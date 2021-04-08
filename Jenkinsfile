@@ -8,10 +8,10 @@ node('master') {
     stage("Setup"){
         checkout scm
         GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replace(" ", "-").replace("/", "-").replace(":", "-")
-        if(GIT_COMMIT_MSG.contains("Increasing version to")){
+        if(GIT_COMMIT_MSG.contains("Increasing-version-to")){
             echo "Increased version build finishing early"
-            currentBuild.result = 'SUCCESS'
-            return
+            currentBuild.result = 'ABORTED'
+            error('Stopping early…')
         }
     }
     stage("Downloading JKS"){
