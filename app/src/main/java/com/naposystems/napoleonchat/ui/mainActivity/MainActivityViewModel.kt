@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.mainActivity
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -138,5 +139,9 @@ class MainActivityViewModel
 
     override fun disconnectSocket() {
 //        repository.disconnectSocket()
+    }
+
+    fun addUriListToCache(listOf: List<Uri>) {
+        repository.addUriListToCache(listOf)
     }
 }

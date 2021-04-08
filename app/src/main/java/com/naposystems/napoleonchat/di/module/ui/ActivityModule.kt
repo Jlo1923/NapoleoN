@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.di.module.ui
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
-import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewActivity
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

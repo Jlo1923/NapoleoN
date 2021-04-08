@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.utility
 
 import android.content.Context
+import android.net.Uri
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
 import com.naposystems.napoleonchat.BuildConfig
@@ -145,6 +146,18 @@ class SharedPreferencesManager
         editor.remove(SharedPreferences.PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW)
         editor.remove(SharedPreferences.PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW)
         editor.apply()
+    }
+
+    fun puStringSet(s: String, listOf: List<Uri>) {
+        with(sharedPreferences.edit()) {
+            putStringSet(s, listOf.map { it.toString() }.toSet())
+            commit()
+        }
+    }
+
+    fun getStringSet(preferenceName: String): Set<String>? {
+        val stringSet = sharedPreferences.getStringSet(preferenceName, emptyList<String>().toSet())
+        return stringSet?.toSet()
     }
 
 }

@@ -13,7 +13,8 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
+            storeFile file('\\pepito.jks')
+            //storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -374,6 +375,7 @@ dependencies {
     implementation "com.xwray:groupie:$groupie_version"
     implementation "com.xwray:groupie-viewbinding:$groupie_version"
     implementation "com.xwray:groupie-kotlin-android-extensions:$groupie_version"
+
     //endregion
 
 }

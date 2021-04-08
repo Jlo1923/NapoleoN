@@ -5,6 +5,7 @@ import androidx.annotation.Nullable
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.naposystems.napoleonchat.source.local.DBConstants
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -63,5 +64,9 @@ data class MessageAttachmentRelation(
         result = 31 * result + attachmentEntityList.hashCode()
         result = 31 * result + (quoteEntity?.hashCode() ?: 0)
         return result
+    }
+
+    fun isMine(): Boolean {
+        return messageEntity.isMine == Constants.IsMine.YES.value
     }
 }

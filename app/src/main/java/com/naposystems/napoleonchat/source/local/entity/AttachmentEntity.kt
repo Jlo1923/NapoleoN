@@ -80,4 +80,6 @@ data class AttachmentEntity(
         return type == Constants.AttachmentType.VIDEO.type && isCompressed.not()
     }
 
+    fun isSent(): Boolean = status == AttachmentStatus.SENT.status
+
 }

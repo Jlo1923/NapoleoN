@@ -15,17 +15,20 @@ val projectionApiLvl29Folders = arrayOf(
     MediaStore.Files.FileColumns.HEIGHT,
     MediaStore.Files.FileColumns.WIDTH,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT
 )
 
 val projectionApiLvl24Folders = arrayOf(
+    MediaStore.Files.FileColumns._ID,
     MediaStore.Files.FileColumns.DATE_MODIFIED,
     MediaStore.Files.FileColumns.MEDIA_TYPE,
-    MediaStore.Files.FileColumns._ID,
     MediaStore.Files.FileColumns.HEIGHT,
     MediaStore.Files.FileColumns.WIDTH,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT,
+    MediaStore.Files.FileColumns.DATA,
 )
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -43,7 +46,10 @@ val projectionApiLvl24Files = arrayOf(
     MediaStore.Files.FileColumns.MEDIA_TYPE,
     MediaStore.Files.FileColumns.DATE_MODIFIED,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT,
+    MediaStore.Files.FileColumns.DISPLAY_NAME,
+    MediaStore.Files.FileColumns.DATA
 )
 
 
@@ -59,7 +65,7 @@ val whereForMediaStore =
 val whereForMediaStoreFiles =
     "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
             "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
-            "AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=? AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
+            "AND ${MediaStore.Files.FileColumns.PARENT}=? AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
 
 
 //WHERE ARGS
@@ -69,20 +75,21 @@ val selectionArgsForMediaStore: Array<String> = arrayOf(
     MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
 )
 
-fun getSelectionArgsForFilesByFolderName(folderName: String): Array<String> =
+fun getSelectionArgsForFilesByFolderName(folderParent: String): Array<String> =
     arrayOf(
         MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
         MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
         MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
-        folderName
+        folderParent
     )
+
 
 @RequiresApi(Build.VERSION_CODES.Q)
 val bucketSortApiLvl29 =
     "${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME} ASC, ${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC, ${MediaStore.Files.FileColumns._ID} DESC"
 
-val bucketSortApiLvl24 =
+const val bucketSortApiLvl24 =
     "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC, ${MediaStore.Files.FileColumns._ID} DESC"
 
-val sortForFiles =
+const val sortForFiles =
     "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC, ${MediaStore.Files.FileColumns._ID} DESC"

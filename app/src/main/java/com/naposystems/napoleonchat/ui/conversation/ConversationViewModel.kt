@@ -21,6 +21,7 @@ import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.MediaStoreAudio
+import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity
@@ -47,7 +48,8 @@ import kotlin.collections.ArrayList
 class ConversationViewModel @Inject constructor(
     private val cryptoMessage: CryptoMessage,
     private val context: Context,
-    private val repository: IContractConversation.Repository
+    private val repository: IContractConversation.Repository,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel(), IContractConversation.ViewModel {
 
     private lateinit var userEntity: UserEntity
@@ -680,6 +682,17 @@ class ConversationViewModel @Inject constructor(
 
     override fun insertMessageNotSent(message: String, contactId: Int) {
         repository.insertMessageNotSent(message, contactId)
+    }
+
+    fun getPendingUris(): List<Uri> {
+        val urisString = sharedPreferencesManager.getStringSet("test")
+        val listString = urisString?.toList()
+        val listUris = listString?.map { Uri.parse(it) }
+        return listUris ?: emptyList()
+    }
+
+    fun removePendingUris() {
+        sharedPreferencesManager.puStringSet("test", emptyList())
     }
 
     //endregion

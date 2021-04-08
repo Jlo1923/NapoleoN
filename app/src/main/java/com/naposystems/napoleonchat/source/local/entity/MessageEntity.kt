@@ -79,8 +79,8 @@ data class MessageEntity(
 
     fun mustSendToRemote(): Boolean {
         return (status == Constants.MessageStatus.ERROR.status ||
-                status == Constants.MessageStatus.SENDING.status
-                ) && webId.isEmpty()
+                status == Constants.MessageStatus.SENDING.status)
+                && webId.isEmpty()
     }
 
 }

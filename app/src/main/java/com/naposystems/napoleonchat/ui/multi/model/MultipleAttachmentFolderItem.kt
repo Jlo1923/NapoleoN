@@ -7,5 +7,6 @@ data class MultipleAttachmentFolderItem(
     val folderName: String,
     val quantity: Int = 0,
     val mediaType: Int,
-    var contentUri: Uri? = null
+    var contentUri: Uri? = null,
+    val parent: String
 )

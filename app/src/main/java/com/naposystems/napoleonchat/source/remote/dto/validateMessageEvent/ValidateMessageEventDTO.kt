@@ -12,6 +12,6 @@ data class ValidateMessageEventDTO(
 @JsonClass(generateAdapter = true)
 data class ValidateMessage(
     @Json(name = "id") val id: String,
-    @Json(name = "user") val user: Int,
+    @Json(name = "user") val user: Long,
     @Json(name = "status") val status: Int
 )

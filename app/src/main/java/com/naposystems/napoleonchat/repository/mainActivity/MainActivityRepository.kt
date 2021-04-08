@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import android.net.Uri
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
@@ -86,5 +87,16 @@ class MainActivityRepository @Inject constructor(
     override fun disconnectSocket() {
 //            socketClient.disconnectSocket()
 
+    }
+
+    fun addUriListToCache(listOf: List<Uri>) {
+        sharedPreferencesManager.puStringSet("test", listOf)
+    }
+
+    fun getPendingUris(): List<Uri> {
+        val urisString = sharedPreferencesManager.getStringSet("test")
+        val listString = urisString?.toList()
+        val listUris = listString?.map { Uri.parse(it) }
+        return listUris ?: emptyList()
     }
 }

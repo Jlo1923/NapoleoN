@@ -61,12 +61,20 @@ import com.naposystems.napoleonchat.ui.attachment.AttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
@@ -78,6 +86,8 @@ import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissio
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
+import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -102,8 +112,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
-    InputPanelWidget.Listener {
+class ConversationFragment
+    : BaseFragment(),
+    ConversationAdapter.ClickListener,
+    InputPanelWidget.Listener,
+    MultiAttachmentMsgListener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -158,6 +171,8 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
+
+    private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
 
     private val documentsMimeTypeAllowed = arrayOf(
         Constants.MimeType.PDF.type,
@@ -704,6 +719,31 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
                 Timber.e(e)
             }
         })
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val uris = viewModel.getPendingUris()
+        if (uris.isEmpty().not()) {
+            viewModel.removePendingUris()
+            val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
+            val listElements = uris.map {
+                val mimeType = binding.root.context.contentResolver.getType(it)
+                MultipleAttachmentFileItem(
+                    id = 0,
+                    attachmentType = mimeType ?: "",
+                    contentUri = it,
+                    isSelected = false,
+                    selfDestruction = 0
+                )
+            }
+            intent.putExtras(Bundle().apply {
+                putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+                putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
+            })
+            startActivity(intent)
+        }
     }
 
     @InternalCoroutinesApi
@@ -1727,10 +1767,21 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
 
     @InternalCoroutinesApi
     private fun setupAdapter() {
+
+        val viewModels = ConversationViewModelsForViewHolders(
+            myMultiAttachmentMsgViewModel
+        )
+
+        val listeners = ConversationListeners(
+            listenerMultiAttachment = this@ConversationFragment
+        )
+
         conversationAdapter = ConversationAdapter(
             this,
             mediaPlayerManager,
-            timeFormatShareViewModel.getValTimeFormat()
+            timeFormatShareViewModel.getValTimeFormat(),
+            listeners,
+            viewModels
         )
 
         linearLayoutManager = LinearLayoutManager(requireContext())
@@ -2235,6 +2286,30 @@ class ConversationFragment : BaseFragment(), ConversationAdapter.ClickListener,
 
             showShowCase = true
         }
+    }
+
+    override fun onMultipleAttachmentMsgAction(action: MultiAttachmentMsgAction) {
+        when (action) {
+            is OpenMultipleAttachmentPreview -> openMultipleAttachmentPreview(action)
+        }
+    }
+
+    private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
+        val files = action.listElements.map {
+            MultipleAttachmentFileItem(
+                id = it.id,
+                attachmentType = it.type,
+                contentUri = Uri.parse(it.thumbnailUri),
+                isSelected = false
+            )
+        }
+        val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
+        intent.putExtras(Bundle().apply {
+            //putParcelable(MULTI_EXTRA_CONTACT, contact)
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(files))
+            putInt(MULTI_SELECTED, action.index)
+        })
+        startActivity(intent)
     }
 
     //endregion

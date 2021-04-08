@@ -19,6 +19,7 @@ import com.naposystems.napoleonchat.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.napoleonchat.ui.contactUs.ContactUsViewModel
 import com.naposystems.napoleonchat.ui.contacts.ContactsViewModel
 import com.naposystems.napoleonchat.ui.conversation.ConversationViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallViewModel
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinViewModel
@@ -33,7 +34,7 @@ import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingVi
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
-import com.naposystems.napoleonchat.ui.previewmulti.MultipleAttachmentPreviewViewModel
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -376,5 +377,12 @@ abstract class ViewModelModule {
     @ViewModelKey(MultipleAttachmentPreviewViewModel::class)
     internal abstract fun bindMultipleAttachmentPreviewViewModel(
         viewModel: MultipleAttachmentPreviewViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MyMultiAttachmentMsgViewModel::class)
+    internal abstract fun bindMyMultiAttachmentMsgViewModel(
+        viewModel: MyMultiAttachmentMsgViewModel
     ): ViewModel
 }
