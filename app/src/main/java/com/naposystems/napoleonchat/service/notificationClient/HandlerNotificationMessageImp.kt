@@ -195,41 +195,41 @@ class HandlerNotificationMessageImp
         }
     }
 
-    private fun emitClientConversation(messageString: String) {
-
-        Timber.d("**Paso 8: Proceso de Emision del item $messageString")
-
-        GlobalScope.launch() {
-            val newMessageEventMessageResData: String =
-                if (BuildConfig.ENCRYPT_API)
-                    cryptoMessage.decryptMessageBody(messageString)
-                else
-                    messageString
-
-            Timber.d("Paso 8.1: Desencriptar mensaje $messageString")
-            try {
-                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
-                    moshi.adapter(NewMessageEventMessageRes::class.java)
-
-                jsonAdapter.fromJson(newMessageEventMessageResData)
-                    ?.let { newMessageEventMessageRes ->
-
-                        val messages = arrayListOf(
-                            ValidateMessage(
-                                id = newMessageEventMessageRes.id,
-                                user = newMessageEventMessageRes.userAddressee,
-                                status = Constants.MessageEventType.UNREAD.status
-                            )
-                        )
-
-                        Timber.d("**Paso 8.2: Emitir Recibido $messages")
-
-                        socketClient.emitClientConversation(messages)
-
-                    }
-            } catch (e: java.lang.Exception) {
-                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
-            }
-        }
-    }
+//    private fun emitClientConversation(messageString: String) {
+//
+//        Timber.d("**Paso 8: Proceso de Emision del item $messageString")
+//
+//        GlobalScope.launch() {
+//            val newMessageEventMessageResData: String =
+//                if (BuildConfig.ENCRYPT_API)
+//                    cryptoMessage.decryptMessageBody(messageString)
+//                else
+//                    messageString
+//
+//            Timber.d("Paso 8.1: Desencriptar mensaje $messageString")
+//            try {
+//                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
+//                    moshi.adapter(NewMessageEventMessageRes::class.java)
+//
+//                jsonAdapter.fromJson(newMessageEventMessageResData)
+//                    ?.let { newMessageEventMessageRes ->
+//
+//                        val messages = arrayListOf(
+//                            ValidateMessage(
+//                                id = newMessageEventMessageRes.id,
+//                                user = newMessageEventMessageRes.userAddressee,
+//                                status = Constants.MessageEventType.UNREAD.status
+//                            )
+//                        )
+//
+//                        Timber.d("**Paso 8.2: Emitir Recibido $messages")
+//
+//                        socketClient.emitClientConversation(messages)
+//
+//                    }
+//            } catch (e: java.lang.Exception) {
+//                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
+//            }
+//        }
+//    }
 }

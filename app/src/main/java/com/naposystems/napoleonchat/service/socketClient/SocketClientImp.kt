@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedRESDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -453,9 +454,9 @@ class SocketClientImp
 
     }
 
-    private fun emitClientConversation(messages: ValidateMessage) {
-        emitClientConversation(arrayListOf(messages))
-    }
+//    private fun emitClientConversation(messages: ValidateMessage) {
+//        emitClientConversation(arrayListOf(messages))
+//    }
 
     override fun emitClientCall(channel: String, jsonObject: JSONObject) {
 
@@ -696,44 +697,79 @@ class SocketClientImp
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         try {
-                            event?.data?.let {
+                            event?.data?.let { messagesResDTO ->
 
-                                //TODO: Descomentarear cuando puntos verdes arreglado
+                                val jsonAdapter: JsonAdapter<MessagesResDTO> =
+                                    moshi.adapter(MessagesResDTO::class.java)
 
-//                                    dataEventRes ->
-//
-//                                val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
-//                                    moshi.adapter(ValidateMessageEventDTO::class.java)
-//
-//                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
-//
-//                                val messages = dataEvent?.messages?.filter {
-//                                    it.user == userId
-//                                }?.filter {
-//                                    syncManager.existIdMessage(it.id)
-//                                }
-//
-//                                val unread = messages?.filter {
-//                                    it.status == Constants.MessageEventType.UNREAD.status
-//                                }?.map { it.id }
-//
-//                                unread?.let {
-//                                    syncManager.updateMessagesStatus(
-//                                        it,
-//                                        Constants.MessageStatus.UNREAD.status
-//                                    )
-//                                }
-//
-//                                val read = messages?.filter {
-//                                    it.status == Constants.MessageEventType.READ.status
-//                                }?.map { it.id }
-//
-//                                read?.let {
-//                                    syncManager.validateMessageType(
-//                                        it,
-//                                        Constants.MessageStatus.READED.status
-//                                    )
-//                                }
+                                //TODO: Pasar esto a una funcion ya que la estructura se repite
+                                val dataEvent = jsonAdapter.fromJson(messagesResDTO)
+
+                                //filtra los MESSAGES
+                                val messages = dataEvent?.messages?.filter {
+                                    it.userId == userId
+                                }?.filter {
+                                    syncManager.existMessageById(it.id)
+                                }
+
+                                //Seccion Actualizar MESSAGE UNREAD
+                                messages?.filter {
+                                    it.status == Constants.MessageEventType.UNREAD.status &&
+                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateMessagesStatus(
+                                        it,
+                                        Constants.MessageStatus.UNREAD.status
+                                    )
+                                }
+
+                                //Seccion Actualizar MESSAGE READED
+                                messages?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateMessagesStatus(
+                                        it,
+                                        Constants.MessageStatus.READED.status
+                                    )
+                                }
+
+                                //filtra los ATTACHMENTS
+                                val attachments = dataEvent?.messages?.filter {
+                                    it.userId == userId
+                                }?.filter {
+                                    syncManager.existAttachmentById(it.id)
+                                }
+
+                                //Seccion Actualizar ATTACHMENT UNREAD
+                                attachments?.filter {
+                                    it.status == Constants.MessageEventType.UNREAD.status &&
+                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateAttachmentsStatus(
+                                        it,
+                                        Constants.MessageStatus.UNREAD.status
+                                    )
+                                }
+
+                                //Seccion Actualizar ATTACHMENT READED
+                                attachments?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.validateMessageType(
+                                        it,
+                                        Constants.MessageStatus.READED.status
+                                    )
+                                }
 
                             }
                         } catch (e: Exception) {

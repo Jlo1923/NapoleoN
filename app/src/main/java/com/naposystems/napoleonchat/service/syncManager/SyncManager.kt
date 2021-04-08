@@ -30,7 +30,7 @@ interface SyncManager {
 
     fun rejectCall(contactId: Int, channel: String)
 
-    fun existIdMessage(id: String): Boolean
+    fun existMessageById(id: String): Boolean
 
     fun validateMessageType(messagesWebIds: List<String>, state: Int)
 

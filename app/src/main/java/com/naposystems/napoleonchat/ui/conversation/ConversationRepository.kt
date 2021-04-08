@@ -322,87 +322,87 @@ class ConversationRepository @Inject constructor(
 
         Timber.d("Envio en proceso Inicio $envioEnProceso")
 
-        if (envioEnProceso) {
-
-            envioEnProceso = false
-
-            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
-
-            val messagesUnread =
-                messageLocalDataSource.getTextMessagesByStatus(
-                    contactId,
-                    Constants.MessageStatus.UNREAD.status
-                )
-
-            val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
-
-            val locationMessagesUnread =
-                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
-
-            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-
-            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
-
-            val listIds = mutableListOf<String>()
-
-            listIds.addAll(textMessagesUnreadIds)
-
-            listIds.addAll(locationMessagesUnreadIds)
-
-            val messagesRead = messagesUnread.map {
-                ValidateMessage(
-                    id = it.messageEntity.webId,
-                    user = contactId,
-                    status = Constants.MessageEventType.READ.status
-                )
-            }
-
-            if (listIds.isNotEmpty()) {
-
-                try {
-
-                    Timber.d("SocketService: $socketClient")
-
-                    socketClient.emitClientConversation(messagesRead)
-
-                    val response = napoleonApi.sendMessagesRead(
-                        MessagesReadReqDTO(
-                            listIds
-                        )
-                    )
-
-                    if (response.isSuccessful) {
-
-                        envioEnProceso = true
-
-                        Timber.d("Envio en proceso Successful $envioEnProceso")
-
-                        messageLocalDataSource.updateMessageStatus(
-                            listIds,
-                            Constants.MessageStatus.READED.status
-                        )
-                    }
-
-                } catch (ex: Exception) {
-
-                    envioEnProceso = true
-
-                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
-
-                    Timber.e(ex)
-                } finally {
-
-                    envioEnProceso = true
-
-                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
-
-                }
-
-            } else {
-                envioEnProceso = true
-            }
-
-        }
+//        if (envioEnProceso) {
+//
+//            envioEnProceso = false
+//
+//            Timber.d("Envio en proceso dentro del IF $envioEnProceso")
+//
+//            val messagesUnread =
+//                messageLocalDataSource.getTextMessagesByStatus(
+//                    contactId,
+//                    Constants.MessageStatus.UNREAD.status
+//                )
+//
+//            val textMessagesUnread = messagesUnread.filter { it.attachmentEntityList.isEmpty() }
+//
+//            val locationMessagesUnread =
+//                messagesUnread.filter { it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type }
+//
+//            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
+//
+//            val locationMessagesUnreadIds = locationMessagesUnread.map { it.messageEntity.webId }
+//
+//            val listIds = mutableListOf<String>()
+//
+//            listIds.addAll(textMessagesUnreadIds)
+//
+//            listIds.addAll(locationMessagesUnreadIds)
+//
+//            val messagesRead = messagesUnread.map {
+//                ValidateMessage(
+//                    id = it.messageEntity.webId,
+//                    user = contactId,
+//                    status = Constants.MessageEventType.READ.status
+//                )
+//            }
+//
+//            if (listIds.isNotEmpty()) {
+//
+//                try {
+//
+//                    Timber.d("SocketService: $socketClient")
+//
+////                    socketClient.emitClientConversation(messagesRead)
+//
+//                    val response = napoleonApi.sendMessagesRead(
+//                        MessagesReadReqDTO(
+//                            listIds
+//                        )
+//                    )
+//
+//                    if (response.isSuccessful) {
+//
+//                        envioEnProceso = true
+//
+//                        Timber.d("Envio en proceso Successful $envioEnProceso")
+//
+//                        messageLocalDataSource.updateMessageStatus(
+//                            listIds,
+//                            Constants.MessageStatus.READED.status
+//                        )
+//                    }
+//
+//                } catch (ex: Exception) {
+//
+//                    envioEnProceso = true
+//
+//                    Timber.d("Envio en proceso dentro del Catch $envioEnProceso")
+//
+//                    Timber.e(ex)
+//                } finally {
+//
+//                    envioEnProceso = true
+//
+//                    Timber.d("Envio en proceso dentro del Finally $envioEnProceso")
+//
+//                }
+//
+//            } else {
+//                envioEnProceso = true
+//            }
+//
+//        }
 
     }
 

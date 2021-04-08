@@ -342,14 +342,17 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun existIdMessage(id: String): Boolean = messageLocalDataSource.existMessage(id)
+    override fun existMessageById(id: String): Boolean = messageLocalDataSource.existMessage(id)
 
     override fun existAttachmentById(id: String): Boolean = attachmentLocalDataSource.existAttachment(id)
 
     override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
+
             val listWebId = mutableListOf<String>()
+
             for (webId in messagesWebIds) {
+
                 val localMessage = messageLocalDataSource.getMessageByWebId(webId, false)
 
                 localMessage?.let {
@@ -360,6 +363,7 @@ class SyncManagerImp @Inject constructor(
                         validateAttachmentType(it, listWebId)
                     }
                 }
+
             }
 
             updateMessagesStatus(listWebId, state)
