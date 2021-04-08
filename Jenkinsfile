@@ -5,13 +5,19 @@ node('master') {
     stage("Cleaning existing resources"){
         cleanWs()
     }
-    stage("Checkout"){
+    stage("Setup"){
         checkout scm
+        GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replace(" ", "-").replace("/", "-").replace(":", "-")
+        if(GIT_COMMIT_MSG.contains("Increasing version to")){
+            echo "Increased version build finishing early"
+            currentBuild.result = 'SUCCESS'
+            return
+        }
     }
     stage("Downloading JKS"){
         s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
     }
-    GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replace(" ", "-")
+
     VERSION = sh(script:"cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'",returnStdout: true).trim()
     VERSIONCODE = sh(script:"cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'",returnStdout: true).trim().toInteger()
     INCREASEDVERSION = VERSIONCODE + 1
@@ -51,7 +57,7 @@ node('master') {
 
     stage("Slack notification"){
         HORA = sh(script:"date +%T", returnStdout: true).trim();
-        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${FINALVERSIONNAME}* con código de version *${VERSIONCODE}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
+        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${FINALVERSIONNAME}* con código de version *${INCREASEDVERSION}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
     }
     cleanWs()
 }
