@@ -25,9 +25,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 51
+        versionCode 52
 
-        versionName "1.1.51-Stopping-early-Jenkinsfile"
+        versionName "1.1.52-Fixing-merge"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
