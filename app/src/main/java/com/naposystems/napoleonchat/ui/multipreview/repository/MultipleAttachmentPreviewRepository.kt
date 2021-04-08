@@ -90,9 +90,7 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
     )
 
     private suspend fun imageFile(fileInputStream: FileInputStream) =
-        FileManager.compressImageFromFileInputStream(
-            context, fileInputStream
-        )
+        FileManager.compressImageFromFileInputStream(context, fileInputStream)
 }
 
 

@@ -9,26 +9,33 @@ import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelatio
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.*
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
 class MyMultiAttachmentMsgViewHolder(
     private val binding: ConversationItemMyMessageMultiBinding,
-    private val viewModel: MyMultiAttachmentMsgViewModel
+    private val viewModel: MyMultiAttachmentMsgViewModel,
+    private val listener: MultiAttachmentMsgListener
 ) : ConversationViewHolder(binding.root, binding.root.context),
     MultiAttachmentMsgItemListener {
 
     private lateinit var msgAndAttachment: MessageAttachmentRelation
+    lateinit var currentAttachments: List<AttachmentEntity>
 
     companion object {
         fun from(
             parent: ViewGroup,
-            viewModel: MyMultiAttachmentMsgViewModel
+            viewModel: MyMultiAttachmentMsgViewModel,
+            listener: MultiAttachmentMsgListener
         ): MyMultiAttachmentMsgViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
             val binding = ConversationItemMyMessageMultiBinding.inflate(
@@ -36,7 +43,7 @@ class MyMultiAttachmentMsgViewHolder(
                 parent,
                 false
             )
-            return MyMultiAttachmentMsgViewHolder(binding, viewModel)
+            return MyMultiAttachmentMsgViewHolder(binding, viewModel, listener)
         }
     }
 
@@ -64,8 +71,12 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun launchActionViewAttachment(action: MultiAttachmentMsgItemAction) {
-
+    private fun launchActionViewAttachment(action: ViewAttachment) {
+        val actionForListener = OpenMultipleAttachmentPreview(
+            currentAttachments,
+            action.index
+        )
+        listener.onMultipleAttachmentMsgAction(actionForListener)
     }
 
     private fun configListenersViews() = binding.apply {
@@ -80,19 +91,15 @@ class MyMultiAttachmentMsgViewHolder(
         viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
     }
 
-    private fun handleActions(action: MultiAttachmentMsgAction) {
+    private fun handleActions(action: MultiAttachmentMsgEvent) {
         when (action) {
-            MultiAttachmentMsgAction.HideQuantity -> TODO()
-            is MultiAttachmentMsgAction.ShowQuantity -> showQuantity(action.data)
+            MultiAttachmentMsgEvent.HideQuantity -> binding.textViewCountFiles.hide()
+            is MultiAttachmentMsgEvent.ShowQuantity -> showQuantity(action.data)
         }
     }
 
-    private fun showQuantity(data: Pair<Int, Int>) {
-        binding.apply {
-            val text = "${data.first} / ${data.second}"
-            textViewCountFiles.text = text
-        }
-
+    private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
+        textViewCountFiles.text = "${data.first} / ${data.second}"
     }
 
     private fun handleState(state: MultiAttachmentMsgState) = when (state) {
@@ -104,24 +111,28 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
+        currentAttachments = listElements
         hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewTwoFiles)
         viewTwoFiles.bindAttachments(listElements)
     }
 
     private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
+        currentAttachments = listElements
         hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles)
         showViews(viewThreeFiles)
         viewThreeFiles.bindAttachments(listElements)
     }
 
     private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
+        currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles)
         showViews(viewFourFiles)
         viewFourFiles.bindAttachments(listElements)
     }
 
     private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
+        currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles)
         showViews(viewFiveFiles)
         viewFiveFiles.bindAttachments(listElements)

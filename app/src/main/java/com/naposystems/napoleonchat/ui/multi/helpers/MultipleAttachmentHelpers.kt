@@ -15,7 +15,8 @@ val projectionApiLvl29Folders = arrayOf(
     MediaStore.Files.FileColumns.HEIGHT,
     MediaStore.Files.FileColumns.WIDTH,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT
 )
 
 val projectionApiLvl24Folders = arrayOf(

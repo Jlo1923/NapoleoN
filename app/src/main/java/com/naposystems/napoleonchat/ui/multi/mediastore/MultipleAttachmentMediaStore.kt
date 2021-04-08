@@ -47,18 +47,18 @@ class MultipleAttachmentMediaStore @Inject constructor(
                     } else {
                         -1
                     }
+
                 val idColumnIndex = cursorFolders.getColumnIndexOrThrow(_ID)
                 val mediaTypeColumnIndex = cursorFolders.getColumnIndexOrThrow(MEDIA_TYPE)
 
                 do {
 
-                    val indexForData = cursorFolders.getColumnIndexOrThrow(DATA)
-                    val splitData = cursorFolders.getString(indexForData).split("/")
-                    val nameFromData = splitData[splitData.size - 2]
-
                     val folderName = if (folderNameColumnIndex != -1) {
                         cursorFolders.getString(folderNameColumnIndex)
                     } else {
+                        val indexForData = cursorFolders.getColumnIndexOrThrow(DATA)
+                        val splitData = cursorFolders.getString(indexForData).split("/")
+                        val nameFromData = splitData[splitData.size - 2]
                         nameFromData
                     }
 

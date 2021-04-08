@@ -26,10 +26,6 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
 
     fun getTabLayout(): TabLayout = viewBinding.tabLayoutFiles
 
-    init {
-
-    }
-
     fun showElements(listElements: List<Item<*>>) {
         groupieAdapter.update(listElements)
     }

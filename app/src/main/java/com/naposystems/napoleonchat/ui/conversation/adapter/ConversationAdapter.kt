@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.audio.IncomingMessageAudioViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.audio.MyMessageAudioViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.base.IncomingMessageViewHolder
@@ -34,7 +36,8 @@ class ConversationAdapter(
     private val clickListener: ClickListener,
     private val mediaPlayerManager: MediaPlayerManager,
     private var timeFormat: Int?,
-    private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel
+    private var listeners: ConversationListeners,
+    private var viewmodels: ConversationViewModelsForViewHolders
 ) : ListAdapter<MessageAttachmentRelation, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
@@ -372,7 +375,8 @@ class ConversationAdapter(
             TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             TYPE_MY_MULTI_ATTACHMENT -> MyMultiAttachmentMsgViewHolder.from(
                 parent,
-                myMultiAttachmentMsgViewModel
+                viewmodels.viewModelMultiAttachment,
+                listeners.listenerMultiAttachment
             )
             //TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
@@ -572,6 +576,6 @@ class ConversationAdapter(
         fun scrollToNextAudio(nextPosition: Int)
 
         fun updateMessageState(messageEntity: MessageEntity)
-        
+
     }
 }

@@ -55,6 +55,22 @@
         app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
         tools:background="#345678" />
 
+    <TextView
+        android:id="@+id/text_more_files_quantity"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black_overlay"
+        android:elevation="4dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_two"
+        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
+        tools:text="+2" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_vertical_middle"
         android:layout_width="wrap_content"

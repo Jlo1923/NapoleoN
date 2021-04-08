@@ -1,11 +1,12 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events
 
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+
 sealed class MultiAttachmentMsgAction {
 
-    class ShowQuantity(
-        val data: Pair<Int, Int>
+    class OpenMultipleAttachmentPreview(
+        val listElements: List<AttachmentEntity>,
+        val index: Int
     ) : MultiAttachmentMsgAction()
-
-    object HideQuantity : MultiAttachmentMsgAction()
 
 }

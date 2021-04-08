@@ -34,6 +34,7 @@ import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
+import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
@@ -70,7 +71,6 @@ class MultipleAttachmentPreviewActivity
 
     override fun onStart() {
         super.onStart()
-        //showLoading()
         bindViewModel()
         extractContactFromExtras()
         extractFilesFromExtras()
@@ -149,11 +149,19 @@ class MultipleAttachmentPreviewActivity
         }
     }
 
-    private fun extractContactFromExtras() {
-        intent.extras?.let { bundle ->
-            val contact = bundle.getParcelable<ContactEntity>(MULTI_EXTRA_CONTACT)
-            contact?.let { viewModel.setContact(it) }
+    private fun extractSelectedIndex() = intent.extras?.let { bundle ->
+        if (bundle.containsKey(MULTI_SELECTED)) {
+            val index = bundle.getInt(MULTI_SELECTED)
+            viewBinding.viewPreviewBottom.getTabLayout().apply {
+                val tab = getTabAt(index)
+                selectTab(tab)
+            }
         }
+    }
+
+    private fun extractContactFromExtras() = intent.extras?.let { bundle ->
+        val contact = bundle.getParcelable<ContactEntity>(MULTI_EXTRA_CONTACT)
+        contact?.let { viewModel.setContact(it) }
     }
 
     private fun configureTabsAndViewPager(it: ArrayList<MultipleAttachmentFileItem>) {
@@ -195,6 +203,9 @@ class MultipleAttachmentPreviewActivity
         adapter = MultipleAttachmentFragmentAdapter(this, listFiles)
         configureTabsAndViewPager(listFiles)
         addListenerToPager()
+        viewBinding.viewPreviewBottom.postDelayed(
+            { extractSelectedIndex() }, 500
+        )
     }
 
     private fun showLoading() = viewBinding.apply {
@@ -303,6 +314,5 @@ class MultipleAttachmentPreviewActivity
         viewAttachmentOptions.animShowSlideDown()
         viewPreviewBottom.animShowSlideUp()
     }
-
 
 }

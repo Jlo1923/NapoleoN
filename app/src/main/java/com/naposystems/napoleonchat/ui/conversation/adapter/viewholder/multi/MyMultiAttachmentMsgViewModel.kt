@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import kotlinx.coroutines.launch
@@ -21,8 +21,8 @@ class MyMultiAttachmentMsgViewModel @Inject constructor(
     val state: LiveData<MultiAttachmentMsgState>
         get() = _state
 
-    private val actions: SingleLiveEvent<MultiAttachmentMsgAction> = SingleLiveEvent()
-    fun actions(): LiveData<MultiAttachmentMsgAction> = actions
+    private val actions: SingleLiveEvent<MultiAttachmentMsgEvent> = SingleLiveEvent()
+    fun actions(): LiveData<MultiAttachmentMsgEvent> = actions
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     override fun getAttachmentsInMessage(messageId: Int) {
@@ -49,7 +49,7 @@ class MyMultiAttachmentMsgViewModel @Inject constructor(
     private fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
         val countSent = listAttachments.filter { it.isSent() }
         val data = Pair(countSent.size, listAttachments.size)
-        actions.value = MultiAttachmentMsgAction.ShowQuantity(data)
+        actions.value = MultiAttachmentMsgEvent.ShowQuantity(data)
     }
 
     override fun retryUploadAllFiles() {
