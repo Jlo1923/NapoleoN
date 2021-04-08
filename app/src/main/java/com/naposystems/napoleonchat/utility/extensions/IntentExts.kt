@@ -33,21 +33,3 @@ fun Intent.getUriListFromExtra(): List<Uri> {
     } ?: kotlin.run { emptyList() }
 }
 
-fun getMimeType(uri: Uri, context: Context): String? {
-    var mimeType: String? = null
-    mimeType = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
-        val cr: ContentResolver = context.contentResolver
-        cr.getType(uri)
-    } else {
-        val fileExtension = MimeTypeMap.getFileExtensionFromUrl(
-            uri.toString()
-        )
-        MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-            fileExtension.toLowerCase()
-        )
-    }
-    return mimeType
-}
-
-
-
