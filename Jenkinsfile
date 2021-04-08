@@ -8,11 +8,11 @@ node('master') {
     stage("Setup"){
         checkout scm
         GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replace(" ", "-").replace("/", "-").replace(":", "-")
-        if(GIT_COMMIT_MSG.contains("Increasing-version-to")){
-            echo "Increased version build finishing early"
-            currentBuild.result = 'ABORTED'
-            error('Stopping early…')
-        }
+    }
+    if(GIT_COMMIT_MSG.contains("Increasing-version-to")){
+        echo "Increased version build finishing early"
+        currentBuild.result = "ABORTED"
+        return
     }
     stage("Downloading JKS"){
         s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
