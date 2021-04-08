@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.source.local.entity.*
         QuoteEntity::class,
         MessageNotSentEntity::class
     ],
-    version = 2
+    version = 3
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -56,6 +56,24 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE message ADD COLUMN 'uuid' TEXT DEFAULT NULL")
 
                 database.execSQL("ALTER TABLE 'message' ADD COLUMN 'cypher' INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("ALTER TABLE attachment ADD COLUMN 'self_destruction_at' INTEGER NOT NULL DEFAULT -1")
+
+                database.execSQL("ALTER TABLE attachment ADD COLUMN 'total_self_destruction_at' INTEGER NOT NULL DEFAULT 0")
+
+                database.execSQL("ALTER TABLE attachment ADD COLUMN 'updated_at' INTEGER NOT NULL DEFAULT 0")
+
+                database.execSQL(
+                    """UPDATE attachment SET 
+                    self_destruction_at = (SELECT self_destruction_at FROM message WHERE attachment.message_id = message.id), 
+                    total_self_destruction_at = (SELECT total_self_destruction_at FROM message WHERE attachment.message_id = message.id), 
+                    updated_at = (SELECT updated_at FROM message WHERE attachment.message_id = message.id)"""
+                )
+
             }
         }
     }

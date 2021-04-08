@@ -39,10 +39,6 @@ class ConversationCallViewModel
         }
     }
 
-    override fun resetIsOnCallPref() {
-        repository.resetIsOnCallPref()
-    }
-
     override fun sendMissedCall(callModel: CallModel) {
         viewModelScope.launch {
             try {

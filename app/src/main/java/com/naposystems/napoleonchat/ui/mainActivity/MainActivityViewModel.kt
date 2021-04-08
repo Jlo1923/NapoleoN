@@ -133,10 +133,6 @@ class MainActivityViewModel
         isVideoCall = null
     }
 
-    override fun resetIsOnCallPref() {
-        repository.resetIsOnCallPref()
-    }
-
     override fun getRecoveryQuestionsPref(): Int {
         return repository.getRecoveryQuestionsPref()
     }

@@ -24,10 +24,6 @@ class ConversationCallRepository @Inject constructor(
         return contactLocalDataSource.getContactById(contactId)
     }
 
-    override fun resetIsOnCallPref() {
-        NapoleonApplication.isCurrentOnCall = false
-    }
-
     override suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO> {
         return napoleonApi.sendMessage(messageReqDTO)
     }

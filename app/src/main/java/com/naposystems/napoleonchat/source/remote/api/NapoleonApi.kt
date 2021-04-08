@@ -29,6 +29,10 @@ import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeResDTO
 import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
 import com.naposystems.napoleonchat.source.remote.dto.language.UserLanguageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageAndAttachmentResDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageReceivedResDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
 import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
@@ -171,18 +175,16 @@ interface NapoleonApi {
     suspend fun getMyMessages(): Response<List<MessageResDTO>>
 
     @GET(VERIFY_MESSAGES_RECEIVED)
-    suspend fun verifyMessagesReceived(): Response<List<String>>
+    suspend fun verifyMessagesReceived(): Response<MessageAndAttachmentResDTO>
 
     @POST(VERIFY_MESSAGES_READ)
-    suspend fun verifyMessagesRead(): Response<List<String>>
+    suspend fun verifyMessagesRead(): Response<MessageAndAttachmentResDTO>
 
     @PUT(SEND_MESSAGES_READ)
-    suspend fun sendMessagesRead(@Body messagesReadReqDTO: MessagesReadReqDTO): Response<List<String>>
+    suspend fun sendMessagesRead(@Body messagesReqDTO: MessagesReqDTO): Response<MessagesResDTO>
 
     @POST(NOTIFY_MESSAGE_RECEIVED)
-    suspend fun notifyMessageReceived(
-        @Body messageReceivedReqDTO: MessageReceivedReqDTO
-    ): Response<MessageReceivedResDTO>
+    suspend fun notifyMessageReceived(@Body messageReceivedReqDTO: MessagesReqDTO): Response<MessageReceivedResDTO>
 
     @GET(GET_RECOVERY_QUESTIONS)
     suspend fun getRecoveryQuestions(@Path("nick") nick: String): Response<RecoveryAccountUserTypeResDTO>
@@ -260,8 +262,5 @@ interface NapoleonApi {
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>
 
     @PUT(UPDATE_CONTACT_FAKE)
-    suspend fun updateContactFake(
-        @Body contactFakeReqDTO: ContactFakeReqDTO,
-        @Path("friendshipId") idContact: Int
-    ): Response<ContactFakeResDTO>
+    suspend fun updateContactFake(@Body contactFakeReqDTO: ContactFakeReqDTO,@Path("friendshipId") idContact: Int): Response<ContactFakeResDTO>
 }

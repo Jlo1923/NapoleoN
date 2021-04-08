@@ -202,6 +202,7 @@ class HomeFragment : BaseFragment() {
         val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                Timber.d("LLAMADA PASO: DISPOSE CALL OYENDO DESDE HOME")
                 binding.textViewReturnCall.isVisible = false
             }
 

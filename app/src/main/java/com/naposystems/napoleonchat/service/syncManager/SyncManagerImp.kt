@@ -19,16 +19,13 @@ import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MESSAGE
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReceivedReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessagesReadReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -40,8 +37,6 @@ import javax.inject.Inject
 class SyncManagerImp @Inject constructor(
     private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
-//    private val socketService: SocketService,
-    private val sharedPreferencesManager: SharedPreferencesManager,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
@@ -53,14 +48,6 @@ class SyncManagerImp @Inject constructor(
         Moshi.Builder().build()
     }
 
-    init {
-
-        Timber.d("Pusher: //////////////////////////////////////")
-
-    }
-
-    //region SocketService
-    //region Metodos De La Interface
     override fun getUserId(): Int {
 
         val user = userLocalDataSource.getMyUser()
@@ -138,83 +125,67 @@ class SyncManagerImp @Inject constructor(
 
     override fun verifyMessagesReceived() {
         GlobalScope.launch {
-            val response = napoleonApi.verifyMessagesReceived()
+            try {
+                val response = napoleonApi.verifyMessagesReceived()
 
-            if (response.isSuccessful) {
-                messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
-                    Constants.MessageStatus.UNREAD.status
-                )
+                if (response.isSuccessful) {
+
+                    response.body()?.messagesId.let {
+                        it?.let {
+                            messageLocalDataSource.updateMessageStatus(
+                                it,
+                                Constants.MessageStatus.UNREAD.status
+                            )
+                        }
+                    }
+
+                    response.body()?.attachmentsId.let {
+                        it?.let {
+                            attachmentLocalDataSource.updateAttachmentStatus(
+                                it,
+                                Constants.AttachmentStatus.DOWNLOADING.status
+                            )
+                        }
+                    }
+
+                }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
             }
         }
     }
 
     override fun verifyMessagesRead() {
         GlobalScope.launch {
-            val response = napoleonApi.verifyMessagesRead()
+            try {
+                val response = napoleonApi.verifyMessagesRead()
 
-            if (response.isSuccessful) {
-                messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
-                    Constants.MessageStatus.READED.status
-                )
+                if (response.isSuccessful) {
+
+                    response.body()?.messagesId.let {
+                        it?.let {
+                            messageLocalDataSource.updateMessageStatus(
+                                it,
+                                Constants.MessageStatus.READED.status
+                            )
+                        }
+                    }
+
+                    response.body()?.attachmentsId.let {
+                        it?.let {
+                            attachmentLocalDataSource.updateAttachmentStatus(
+                                it,
+                                Constants.MessageStatus.READED.status
+                            )
+                        }
+                    }
+
+                }
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
             }
         }
     }
-
-//    override suspend fun NEW_insertMessage(newMessageEventMessageRes: NewMessageEventMessageRes) {
-//
-//        Timber.d("**Paso 7: Proceso de Insercion del item $newMessageEventMessageRes")
-//
-//        try {
-//
-//            if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-//                getRemoteContact()
-//            }
-//
-//            val databaseMessage = messageLocalDataSource.getMessageByWebId(
-//                newMessageEventMessageRes.id,
-//                false
-//            )
-//
-//            Timber.d("**Paso 7.1: Validar WebId ${newMessageEventMessageRes.id}")
-//
-//            if (databaseMessage == null) {
-//
-//                Timber.d("**Paso 7.2: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
-//
-//                val message =
-//                    newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
-//
-//                val messageId = messageLocalDataSource.insertMessage(message)
-//
-//                Timber.d("**Paso 7.3: Mensaje insertado $messageId")
-//
-//                if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-//                    Timber.d("**Paso 7.4: insertar mensaje Quote")
-//                    insertQuote_NOTIF(
-//                        newMessageEventMessageRes.quoted,
-//                        messageId.toInt()
-//                    )
-//                }
-//
-//                val listAttachments =
-//                    NewMessageEventAttachmentRes.toListConversationAttachment(
-//                        messageId.toInt(),
-//                        newMessageEventMessageRes.attachments
-//                    )
-//                if (listAttachments.isNotEmpty()) {
-//                    Timber.d("**Paso 7.5: insertar ${listAttachments.size} adjuntos")
-//                    attachmentLocalDataSource.insertAttachments(listAttachments)
-//                }
-//
-//            }
-//        } catch (e: java.lang.Exception) {
-//            Timber.e(e.localizedMessage)
-//        }
-//
-//    }
-
 
     //TODO: Estos dos metodos tienen la misma funcion refactorizarlos
     override fun insertMessage(messageString: String) {
@@ -222,66 +193,62 @@ class SyncManagerImp @Inject constructor(
         Timber.d("**Paso 7: Proceso de Insercion del item $messageString")
 
         GlobalScope.launch() {
-            val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
-                cryptoMessage.decryptMessageBody(messageString)
-            } else {
-                messageString
-            }
 
-            Timber.d("**Paso 7.1: Desencriptar mensaje ${newMessageEventMessageResData}")
+            Timber.d("**Paso 7.1: Desencriptar mensaje $messageString")
 
             try {
                 val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
                     moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                jsonAdapter.fromJson(newMessageEventMessageResData)?.let { newMessageEventRes ->
+                jsonAdapter.fromJson(messageString)
+                    ?.let { newMessageEventMessageRes ->
 
-                    if (newMessageEventRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
-                        getRemoteContact()
-                    }
-
-                    val databaseMessage =
-                        messageLocalDataSource.getMessageByWebId(
-                            newMessageEventRes.id,
-                            false
-                        )
-
-                    Timber.d("**Paso 7.2: Validar WebId ${newMessageEventRes.id}")
-
-
-                    if (databaseMessage == null) {
-
-                        val message =
-                            newMessageEventRes.toMessageEntity(Constants.IsMine.NO.value)
-
-                        Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventRes.id}")
-
-                        val messageId =
-                            messageLocalDataSource.insertMessage(message)
-
-                        Timber.d("**Paso 7.4: Mensaje insertado $messageId")
-
-                        if (newMessageEventRes.quoted.isNotEmpty()) {
-                            Timber.d("**Paso 7.5.1: insertar Quote")
-                            insertQuote(
-                                newMessageEventRes.quoted,
-                                messageId.toInt()
-                            )
+                        if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                            getRemoteContact()
                         }
 
-                        val listAttachments =
-                            NewMessageEventAttachmentRes.toListConversationAttachment(
-                                messageId.toInt(),
-                                newMessageEventRes.attachments
+                        val databaseMessage =
+                            messageLocalDataSource.getMessageByWebId(
+                                newMessageEventMessageRes.id,
+                                false
                             )
-                        if (listAttachments.isNotEmpty()) {
-                            Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
-                            attachmentLocalDataSource.insertAttachments(listAttachments)
+
+                        Timber.d("**Paso 7.2: Validar WebId ${newMessageEventMessageRes.id}")
+
+
+                        if (databaseMessage == null) {
+
+                            val message =
+                                newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+
+                            Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
+
+                            val messageId =
+                                messageLocalDataSource.insertMessage(message)
+
+                            Timber.d("**Paso 7.4: Mensaje insertado $messageId")
+
+                            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                                Timber.d("**Paso 7.5.1: insertar Quote")
+                                insertQuote(
+                                    newMessageEventMessageRes.quoted,
+                                    messageId.toInt()
+                                )
+                            }
+
+                            val listAttachments =
+                                NewMessageEventAttachmentRes.toListConversationAttachment(
+                                    messageId.toInt(),
+                                    newMessageEventMessageRes.attachments
+                                )
+                            if (listAttachments.isNotEmpty()) {
+                                Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
+                                attachmentLocalDataSource.insertAttachments(listAttachments)
+                            }
                         }
                     }
-                }
             } catch (e: java.lang.Exception) {
-                Timber.e("${e.localizedMessage} $newMessageEventMessageResData")
+                Timber.e("${e.localizedMessage} $messageString")
             }
 
         }
@@ -339,18 +306,14 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun notifyMessageReceived(message: ValidateMessage) {
+    override fun notifyMessageReceived(messagesReqDTO: MessagesReqDTO) {
 
-        Timber.d("**Paso 9: Proceso consumir recibido del item $message.id")
+        Timber.d("**Paso 9: Proceso consumir recibido del item $messagesReqDTO")
 
         GlobalScope.launch {
             try {
-                //TOOD: debemos diferenciar si mensaje o attachment
-                val messageReceivedReqDTO = MessageReceivedReqDTO(
-                    messageId = message.id, userSender = null, type = MESSAGE, status = null
-                )
-                Timber.d("**Paso 9.1: Proceso consumir recibido del item $messageReceivedReqDTO")
-                napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
+                Timber.d("**Paso 9.1: Proceso consumir recibido del item $messagesReqDTO")
+                napoleonApi.notifyMessageReceived(messagesReqDTO)
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -362,6 +325,18 @@ class SyncManagerImp @Inject constructor(
             messageLocalDataSource.updateMessageStatus(
                 messagesWebIds,
                 state
+            )
+        }
+    }
+
+    override fun updateAttachmentsStatus(attachmentsWebIds: List<String>, state: Int) {
+        GlobalScope.launch(Dispatchers.IO) {
+            attachmentLocalDataSource.updateAttachmentStatus(
+                attachmentsWebIds,
+                state
+            )
+            messageLocalDataSource.updateMessageStatusBeforeAttachment(
+                attachmentsWebIds
             )
         }
     }
@@ -400,12 +375,18 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun existIdMessage(id: String): Boolean = messageLocalDataSource.existMessage(id)
+    override fun existMessageById(id: String): Boolean = messageLocalDataSource.existMessage(id)
+
+    override fun existAttachmentById(id: String): Boolean =
+        attachmentLocalDataSource.existAttachment(id)
 
     override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
+
             val listWebId = mutableListOf<String>()
+
             for (webId in messagesWebIds) {
+
                 val localMessage = messageLocalDataSource.getMessageByWebId(webId, false)
 
                 localMessage?.let {
@@ -416,14 +397,13 @@ class SyncManagerImp @Inject constructor(
                         validateAttachmentType(it, listWebId)
                     }
                 }
+
             }
 
             updateMessagesStatus(listWebId, state)
         }
     }
-//endregion
 
-    //region Metodos Privados
     suspend fun getContacts() {
         try {
             val response =
@@ -499,35 +479,48 @@ class SyncManagerImp @Inject constructor(
                     Constants.MessageStatus.UNREAD.status
                 )
 
-            val textMessagesUnread = messagesUnread.filter {
-                it.attachmentEntityList.isEmpty() ||
-                        it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
-                        it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
-            }
-
-            val locationMessagesUnread = messagesUnread.filter {
-                it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
-            }
-
-            val textMessagesUnreadIds = textMessagesUnread.map { it.messageEntity.webId }
-            val locationMessagesUnreadIds =
-                locationMessagesUnread.map { it.messageEntity.webId }
-
-            val listIds = mutableListOf<String>()
-            listIds.addAll(textMessagesUnreadIds)
-            listIds.addAll(locationMessagesUnreadIds)
-
-            if (listIds.isNotEmpty()) {
-                try {
-                    val response = napoleonApi.sendMessagesRead(
-                        MessagesReadReqDTO(
-                            listIds
-                        )
+            val textMessagesUnread = messagesUnread
+                .filter {
+                    it.attachmentEntityList.isEmpty() ||
+                            it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
+                            it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+                }.map {
+                    MessageDTO(
+                        id = it.messageEntity.webId,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = it.messageEntity.contactId,
+                        status = Constants.StatusMustBe.READED.status
                     )
+                }
+
+            val locationMessagesUnread = messagesUnread
+                .filter {
+                    it.getFirstAttachment()?.type == Constants.AttachmentType.LOCATION.type
+                }.map {
+                    MessageDTO(
+                        id = it.messageEntity.webId,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = it.messageEntity.contactId,
+                        status = Constants.StatusMustBe.READED.status
+                    )
+                }
+
+            val messagesRead = mutableListOf<MessageDTO>()
+
+            messagesRead.addAll(textMessagesUnread)
+
+            messagesRead.addAll(locationMessagesUnread)
+
+            if (messagesRead.isNotEmpty()) {
+                try {
+
+                    val messagesReqDTO = MessagesReqDTO(messagesRead)
+
+                    val response = napoleonApi.sendMessagesRead(messagesReqDTO)
 
                     if (response.isSuccessful) {
                         messageLocalDataSource.updateMessageStatus(
-                            listIds,
+                            messagesReqDTO.messages.map { it.id },
                             Constants.MessageStatus.READED.status
                         )
                     }
@@ -553,10 +546,6 @@ class SyncManagerImp @Inject constructor(
             }
         }
     }
-//endregion
-//endregion
-
-//region Notification
 
     override suspend fun getRemoteContact() {
         try {
@@ -592,7 +581,27 @@ class SyncManagerImp @Inject constructor(
 //            Timber.e(e)
         }
     }
-//
+
+    override fun getContact(contactId: Int): ContactEntity? {
+        return contactLocalDataSource.getContactById(contactId)
+    }
+
+    override fun callContact(contact: Int, videoCall: Boolean, offer: String) {
+
+        Timber.d("LLAMADA PASO 11 OUTGOING: Consumiendo llamando contacto")
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val callContactReqDTO = CallContactReqDTO(
+                contactToCall = contact,
+                isVideoCall = videoCall,
+                offer = offer
+            )
+
+            napoleonApi.callContact(callContactReqDTO)
+        }
+    }
+
+    //
 //
 //    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
 //        try {
@@ -632,37 +641,5 @@ class SyncManagerImp @Inject constructor(
 //        }
 //    }
 
-    override fun getContact(contactId: Int): ContactEntity? {
-        return contactLocalDataSource.getContactById(contactId)
-    }
-
-//endregion
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    override fun callContact(contact: Int, videoCall: Boolean, offer: String) {
-
-        Timber.d("LLAMADA PASO 11 OUTGOING: Consumiendo llamando contacto")
-
-        GlobalScope.launch(Dispatchers.IO) {
-            val callContactReqDTO = CallContactReqDTO(
-                contactToCall = contact,
-                isVideoCall = videoCall,
-                offer = offer
-            )
-
-            napoleonApi.callContact(callContactReqDTO)
-        }
-    }
 
 }

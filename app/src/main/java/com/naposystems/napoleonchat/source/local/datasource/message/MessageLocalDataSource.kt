@@ -36,7 +36,7 @@ interface MessageLocalDataSource {
 
     suspend fun getLastMessageByContact(contactId: Int): MessageAttachmentRelation
 
-    suspend fun getIdContactWithWebId(listWebId: List<String>): Int
+    suspend fun getContactIdByWebId(listWebId: List<String>): Int
 
     suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
 
@@ -60,4 +60,7 @@ interface MessageLocalDataSource {
 
     suspend fun deleteDuplicatesMessages()
     suspend fun addUUID()
+    suspend fun updateMessageStatusBeforeAttachment(attachmentsWebIds: List<String>)
+
+
 }
