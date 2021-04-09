@@ -16,10 +16,10 @@ node('master') {
 
     stage("Setup"){
         checkout scm
-        GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replaceAll(" ", "-").replaceAll("/", "-").replaceAll(":", "-").replaceAll("_", "-").replaceAll("\\(.*?\\)", "").replaceAll("\n", "").replaceAll("\r", "").trim()
+        gitCommitMessage = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replaceAll(" ", "-").replaceAll("/", "-").replaceAll(":", "-").replaceAll("_", "-").replaceAll("\\(.*?\\)", "").replaceAll("\n", "").replaceAll("\r", "").trim()
     }
 
-    if(GIT_COMMIT_MSG.contains("Increasing-version-to")){
+    if(gitCommitMessage.contains("Increasing-version-to")){
         echo "Increased version build finishing early"
         currentBuild.result = "ABORTED"
         return
@@ -30,7 +30,7 @@ node('master') {
     }
 
     stage("Generating version") {
-        versionName = "${GIT_COMMIT_MSG}"
+        versionName = "${gitCommitMessage}"
         if (params.VersionName?.trim()) {
             versionName = ${params.VersionName}
         }
@@ -47,7 +47,6 @@ node('master') {
         echo "VersionCode ${increasedVersion}"
         sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean bundle")
-        sh(script:"ls -la")
         script {
             archiveArtifacts allowEmptyArchive: true,
                     artifacts: '**/*.apk, **/*.aab, app/build/**/mapping/**/*.txt, app/build/**/logs/**/*.txt, app/build/**/bundle'
