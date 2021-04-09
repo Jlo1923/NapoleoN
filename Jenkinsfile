@@ -10,7 +10,9 @@ node('master') {
         def version
         cleanWs()
     }
-
+    if(environment == "prod"){
+        input 'This build will be affect production env, you want to continue?'
+    }
     stage("Setup"){
         checkout scm
         GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replaceAll(" ", "-").replaceAll("/", "-").replaceAll(":", "-").replaceAll("_", "-").replaceAll("\\(.*?\\)", "").replaceAll("\n", "").replaceAll("\r", "").trim()
