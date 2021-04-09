@@ -9,6 +9,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationAttachmentDialogFragmentBinding
 
+
 class AttachmentDialogFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: ConversationAttachmentDialogFragmentBinding
@@ -26,7 +27,7 @@ class AttachmentDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = DataBindingUtil.inflate(
             inflater,
@@ -67,5 +68,10 @@ class AttachmentDialogFragment : BottomSheetDialogFragment() {
 
     fun setListener(listener: OnAttachmentDialogListener) {
         this.listener = listener
+    }
+
+    override fun onStop() {
+        dismissAllowingStateLoss()
+        super.onStop()
     }
 }

@@ -13,7 +13,7 @@ data class Contact(
     var receiver: Boolean = false,
     var offer: Boolean = false,
     val offerId: Int? = 0,
-    val type: Int = 0
+    var type: Int = 0
 
 ) {
     override fun equals(other: Any?): Boolean {
