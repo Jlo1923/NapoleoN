@@ -11,6 +11,7 @@ import android.os.*
 import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.model.CallModel
@@ -46,9 +47,9 @@ class WebRTCClientImp
     private val syncManager: SyncManager,
     private val handlerNotification: HandlerNotification,
     private val handlerMediaPlayerNotification: HandlerMediaPlayerNotification,
-    private val peerConnectionFactory: PeerConnectionFactory,
-    private val eglBase: EglBase,
-    private val rtcConfiguration: PeerConnection.RTCConfiguration
+//    private val peerConnectionFactory: PeerConnectionFactory,
+//    private val eglBase: EglBase,
+//    private val rtcConfiguration: PeerConnection.RTCConfiguration
 ) : WebRTCClient,
     SocketEventListener,
     BluetoothStateManager.BluetoothStateListener {
@@ -105,6 +106,42 @@ class WebRTCClientImp
 
         override fun onTick(millisUntilFinished: Long) = Unit
     }
+
+    private val eglBase: EglBase by lazy {
+        EglBase.create()
+    }
+
+    private val peerConnectionFactory: PeerConnectionFactory by lazy {
+        //Initialize PeerConnectionFactory globals.
+        val initializationOptions = PeerConnectionFactory.InitializationOptions.builder(context)
+            .createInitializationOptions()
+        PeerConnectionFactory.initialize(initializationOptions)
+
+        //Create a new PeerConnectionFactory instance - using Hardware encoder and decoder.
+        val options = PeerConnectionFactory.Options()
+        val defaultVideoEncoderFactory = DefaultVideoEncoderFactory(
+            eglBase.eglBaseContext,
+            /* enableIntelVp8Encoder */true,
+            /* enableH264HighProfile */true
+        )
+        val defaultVideoDecoderFactory = DefaultVideoDecoderFactory(eglBase.eglBaseContext)
+
+        PeerConnectionFactory.builder()
+            .setOptions(options)
+            .setVideoEncoderFactory(defaultVideoEncoderFactory)
+            .setVideoDecoderFactory(defaultVideoDecoderFactory)
+            .createPeerConnectionFactory()
+    }
+
+
+    private var peerIceServer: MutableList<PeerConnection.IceServer> = arrayListOf(
+        PeerConnection.IceServer.builder(BuildConfig.STUN_SERVER)
+            .createIceServer(),
+        PeerConnection.IceServer.builder(BuildConfig.TURN_SERVER)
+            .setUsername("wPJlHAYY")
+            .setPassword("GrI09zxkwFuOihIf")
+            .createIceServer()
+    )
 
     //TODO: Revisar el AudioAttribute
     private val mediaPlayer: MediaPlayer = MediaPlayer().apply {
@@ -299,6 +336,20 @@ class WebRTCClientImp
         Timber.d("LLAMADA PASO 3: CREANDO PEERCONNECTION")
 
         try {
+
+            if (peerConnection != null)
+                peerConnection = null
+
+            val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
+
+            rtcConfiguration.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED
+            rtcConfiguration.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE
+            rtcConfiguration.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE
+            rtcConfiguration.continualGatheringPolicy =
+                PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY
+            //Usamos ECDSA encryption
+            rtcConfiguration.keyType = PeerConnection.KeyType.ECDSA
+
             peerConnection = peerConnectionFactory.createPeerConnection(
                 rtcConfiguration,
                 object : CustomPeerConnectionObserver() {
@@ -1051,17 +1102,32 @@ class WebRTCClientImp
 
         stopRingAndVibrate()
 
+
+        if (callModel.isVideoCall.not() && callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+            audioManager.isSpeakerphoneOn = false
+            webRTCClientListener?.toggleCheckedSpeaker(false)
+        }
+
         if (callModel.isVideoCall) {
             renderRemoteVideo(remoteMediaStream)
-        } else {
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                audioManager.isSpeakerphoneOn = false
-                webRTCClientListener?.toggleCheckedSpeaker(false)
-            }
-            if (isBluetoothActive || isHeadsetConnected) {
-                stopProximitySensor()
-            }
         }
+
+        if ((callModel.isVideoCall.not() && isBluetoothActive) || isHeadsetConnected) {
+            stopProximitySensor()
+        }
+
+//
+//        if (callModel.isVideoCall) {
+//            renderRemoteVideo(remoteMediaStream)
+//        } else {
+//            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+//                audioManager.isSpeakerphoneOn = false
+//                webRTCClientListener?.toggleCheckedSpeaker(false)
+//            }
+//            if (isBluetoothActive || isHeadsetConnected) {
+//                stopProximitySensor()
+//            }
+//        }
     }
 
     override fun emitHangUp() {
@@ -1120,6 +1186,10 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
         webRTCClientListener?.callEnded()
+
+        videoCapturerAndroid?.dispose()
+        localVideoView?.release()
+        remoteVideoView?.release()
 
         peerConnection?.close()
 
