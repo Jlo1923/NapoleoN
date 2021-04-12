@@ -18,6 +18,8 @@ interface WebRTCClient {
 
     var isBluetoothActive: Boolean
 
+    fun reInit()
+
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
 
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)

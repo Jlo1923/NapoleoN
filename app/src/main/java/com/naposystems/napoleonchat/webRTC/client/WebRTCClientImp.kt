@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.AudioManager.MODE_IN_CALL
-import android.media.AudioManager.MODE_IN_COMMUNICATION
 import android.media.MediaPlayer
 import android.os.*
 import android.view.KeyEvent
@@ -199,7 +197,7 @@ class WebRTCClientImp
 
     private lateinit var wakeLock: PowerManager.WakeLock
 
-    private fun reInit() {
+    override fun reInit() {
 
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -211,10 +209,11 @@ class WebRTCClientImp
 
         audioManager.isSpeakerphoneOn = false
 
-        wakeLock = (context.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(
-            PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-            WebRTCClientImp::class.simpleName
-        )
+        wakeLock =
+            (context.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(
+                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                WebRTCClientImp::class.simpleName
+            )
 
         iceCandidatesCaller = mutableListOf()
 
@@ -244,7 +243,11 @@ class WebRTCClientImp
         remoteSurfaceViewRenderer = null
 
         if (::remoteMediaStream.isInitialized)
-            remoteMediaStream.dispose()
+            try {
+                remoteMediaStream.dispose()
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
+            }
 
         localSurfaceViewRenderer = null
 
@@ -255,7 +258,11 @@ class WebRTCClientImp
         localVideoSource = null
 
         if (::localMediaStream.isInitialized)
-            localMediaStream.dispose()
+            try {
+                localMediaStream.dispose()
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
+            }
 
         videoCapturerAndroid?.dispose()
 
@@ -353,8 +360,15 @@ class WebRTCClientImp
 
         try {
 
-            if (peerConnection != null)
-                peerConnection = null
+            if (peerConnection != null) {
+                try {
+                    Timber.d("LLAMADA PASO 3: NULLEANDO PEERCONNECTION")
+                    peerConnection = null
+                } catch (e: java.lang.Exception) {
+                    Timber.d("LLAMADA PASO 3: ERROR")
+                    Timber.e(e.localizedMessage)
+                }
+            }
 
             val rtcConfiguration = PeerConnection.RTCConfiguration(peerIceServer)
 
@@ -803,7 +817,7 @@ class WebRTCClientImp
 
     override fun playRingBackTone() {
 
-        audioManager.mode = MODE_IN_COMMUNICATION
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         if (isBluetoothAvailable || isHeadsetConnected) {
             audioManager.isSpeakerphoneOn = false
@@ -889,7 +903,7 @@ class WebRTCClientImp
                 }
                 isBluetoothAvailable -> {
                     audioManager.isSpeakerphoneOn = true
-                    audioManager.mode = MODE_IN_CALL
+                    audioManager.mode = AudioManager.MODE_IN_CALL
                     stopProximitySensor()
                 }
                 else -> {
@@ -1072,7 +1086,7 @@ class WebRTCClientImp
             webRTCClientListener?.contactAcceptChangeToVideoCall()
             callModel.isVideoCall = true
             renegotiateCall = true
-            startCaptureVideo()
+//            startCaptureVideo()qqq
         }
     }
 
@@ -1099,7 +1113,7 @@ class WebRTCClientImp
 
         isActiveCall = true
 
-        audioManager.mode = MODE_IN_COMMUNICATION
+        audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         countDownRingCall.cancel()
 
@@ -1128,19 +1142,6 @@ class WebRTCClientImp
         if ((callModel.isVideoCall.not() && isBluetoothActive) || isHeadsetConnected) {
             stopProximitySensor()
         }
-
-//
-//        if (callModel.isVideoCall) {
-//            renderRemoteVideo(remoteMediaStream)
-//        } else {
-//            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-//                audioManager.isSpeakerphoneOn = false
-//                webRTCClientListener?.toggleCheckedSpeaker(false)
-//            }
-//            if (isBluetoothActive || isHeadsetConnected) {
-//                stopProximitySensor()
-//            }
-//        }
     }
 
     override fun emitHangUp() {
@@ -1160,49 +1161,55 @@ class WebRTCClientImp
 
     override fun disposeCall() {
 
-        Timber.d("LLAMADA PASO: DISPOSE CALL")
+        try {
 
-        Timber.d("LLAMADA PASO: END CALL TONE")
+            Timber.d("LLAMADA PASO: DISPOSE CALL")
 
-        handlerMediaPlayerNotification.stopRingtone()
+            Timber.d("LLAMADA PASO: END CALL TONE")
 
-        handlerMediaPlayerNotification.playEndTone()
+            handlerMediaPlayerNotification.stopRingtone()
 
-        countDownEndCallBusy.cancel()
+            handlerMediaPlayerNotification.playEndTone()
 
-        countDownRingCall.cancel()
+            countDownEndCallBusy.cancel()
 
-        bluetoothStateManager?.onDestroy()
+            countDownRingCall.cancel()
 
-        isActiveCall = false
+            bluetoothStateManager?.onDestroy()
 
-        RxBus.publish(RxEvent.CallEnd())
+            isActiveCall = false
 
-        Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
+            RxBus.publish(RxEvent.CallEnd())
 
-        val intent = Intent(context, WebRTCService::class.java)
+            Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
 
-        intent.action = WebRTCService.ACTION_CALL_END
+            val intent = Intent(context, WebRTCService::class.java)
 
-        intent.putExtras(Bundle().apply {
-            putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
-        })
+            intent.action = WebRTCService.ACTION_CALL_END
 
-        context.startService(intent)
+            intent.putExtras(Bundle().apply {
+                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
+            })
 
-        Timber.d("LLAMADA PASO: DESSUSCRIBIR A CANAL")
-        socketClient.unSubscribePresenceChannel(callModel.channelName)
+            context.startService(intent)
 
-        unregisterProximityListener()
+            Timber.d("LLAMADA PASO: DESSUSCRIBIR A CANAL")
+            socketClient.unSubscribePresenceChannel(callModel.channelName)
 
-        mHandler.removeCallbacks(mCallTimeRunnable)
+            unregisterProximityListener()
 
-        Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
-        webRTCClientListener?.callEnded()
+            mHandler.removeCallbacks(mCallTimeRunnable)
 
-        peerConnection?.close()
+            Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
+            webRTCClientListener?.callEnded()
 
-        reInit()
+            peerConnection?.close()
+
+        } catch (e: java.lang.Exception) {
+            Timber.e(e.localizedMessage)
+        } finally {
+            reInit()
+        }
 
     }
 

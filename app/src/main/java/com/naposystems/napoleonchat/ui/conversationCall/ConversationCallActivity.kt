@@ -82,6 +82,8 @@ class ConversationCallActivity :
 
         AndroidInjection.inject(this)
 
+        webRTCClient.reInit()
+
         NapoleonApplication.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
