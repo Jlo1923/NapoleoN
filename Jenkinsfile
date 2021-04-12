@@ -4,7 +4,7 @@ final String REGION = "us-west-2"
 node('master') {
     stage("Cleaning existing resources"){
         def versionName = params.VersionName
-        dev environment = params.Environment
+        def environment = params.Environment
         def recentChangeEs = params.recentChangeEs
         def recentChangeEn = params.recentChangeEn
         def version
