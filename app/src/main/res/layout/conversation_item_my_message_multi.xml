@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ContainerMessage"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_message"
+        style="@style/ContainerMyMessageBubble"
+        android:layout_width="0dp"
+        android:layout_height="230dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgTwoFilesView
+            android:id="@+id/view_two_files"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/textView_count_files"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgThreeFilesView
+            android:id="@+id/view_three_files"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/textView_count_files"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgFourFilesView
+            android:id="@+id/view_four_files"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/textView_count_files"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgFiveFilesView
+            android:id="@+id/view_five_files"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/textView_count_files"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_count_files"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:padding="@dimen/x_small_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="8 / 10"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- BUTTON ATTACHMENT STATE -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/imageButton_state"
+        style="@style/ButtonState"
+        android:src="@drawable/ic_file_upload_black"
+        app:layout_constraintBottom_toBottomOf="@id/container_message"
+        app:layout_constraintEnd_toStartOf="@id/container_message"
+        app:layout_constraintTop_toTopOf="@id/container_message"
+        tools:visibility="visible" />
+
+    <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
+        android:id="@+id/progressBar"
+        style="@style/CircleProgressBar"
+        app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+        app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+        app:layout_constraintStart_toStartOf="@id/imageButton_state"
+        app:layout_constraintTop_toTopOf="@id/imageButton_state"
+        tools:progress="70"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_indeterminate"
+        style="@style/ProgressIndeterminate"
+        app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+        app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+        app:layout_constraintStart_toStartOf="@id/imageButton_state"
+        app:layout_constraintTop_toTopOf="@id/imageButton_state"
+        tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <TextView
+        android:id="@+id/textView_count_down"
+        style="@style/TextCountDownSelfDestruct"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/container_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/container_message"
+        tools:text="30 segundos" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

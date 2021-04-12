@@ -86,7 +86,7 @@ class NotificationClientImp
 
                     Timber.d("LLAMADA PASO 2: APLICACION NO VISIBLE")
 
-                    var callModel = dataFromNotification.toCallModel()
+                    val callModel = dataFromNotification.toCallModel()
 
                     callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
 
@@ -99,11 +99,16 @@ class NotificationClientImp
             }
 
             Constants.NotificationType.CANCEL_CALL.type -> {
+
                 Timber.d("CANCEL_CALL")
+
                 NapoleonApplication.isCurrentOnCall = false
+
                 val notificationManager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
                 notificationManager.cancelAll()
+
             }
 
         }

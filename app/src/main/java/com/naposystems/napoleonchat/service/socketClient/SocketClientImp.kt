@@ -2,18 +2,19 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.conversationCall.IncomingCall
+import com.naposystems.napoleonchat.model.extractIdsAttachments
+import com.naposystems.napoleonchat.model.extractIdsMessages
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.*
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -36,7 +37,8 @@ import org.webrtc.SessionDescription
 import timber.log.Timber
 import javax.inject.Inject
 
-class SocketClientImp @Inject constructor(
+class SocketClientImp
+@Inject constructor(
     private val context: Context,
     private val pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
@@ -52,12 +54,9 @@ class SocketClientImp @Inject constructor(
 
     private lateinit var privateGeneralChannelName: String
 
-    private lateinit var socketEventListenerCall: SocketEventsListener.Call
-
-    private lateinit var socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp
+    private lateinit var socketEventListener: SocketEventListener
 
     companion object {
-        const val CONTACT_JOIN_TO_CALL = 1
         const val HANGUP_CALL = 2
         const val CONTACT_WANT_CHANGE_TO_VIDEO = 3
         const val CONTACT_ACCEPT_CHANGE_TO_VIDEO = 4
@@ -72,12 +71,8 @@ class SocketClientImp @Inject constructor(
     }
 
     //region Conexion
-    override fun setSocketCallListener(socketEventsListenerCall: SocketEventsListener.Call) {
-        this.socketEventListenerCall = socketEventsListenerCall
-    }
-
-    override fun setSocketCallOutAppListener(socketEventsListenerCallOutApp: SocketEventsListener.CallOutApp) {
-        this.socketEventsListenerCallOutApp = socketEventsListenerCallOutApp
+    override fun setSocketEventListener(socketEventListener: SocketEventListener) {
+        this.socketEventListener = socketEventListener
     }
 
     override fun getStatusSocket(): ConnectionState {
@@ -85,7 +80,6 @@ class SocketClientImp @Inject constructor(
     }
 
     override fun getStatusGlobalChannel(): Boolean {
-
         return if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null)
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
                 pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
@@ -95,19 +89,9 @@ class SocketClientImp @Inject constructor(
             Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
     }
 
-    override fun getStatusPresenceChannel(channel: String): Boolean {
-        return if (pusher.getPresenceChannel(channel) != null)
-            if (pusher.getPresenceChannel(channel).isSubscribed)
-                pusher.getPrivateChannel(channel).isSubscribed
-            else
-                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
-        else
-            Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
-    }
-
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
-        Timber.d("LLAMADA PASO 4: EN CONNECT SOCKET")
+        Timber.d("LLAMADA PASO: EN CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
         userId = syncManager.getUserId()
 
@@ -120,25 +104,31 @@ class SocketClientImp @Inject constructor(
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
 
-                Timber.d("LLAMADA PASO 5: EN SOCKET DESCONECTADO")
+                Timber.d("LLAMADA PASO: CONECTAR A SOCKET SI ESTA DESCONECTADO mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
                 pusher.connect(object : ConnectionEventListener {
 
                     override fun onConnectionStateChange(change: ConnectionStateChange?) {
+
                         if (change?.currentState == ConnectionState.CONNECTED) {
+
                             subscribeChannels()
+
                             if (mustSubscribeToPresenceChannel) {
-                                Timber.d("LLAMADA PASO 6: CONEXION SUCCESS")
+                                Timber.d("LLAMADA PASO: CONEXION SUCCESS")
                                 callModel?.let { subscribeToPresenceChannel(it) }
                             }
                         }
                     }
 
                     override fun onError(message: String?, code: String?, e: java.lang.Exception?) {
+                        Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError message: $message, code: $code, e: ${e?.localizedMessage}")
                         pusher.connect()
                     }
                 })
             } else if (pusher.connection.state == ConnectionState.CONNECTED) {
+
+                Timber.d("LLAMADA PASO: EN SOCKET CONECTADO  mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
                 if (NapoleonApplication.isVisible)
                     subscribeChannels()
@@ -152,154 +142,6 @@ class SocketClientImp @Inject constructor(
         }
     }
 
-    override fun disconnectSocket() {
-
-        try {
-
-            if (pusher.connection.state == ConnectionState.CONNECTED ||
-                pusher.connection.state == ConnectionState.CONNECTING
-            ) {
-
-                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
-
-                    //Unbind Global
-
-                    pusher.getPrivateChannel(
-                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                    )
-                        .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                            SubscriptionEventListener {}
-                        )
-
-                    //Unsubscribe Channels
-
-                    pusher.unsubscribe(
-                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                    )
-
-                }
-
-                if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
-
-                    //Unbind General
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.DISCONNECT.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    pusher.getPrivateChannel(privateGeneralChannelName)
-                        .unbind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
-                            SubscriptionEventListener {}
-                        )
-
-                    //Unsubscribe Channels
-
-                    pusher.unsubscribe(privateGeneralChannelName)
-
-                }
-
-                //Disconnect Pusher
-                pusher.disconnect()
-
-            }
-        } catch (e: Exception) {
-            Timber.e("Pusher Paso IN 7.3: $e")
-        }
-    }
-
-    override fun unSubscribePresenceChannel(channelName: String) {
-        if (pusher.getPresenceChannel(channelName) != null) {
-            NapoleonApplication.isCurrentOnCall = false
-            pusher.unsubscribe(channelName)
-        }
-    }
-
-    //TODO: Fusionar estos metodos
-    private fun emitClientConversation(messages: ValidateMessage) {
-        emitClientConversation(arrayListOf(messages))
-    }
-
-    override fun emitClientConversation(messages: List<ValidateMessage>) {
-
-        Timber.d("Pusher 6.1: Emitir")
-
-        try {
-
-            val validateMessage = ValidateMessageEventDTO(messages)
-
-            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
-
-            val jsonObject = adapterValidate.toJson(validateMessage)
-
-            if (jsonObject.isNotEmpty()) {
-
-                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
-                    .trigger(
-                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
-                        jsonObject
-                    )
-            }
-
-
-        } catch (e: Exception) {
-
-            Timber.e("Pusher Paso IN 6.4: $e}")
-        }
-
-    }
-
-    override fun emitClientCall(channel: String, jsonObject: JSONObject) {
-
-        if (pusher.getPresenceChannel(channel) != null) {
-
-            pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, jsonObject.toString())
-
-            Timber.d("Emit to Call $jsonObject")
-
-        }
-
-    }
-
-    override fun emitClientCall(channel: String, eventType: Int) {
-
-        if (pusher.getPresenceChannel(channel) != null) {
-
-            pusher.getPresenceChannel(channel)
-                .trigger(Constants.SocketEmitTriggers.CLIENT_CALL.trigger, eventType.toString())
-
-            Timber.d("Emit to Call $eventType")
-        }
-    }
-    //endregion
-
-    //region Metodos de Suscripcion
     private fun subscribeChannels() {
 
         try {
@@ -363,9 +205,9 @@ class SocketClientImp @Inject constructor(
 
                             syncManager.getMyMessages(null)
 
-//                            syncManager.verifyMessagesReceive d()
-//
-//                            syncManager.verifyMessagesRead()
+                            syncManager.verifyMessagesReceived()
+
+                            syncManager.verifyMessagesRead()
 
                         }
 
@@ -412,19 +254,16 @@ class SocketClientImp @Inject constructor(
         Timber.d("LLAMADA PASO 1: SUSCRIBIRSE AL CANAL DE LLAMADAS ${callModel.channelName}")
 
         if (pusher.getPresenceChannel(callModel.channelName) == null) {
+
             pusher.subscribePresence(
                 callModel.channelName,
                 object : PresenceChannelEventListener {
-                    override fun onEvent(event: PusherEvent) {
-                        Timber.d("event: ${event.data}")
-                    }
+                    override fun onEvent(event: PusherEvent) = Unit
 
                     override fun onAuthenticationFailure(
                         message: String,
                         e: java.lang.Exception
-                    ) {
-                        Timber.e(e, message)
-                    }
+                    ) = Unit
 
                     override fun onSubscriptionSucceeded(channelName: String) {
 
@@ -433,56 +272,215 @@ class SocketClientImp @Inject constructor(
                         listenCallEvents(channelName)
 
                         if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-
                             Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
-
-                            processIncomingCall(callModel)
+                            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL)
+                                socketEventListener.itsSubscribedToPresenceChannelIncomingCall(
+                                    callModel
+                                )
 
                         } else {
-                            socketEventListenerCall.itsSubscribedToPresenceChannelOutgoingCall(
-                                callModel
-                            )
+                            Timber.d("LLAMADA PASO 3: Usuarios solo uno")
+                            if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+                                socketEventListener.itsSubscribedToPresenceChannelOutgoingCall(
+                                    callModel
+                                )
                         }
                     }
 
                     override fun onUsersInformationReceived(
                         channelName: String?,
                         users: MutableSet<User>?
-                    ) {
-                        Timber.d("onUsersInformationReceived, $channelName, $users")
-                    }
+                    ) = Unit
 
-                    override fun userSubscribed(channelName: String?, user: User?) {
-                        Timber.d("userSubscribed, $channelName, $user")
-                    }
+                    override fun userSubscribed(channelName: String?, user: User?) = Unit
 
-                    override fun userUnsubscribed(channelName: String?, user: User?) {
-                        Timber.d("userUnsubscribed, $channelName, $user")
-                    }
+                    override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                 })
         }
     }
 
-    private fun processIncomingCall(callModel: CallModel) {
+    override fun disconnectSocket() {
 
-        Timber.d("LLAMADA PASO 4: PROCESANDO LLAMADA ENTRANTE callModel $callModel")
+        Timber.e("SOCKET DISCONNECT")
 
-        val service = Intent(context, WebRTCService::class.java).apply {
-            putExtras(Bundle().apply {
-                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
-            })
+        try {
+
+            if (pusher.connection.state == ConnectionState.CONNECTED ||
+                pusher.connection.state == ConnectionState.CONNECTING
+            ) {
+
+                Timber.e("UNSUBSCRIBE GLOBAL")
+
+                if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName) != null) {
+
+                    Timber.e("UNBIND GLOBAL")
+
+                    pusher.getPrivateChannel(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    )
+                        .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(
+                        Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
+                    )
+
+                }
+
+                Timber.e("UNSUBSCRIBE GENERAL")
+
+                if (pusher.getPrivateChannel(privateGeneralChannelName) != null) {
+
+                    Timber.e("UNBIND GENERAL")
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.DISCONNECT.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.SEND_MESSAGES_DESTROY.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.CANCEL_OR_REJECT_FRIENDSHIP_REQUEST.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    pusher.getPrivateChannel(privateGeneralChannelName)
+                        .unbind(Constants.SocketListenEvents.BLOCK_OR_DELETE_FRIENDSHIP.event,
+                            SubscriptionEventListener {}
+                        )
+
+                    //Unsubscribe Channels
+
+                    pusher.unsubscribe(privateGeneralChannelName)
+
+                }
+
+                //Disconnect Pusher
+                pusher.disconnect()
+
+            }
+        } catch (e: Exception) {
+            Timber.e("Pusher Paso IN 7.3: $e")
         }
+    }
 
-        context.startService(service)
+    override fun unSubscribePresenceChannel(channelName: String) {
+        if (pusher.getPresenceChannel(channelName) != null) {
+            Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
+            NapoleonApplication.isCurrentOnCall = false
+            pusher.unsubscribe(channelName)
+        }
+    }
 
-//
-//        if (::socketEventListenerCall.isInitialized)
-//            socketEventListenerCall.itsSubscribedToPresenceChannelIncomingCall(callModel)
-//        else if (::socketEventsListenerCallOutApp.isInitialized)
-//            socketEventsListenerCallOutApp.itsSubscribedToPresenceChannelIncomingCall(callModel)
+    //TODO: Fusionar estos metodos
+    override fun emitClientConversation(messages: List<ValidateMessage>) {
+
+        Timber.d("Pusher 6.1: Emitir")
+
+        try {
+
+            val validateMessage = ValidateMessageEventDTO(messages)
+
+            val adapterValidate = moshi.adapter(ValidateMessageEventDTO::class.java)
+
+            val jsonObject = adapterValidate.toJson(validateMessage)
+
+            if (jsonObject.isNotEmpty()) {
+
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        jsonObject
+                    )
+            }
+
+
+        } catch (e: Exception) {
+
+            Timber.e("Pusher Paso IN 6.4: $e}")
+        }
 
     }
 
+    override fun emitClientConversation(messages: MessagesReqDTO) {
+
+        Timber.d("Pusher 6.1: Emitir")
+
+        try {
+
+            val adapterValidate = moshi.adapter(MessagesReqDTO::class.java)
+
+            val jsonObject = adapterValidate.toJson(messages)
+
+            if (jsonObject.isNotEmpty()) {
+
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
+                        jsonObject
+                    )
+            }
+
+
+        } catch (e: Exception) {
+
+            Timber.e("Pusher Paso IN 6.4: $e}")
+        }
+
+    }
+
+//    private fun emitClientConversation(messages: ValidateMessage) {
+//        emitClientConversation(arrayListOf(messages))
+//    }
+
+    override fun emitClientCall(channel: String, jsonObject: JSONObject) {
+
+        if (pusher.getPresenceChannel(channel) != null) {
+            if (pusher.connection.state == ConnectionState.CONNECTED) {
+                pusher.getPresenceChannel(channel)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
+                        jsonObject.toString()
+                    )
+
+                Timber.d("Emit to Call $jsonObject")
+            }
+        }
+    }
+
+    override fun emitClientCall(channel: String, eventType: Int) {
+
+        Timber.d("LLAMADA PASO: channel $channel eventType: $eventType")
+
+        if (pusher.getPresenceChannel(channel) != null)
+            pusher.getPresenceChannel(channel)
+                .trigger(
+                    Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
+                    eventType.toString()
+                )
+    }
     //endregion
 
     // region Region Escuchadores de Eventos
@@ -524,6 +522,8 @@ class SocketClientImp @Inject constructor(
 
                             try {
 
+                                //TODO: Refactorizar este metodo para que pueda ser utilizado tanto por SocketClient como
+                                // por HandlerNotificationMessageImp
                                 event?.data?.let { dataEventRes ->
 
                                     val jsonAdapterData: JsonAdapter<NewMessageEventRes> =
@@ -533,16 +533,9 @@ class SocketClientImp @Inject constructor(
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
-                                        val message =
-                                            ValidateMessage(
-                                                id = newMessageDataEventRes.messageId,
-                                                user = newMessageDataEventRes.contactId,
-                                                status = Constants.MessageEventType.UNREAD.status
-                                            )
-
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
-                                        val data: String = if (BuildConfig.ENCRYPT_API) {
+                                        val messageString: String = if (BuildConfig.ENCRYPT_API) {
                                             cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
                                         } else {
                                             newMessageDataEventRes.message
@@ -551,26 +544,23 @@ class SocketClientImp @Inject constructor(
                                         val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
                                             moshi.adapter(NewMessageEventMessageRes::class.java)
 
-                                        jsonAdapterMessage.fromJson(data)
-                                            ?.let { newMessageEventMessageRes ->
+                                        jsonAdapterMessage.fromJson(messageString)
+                                            ?.let { messageModel ->
 
-                                                if (newMessageEventMessageRes.numberAttachments > 0) {
-                                                    if ((availableToReceived(
-                                                            newMessageEventMessageRes.attachments
-                                                        ) && NapoleonApplication.currentConversationContactId == newMessageEventMessageRes.userAddressee) ||
-                                                        NapoleonApplication.currentConversationContactId == 0
-                                                    ) {
+                                                if (messageModel.numberAttachments == 0 &&
+                                                    NapoleonApplication.currentConversationContactId != messageModel.userAddressee
+                                                ) {
 
-                                                        syncManager.notifyMessageReceived(message.id)
+                                                    val listMessagesToReceived = listOf(
+                                                        messageModel
+                                                    ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
 
-                                                        emitClientConversation(message)
 
-                                                    }
-                                                } else if (NapoleonApplication.currentConversationContactId != newMessageEventMessageRes.userAddressee) {
+                                                    syncManager.notifyMessageReceived(
+                                                        listMessagesToReceived
+                                                    )
 
-                                                    syncManager.notifyMessageReceived(message.id)
-
-                                                    emitClientConversation(message)
+                                                    emitClientConversation(listMessagesToReceived)
 
                                                 }
                                             }
@@ -598,21 +588,37 @@ class SocketClientImp @Inject constructor(
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
+
                         Timber.d("NotifyMessagesReceived: ${event?.data}")
-                        event?.data?.let {
-                            val jsonAdapter: JsonAdapter<MessagesReceivedDTO> =
-                                moshi.adapter(MessagesReceivedDTO::class.java)
 
-                            val dataEvent = jsonAdapter.fromJson(it)
+                        event?.data?.let { messagesReceivedResDto ->
 
-                            dataEvent?.let { messagesReceivedDTO ->
+                            val jsonAdapter: JsonAdapter<MessagesReceivedRESDTO> =
+                                moshi.adapter(MessagesReceivedRESDTO::class.java)
 
-                                Timber.d(messagesReceivedDTO.data.messageIds.toString())
+                            val dataDataEvent = jsonAdapter.fromJson(messagesReceivedResDto)
+
+                            dataDataEvent?.data?.let { messagesResDTO ->
 
                                 syncManager.updateMessagesStatus(
-                                    messagesReceivedDTO.data.messageIds,
+                                    messagesResDTO.extractIdsMessages(),
                                     Constants.MessageStatus.UNREAD.status
                                 )
+
+                                val idsAttachments = messagesResDTO.extractIdsAttachments()
+
+                                if (idsAttachments.isNotEmpty()) {
+
+                                    val ids = idsAttachments.filter {
+                                        syncManager.existAttachmentById(it)
+                                    }
+
+                                    syncManager.updateAttachmentsStatus(
+                                        ids,
+                                        Constants.AttachmentStatus.DOWNLOADING.status
+                                    )
+
+                                }
                             }
                         }
                     }
@@ -627,7 +633,6 @@ class SocketClientImp @Inject constructor(
     }
 
     private fun listenNotifyMessagesRead() {
-
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                 object : PrivateChannelEventListener {
@@ -635,17 +640,15 @@ class SocketClientImp @Inject constructor(
                         Timber.d("NotifyMessageReaded: ${event?.data}")
 
                         event?.data?.let {
-                            val jsonAdapter: JsonAdapter<MessagesReadedDTO> =
-                                moshi.adapter(MessagesReadedDTO::class.java)
+                            val jsonAdapter: JsonAdapter<MessagesReadedRESDTO> =
+                                moshi.adapter(MessagesReadedRESDTO::class.java)
 
                             val dataEvent = jsonAdapter.fromJson(it)
 
                             dataEvent?.let { messagesReadedDTO ->
 
-                                Timber.d(messagesReadedDTO.data.messageIds.toString())
-
                                 syncManager.updateMessagesStatus(
-                                    messagesReadedDTO.data.messageIds,
+                                    messagesReadedDTO.data.messages.map { it.id },
                                     Constants.MessageStatus.READED.status
                                 )
                             }
@@ -688,35 +691,74 @@ class SocketClientImp @Inject constructor(
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
                         try {
-                            event?.data?.let { dataEventRes ->
+                            event?.data?.let { messagesResDTO ->
 
-                                val jsonAdapter: JsonAdapter<ValidateMessageEventDTO> =
-                                    moshi.adapter(ValidateMessageEventDTO::class.java)
+                                val jsonAdapter: JsonAdapter<MessagesResDTO> =
+                                    moshi.adapter(MessagesResDTO::class.java)
 
-                                val dataEvent = jsonAdapter.fromJson(dataEventRes)
+                                //TODO: Pasar esto a una funcion ya que la estructura se repite
+                                val dataEvent = jsonAdapter.fromJson(messagesResDTO)
 
+                                //filtra los MESSAGES
                                 val messages = dataEvent?.messages?.filter {
                                     it.user == userId
                                 }?.filter {
-                                    syncManager.existIdMessage(it.id)
+                                    syncManager.existMessageById(it.id)
                                 }
 
-                                val unread = messages?.filter {
-                                    it.status == Constants.MessageEventType.UNREAD.status
-                                }?.map { it.id }
-
-                                unread?.let {
+                                //Seccion Actualizar MESSAGE UNREAD
+                                messages?.filter {
+                                    it.status == Constants.MessageEventType.UNREAD.status &&
+                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                }?.map {
+                                    it.id
+                                }?.let {
                                     syncManager.updateMessagesStatus(
                                         it,
                                         Constants.MessageStatus.UNREAD.status
                                     )
                                 }
 
-                                val read = messages?.filter {
-                                    it.status == Constants.MessageEventType.READ.status
-                                }?.map { it.id }
+                                //Seccion Actualizar MESSAGE READED
+                                messages?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateMessagesStatus(
+                                        it,
+                                        Constants.MessageStatus.READED.status
+                                    )
+                                }
 
-                                read?.let {
+                                //filtra los ATTACHMENTS
+                                val attachments = dataEvent?.messages?.filter {
+                                    it.user == userId
+                                }?.filter {
+                                    syncManager.existAttachmentById(it.id)
+                                }
+
+                                //Seccion Actualizar ATTACHMENT UNREAD
+                                attachments?.filter {
+                                    it.status == Constants.MessageEventType.UNREAD.status &&
+                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                }?.map {
+                                    it.id
+                                }?.let {
+                                    syncManager.updateAttachmentsStatus(
+                                        it,
+                                        Constants.MessageStatus.UNREAD.status
+                                    )
+                                }
+
+                                //Seccion Actualizar ATTACHMENT READED
+                                attachments?.filter {
+                                    it.status == Constants.MessageEventType.READ.status &&
+                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                }?.map {
+                                    it.id
+                                }?.let {
                                     syncManager.validateMessageType(
                                         it,
                                         Constants.MessageStatus.READED.status
@@ -819,6 +861,7 @@ class SocketClientImp @Inject constructor(
                                             incomingCall.data.contactId,
                                             channel
                                         )
+
                                     } else {
 
                                         Timber.d("LLAMADA PASO 3: USUARIO NO ESTA EN LLAMADA")
@@ -860,7 +903,7 @@ class SocketClientImp @Inject constructor(
                     override fun onEvent(event: PusherEvent) {
                         NapoleonApplication.isShowingCallActivity = false
                         Timber.d("LLAMADA PASO REJECTED: LlAMADA RECHAZADA")
-                        socketEventListenerCall.contactRejectCall(event.channelName)
+                        socketEventListener.contactRejectCall(event.channelName)
                     }
 
                     override fun onAuthenticationFailure(
@@ -880,13 +923,13 @@ class SocketClientImp @Inject constructor(
                     override fun onEvent(event: PusherEvent) {
                         try {
                             NapoleonApplication.isShowingCallActivity = false
-                            Timber.d("CancelCallEvent: ${event.data}, notificationId: ${HandlerNotificationImp.NOTIFICATION_RINGING}")
+                            Timber.d("CancelCallEvent: ${event.data}, notificationId: ${HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE}")
                             val jsonObject = JSONObject(event.data)
                             if (jsonObject.has("data")) {
                                 val jsonData = jsonObject.getJSONObject("data")
                                 if (jsonData.has("channel_private")) {
                                     val privateChannel = jsonData.getString("channel_private")
-                                    socketEventListenerCall.contactCancelCall(privateChannel)
+                                    socketEventListener.contactCancelCall(privateChannel)
                                 }
                             }
                             val intent = Intent(context, WebRTCService::class.java)
@@ -914,111 +957,128 @@ class SocketClientImp @Inject constructor(
                     object : PresenceChannelEventListener {
 
                         override fun onEvent(event: PusherEvent) {
-
                             try {
+
                                 val eventType = event.data.toIntOrNull()
 
                                 if (eventType != null) {
 
-                                    Timber.d("LLAMADA PASO 12.1 OUTGOING: Llega el evento de llamada ${eventType}")
+                                    Timber.d("LLAMADA PASO: Llega el evento de llamada ${eventType}")
 
                                     when (eventType) {
 
-                                        CONTACT_WANT_CHANGE_TO_VIDEO ->
-                                            socketEventListenerCall.contactWantChangeToVideoCall(
+                                        CONTACT_WANT_CHANGE_TO_VIDEO -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_WANT_CHANGE_TO_VIDEO")
+                                            socketEventListener.contactWantChangeToVideoCall(
                                                 event.channelName
                                             )
-
-                                        CONTACT_ACCEPT_CHANGE_TO_VIDEO ->
-                                            socketEventListenerCall.contactAcceptChangeToVideoCall(
+                                        }
+                                        CONTACT_ACCEPT_CHANGE_TO_VIDEO -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_ACCEPT_CHANGE_TO_VIDEO")
+                                            socketEventListener.contactAcceptChangeToVideoCall(
                                                 event.channelName
                                             )
-
-                                        CONTACT_CANCEL_CHANGE_TO_VIDEO ->
-                                            socketEventListenerCall.contactCancelChangeToVideoCall(
+                                        }
+                                        CONTACT_CANCEL_CHANGE_TO_VIDEO -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_CANCEL_CHANGE_TO_VIDEO")
+                                            socketEventListener.contactCancelChangeToVideoCall(
                                                 event.channelName
                                             )
-
-                                        CONTACT_CANT_CHANGE_TO_VIDEO ->
-                                            socketEventListenerCall.contactCantChangeToVideoCall(
+                                        }
+                                        CONTACT_CANT_CHANGE_TO_VIDEO -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_CANT_CHANGE_TO_VIDEO")
+                                            socketEventListener.contactCantChangeToVideoCall(
                                                 event.channelName
                                             )
+                                        }
+                                        CONTACT_TURN_ON_CAMERA -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_TURN_ON_CAMERA")
+                                            socketEventListener.toggleContactCamera(
+                                                event.channelName,
+                                                isVisible = true
+                                            )
+                                        }
 
-                                        CONTACT_TURN_ON_CAMERA ->
-                                            socketEventListenerCall.contactTurnOnCamera(event.channelName)
-
-                                        CONTACT_TURN_OFF_CAMERA ->
-                                            socketEventListenerCall.contactTurnOffCamera(event.channelName)
+                                        CONTACT_TURN_OFF_CAMERA -> {
+                                            Timber.d("LLAMADA PASO: CONTACT_TURN_OFF_CAMERA")
+                                            socketEventListener.toggleContactCamera(
+                                                event.channelName,
+                                                isVisible = false
+                                            )
+                                        }
 
                                         HANGUP_CALL -> {
-                                            NapoleonApplication.isShowingCallActivity = false
-                                            socketEventListenerCall.contactHasHangup(event.channelName)
+                                            Timber.d("LLAMADA PASO: HANGUP_CALL")
+                                            socketEventListener.contactHasHangup(event.channelName)
                                         }
                                     }
+
                                 } else {
 
                                     val jsonData = JSONObject(event.data)
 
-                                    Timber.d("LLAMADA PASO 12.2 OUTGOING: Llega el evento de llamada $Constants.SocketEmitTriggers.CLIENT_CALL.trigger $jsonData")
-
                                     if (jsonData.has(TYPE)) {
 
                                         when (jsonData.getString(TYPE)) {
-                                            ICE_CANDIDATE ->
-                                                socketEventListenerCall.iceCandidateReceived(
+
+                                            ICE_CANDIDATE -> {
+
+                                                Timber.d("LLAMADA PASO: RECEPCION DE ICECANDIDATE RECIBIDO")
+
+                                                socketEventListener.iceCandidateReceived(
                                                     event.channelName,
                                                     jsonData.toIceCandidate()
                                                 )
 
-                                            OFFER ->
-                                                socketEventListenerCall.offerReceived(
+                                            }
+
+                                            OFFER -> {
+
+                                                Timber.d("LLAMADA PASO: OFERTA RECIBIDA")
+
+                                                socketEventListener.offerReceived(
                                                     event.channelName,
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.OFFER
                                                     )
                                                 )
+                                            }
 
-                                            ANSWER ->
-                                                socketEventListenerCall.answerReceived(
+                                            ANSWER -> {
+
+                                                Timber.d("LLAMADA PASO: RESPUESTA RECIBIDA")
+
+                                                socketEventListener.answerReceived(
                                                     event.channelName,
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.ANSWER
                                                     )
                                                 )
+                                            }
+
                                         }
                                     }
                                 }
                             } catch (e: Exception) {
                                 Timber.e(e)
                             }
-
                         }
 
                         override fun onAuthenticationFailure(
                             message: String?,
                             e: java.lang.Exception?
-                        ) {
-                            Timber.d("onAuthenticationFailure, $message")
-                        }
+                        ) = Unit
 
-                        override fun onSubscriptionSucceeded(channelName: String?) {
-                            Timber.d("onSubscriptionSucceeded, $channelName")
-                        }
+                        override fun onSubscriptionSucceeded(channelName: String?) = Unit
 
                         override fun onUsersInformationReceived(
                             channelName: String?,
                             users: MutableSet<User>?
-                        ) {
-                            Timber.d("onUsersInformationReceived, $channelName, $users")
-                        }
+                        ) = Unit
 
-                        override fun userSubscribed(channelName: String?, user: User?) {
-                            Timber.d("userSubscribed, $channelName, $user")
-                        }
+                        override fun userSubscribed(channelName: String?, user: User?) = Unit
 
-                        override fun userUnsubscribed(channelName: String?, user: User?) {
-                            Timber.d("userUnsubscribed, $channelName, $user")
-                        }
+                        override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                     })
         } catch (e: Exception) {
             Timber.e(e)

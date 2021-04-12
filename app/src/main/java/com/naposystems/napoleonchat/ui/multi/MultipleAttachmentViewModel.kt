@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction.ShowSelectFolderName
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFolderItem
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentPreviewSmallFileItemView
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
@@ -20,7 +21,9 @@ const val MAX_FILES = 10
 
 class MultipleAttachmentViewModel @Inject constructor(
     private val repository: IContractMultipleAttachment.Repository
-) : ViewModel(), IContractMultipleAttachment.ViewModel, LifecycleObserver {
+) : ViewModel(),
+    IContractMultipleAttachment.ViewModel,
+    LifecycleObserver {
 
     private var isShowingFiles = false
     private var cacheListFolders = emptyList<Item<*>>()
@@ -40,34 +43,41 @@ class MultipleAttachmentViewModel @Inject constructor(
             try {
                 repository.getFolders()
                     .flowOn(Dispatchers.IO)
-                    .collect {
-                        _state.value = it
-                        if (it is MultipleAttachmentState.SuccessFolders) {
-                            cacheListFolders = it.listElements
-                        }
-                    }
+                    .collect { successFolders(it) }
             } catch (exception: Exception) {
                 _state.value = MultipleAttachmentState.Error
             }
         }
     }
 
-    override fun loadFilesFromFolder(folderName: String) {
+    private fun successFolders(it: MultipleAttachmentState) {
+        _state.value = it
+        if (it is MultipleAttachmentState.SuccessFolders) {
+            cacheListFolders = it.listElements
+        }
+    }
+
+    override fun loadFilesFromFolder(folder: MultipleAttachmentFolderItem) {
         isShowingFiles = true
         viewModelScope.launch {
             try {
                 val mapIdsSelected = selectedLists.map { it.id to it.id }.toMap()
-                repository.getFilesByFolder(folderName, mapIdsSelected)
+                repository.getFilesByFolder(folder.parent, mapIdsSelected)
                     .flowOn(Dispatchers.IO)
-                    .collect {
-                        _state.value = it
-                        if (it is MultipleAttachmentState.SuccessFiles) {
-                            actions.value = ShowSelectFolderName(folderName)
-                        }
-                    }
+                    .collect { successFilesByFolder(it, folderName = folder.folderName) }
             } catch (exception: Exception) {
                 _state.value = MultipleAttachmentState.Error
             }
+        }
+    }
+
+    private fun successFilesByFolder(
+        it: MultipleAttachmentState,
+        folderName: String
+    ) {
+        _state.value = it
+        if (it is MultipleAttachmentState.SuccessFiles) {
+            actions.value = ShowSelectFolderName(folderName)
         }
     }
 

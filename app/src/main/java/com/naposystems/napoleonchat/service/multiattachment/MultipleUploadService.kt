@@ -15,8 +15,7 @@ import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class MultipleUploadService
-    : Service() {
+class MultipleUploadService : Service() {
 
     companion object {
         const val PROGRESS_MAX = 100
@@ -50,10 +49,10 @@ class MultipleUploadService
         Timber.d("onStartCommand")
 
         intent.extras?.let { bundle ->
-            val message = bundle.getParcelable(MultipleUploadService.MESSAGE_KEY) as MessageEntity?
+            val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
             message?.let { currentMessage = it }
             attachmentList =
-                bundle.getParcelableArrayList<AttachmentEntity>(MultipleUploadService.ATTACHMENT_KEY) as List<AttachmentEntity>
+                bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
         }
 
         currentMessage.let { msg ->

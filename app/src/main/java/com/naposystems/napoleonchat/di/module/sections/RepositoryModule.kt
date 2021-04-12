@@ -69,6 +69,8 @@ import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
 import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
 import com.naposystems.napoleonchat.ui.contacts.IContractContacts
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IContractMyMultiAttachmentMsg
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
@@ -83,8 +85,8 @@ import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyb
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.previewmulti.contract.IContractMultipleAttachmentPreview
-import com.naposystems.napoleonchat.ui.previewmulti.repository.MultipleAttachmentPreviewRepository
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
@@ -106,6 +108,7 @@ import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFor
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
 import dagger.Binds
 import dagger.Module
+import javax.inject.Singleton
 
 @Module
 abstract class RepositoryModule {
@@ -271,5 +274,10 @@ abstract class RepositoryModule {
     @Binds
     abstract fun provideMultipleAttachmentPreviewRepository(repository: MultipleAttachmentPreviewRepository):
             IContractMultipleAttachmentPreview.Repository
+
+    @Binds
+    abstract fun provideMyMultiAttachmentMsgRepository(
+        repository: MyMultiAttachmentMsgRepository
+    ): IContractMyMultiAttachmentMsg.Repository
 
 }

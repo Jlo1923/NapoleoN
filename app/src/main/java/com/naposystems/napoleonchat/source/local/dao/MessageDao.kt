@@ -45,7 +45,7 @@ interface MessageDao {
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_WEB_ID} = :quoteWebId"
     )
-    fun getQuoteId(quoteWebId: String): Int
+    fun getMessageIdByQuoteWebId(quoteWebId: String): Int
 
     @Query(
         "SELECT * " +
@@ -104,15 +104,7 @@ interface MessageDao {
                 "ORDER BY ${DBConstants.Message.COLUMN_CREATED_AT} DESC " +
                 "LIMIT 1"
     )
-    suspend fun getLastMessageByContact(contactId: Int): MessageAttachmentRelation
-
-    @Query(
-        "SELECT ${DBConstants.Message.COLUMN_CONTACT_ID} " +
-                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                "WHERE ${DBConstants.Message.COLUMN_WEB_ID} = :messageWebId " +
-                "LIMIT 1"
-    )
-    suspend fun getContactByMessage(messageWebId: String): Int
+    suspend fun getLastMessageByContactId(contactId: Int): MessageAttachmentRelation
 
     @Query(
         "SELECT * " +
@@ -192,9 +184,10 @@ interface MessageDao {
     @Query(
         "SELECT ${DBConstants.Message.COLUMN_CONTACT_ID} " +
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                "WHERE ${DBConstants.Message.COLUMN_WEB_ID}  = :webId "
+                "WHERE ${DBConstants.Message.COLUMN_WEB_ID} = :webId " +
+                "LIMIT 1"
     )
-    fun getIdContactWithWebId(webId: String): Int
+    suspend fun getContactIdByWebId(webId: String): Int
 
     @Query(
         "UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
@@ -219,7 +212,7 @@ interface MessageDao {
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_WEB_ID} = :webId"
     )
-    fun getSelfDestructTimeByMessage(webId: String): Int
+    fun getMessageSelfDestructTimeById(webId: String): Int
 
     @Query(
         "DELETE " +

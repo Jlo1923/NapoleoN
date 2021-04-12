@@ -28,7 +28,7 @@ data class NewMessageEventMessageRes(
     @Json(name = "user_sender") val userAddressee: Int,
     @Json(name = "updated_at") val updatedAt: Int,
     @Json(name = "created_at") val createdAt: Int,
-    @Json(name = "attachments") var attachments: List<NewMessageEventAttachmentRes> = ArrayList(),
+    @Json(name = "attachments_finally") var attachments: List<NewMessageEventAttachmentRes> = ArrayList(),
     @Json(name = "destroy") val destroy: Int = -1,
     @Json(name = "number_attachments") val numberAttachments: Int,
     @Json(name = "type_message") val messageType: Int

@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import android.net.Uri
 import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
@@ -9,7 +11,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import javax.inject.Inject
 
 class MainActivityRepository @Inject constructor(
@@ -17,7 +18,7 @@ class MainActivityRepository @Inject constructor(
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val socketClient: SocketClient
-) :    IContractMainActivity.Repository {
+) : IContractMainActivity.Repository {
 
     override suspend fun getUser(): UserEntity {
 //        val firebaseId = sharedPreferencesManager
@@ -53,7 +54,8 @@ class MainActivityRepository @Inject constructor(
 
     override fun setJsonNotification(json: String) {
         if (sharedPreferencesManager.getString(PREF_LAST_JSON_NOTIFICATION, "") != json
-            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json) {
+            && sharedPreferencesManager.getString(PREF_JSON_NOTIFICATION, "") != json
+        ) {
             sharedPreferencesManager.putString(
                 PREF_LAST_JSON_NOTIFICATION, json
             )
@@ -78,15 +80,23 @@ class MainActivityRepository @Inject constructor(
     override suspend fun getContactById(contactId: Int) =
         contactLocalDataSource.getContactById(contactId)
 
-    override fun resetIsOnCallPref() {
-        NapoleonApplication.isCurrentOnCall = false
-    }
-
     override fun getRecoveryQuestionsPref(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_RECOVERY_QUESTIONS_SAVED)
     }
 
     override fun disconnectSocket() {
-//        socketMessageService.disconnectSocket()
+//            socketClient.disconnectSocket()
+
+    }
+
+    fun addUriListToCache(listOf: List<Uri>) {
+        sharedPreferencesManager.puStringSet("test", listOf)
+    }
+
+    fun getPendingUris(): List<Uri> {
+        val urisString = sharedPreferencesManager.getStringSet("test")
+        val listString = urisString?.toList()
+        val listUris = listString?.map { Uri.parse(it) }
+        return listUris ?: emptyList()
     }
 }

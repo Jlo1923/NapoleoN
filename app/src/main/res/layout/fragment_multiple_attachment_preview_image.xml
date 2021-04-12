@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.previewmulti.fragments.MultipleAttachmentPreviewImageFragment">
+    tools:context=".ui.multipreview.fragments.MultipleAttachmentPreviewImageFragment">
 
     <com.naposystems.napoleonchat.utility.ZoomImage
         android:id="@+id/image_preview"

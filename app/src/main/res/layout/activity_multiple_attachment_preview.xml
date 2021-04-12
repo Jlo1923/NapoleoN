@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".ui.previewmulti.MultipleAttachmentPreviewActivity">
+    tools:context=".ui.multipreview.MultipleAttachmentPreviewActivity">
 
     <ImageView
         android:id="@+id/image_close"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.naposystems.napoleonchat.ui.previewmulti.views.ViewAttachmentOptions
+    <com.naposystems.napoleonchat.ui.multipreview.views.ViewAttachmentOptions
         android:id="@+id/view_attachment_options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/image_close" />
 
-    <com.naposystems.napoleonchat.ui.previewmulti.views.ViewAttachmentsPreviewBottomTabs
+    <com.naposystems.napoleonchat.ui.multipreview.views.ViewAttachmentsPreviewBottomTabs
         android:id="@+id/view_preview_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

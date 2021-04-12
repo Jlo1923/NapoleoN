@@ -1,5 +1,10 @@
 package com.naposystems.napoleonchat.model
 
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
+import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
 
 //region Funciones de Extension de Post
@@ -28,4 +33,72 @@ fun Map<String, String>.toCallModel(): CallModel {
         isVideoCall,
         offer
     )
+}
+
+fun List<NewMessageEventMessageRes>.toMessagesReqDTO(mustStatus: Constants.StatusMustBe): MessagesReqDTO {
+
+    val messages = filter {
+        it.attachments.isEmpty()
+    }.map {
+        MessageDTO(
+            id = it.id,
+            type = Constants.MessageTypeByStatus.MESSAGE.type,
+            user = it.userAddressee,
+            status = mustStatus.status
+        )
+    }.toMutableList()
+
+    val attachments = filter {
+        it.attachments.isNotEmpty()
+    }.flatMap {
+        it.attachments
+    }.map {
+        mappingMessagesDto(
+            attachment = it,
+            list = this,
+            mustStatus
+        )
+    }
+
+    messages.addAll(attachments)
+
+    return MessagesReqDTO(
+        messages
+    )
+
+}
+
+fun mappingMessagesDto(
+    attachment: NewMessageEventAttachmentRes,
+    list: List<NewMessageEventMessageRes>,
+    mustStatus: Constants.StatusMustBe
+): MessageDTO {
+
+    val message = list.first {
+        it.id == attachment.messageId
+    }
+
+    return MessageDTO(
+        id = attachment.id,
+        type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+        user = message.userAddressee,
+        status = mustStatus.status
+    )
+
+}
+
+fun MessagesResDTO.extractIdsMessages(): List<String> {
+    return messages.filter {
+        it.type == Constants.MessageTypeByStatus.MESSAGE.type
+    }.map {
+        it.id
+    }
+}
+
+fun MessagesResDTO.extractIdsAttachments(): List<String> {
+    return messages.filter {
+        it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+    }.map {
+        it.id
+    }
 }

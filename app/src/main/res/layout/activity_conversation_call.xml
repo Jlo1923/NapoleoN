@@ -210,9 +210,11 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:background="@color/color_D8A605"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@id/container_controls"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_controls"
@@ -220,7 +222,7 @@
             android:layout_height="70dp"
             android:background="#998B8989"
             android:padding="@dimen/normal_padding"
-            android:visibility="@{typeCall == Constants.TypeCall.IS_INCOMING_CALL.type ? View.GONE : View.VISIBLE}"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

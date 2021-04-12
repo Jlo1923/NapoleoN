@@ -1,23 +1,28 @@
 package com.naposystems.napoleonchat.webRTC.client
 
 interface WebRTCClientListener {
+
+    //Turn ON/OFF Camera
+    fun toggleContactCamera(isVisible: Boolean)
+
+    //Change to videocall
     fun contactWantChangeToVideoCall()
-    fun contactCancelledVideoCall()
-    fun contactTurnOffCamera()
-    fun contactTurnOnCamera()
-    fun showRemoteVideo()
-    fun callEnded()
-    fun changeLocalRenderVisibility(visibility: Int)
-    fun changeTextViewTitle(stringResourceId: Int)
-    fun changeBluetoothButtonVisibility(isVisible: Boolean)
-    fun enableControls()
-    fun resetIsOnCallPref()
-    fun contactNotAnswer()
+    fun contactAcceptChangeToVideoCall()
+    fun contactCancelChangeToVideoCall()
+    fun contactCantChangeToVideoCall()
+
+    //UI
     fun showTimer()
     fun showConnectingTitle()
-    fun changeCheckedSpeaker(checked: Boolean)
-    fun hangupByNotification()
-    fun unlockVideoButton()
-    fun rejectByNotification()
-    fun contactAcceptChangeToVideoCall()
+    fun enableControls()
+    fun showRemoteVideo()
+    fun changeTextviewTitle(stringResourceId: Int)
+    fun toggleLocalRenderVisibility(visibility: Int)
+    fun toggleBluetoothButtonVisibility(isVisible: Boolean)
+    fun toggleCheckedSpeaker(checked: Boolean)
+
+    fun hangUpFromNotification()
+    fun onContactNotAnswer()
+    fun callEnded()
+
 }

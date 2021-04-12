@@ -291,7 +291,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
         try {
 
-            mAudioManager.isSpeakerphoneOn = !isProximitySensorActive
+            mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
 
             if (mPreviousMessageId == currentMessageId && progress == 0) {
                 if (mediaPlayer != null) {
@@ -374,7 +374,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         .build()
 
                     audioManagerCompat.requestCallAudioFocus()
-                    mAudioManager.isSpeakerphoneOn = !isProximitySensorActive
+                    mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
 
                     playWhenReady = true
 

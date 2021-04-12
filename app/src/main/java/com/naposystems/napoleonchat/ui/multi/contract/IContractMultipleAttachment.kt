@@ -14,12 +14,18 @@ interface IContractMultipleAttachment {
          */
         fun getFolders()
 
-        fun loadFilesFromFolder(folderName: String)
+        /**
+         * Load files from folder, by the folder id
+         *
+         * @param folder the folder identifier
+         *
+         */
+        fun loadFilesFromFolder(folder: MultipleAttachmentFolderItem)
 
         fun addFileToList(item: MultipleAttachmentFileItem)
 
         fun removeFileToList(item: MultipleAttachmentFileItem)
-        
+
     }
 
     interface Repository {
@@ -33,7 +39,7 @@ interface IContractMultipleAttachment {
          * get Files from a folder Name
          */
         fun getFilesByFolder(
-            folderName: String,
+            folderParent: String,
             mapIds: Map<Int, Int>
         ): Flow<MultipleAttachmentState>
 
@@ -41,10 +47,15 @@ interface IContractMultipleAttachment {
 
     interface MediaStore {
 
+        /**
+         * Get folders for the conversation, this is a old implementation
+         *
+         * @return list of MultipleAttachmentFolderItem (folders)
+         */
         fun getFoldersForConversation(): List<MultipleAttachmentFolderItem>
 
         fun getFilesByFolder(
-            folderName: String,
+            folderParent: String,
             mapIds: Map<Int, Int>
         ): List<MultipleAttachmentFileItem>
 

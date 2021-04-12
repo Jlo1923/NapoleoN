@@ -8,16 +8,36 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.ui.conversation.viewHolder.*
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
+import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.audio.IncomingMessageAudioViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.audio.MyMessageAudioViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.base.IncomingMessageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.base.MyMessageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.common.GroupDateMessageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.common.MessageMissedCallViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.common.SystemMessageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.document.IncomingMessageDocumentViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.document.MyMessageDocumentViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.IncomingMessageGifNNViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.MyMessageGifNNViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.IncomingMessageImageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.MyMessageImageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.IncomingMessageVideoViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.MyMessageVideoViewHolder
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import kotlinx.coroutines.Job
 import timber.log.Timber
 
-class ConversationAdapter constructor(
+class ConversationAdapter(
     private val clickListener: ClickListener,
     private val mediaPlayerManager: MediaPlayerManager,
-    private var timeFormat: Int?
+    private var timeFormat: Int?,
+    private var listeners: ConversationListeners,
+    private var viewmodels: ConversationViewModelsForViewHolders
 ) : ListAdapter<MessageAttachmentRelation, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
@@ -50,6 +70,8 @@ class ConversationAdapter constructor(
         const val TYPE_MISSED_CALL = 17
         const val TYPE_SYSTEM_MESSAGE = 18
         const val TYPE_GROUP_DATE_MESSAGES = 19
+        const val TYPE_MY_MULTI_ATTACHMENT = 20
+        const val TYPE_INCOMING_MULTI_ATTACHMENT = 21
     }
 
     private var isFirst = false
@@ -257,67 +279,20 @@ class ConversationAdapter constructor(
     override fun getItemViewType(position: Int): Int {
         val conversation = getItem(position)
         conversation?.let {
+
             return when (conversation.messageEntity.messageType) {
+
                 Constants.MessageType.MESSAGE.type -> {
-                    if (conversation.attachmentEntityList.isNotEmpty()) {
-                        when (conversation.attachmentEntityList[0].type) {
-                            Constants.AttachmentType.IMAGE.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                                    TYPE_MY_MESSAGE_IMAGE
-                                else
-                                    TYPE_INCOMING_MESSAGE_IMAGE
-                            }
-                            Constants.AttachmentType.AUDIO.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                                    TYPE_MY_MESSAGE_AUDIO
-                                else
-                                    TYPE_INCOMING_MESSAGE_AUDIO
-                            }
-                            Constants.AttachmentType.VIDEO.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                                    TYPE_MY_MESSAGE_VIDEO
-                                else
-                                    TYPE_INCOMING_MESSAGE_VIDEO
-                            }
-                            Constants.AttachmentType.DOCUMENT.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                                    TYPE_MY_MESSAGE_DOCUMENT
-                                else
-                                    TYPE_INCOMING_MESSAGE_DOCUMENT
-                            }
-                            Constants.AttachmentType.GIF.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
-                                    TYPE_MY_MESSAGE_GIF
-                                } else {
-                                    TYPE_INCOMING_MESSAGE_GIF
-                                }
-                            }
-                            Constants.AttachmentType.GIF_NN.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
-                                    TYPE_MY_MESSAGE_GIF_NN
-                                } else {
-                                    TYPE_INCOMING_MESSAGE_GIF_NN
-                                }
-                            }
-                            Constants.AttachmentType.LOCATION.type -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
-                                    TYPE_MY_MESSAGE_LOCATION
-                                } else {
-                                    TYPE_INCOMING_MESSAGE_LOCATION
-                                }
-                            }
-                            else -> {
-                                if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                                    TYPE_MY_MESSAGE
-                                else
-                                    TYPE_INCOMING_MESSAGE
-                            }
-                        }
-                    } else {
-                        if (conversation.messageEntity.isMine == Constants.IsMine.YES.value)
-                            TYPE_MY_MESSAGE
-                        else
-                            TYPE_INCOMING_MESSAGE
+                    /**
+                     * Podemos tener distintos casos,
+                     * sin Attachment
+                     * Con un solo attachment
+                     * Con varios Attachments
+                     */
+                    when (conversation.attachmentEntityList.size) {
+                        0 -> getItemTypeForNoAttachments(conversation)
+                        1 -> getItemTypeForOneAttachment(conversation)
+                        else -> getItemForTwoOrMoreAttachments(conversation)
                     }
                 }
                 Constants.MessageType.MISSED_CALL.type,
@@ -335,6 +310,42 @@ class ConversationAdapter constructor(
         }
 
         return -1
+    }
+
+    private fun getItemTypeForNoAttachments(conversation: MessageAttachmentRelation) =
+        if (conversation.isMine()) TYPE_MY_MESSAGE else TYPE_INCOMING_MESSAGE
+
+    private fun getItemTypeForOneAttachment(conversation: MessageAttachmentRelation): Int {
+        return when (conversation.attachmentEntityList[0].type) {
+            Constants.AttachmentType.IMAGE.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_IMAGE else TYPE_INCOMING_MESSAGE_IMAGE
+            }
+            Constants.AttachmentType.AUDIO.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_AUDIO else TYPE_INCOMING_MESSAGE_AUDIO
+            }
+            Constants.AttachmentType.VIDEO.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_VIDEO else TYPE_INCOMING_MESSAGE_VIDEO
+            }
+            Constants.AttachmentType.DOCUMENT.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_DOCUMENT else TYPE_INCOMING_MESSAGE_DOCUMENT
+            }
+            Constants.AttachmentType.GIF.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_GIF else TYPE_INCOMING_MESSAGE_GIF
+            }
+            Constants.AttachmentType.GIF_NN.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_GIF_NN else TYPE_INCOMING_MESSAGE_GIF_NN
+            }
+            Constants.AttachmentType.LOCATION.type -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE_LOCATION else TYPE_INCOMING_MESSAGE_LOCATION
+            }
+            else -> {
+                if (conversation.isMine()) TYPE_MY_MESSAGE else TYPE_INCOMING_MESSAGE
+            }
+        }
+    }
+
+    private fun getItemForTwoOrMoreAttachments(conversation: MessageAttachmentRelation): Int {
+        return if (conversation.isMine()) TYPE_MY_MULTI_ATTACHMENT else TYPE_INCOMING_MULTI_ATTACHMENT
     }
 
     override fun onCreateViewHolder(
@@ -362,6 +373,12 @@ class ConversationAdapter constructor(
             TYPE_MISSED_CALL -> MessageMissedCallViewHolder.from(parent)
             TYPE_SYSTEM_MESSAGE -> SystemMessageViewHolder.from(parent)
             TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
+            TYPE_MY_MULTI_ATTACHMENT -> MyMultiAttachmentMsgViewHolder.from(
+                parent,
+                viewmodels.viewModelMultiAttachment,
+                listeners.listenerMultiAttachment
+            )
+            //TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
     }
@@ -407,6 +424,9 @@ class ConversationAdapter constructor(
                 }
                 TYPE_GROUP_DATE_MESSAGES -> (holder as GroupDateMessageViewHolder)
                     .bind(item)
+                TYPE_MY_MULTI_ATTACHMENT ->
+                    (holder as MyMultiAttachmentMsgViewHolder)
+                        .bind(item, clickListener, isFirst, timeFormat)
             }
         }
     }
@@ -520,20 +540,30 @@ class ConversationAdapter constructor(
     }
 
     interface ClickListener {
+
         fun onClick(item: MessageAttachmentRelation)
+
         fun onLongClick(item: MessageEntity)
+
         fun messageToEliminate(item: MessageAttachmentRelation)
+
         fun errorPlayingAudio()
+
         fun onPreviewClick(item: MessageAttachmentRelation)
+
         fun goToQuote(messageAndAttachmentRelation: MessageAttachmentRelation, itemPosition: Int?)
+
         fun downloadAttachment(
             messageAndAttachmentRelation: MessageAttachmentRelation,
             itemPosition: Int?
         )
 
         fun uploadAttachment(attachmentEntity: AttachmentEntity, messageEntity: MessageEntity)
+
         fun updateAttachmentState(messageAndAttachmentEntity: AttachmentEntity)
+
         fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation)
+
         fun sendMessageRead(
             messageId: Int,
             webId: String,
@@ -542,7 +572,10 @@ class ConversationAdapter constructor(
         )
 
         fun reSendMessage(messageEntity: MessageEntity)
+
         fun scrollToNextAudio(nextPosition: Int)
+
         fun updateMessageState(messageEntity: MessageEntity)
+
     }
 }

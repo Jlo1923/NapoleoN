@@ -2,13 +2,14 @@ package com.naposystems.napoleonchat.repository.previewMedia
 
 import android.content.Context
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessagesReadReqDTO
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -37,17 +38,25 @@ class PreviewMediaRepository @Inject constructor(
         )
     }
 
-    override suspend fun sentMessageReaded(messageAndAttachmentRelation: MessageAttachmentRelation) {
+    override suspend fun sentMessageReaded(messageAttachmentRelation: MessageAttachmentRelation) {
         try {
-            val response = napoleonApi.sendMessagesRead(
-                MessagesReadReqDTO(
-                    listOf(messageAndAttachmentRelation.messageEntity.webId)
+
+            val messagesReqDTO = MessagesReqDTO(
+                messages = listOf(
+                    MessageDTO(
+                        id = messageAttachmentRelation.messageEntity.webId,
+                        status = Constants.StatusMustBe.READED.status,
+                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        user = messageAttachmentRelation.messageEntity.contactId
+                    )
                 )
             )
 
+            val response = napoleonApi.sendMessagesRead(messagesReqDTO)
+
             if (response.isSuccessful) {
                 messageLocalDataSource.updateMessageStatus(
-                    response.body()!!,
+                    listOf(messageAttachmentRelation.messageEntity.webId),
                     Constants.MessageStatus.READED.status
                 )
             }

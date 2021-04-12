@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.mainActivity
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -132,15 +133,15 @@ class MainActivityViewModel
         isVideoCall = null
     }
 
-    override fun resetIsOnCallPref() {
-        repository.resetIsOnCallPref()
-    }
-
     override fun getRecoveryQuestionsPref(): Int {
         return repository.getRecoveryQuestionsPref()
     }
 
     override fun disconnectSocket() {
 //        repository.disconnectSocket()
+    }
+
+    fun addUriListToCache(listOf: List<Uri>) {
+        repository.addUriListToCache(listOf)
     }
 }
