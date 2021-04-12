@@ -123,7 +123,6 @@ class ConversationCallActivity :
         }
 
         if (callModel.isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-            webRTCClient.startCaptureVideo()
             binding.viewSwitcher.showNext()
         }
 
@@ -141,7 +140,7 @@ class ConversationCallActivity :
             if (callModel.isVideoCall) {
                 webRTCClient.renderRemoteVideo()
                 showRemoteVideo()
-                binding.surfaceRender.isVisible = webRTCClient.isHideVideo.not()
+                binding.localSurfaceRender.isVisible = webRTCClient.isHideVideo.not()
                 binding.cameraOff.containerCameraOff.isVisible =
                     webRTCClient.contactCameraIsVisible
             }
@@ -381,7 +380,7 @@ class ConversationCallActivity :
         Timber.d("LLAMADA PASO: INICIANDO LAS SUPERFICIES DE RENDERIZADO")
 
         runOnUiThread {
-            webRTCClient.setLocalVideoView(binding.surfaceRender)
+            webRTCClient.setLocalVideoView(binding.localSurfaceRender)
             webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
             webRTCClient.initSurfaceRenders()
         }
@@ -472,7 +471,7 @@ class ConversationCallActivity :
             constraintSet.clone(binding.containerVideoCall)
 
             // Obtenemos el id del elemento a modificar
-            val id = binding.surfaceRender.id
+            val id = binding.localSurfaceRender.id
 
             // Cambiamos el margen
             constraintSet.setMargin(id, ConstraintSet.END, Utils.dpToPx(this, 16f))
@@ -515,7 +514,7 @@ class ConversationCallActivity :
     }
 
     override fun toggleLocalRenderVisibility(visibility: Int) {
-        binding.surfaceRender.visibility = visibility
+        binding.localSurfaceRender.visibility = visibility
     }
 
     override fun toggleBluetoothButtonVisibility(isVisible: Boolean) {

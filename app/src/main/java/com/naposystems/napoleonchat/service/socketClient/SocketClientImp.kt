@@ -14,7 +14,10 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.*
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedRESDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedRESDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -126,6 +129,7 @@ class SocketClientImp
                         pusher.connect()
                     }
                 })
+
             } else if (pusher.connection.state == ConnectionState.CONNECTED) {
 
                 Timber.d("LLAMADA PASO: EN SOCKET CONECTADO  mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
@@ -296,7 +300,15 @@ class SocketClientImp
 
                     override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                 })
+
+        } else {
+
+            unSubscribePresenceChannel(channelName = callModel.channelName)
+
+            subscribeToPresenceChannel(callModel)
+
         }
+
     }
 
     override fun disconnectSocket() {

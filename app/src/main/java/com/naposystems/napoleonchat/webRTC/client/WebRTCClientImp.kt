@@ -46,10 +46,7 @@ class WebRTCClientImp
     private val socketClient: SocketClient,
     private val syncManager: SyncManager,
     private val handlerNotification: HandlerNotification,
-    private val handlerMediaPlayerNotification: HandlerMediaPlayerNotification,
-//    private val peerConnectionFactory: PeerConnectionFactory,
-//    private val eglBase: EglBase,
-//    private val rtcConfiguration: PeerConnection.RTCConfiguration
+    private val handlerMediaPlayerNotification: HandlerMediaPlayerNotification
 ) : WebRTCClient,
     SocketEventListener,
     BluetoothStateManager.BluetoothStateListener {
@@ -164,22 +161,23 @@ class WebRTCClientImp
 
     private var videoCapturerAndroid: VideoCapturer? = null
 
-    private var videoSource: VideoSource? = null
+    private lateinit var localMediaStream: MediaStream
+
+    private var localVideoSource: VideoSource? = null
 
     private var localVideoTrack: VideoTrack? = null
-    private var localVideoView: SurfaceViewRenderer? = null
 
     private var localAudioTrack: AudioTrack? = null
 
-    private var remoteVideoView: SurfaceViewRenderer? = null
+    private var localSurfaceViewRenderer: SurfaceViewRenderer? = null
+
+    private lateinit var remoteMediaStream: MediaStream
+
+    private var remoteSurfaceViewRenderer: SurfaceViewRenderer? = null
 
     private var webRTCClientListener: WebRTCClientListener? = null
 
     private var bluetoothStateManager: BluetoothStateManager? = null
-
-    private lateinit var localMediaStream: MediaStream
-
-    private lateinit var remoteMediaStream: MediaStream
 
     private var callTime: Long = 0
 
@@ -236,15 +234,33 @@ class WebRTCClientImp
         isReturnCall = false
 
         textViewTimer = null
+
         bluetoothStateManager = null
+
         webRTCClientListener = null
-        remoteVideoView = null
-        localAudioTrack = null
-        localVideoView = null
-        localVideoTrack = null
-        videoSource = null
-        videoCapturerAndroid = null
+
         mediaConstraints = null
+
+        remoteSurfaceViewRenderer = null
+
+        if (::remoteMediaStream.isInitialized)
+            remoteMediaStream.dispose()
+
+        localSurfaceViewRenderer = null
+
+        localAudioTrack = null
+
+        localVideoTrack = null
+
+        localVideoSource = null
+
+        if (::localMediaStream.isInitialized)
+            localMediaStream.dispose()
+
+        videoCapturerAndroid?.dispose()
+
+        videoCapturerAndroid = null
+
         peerConnection = null
     }
 
@@ -390,15 +406,11 @@ class WebRTCClientImp
 
                                 if (mediaStreams.first().videoTracks.isNotEmpty() && isActiveCall) {
 
-                                    if (mediaStreams.first().videoTracks.first()
-                                            .state() == MediaStreamTrack.State.LIVE
-                                    ) {
-                                        if (remoteMediaStream.videoTracks.isNotEmpty()) {
-                                            remoteMediaStream.videoTracks.first()
-                                                ?.addSink(remoteVideoView)
-                                        }
-                                        renderRemoteVideo(remoteMediaStream)
-                                    }
+                                    remoteMediaStream.videoTracks.first()
+                                        ?.addSink(remoteSurfaceViewRenderer)
+
+                                    peerConnection?.addStream(mediaStreams.first())
+
                                 }
                             }
                         }
@@ -417,6 +429,12 @@ class WebRTCClientImp
                             PeerConnection.IceConnectionState.FAILED -> {
                                 disposeCall()
                             }
+                            PeerConnection.IceConnectionState.NEW,
+                            PeerConnection.IceConnectionState.COMPLETED,
+                            PeerConnection.IceConnectionState.DISCONNECTED,
+                            PeerConnection.IceConnectionState.CLOSED ->
+                                Timber.d("IceConnectionState UNHANDLER $iceConnectionState")
+
                             else -> Timber.e("IceConnectionState Not Recognized")
 
                         }
@@ -425,15 +443,14 @@ class WebRTCClientImp
 
             createLocalAudioTrack()
 
-            addLocalAudioTrackToLocalMediaStream()
-
-            if (callModel.isVideoCall)
-                startCaptureVideo()
-
             peerConnection?.addStream(localMediaStream)
+
         } catch (e: java.lang.Exception) {
+
             Timber.e("LLAMADA PASO ${e.localizedMessage}")
+
         }
+
     }
 
     private fun createOffer() {
@@ -606,116 +623,113 @@ class WebRTCClientImp
 
     //Audio
     private fun createLocalAudioTrack() {
-        val audioConstraints = MediaConstraints()
-        val audioSource: AudioSource =
-            peerConnectionFactory.createAudioSource(audioConstraints)
-        localAudioTrack =
-            peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
-        localAudioTrack?.setEnabled(true)
-    }
 
-    private fun addLocalAudioTrackToLocalMediaStream() {
-        localMediaStream =
-            peerConnectionFactory.createLocalMediaStream("localMediaStream")
+        val audioConstraints = MediaConstraints()
+
+        val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
+
+        localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
+
+        localAudioTrack?.setEnabled(true)
+
+        localMediaStream = peerConnectionFactory.createLocalMediaStream("localMediaStream")
+
         localMediaStream.addTrack(localAudioTrack)
+
     }
 
     //Video
     override fun initSurfaceRenders() {
-        localVideoView?.init(eglBase.eglBaseContext, null)
-        localVideoView?.setZOrderMediaOverlay(true)
 
-        remoteVideoView?.init(eglBase.eglBaseContext, null)
-        remoteVideoView?.setZOrderMediaOverlay(true)
+        localSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
+        localSurfaceViewRenderer?.setZOrderMediaOverlay(true)
+
+        remoteSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
+        remoteSurfaceViewRenderer?.setZOrderMediaOverlay(true)
+
+        localSurfaceViewRenderer?.setMirror(true)
+
+        remoteSurfaceViewRenderer?.setMirror(false)
+
+        startCaptureVideo()
+
     }
 
     override fun startCaptureVideo() {
-        createLocalVideoTrack()
-        addLocalVideoTrackToLocalMediaStream()
-        videoCapturerAndroid?.startCapture(640, 480, 30)
-        localVideoTrack?.addSink(localVideoView)
-    }
 
-    override fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
-        this.localVideoView = surfaceViewRenderer
-    }
-
-    override fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
-        this.remoteVideoView = surfaceViewRenderer
-    }
-
-    override fun renderRemoteVideo() {
-        if (remoteMediaStream.videoTracks.isNotEmpty()) {
-            remoteMediaStream.videoTracks.first()?.addSink(remoteVideoView)
-        }
-    }
-
-    private fun renderRemoteVideo(mediaStream: MediaStream) {
-        Timber.d("firstMediaStream, ${mediaStream.videoTracks.isEmpty()}")
-        if (mediaStream.videoTracks.isNotEmpty()) {
-
-            remoteMediaStream = mediaStream
-            val videoTrack = mediaStream.videoTracks[0]
-            try {
-                stopProximitySensor()
-
-                if (isBluetoothAvailable) {
-                    audioManager.isSpeakerphoneOn = false
-                } else {
-                    audioManager.isSpeakerphoneOn = this.isHeadsetConnected.not()
-                }
-                webRTCClientListener?.showRemoteVideo()
-
-                videoTrack.addSink(remoteVideoView)
-            } catch (e: Exception) {
-                Timber.d("NO Got Remote Stream")
-                Timber.e(e)
-            }
-        }
-    }
-
-    private fun createLocalVideoTrack() {
         Timber.d("createLocalVideoTrack")
 
-        videoCapturerAndroid = createVideoCapturer()
+        videoCapturerAndroid = createCameraCapturer(Camera2Enumerator(context))
 
         mediaConstraints = MediaConstraints()
 
         videoCapturerAndroid?.let { videoCapturer ->
 
             val surfaceTextureHelper: SurfaceTextureHelper =
+
                 SurfaceTextureHelper.create(
                     "SurfaceTextureHelper",
                     eglBase.eglBaseContext
                 )
 
-            videoSource =
-                peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
+            localVideoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
 
             videoCapturer.initialize(
                 surfaceTextureHelper,
                 context,
-                videoSource?.capturerObserver
+                localVideoSource?.capturerObserver
             )
 
             localVideoTrack =
-                peerConnectionFactory.createVideoTrack("localVideoTrack1", videoSource)
-            localVideoView?.setMirror(true)
-            remoteVideoView?.setMirror(false)
+                peerConnectionFactory.createVideoTrack("localVideoTrack1", localVideoSource)
+
+            localMediaStream.addTrack(localVideoTrack)
+
+            localVideoTrack?.addSink(localSurfaceViewRenderer)
         }
+
+        videoCapturerAndroid?.startCapture(640, 480, 30)
+
     }
 
-    private fun createVideoCapturer(): VideoCapturer? {
-        return createCameraCapturer(Camera2Enumerator(context))
+    override fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
+        localSurfaceViewRenderer = surfaceViewRenderer
+        Timber.d("Aqui hago pausa")
     }
 
-    private fun addLocalVideoTrackToLocalMediaStream() {
-        localMediaStream.addTrack(localVideoTrack)
+    override fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
+        remoteSurfaceViewRenderer = surfaceViewRenderer
+        Timber.d("Aqui hago pausa")
+    }
+
+    override fun renderRemoteVideo() {
+
+        try {
+
+            stopProximitySensor()
+
+            if (isBluetoothAvailable) {
+                audioManager.isSpeakerphoneOn = false
+            } else {
+                audioManager.isSpeakerphoneOn = this.isHeadsetConnected.not()
+            }
+
+            remoteMediaStream.videoTracks.first()?.addSink(remoteSurfaceViewRenderer)
+
+            webRTCClientListener?.showRemoteVideo()
+
+        } catch (e: Exception) {
+            Timber.d("NO Got Remote Stream")
+            Timber.e(e)
+        }
+
     }
 
     //Camera
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
+
         val deviceNames = enumerator.deviceNames
+
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
                 val videoCapturer = enumerator.createCapturer(deviceName, null)
@@ -1102,14 +1116,13 @@ class WebRTCClientImp
 
         stopRingAndVibrate()
 
-
         if (callModel.isVideoCall.not() && callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
             audioManager.isSpeakerphoneOn = false
             webRTCClientListener?.toggleCheckedSpeaker(false)
         }
 
         if (callModel.isVideoCall) {
-            renderRemoteVideo(remoteMediaStream)
+            renderRemoteVideo()
         }
 
         if ((callModel.isVideoCall.not() && isBluetoothActive) || isHeadsetConnected) {
@@ -1186,10 +1199,6 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
         webRTCClientListener?.callEnded()
-
-        videoCapturerAndroid?.dispose()
-        localVideoView?.release()
-        remoteVideoView?.release()
 
         peerConnection?.close()
 
