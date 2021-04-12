@@ -32,7 +32,7 @@ node('master') {
     stage("Generating version") {
         versionName = "${gitCommitMessage}"
         if (params.VersionName?.trim()) {
-            versionName = ${params.VersionName}
+            versionName = "${params.VersionName}"
         }
         version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'", returnStdout: true).trim()
         versionCode = sh(script: "cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'", returnStdout: true).trim().toInteger()
