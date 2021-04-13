@@ -144,7 +144,7 @@ class ConversationCallActivity :
             }
             binding.imageButtonMicOff.setChecked(webRTCClient.isMicOn.not(), false)
             binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
-            binding.imageButtonMuteVideo.setChecked(webRTCClient.isHideVideo, false)
+            binding.imageButtonToggleVideo.setChecked(webRTCClient.isHideVideo, false)
             binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive, false)
         }
 
@@ -181,7 +181,7 @@ class ConversationCallActivity :
             Timber.d("startCallActivity, onBackPressed")
 
             if (webRTCClient.callModel.isVideoCall) {
-                webRTCClient.hideVideo(checked = true, itsFromBackPressed = true)
+                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
             }
 
             NapoleonApplication.isShowingCallActivity = false
@@ -292,8 +292,8 @@ class ConversationCallActivity :
             webRTCClient.changeToVideoCall()
         }
 
-        binding.imageButtonMuteVideo.setOnCheckedChangeListener { _, isChecked ->
-            webRTCClient.hideVideo(isChecked)
+        binding.imageButtonToggleVideo.setOnCheckedChangeListener { _, isChecked ->
+            webRTCClient.toggleVideo(isChecked)
         }
 
         binding.imageButtonSwitchCamera.setOnClickListener {
@@ -386,14 +386,6 @@ class ConversationCallActivity :
                 binding.viewSwitcher.showNext()
 
         }
-    }
-
-    //region Implementation WebRTCClient.WebRTCClientListener
-    override fun toggleContactCamera(isVisible: Boolean) {
-        runOnUiThread(Runnable {
-            binding.cameraOff.containerCameraOff.visibility =
-                if (isVisible) View.VISIBLE else View.GONE
-        })
     }
 
     override fun contactWantChangeToVideoCall() {
@@ -531,7 +523,16 @@ class ConversationCallActivity :
     }
 
     override fun toggleLocalRenderVisibility(visibility: Int) {
-        binding.localSurfaceRender.visibility = visibility
+        runOnUiThread(Runnable {
+            binding.localSurfaceRender.visibility = visibility
+        })
+    }
+
+    //region Implementation WebRTCClient.WebRTCClientListener
+    override fun toggleContactCamera(visibility: Int) {
+        runOnUiThread(Runnable {
+            binding.cameraOff.containerCameraOff.visibility = visibility
+        })
     }
 
     override fun toggleBluetoothButtonVisibility(isVisible: Boolean) {

@@ -742,26 +742,36 @@ class WebRTCClientImp
         return null
     }
 
-    override fun hideVideo(checked: Boolean, itsFromBackPressed: Boolean) {
-        if (callModel.isVideoCall && localMediaStream.videoTracks.isNotEmpty()) {
-            val videoTrack = localMediaStream.videoTracks.first()
+    override fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean) {
+
+        if (callModel.isVideoCall) {
+
             isHideVideo = checked
 
             if (checked) {
+
+                videoCapturerAndroid?.stopCapture()
+
                 socketClient.emitClientCall(
                     callModel.channelName,
                     SocketClientImp.CONTACT_TURN_OFF_CAMERA
                 )
-                webRTCClientListener?.toggleLocalRenderVisibility(View.GONE)
-                videoTrack.setEnabled(false)
+
+                webRTCClientListener?.toggleLocalRenderVisibility(View.INVISIBLE)
+
             } else {
+
+                videoCapturerAndroid?.startCapture(640,480,30)
+
                 socketClient.emitClientCall(
                     callModel.channelName,
                     SocketClientImp.CONTACT_TURN_ON_CAMERA
                 )
+
                 webRTCClientListener?.toggleLocalRenderVisibility(View.VISIBLE)
-                videoTrack.setEnabled(true)
+
             }
+
         }
 
         if (itsFromBackPressed) {
@@ -1102,10 +1112,13 @@ class WebRTCClientImp
             webRTCClientListener?.contactCantChangeToVideoCall()
     }
 
-    override fun toggleContactCamera(channelName: String, isVisible: Boolean) {
+    override fun toggleContactCamera(channelName: String, contactCameraIsVisible: Boolean) {
         if (channelName == this.callModel.channelName) {
-            contactCameraIsVisible = isVisible
-            webRTCClientListener?.toggleContactCamera(isVisible)
+
+            this.contactCameraIsVisible = contactCameraIsVisible
+
+            webRTCClientListener?.toggleContactCamera(if (contactCameraIsVisible.not()) View.VISIBLE else View.INVISIBLE)
+
         }
     }
 

@@ -128,11 +128,16 @@ class HandlerNotificationImp
 
         val notificationIntent = Intent(context, MainActivity::class.java)
 
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        notificationIntent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
 
         with(dataFromNotification) {
 
             if (this.isNotEmpty()) {
+
 
                 if (this.containsKey(Constants.NotificationKeys.CONTACT)) {
                     notificationIntent.putExtra(
