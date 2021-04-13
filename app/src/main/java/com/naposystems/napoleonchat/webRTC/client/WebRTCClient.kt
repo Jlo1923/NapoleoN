@@ -8,6 +8,8 @@ interface WebRTCClient {
 
     var callModel: CallModel
 
+    var renegotiateCall: Boolean
+
     var isActiveCall: Boolean
 
     var isHideVideo: Boolean
@@ -35,8 +37,8 @@ interface WebRTCClient {
 
     //Change to video Call
     fun changeToVideoCall()
-    fun acceptChangeToVideoCall()
-    fun cancelChangeToVideoCall()
+    fun meAcceptChangeToVideoCall()
+    fun meCancelChangeToVideoCall()
 
     //Video
     fun initSurfaceRenders()

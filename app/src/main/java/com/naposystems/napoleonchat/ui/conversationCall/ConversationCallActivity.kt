@@ -124,10 +124,6 @@ class ConversationCallActivity :
             }
         }
 
-        if (callModel.isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-            binding.viewSwitcher.showNext()
-        }
-
         if (webRTCClient.isActiveCall.not()) {
 
             when (callModel.typeCall) {
@@ -385,12 +381,19 @@ class ConversationCallActivity :
             webRTCClient.setLocalVideoView(binding.localSurfaceRender)
             webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
             webRTCClient.initSurfaceRenders()
+
+            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id)
+                binding.viewSwitcher.showNext()
+
         }
     }
 
     //region Implementation WebRTCClient.WebRTCClientListener
     override fun toggleContactCamera(isVisible: Boolean) {
-        binding.cameraOff.containerCameraOff.visibility = if (isVisible) View.VISIBLE else View.GONE
+        runOnUiThread(Runnable {
+            binding.cameraOff.containerCameraOff.visibility =
+                if (isVisible) View.VISIBLE else View.GONE
+        })
     }
 
     override fun contactWantChangeToVideoCall() {
@@ -406,18 +409,30 @@ class ConversationCallActivity :
                 R.string.text_accept,
                 R.string.text_cancel,
                 clickPositiveButton = {
+
+                    callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+
+                    callModel.isVideoCall = true
+
                     initSurfaceRenders()
-                    webRTCClient.acceptChangeToVideoCall()
+
+                    webRTCClient.meAcceptChangeToVideoCall()
+
                     binding.textViewTitle.text =
                         getString(R.string.text_encrypted_video_call)
                 }, clickNegativeButton = {
-                    webRTCClient.cancelChangeToVideoCall()
+                    webRTCClient.meCancelChangeToVideoCall()
                 }
             )
         })
     }
 
     override fun contactAcceptChangeToVideoCall() {
+
+        callModel.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+
+        callModel.isVideoCall = true
+
         initSurfaceRenders()
     }
 

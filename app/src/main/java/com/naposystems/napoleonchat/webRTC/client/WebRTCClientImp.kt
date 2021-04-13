@@ -58,6 +58,8 @@ class WebRTCClientImp
         offer = ""
     )
 
+    override var renegotiateCall: Boolean = false
+
     override var isActiveCall: Boolean = false
 
     override var isHideVideo: Boolean = false
@@ -180,8 +182,6 @@ class WebRTCClientImp
     private var callTime: Long = 0
 
     private var mediaPlayerHasStopped: Boolean = false
-
-    private var renegotiateCall: Boolean = false
 
     private var isFirstTimeBluetoothAvailable: Boolean = false
 
@@ -387,7 +387,7 @@ class WebRTCClientImp
                     override fun onRenegotiationNeeded() {
                         super.onRenegotiationNeeded()
                         Timber.d("LLAMADA PASO: onRenegotiationNeeded renegotiateCall: $renegotiateCall isReturnCall: $isReturnCall")
-                        if (renegotiateCall || isReturnCall) {
+                        if ((renegotiateCall || isReturnCall) && callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
                             isReturnCall = false
                             renegotiateCall = false
                             Timber.d("LLAMADA PASO: onRenegotiationNeeded CREAR OFERTA")
@@ -424,6 +424,8 @@ class WebRTCClientImp
                                         ?.addSink(remoteSurfaceViewRenderer)
 
                                     peerConnection?.addStream(mediaStreams.first())
+
+                                    renderRemoteVideo()
 
                                 }
                             }
@@ -608,32 +610,7 @@ class WebRTCClientImp
     }
 
     //Change To VideoCall
-    override fun changeToVideoCall() {
-        if (callModel.isVideoCall.not()) {
-            socketClient.emitClientCall(
-                callModel.channelName,
-                SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
-            )
-        }
-    }
 
-    override fun acceptChangeToVideoCall() {
-        callModel.isVideoCall = true
-        startCaptureVideo()
-        socketClient.emitClientCall(
-            callModel.channelName,
-            SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
-        )
-        webRTCClientListener?.changeTextviewTitle(R.string.text_encrypted_video_call)
-
-    }
-
-    override fun cancelChangeToVideoCall() {
-        socketClient.emitClientCall(
-            callModel.channelName,
-            SocketClientImp.CONTACT_CANCEL_CHANGE_TO_VIDEO
-        )
-    }
 
     //Audio
     private fun createLocalAudioTrack() {
@@ -1032,15 +1009,15 @@ class WebRTCClientImp
                 sessionDescription
             )
 
-            if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL && iceCandidatesCaller.isNotEmpty()) {
-                iceCandidatesCaller.forEach { iceCandidate ->
-                    socketClient.emitClientCall(
-                        channel = callModel.channelName,
-                        jsonObject = iceCandidate.toJSONObject()
-                    )
-                }
-                iceCandidatesCaller.clear()
+            iceCandidatesCaller.forEach { iceCandidate ->
+                socketClient.emitClientCall(
+                    channel = callModel.channelName,
+                    jsonObject = iceCandidate.toJSONObject()
+                )
             }
+
+            iceCandidatesCaller.clear()
+
         }
     }
 
@@ -1080,13 +1057,47 @@ class WebRTCClientImp
         }
     }
 
+    override fun changeToVideoCall() {
+        if (callModel.isVideoCall.not()) {
+            socketClient.emitClientCall(
+                callModel.channelName,
+                SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
+            )
+        }
+    }
+
+    override fun meAcceptChangeToVideoCall() {
+
+        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+
+        callModel.isVideoCall = true
+
+        socketClient.emitClientCall(
+            callModel.channelName,
+            SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
+        )
+
+        webRTCClientListener?.changeTextviewTitle(R.string.text_encrypted_video_call)
+
+    }
+
+    override fun meCancelChangeToVideoCall() {
+        socketClient.emitClientCall(
+            callModel.channelName,
+            SocketClientImp.CONTACT_CANCEL_CHANGE_TO_VIDEO
+        )
+    }
+
     override fun contactAcceptChangeToVideoCall(channelName: String) {
         if (channelName == this.callModel.channelName && callModel.isVideoCall.not()) {
-            webRTCClientListener?.changeTextviewTitle(R.string.text_encrypted_video_call)
-            webRTCClientListener?.contactAcceptChangeToVideoCall()
+
+            callModel.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+
             callModel.isVideoCall = true
+
             renegotiateCall = true
-//            startCaptureVideo()qqq
+
+            webRTCClientListener?.contactAcceptChangeToVideoCall()
         }
     }
 
