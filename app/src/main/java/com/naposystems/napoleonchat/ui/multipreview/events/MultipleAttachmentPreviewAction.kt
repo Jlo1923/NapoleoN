@@ -1,5 +1,8 @@
 package com.naposystems.napoleonchat.ui.multipreview.events
 
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+
 sealed class MultipleAttachmentPreviewAction {
 
     object Exit : MultipleAttachmentPreviewAction()
@@ -19,6 +22,11 @@ sealed class MultipleAttachmentPreviewAction {
 
     class ShowSelfDestruction(
         val selfDestruction: Int
+    ) : MultipleAttachmentPreviewAction()
+
+    class SendMessageToRemote(
+        val messageEntity: MessageEntity,
+        val attachments: List<AttachmentEntity?>
     ) : MultipleAttachmentPreviewAction()
 
 }

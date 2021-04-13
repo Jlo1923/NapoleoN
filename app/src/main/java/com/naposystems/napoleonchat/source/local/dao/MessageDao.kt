@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.source.local.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.naposystems.napoleonchat.source.local.DBConstants
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import kotlinx.coroutines.flow.Flow
@@ -263,5 +264,12 @@ interface MessageDao {
 
     @Query("SELECT * FROM message WHERE id=:id")
     suspend fun getMessageById(id: Int): MessageAttachmentRelation?
+
+    @Query(
+        "SELECT * " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_MESSAGE_ID} = :messageId"
+    )
+    fun getMessageByIdAsFlow(messageId: Int): Flow<List<AttachmentEntity>>
 
 }
