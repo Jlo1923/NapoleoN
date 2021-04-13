@@ -335,10 +335,13 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     override fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>> {
+
         return messageDao.getMessagesForHome()
             .map { listMessageRelations: List<MessageAttachmentRelation> ->
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
+                        messageAndAttachmentRelation.messagesUnReads =
+                            messageDao.countUnreadByContactId(messageAndAttachmentRelation.contact?.id)
                         with(messageAndAttachmentRelation.messageEntity) {
                             this.let {
                                 it.body = it.getBody(cryptoMessage)

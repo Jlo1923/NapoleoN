@@ -37,7 +37,7 @@ MessageResDTO(
     @Json(name = "type_message")
     val messageType: Int,
     @Json(name = "count")
-    val count: Int,
+    val count: Int?,
     @Json(name = "download")
     val download: Boolean
 ) {

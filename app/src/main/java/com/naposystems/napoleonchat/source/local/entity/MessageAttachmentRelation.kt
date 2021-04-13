@@ -33,7 +33,7 @@ data class MessageAttachmentRelation(
     @Nullable
     var contact: ContactEntity?,
     @Nullable
-    val messagesUnReads: Int? = 0
+    var messagesUnReads: Int? = 0
 ) : Parcelable {
 
     fun getFirstAttachment(): AttachmentEntity? {
