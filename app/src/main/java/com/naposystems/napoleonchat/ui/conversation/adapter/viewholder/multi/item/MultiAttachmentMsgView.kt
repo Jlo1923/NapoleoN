@@ -10,6 +10,10 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.ViewAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.*
+import com.naposystems.napoleonchat.utility.extensions.hideViews
+import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import kotlin.properties.Delegates
 
@@ -37,6 +41,32 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         theAttachment = attachmentEntity
         mIndex = index
         loadImage()
+        showUiByStatus()
+    }
+
+    private fun showUiByStatus() = viewBinding.apply {
+        theAttachment?.let {
+            when (it.status) {
+                SENDING.status -> uiModeSending()
+                SENT.status, DOWNLOADING.status -> uiModeSent()
+                ERROR.status -> uiModeError()
+            }
+        }
+    }
+
+    private fun uiModeError() = viewBinding.apply {
+        showViews(imageRetry)
+        hideViews(progressBar, imageViewAttachment, imageViewIconShow)
+    }
+
+    private fun uiModeSent() = viewBinding.apply {
+        showViews(imageViewAttachment, imageViewIconShow)
+        hideViews(progressBar, imageRetry)
+    }
+
+    private fun uiModeSending() = viewBinding.apply {
+        hideViews(imageViewAttachment, imageViewIconShow, imageRetry)
+        showViews(progressBar)
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {
@@ -50,6 +80,13 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
                     listener.onMsgItemFileAction(ViewAttachment(attachment, mIndex))
                 }
             }
+            imageRetry.setOnClickListener {
+                ifNotNull(theAttachment, listener) { attachment, listener ->
+                    listener.onMsgItemFileAction(
+                        MultiAttachmentMsgItemAction.RetryUpload(attachment)
+                    )
+                }
+            }
         }
     }
 
@@ -57,7 +94,7 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         try {
             viewBinding.apply {
                 Glide.with(root.context)
-                    .load("https://cms-assets.tutsplus.com/uploads/users/2659/posts/31467/image/gilbert-free-color-fonts.jpg")
+                    .load(theAttachment?.body)
                     .into(imageViewAttachment)
             }
         } catch (exception: Exception) {

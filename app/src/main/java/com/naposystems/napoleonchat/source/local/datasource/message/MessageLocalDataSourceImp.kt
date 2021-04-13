@@ -57,6 +57,15 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageAndAttachmentRelation
     }
 
+    override suspend fun getMessageByIdAsLiveData(
+        id: Int,
+        decrypt: Boolean
+    ): LiveData<List<AttachmentEntity>> {
+        return messageDao.getMessageByIdAsFlow(id).map { attachments ->
+            attachments
+        }.asLiveData()
+    }
+
     override fun getMessages(contactId: Int) =
         messageDao.getMessagesAndAttachmentsDistinctUntilChanged(contactId)
             .map { listMessageRelations: List<MessageAttachmentRelation> ->

@@ -218,7 +218,7 @@ class MultipleAttachmentPreviewActivity
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
         when (action) {
             MultipleAttachmentPreviewAction.Exit -> exitPreview()
-            MultipleAttachmentPreviewAction.ExitToConversation -> exitToConversation()
+            MultipleAttachmentPreviewAction.ExitToConversation -> exitPreview()
             MultipleAttachmentPreviewAction.HideAttachmentOptions -> hideAnimAttachmentOptions()
             MultipleAttachmentPreviewAction.ShowAttachmentOptions -> showAnimAttachmentOptions()
             MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
@@ -226,11 +226,12 @@ class MultipleAttachmentPreviewActivity
             is MultipleAttachmentPreviewAction.ShowSelectFolderName -> TODO()
             is MultipleAttachmentPreviewAction.SelectItemInTabLayout -> removeElementPager(action.indexItem)
             is MultipleAttachmentPreviewAction.ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
+            is MultipleAttachmentPreviewAction.SendMessageToRemote -> sendMessageToRemote(action)
         }
     }
 
-    private fun exitToConversation() {
-    }
+    private fun sendMessageToRemote(action: MultipleAttachmentPreviewAction.SendMessageToRemote) =
+        viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
 
     private fun showSelfDestruction(selfDestruction: Int) {
         val iconSelfDestruction = getDrawableSelfDestruction(selfDestruction)

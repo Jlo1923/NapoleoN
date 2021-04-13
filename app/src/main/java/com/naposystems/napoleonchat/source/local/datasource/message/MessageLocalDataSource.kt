@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.source.local.datasource.message
 
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 
@@ -9,6 +10,11 @@ interface MessageLocalDataSource {
     suspend fun getMessageByWebId(webId: String, decrypt: Boolean): MessageAttachmentRelation?
 
     suspend fun getMessageById(id: Int, decrypt: Boolean): MessageAttachmentRelation?
+
+    suspend fun getMessageByIdAsLiveData(
+        id: Int,
+        decrypt: Boolean
+    ): LiveData<List<AttachmentEntity>>
 
     fun getMessages(contactId: Int): LiveData<List<MessageAttachmentRelation>>
 
@@ -28,7 +34,10 @@ interface MessageLocalDataSource {
 
     suspend fun cleanSelectionMessages(contactId: Int)
 
-    suspend fun deleteMessagesSelected(contactId: Int, listMessageRelations: List<MessageAttachmentRelation>)
+    suspend fun deleteMessagesSelected(
+        contactId: Int,
+        listMessageRelations: List<MessageAttachmentRelation>
+    )
 
     suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
 
@@ -46,7 +55,10 @@ interface MessageLocalDataSource {
 
     fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>>
 
-    suspend fun getTextMessagesByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
+    suspend fun getTextMessagesByStatus(
+        contactId: Int,
+        status: Int
+    ): List<MessageAttachmentRelation>
 
     suspend fun getMissedCallsByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
 
