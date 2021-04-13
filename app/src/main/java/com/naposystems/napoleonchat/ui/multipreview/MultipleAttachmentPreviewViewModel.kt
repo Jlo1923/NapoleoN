@@ -144,7 +144,10 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                         val messageEntity = insertMessageToContact(itemMessage)
                         deleteMessageNotSent(it.id)
                         val attachments = insertAttachmentsWithMsgId(listFiles, messageEntity.id)
-                        sendMessageAndAttachmentsToRemote(messageEntity, attachments)
+                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
+                            messageEntity,
+                            attachments
+                        )
                     }
                 }
             } catch (exception: Exception) {
@@ -153,41 +156,12 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    private suspend fun sendMessageAndAttachmentsToRemote(
-        messageEntity: MessageEntity,
-        attachments: List<AttachmentEntity?>
-    ) {
-        if (messageEntity.mustSendToRemote()) {
-            val messageResponse = repositoryMessages.sendMessage(messageEntity)
-            val attachmentsWithWebId = setMessageWebIdToAttachments(attachments, messageResponse)
-            messageResponse?.let { pairData ->
-                pairData.first?.let {
-                    sendMessageAndAttachmentsToRemote(it, attachmentsWithWebId)
-                }
-            }
-        } else {
-            // we can create notification for upload attachments
-            // todo: mover esto a un activity para usar el context
-            val intent = Intent(context, MultipleUploadService::class.java).apply {
-                putExtras(Bundle().apply {
-                    putParcelable(MESSAGE_KEY, messageEntity)
-                    putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
-                })
-            }
-            context.startService(intent)
-            actions.value = MultipleAttachmentPreviewAction.ExitToConversation
-        }
-    }
-
     private fun setMessageWebIdToAttachments(
         attachments: List<AttachmentEntity?>,
         messageResponse: Pair<MessageEntity?, String>?
     ): List<AttachmentEntity?> {
         attachments.forEach { attachment ->
-            attachment?.let {
-                it.messageWebId = messageResponse?.second ?: ""
-            }
-
+            attachment?.let { it.messageWebId = messageResponse?.second ?: "" }
         }
         return attachments
     }
@@ -204,5 +178,34 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
+
+    fun sendMessageToRemote(
+        messageEntity: MessageEntity,
+        attachments: List<AttachmentEntity?>
+    ) {
+        if (messageEntity.mustSendToRemote()) {
+            viewModelScope.launch {
+                val messageResponse = repositoryMessages.sendMessage(messageEntity)
+                val attachmentsWithWebId =
+                    setMessageWebIdToAttachments(attachments, messageResponse)
+                messageResponse?.let { pairData ->
+                    pairData.first?.let {
+                        sendMessageToRemote(it, attachmentsWithWebId)
+                    }
+                }
+            }
+        } else {
+            // we can create notification for upload attachments
+            // todo: mover esto a un activity para usar el context
+            val intent = Intent(context, MultipleUploadService::class.java).apply {
+                putExtras(Bundle().apply {
+                    putParcelable(MESSAGE_KEY, messageEntity)
+                    putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
+                })
+            }
+            context.startService(intent)
+            actions.value = MultipleAttachmentPreviewAction.ExitToConversation
+        }
+    }
 
 }

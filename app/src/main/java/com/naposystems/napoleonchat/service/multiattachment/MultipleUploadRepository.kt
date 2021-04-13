@@ -69,10 +69,8 @@ class MultipleUploadRepository @Inject constructor(
                 updateMessageStatus(messageEntity, SENDING.status)
                 publishEventStart()
                 val pairFiles = getDestFileForCompress(attachmentEntity)
-
                 compressVideo(attachmentEntity, pairFiles.first, pairFiles.second, this)
                     .collect { handleVideoCompressResult(it, this as Job) }
-
             } catch (exception: Exception) {
                 handleExceptionInUploadAttachment()
             }
