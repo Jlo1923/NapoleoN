@@ -29,7 +29,6 @@ data class ContactResDTO(
         fun getUsers(contactResDTO: List<ContactResDTO>): MutableList<Contact> {
 
             val listContacts: MutableList<Contact> = arrayListOf()
-            var existsC = false
 
             for (resContact in contactResDTO) {
                 val contact = Contact(
@@ -46,7 +45,6 @@ data class ContactResDTO(
                     offerId = resContact.offer?.id
                 )
 
-                if (!existsC && !contact.statusFriend) existsC = true
                 listContacts.add(contact)
             }
 
@@ -65,7 +63,6 @@ data class ContactResDTO(
                 multableList.add(title1)
                 multableList.addAll(sortedByFriends)
                 val lastP = multableList.indexOf(existsContact)
-                if (existsC)
                     multableList.add(
                         lastP + 1,
                         title2

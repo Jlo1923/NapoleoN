@@ -219,6 +219,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
     private fun imageButtonSwitchCameraClickListener() {
         binding.imageButtonSwitchCamera.setOnClickListener {
             binding.viewFinder.toggleCamera()
+            binding.customVerticalSeekBar.restartProgress()
         }
     }
 
@@ -227,6 +228,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
         if (binding.viewFinder.isRecording) {
             binding.viewFinder.stopRecording()
         }
+        binding.customVerticalSeekBar.restartProgress()
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
@@ -519,6 +521,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
     override fun startToRecord() {
         startRecording()
     }
+
 
     override fun hasLocked() {
         binding.imageButtonLock.visibility = View.GONE

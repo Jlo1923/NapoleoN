@@ -14,8 +14,12 @@ class CustomVerticalSeekBar constructor(context: Context, attributeSet: Attribut
         fun onSlide(zoomValue: Float)
     }
 
-    fun setListener(listener: Listener  ) {
+    fun setListener(listener: Listener) {
         this.listener = listener
+    }
+
+    fun restartProgress() {
+        progress = 0
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {

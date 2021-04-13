@@ -171,8 +171,8 @@ object Constants {
     }
 
     enum class AddContactTitleType(val type: Int) {
-        TITLE_MY_CONTACTS(0),
-        TITLE_COINCIDENCES(1)
+        TITLE_MY_CONTACTS(1),
+        TITLE_COINCIDENCES(2)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {

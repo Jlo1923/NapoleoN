@@ -18,7 +18,7 @@ class AddContactTitleViewHolder constructor(val binding: AddContactTitleItemBind
             if (item.type == Constants.AddContactTitleType.TITLE_MY_CONTACTS.type) {
                 textViewTitle.text = context.getString(R.string.text_friend_my_contacts)
             } else {
-                binding.textViewTitle.text = context.getString(R.string.text_friend_coincidences)
+                textViewTitle.text = context.getString(R.string.text_friend_coincidences)
             }
         }
 
