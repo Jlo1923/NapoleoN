@@ -815,22 +815,13 @@ class WebRTCClientImp
 
     //Proximity Sensor
     override fun startProximitySensor() {
-        if (audioManager.isSpeakerphoneOn.not() && isHeadsetConnected.not() && isBluetoothActive.not()) {
-            initializeProximitySensor()
+        if (wakeLock.isHeld.not()) {
+            wakeLock.acquire()
         }
+
     }
 
     override fun stopProximitySensor() {
-        unregisterProximityListener()
-    }
-
-    private fun initializeProximitySensor() {
-        if (callModel.isVideoCall.not() && audioManager.isSpeakerphoneOn.not() && wakeLock.isHeld.not()) {
-            wakeLock.acquire()
-        }
-    }
-
-    private fun unregisterProximityListener() {
         if (wakeLock.isHeld) {
             wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
         }
@@ -926,10 +917,10 @@ class WebRTCClientImp
     }
 
     //region Implementation BluetoothStateManager.BluetoothStateListener
-    override fun onBluetoothStateChanged(isAvailable: Boolean) {
-        Timber.d("onBluetoothStateChanged: $isAvailable")
+    override fun onBluetoothStateChanged(isBluetoothAvailable: Boolean) {
+        Timber.d("onBluetoothStateChanged: $isBluetoothAvailable")
 
-        isBluetoothAvailable = isAvailable
+        this.isBluetoothAvailable = isBluetoothAvailable
 
         if (isFirstTimeBluetoothAvailable.not() && isHeadsetConnected.not()) {
             Timber.d("isFirstTimeBluetoothAvailableeeee")
@@ -937,23 +928,23 @@ class WebRTCClientImp
             audioManager.startBluetoothSco()
             audioManager.isBluetoothScoOn = true
             audioManager.isSpeakerphoneOn = false
-            stopProximitySensor()
+//            stopProximitySensor()
         }
 
-        if (isAvailable && callModel.isVideoCall && isBluetoothStopped) {
+        if (isBluetoothAvailable && callModel.isVideoCall && isBluetoothStopped) {
             Timber.d("onBluetoothStateChanged 2do")
             audioManager.isSpeakerphoneOn = true
         }
 
-        if (isAvailable && callModel.isVideoCall.not()) {
+        if (isBluetoothAvailable && callModel.isVideoCall.not()) {
             stopProximitySensor()
         }
 
-        if (isAvailable.not() && isHeadsetConnected) {
+        if (isBluetoothAvailable.not() && isHeadsetConnected) {
             Timber.d("onBluetoothStateChanged 3ero")
             audioManager.isSpeakerphoneOn = false
         }
-        webRTCClientListener?.toggleBluetoothButtonVisibility(isAvailable)
+        webRTCClientListener?.toggleBluetoothButtonVisibility(isBluetoothAvailable)
     }
     //endregion
 
@@ -1128,8 +1119,6 @@ class WebRTCClientImp
 
         countDownRingCall.cancel()
 
-        initializeProximitySensor()
-
         webRTCClientListener?.enableControls()
 
         mHandler.postDelayed(
@@ -1140,6 +1129,8 @@ class WebRTCClientImp
         handlerNotification.notificationCallInProgress(callModel)
 
         stopRingAndVibrate()
+
+        startProximitySensor()
 
         if (callModel.isVideoCall.not() && callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
             audioManager.isSpeakerphoneOn = false
@@ -1207,7 +1198,7 @@ class WebRTCClientImp
             Timber.d("LLAMADA PASO: DESSUSCRIBIR A CANAL")
             socketClient.unSubscribePresenceChannel(callModel.channelName)
 
-            unregisterProximityListener()
+            stopProximitySensor()
 
             mHandler.removeCallbacks(mCallTimeRunnable)
 
