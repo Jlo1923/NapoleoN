@@ -761,7 +761,7 @@ class WebRTCClientImp
 
             } else {
 
-                videoCapturerAndroid?.startCapture(640,480,30)
+                videoCapturerAndroid?.startCapture(640, 480, 30)
 
                 socketClient.emitClientCall(
                     callModel.channelName,

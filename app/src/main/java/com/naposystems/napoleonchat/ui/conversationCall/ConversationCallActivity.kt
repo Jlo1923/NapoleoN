@@ -272,6 +272,9 @@ class ConversationCallActivity :
 
     private fun setUIListeners() {
 
+        if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+            binding.fabAnswer.visibility = View.GONE
+
         binding.fabAnswer.setOnClickListener {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                 answerCall()
