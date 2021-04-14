@@ -324,7 +324,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/green"
-            android:visibility="@{typeCall == Constants.TypeCall.IS_INCOMING_CALL.type ? View.VISIBLE : View.GONE}"
+            android:visibility="visible"
             app:borderWidth="0dp"
             app:layout_constraintBottom_toBottomOf="@id/fab_hangup"
             app:layout_constraintEnd_toEndOf="parent"

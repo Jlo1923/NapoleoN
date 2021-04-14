@@ -82,11 +82,14 @@ class ConversationCallActivity :
 
         AndroidInjection.inject(this)
 
-        webRTCClient.reInit()
-
         NapoleonApplication.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
+
+        if (webRTCClient.isActiveCall.not())
+            webRTCClient.reInit()
+        else
+            enableControls()
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
