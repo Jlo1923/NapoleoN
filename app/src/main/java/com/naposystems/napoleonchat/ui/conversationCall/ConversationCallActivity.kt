@@ -82,11 +82,14 @@ class ConversationCallActivity :
 
         AndroidInjection.inject(this)
 
-        webRTCClient.reInit()
-
         NapoleonApplication.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
+
+        if (webRTCClient.isActiveCall.not())
+            webRTCClient.reInit()
+        else
+            enableControls()
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
@@ -144,7 +147,7 @@ class ConversationCallActivity :
             }
             binding.imageButtonMicOff.setChecked(webRTCClient.isMicOn.not(), false)
             binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
-            binding.imageButtonMuteVideo.setChecked(webRTCClient.isHideVideo, false)
+            binding.imageButtonToggleVideo.setChecked(webRTCClient.isHideVideo, false)
             binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive, false)
         }
 
@@ -181,7 +184,7 @@ class ConversationCallActivity :
             Timber.d("startCallActivity, onBackPressed")
 
             if (webRTCClient.callModel.isVideoCall) {
-                webRTCClient.hideVideo(checked = true, itsFromBackPressed = true)
+                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
             }
 
             NapoleonApplication.isShowingCallActivity = false
@@ -215,11 +218,7 @@ class ConversationCallActivity :
             webRTCClient.isActiveCall.not() &&
             callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
-            binding.fabAnswer.visibility = View.GONE
-
-            webRTCClient.stopRingAndVibrate()
-
-            webRTCClient.createAnswer()
+            answerCall()
         }
     }
 
@@ -269,6 +268,9 @@ class ConversationCallActivity :
 
     private fun setUIListeners() {
 
+        if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+            binding.fabAnswer.visibility = View.GONE
+
         binding.fabAnswer.setOnClickListener {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                 answerCall()
@@ -292,8 +294,8 @@ class ConversationCallActivity :
             webRTCClient.changeToVideoCall()
         }
 
-        binding.imageButtonMuteVideo.setOnCheckedChangeListener { _, isChecked ->
-            webRTCClient.hideVideo(isChecked)
+        binding.imageButtonToggleVideo.setOnCheckedChangeListener { _, isChecked ->
+            webRTCClient.toggleVideo(isChecked)
         }
 
         binding.imageButtonSwitchCamera.setOnClickListener {
@@ -386,14 +388,6 @@ class ConversationCallActivity :
                 binding.viewSwitcher.showNext()
 
         }
-    }
-
-    //region Implementation WebRTCClient.WebRTCClientListener
-    override fun toggleContactCamera(isVisible: Boolean) {
-        runOnUiThread(Runnable {
-            binding.cameraOff.containerCameraOff.visibility =
-                if (isVisible) View.VISIBLE else View.GONE
-        })
     }
 
     override fun contactWantChangeToVideoCall() {
@@ -531,7 +525,16 @@ class ConversationCallActivity :
     }
 
     override fun toggleLocalRenderVisibility(visibility: Int) {
-        binding.localSurfaceRender.visibility = visibility
+        runOnUiThread(Runnable {
+            binding.localSurfaceRender.visibility = visibility
+        })
+    }
+
+    //region Implementation WebRTCClient.WebRTCClientListener
+    override fun toggleContactCamera(visibility: Int) {
+        runOnUiThread(Runnable {
+            binding.cameraOff.containerCameraOff.visibility = visibility
+        })
     }
 
     override fun toggleBluetoothButtonVisibility(isVisible: Boolean) {

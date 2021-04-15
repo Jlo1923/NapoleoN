@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.utils.handlerMediPlayer
 
 import android.content.Context
-import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
@@ -25,7 +24,8 @@ class HandlerMediaPlayerNotificationImp
         ACTION_PLAY_RING_BACK
     }
 
-    lateinit var mediaPlayer: MediaPlayer
+    //    lateinit var mediaPlayer: MediaPlayer
+    var mediaPlayer: MediaPlayer? = null
 
     var currentlyAction: ActionPlay = ActionPlay.ACTION_NONE
 
@@ -39,7 +39,7 @@ class HandlerMediaPlayerNotificationImp
 
     override fun playRingtone() {
 
-        if (::mediaPlayer.isInitialized)
+        if (mediaPlayer != null)
             Timber.d("RINGTONE: playRingtone mediaPlayer. $mediaPlayer")
         else
             Timber.d("RINGTONE: playRingtone mediaPlayer. NO INICIALIZADO")
@@ -54,7 +54,7 @@ class HandlerMediaPlayerNotificationImp
 
     override fun playEndTone() {
 
-        if (::mediaPlayer.isInitialized)
+        if (mediaPlayer != null)
             Timber.d("RINGTONE: playEndTone mediaPlayer. $mediaPlayer")
         else
             Timber.d("RINGTONE: playEndTone mediaPlayer. NO INICIALIZADO")
@@ -63,13 +63,13 @@ class HandlerMediaPlayerNotificationImp
             Uri.parse(stringResource + R.raw.end_call_tone),
             isLooping = false,
             needVibrate = false,
-            ActionPlay.ACTION_PLAY_RING_BACK
+            ActionPlay.ACTION_PLAY_ENDTONE
         )
     }
 
     override fun playRingBack() {
 
-        if (::mediaPlayer.isInitialized)
+        if (mediaPlayer != null)
             Timber.d("RINGTONE: playRingBack mediaPlayer. $mediaPlayer")
         else
             Timber.d("RINGTONE: playRingBack mediaPlayer. NO INICIALIZADO")
@@ -84,7 +84,7 @@ class HandlerMediaPlayerNotificationImp
 
     override fun playBusyTone() {
 
-        if (::mediaPlayer.isInitialized)
+        if (mediaPlayer != null)
             Timber.d("RINGTONE: playBusyTone mediaPlayer. $mediaPlayer")
         else
             Timber.d("RINGTONE: playBusyTone mediaPlayer. NO INICIALIZADO")
@@ -113,23 +113,23 @@ class HandlerMediaPlayerNotificationImp
 
         try {
 
-            if (::mediaPlayer.isInitialized.not() || mediaPlayer == null)
-                mediaPlayer = MediaPlayer()
-
             if (currentlyAction != actionPlay) {
 
                 currentlyAction = actionPlay
 
                 stopMedia()
 
-                mediaPlayer = mediaPlayer.apply {
-//                    setAudioAttributes(
-//                        AudioAttributes
-//                            .Builder()
-//                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-//                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-//                            .build()
-//                    )
+                if (mediaPlayer == null)
+                    mediaPlayer = MediaPlayer()
+
+                mediaPlayer = mediaPlayer?.apply {
+                    //                    setAudioAttributes(
+                    //                        AudioAttributes
+                    //                            .Builder()
+                    //                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    //                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    //                            .build()
+                    //                    )
                     setDataSource(
                         context,
                         uriSound
@@ -159,14 +159,17 @@ class HandlerMediaPlayerNotificationImp
     private fun stopMedia() {
         try {
 
-            if (::mediaPlayer.isInitialized)
-                if (mediaPlayer.isPlaying) {
+            if (mediaPlayer != null) {
+                if (mediaPlayer!!.isPlaying) {
                     Timber.d("RINGTONE: stopMedia mediaPlayer. $mediaPlayer ")
-                    mediaPlayer.apply {
+                    mediaPlayer?.apply {
                         stop()
                         reset()
                     }
                 }
+            }
+
+            mediaPlayer = null
 
             vibrator?.cancel()
 

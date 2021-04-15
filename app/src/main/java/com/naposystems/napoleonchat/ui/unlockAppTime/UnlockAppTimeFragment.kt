@@ -33,12 +33,12 @@ class UnlockAppTimeFragment : Fragment() {
 
     private var unlockTime = 0L
     private var lockTime = 0L
-    
-     override fun onAttach(context: Context) {
+
+    override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
         super.onAttach(context)
     }
-    
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
