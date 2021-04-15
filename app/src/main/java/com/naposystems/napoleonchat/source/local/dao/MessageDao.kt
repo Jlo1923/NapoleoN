@@ -273,7 +273,7 @@ interface MessageDao {
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id"
     )
-    suspend fun countUnreadByContactId(id: Int?): Int?
+    suspend fun countUnreadByContactId(id: Int): Int
 
     @Query(
         "SELECT * " +

@@ -350,7 +350,11 @@ class MessageLocalDataSourceImp @Inject constructor(
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
                         messageAndAttachmentRelation.messagesUnReads =
-                            messageDao.countUnreadByContactId(messageAndAttachmentRelation.contact?.id)
+                            messageAndAttachmentRelation.contact?.id?.let {
+                                messageDao.countUnreadByContactId(
+                                    it
+                                )
+                            }
                         with(messageAndAttachmentRelation.messageEntity) {
                             this.let {
                                 it.body = it.getBody(cryptoMessage)
