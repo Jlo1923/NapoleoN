@@ -16,8 +16,8 @@ interface SocketEventListener {
     //endregion
 
     //region Handler Call
-    fun contactRejectCall(channelName: String)
-    fun contactCancelCall(channelName: String)
+    fun contactRejectCall(channelName: String, disposeService: Boolean = true)
+    fun contactCancelCall(channelName: String, disposeService: Boolean = true)
     //endregion
 
     //Contact change to video call
@@ -30,6 +30,7 @@ interface SocketEventListener {
 
     fun contactHasHangup(channelName: String)
     //endregion
+
 
 }
 

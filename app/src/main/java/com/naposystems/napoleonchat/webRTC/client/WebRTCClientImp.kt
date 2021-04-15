@@ -95,11 +95,7 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(3),
         TimeUnit.SECONDS.toMillis(1)
     ) {
-        override fun onFinish() {
-            if (isActiveCall.not()) {
-                disposeCall()
-            }
-        }
+        override fun onFinish() = Unit
 
         override fun onTick(millisUntilFinished: Long) = Unit
     }
@@ -197,6 +193,12 @@ class WebRTCClientImp
 
     private lateinit var wakeLock: PowerManager.WakeLock
 
+    init {
+        reInit()
+        subscribeToRXEvents()
+        socketClient.setSocketEventListener(this)
+    }
+
     override fun reInit() {
 
         audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
@@ -271,11 +273,6 @@ class WebRTCClientImp
         peerConnection = null
     }
 
-    init {
-        reInit()
-        subscribeToRXEvents()
-        socketClient.setSocketEventListener(this)
-    }
 
     private fun subscribeToRXEvents() {
         val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
@@ -1022,28 +1019,18 @@ class WebRTCClientImp
         }
     }
 
-    override fun contactRejectCall(channelName: String) {
-        webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
-        countDownEndCallBusy.start()
-        handlerMediaPlayerNotification.playBusyTone()
+    override fun contactRejectCall(channelName: String, disposeService: Boolean) {
+        if (channelName == this.callModel.channelName) {
+            webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
+            countDownEndCallBusy.start()
+            handlerMediaPlayerNotification.playBusyTone()
+            disposeCall(disposeService = disposeService)
+        }
     }
 
-    override fun contactCancelCall(channelName: String) {
+    override fun contactCancelCall(channelName: String, disposeService: Boolean) {
         if (channelName == this.callModel.channelName) {
-            try {
-                audioManager.isSpeakerphoneOn = false
-                audioManager.mode = AudioManager.MODE_NORMAL
-
-                handlerMediaPlayerNotification.stopRingtone()
-
-                unSubscribePresenceChannel()
-
-                localAudioTrack?.setEnabled(false)
-            } catch (e: Exception) {
-                Timber.e("Error manejado, $e")
-            } finally {
-                disposeCall()
-            }
+            disposeCall(disposeService = disposeService)
         }
     }
 
@@ -1174,9 +1161,31 @@ class WebRTCClientImp
         }
     }
 
-    override fun disposeCall() {
+    override fun disposeCall(callModel: CallModel?, disposeService: Boolean) {
+
+        var auxModel = this.callModel
+
+        if (callModel != null)
+            auxModel = callModel
 
         try {
+
+            if (disposeService) {
+
+                Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
+
+                val intent = Intent(context, WebRTCService::class.java)
+
+                intent.action = WebRTCService.ACTION_CALL_END
+
+                intent.putExtras(Bundle().apply {
+                    putSerializable(Constants.CallKeys.CALL_MODEL, auxModel)
+                })
+
+                context.startService(intent)
+            }
+
+            RxBus.publish(RxEvent.CallEnd())
 
             Timber.d("LLAMADA PASO: DISPOSE CALL")
 
@@ -1194,22 +1203,8 @@ class WebRTCClientImp
 
             isActiveCall = false
 
-            RxBus.publish(RxEvent.CallEnd())
-
-            Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
-
-            val intent = Intent(context, WebRTCService::class.java)
-
-            intent.action = WebRTCService.ACTION_CALL_END
-
-            intent.putExtras(Bundle().apply {
-                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
-            })
-
-            context.startService(intent)
-
-            Timber.d("LLAMADA PASO: DESSUSCRIBIR A CANAL")
-            socketClient.unSubscribePresenceChannel(callModel.channelName)
+            Timber.d("LLAMADA PASO: DESUBSCRIBIR A CANAL")
+            socketClient.unSubscribePresenceChannel(auxModel.channelName)
 
             stopProximitySensor()
 
