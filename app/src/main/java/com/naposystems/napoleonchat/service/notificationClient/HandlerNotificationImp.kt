@@ -222,16 +222,16 @@ class HandlerNotificationImp
             }
         }
 
-        val intent = Intent(context, ConversationCallActivity::class.java).apply {
+        val intent = Intent(context, WebRTCService::class.java).apply {
+            this.action = WebRTCService.ACTION_OPEN_CALL
             putExtras(Bundle().apply {
-                putSerializable(ConversationCallActivity.KEY_CALL_MODEL, callModel)
+                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
             })
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
 
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, 0
-        )
+        val pendingIntent =
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         notificationBuilder.apply {
             setFullScreenIntent(pendingIntent, true)
@@ -307,6 +307,7 @@ class HandlerNotificationImp
 
         val pendingIntent =
             PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         return NotificationCompat.Action(
             iconResId,
             context.getString(titleResId),

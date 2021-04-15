@@ -218,11 +218,7 @@ class ConversationCallActivity :
             webRTCClient.isActiveCall.not() &&
             callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
-            binding.fabAnswer.visibility = View.GONE
-
-            webRTCClient.stopRingAndVibrate()
-
-            webRTCClient.createAnswer()
+            answerCall()
         }
     }
 
