@@ -137,8 +137,12 @@ class NapoleonKeyboardGifFragment : Fragment() {
         binding.giphySearchBar.hideKeyboardOnSearch = true
 
         giphyEditText?.let { editText ->
+
+            editText.isCursorVisible = false
+
             editText.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
+                    editText.isCursorVisible = true
                     editText.requestFocus()
                     mListener?.onSearchFocused()
                 }

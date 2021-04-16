@@ -207,15 +207,14 @@ fun bindAvatar(imageView: ImageView, @Nullable contact: ContactEntity?) {
 
         val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
 
-        Glide.with(context)
-            .load(contact.imageUrlFake)
-            .apply(
-                RequestOptions()
-                    .priority(Priority.NORMAL)
-                    .fitCenter()
-            ).error(defaultAvatar)
-            .circleCrop()
-            .into(imageView)
+        if (contact.imageUrlFake.isEmpty()) {
+            imageView.setImageDrawable(defaultAvatar)
+        } else {
+            Glide.with(context)
+                .load(contact.imageUrlFake)
+                .circleCrop()
+                .into(imageView)
+        }
 
     } else {
         val addContact = ContextCompat.getDrawable(context, R.drawable.ic_person_add)
@@ -230,15 +229,14 @@ fun bindAvatarWithoutCircle(imageView: ImageView, @Nullable contact: ContactEnti
         val context = imageView.context
 
         val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
-
-        Glide.with(context)
-            .load(contact.imageUrlFake)
-            .apply(
-                RequestOptions()
-                    .priority(Priority.NORMAL)
-                    .fitCenter()
-            ).error(defaultAvatar)
-            .into(imageView)
+        if (contact.imageUrlFake.isEmpty()) {
+            imageView.setImageDrawable(defaultAvatar)
+        } else {
+            Glide.with(context)
+                .load(contact.imageUrlFake)
+                .circleCrop()
+                .into(imageView)
+        }
     }
 }
 
