@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.multiattachment
+package com.naposystems.napoleonchat.service.download
 
 import android.app.Service
 import android.content.Intent
@@ -6,38 +6,36 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
+import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
+import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.SENDING
+import com.naposystems.napoleonchat.utility.Constants
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import javax.inject.Inject
 
-class MultipleUploadService : Service() {
+const val ATTACHMENT_KEY = "attachment"
+
+class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
 
     companion object {
         const val PROGRESS_MAX = 100
-        const val MESSAGE_KEY = "message"
-        const val ATTACHMENT_KEY = "attachment"
-        const val ACTION_CANCEL_UPLOAD = "action_cancel_upload"
+        const val ACTION_CANCEL_DOWNLOAD = "action_cancel_download"
     }
 
     @Inject
-    lateinit var repository: IContractMultipleUpload.Repository
+    lateinit var repository: IContractDownloadService.Repository
 
     @Inject
-    lateinit var notificationUploadService: NotificationUploadClientImp
+    lateinit var notificationDownloadClient: NotificationDownloadClient
 
     private lateinit var napoleonApplication: NapoleonApplication
-    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING_MULTI
+    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING
     private val compositeDisposable = CompositeDisposable()
-    private var attachmentsSentCount = 0
-    private var attachmentsPendingCount = 0
     lateinit var attachmentList: List<AttachmentEntity>
-    lateinit var currentMessage: MessageEntity
 
     override fun onCreate() {
         super.onCreate()
@@ -46,22 +44,23 @@ class MultipleUploadService : Service() {
         subscribeRxEvents()
     }
 
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
 
         intent.extras?.let { bundle ->
-            val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
-            message?.let { currentMessage = it }
             attachmentList =
                 bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
+            handleTryNextAttachment()
         }
-
-        handleTryNextAttachment()
 
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")
-            if (action == MultipleUploadService.ACTION_CANCEL_UPLOAD) {
-                repository.cancelUpload()
+            if (action == ACTION_CANCEL_DOWNLOAD) {
+                repository.cancelDownload()
                 stopSelf()
                 stopForeground(true)
             }
@@ -70,16 +69,13 @@ class MultipleUploadService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() { it.status == SENDING.status }
-
-    private fun showNotification() {
-        val notification = notificationUploadService.createUploadNotification(applicationContext)
-        Timber.d("notificationId: $notificationId")
-        startForeground(notificationId, notification)
+    override fun showNotification() {
+        notificationDownloadClient.createDownloadNotification(applicationContext).apply {
+            startForeground(notificationId, this)
+        }
     }
 
-    private fun subscribeRxEvents() {
+    override fun subscribeRxEvents() {
 
         val disposableUploadStart = RxBus.listen(RxEvent.MultiUploadStart::class.java)
             .subscribe { Timber.d("RxEvent.UploadStart") }
@@ -117,22 +113,19 @@ class MultipleUploadService : Service() {
     }
 
     private fun handleTryNextAttachment() {
-        currentMessage.let { msg ->
-            val nextAttachment = getNextAttachment()
-            nextAttachment?.let {
-                repository.uploadAttachment(it, msg)
-                showNotification()
-            } ?: run { handleUploadSuccess() }
-        }
+        val nextAttachment = getNextAttachment()
+        nextAttachment?.let {
+            repository.downloadAttachment(it)
+            showNotification()
+        } ?: run { handleUploadSuccess() }
     }
 
     private fun handleUploadError() {
-        Timber.d("RxEvent.UploadError")
         stopService()
     }
 
     private fun handleUploadProgress(it: RxEvent.MultiUploadProgress) =
-        notificationUploadService.updateUploadNotificationProgress(
+        notificationDownloadClient.updateDownloadNotificationProgress(
             MultipleUploadService.PROGRESS_MAX,
             it.progress.toInt()
         )
@@ -142,6 +135,7 @@ class MultipleUploadService : Service() {
         stopForeground(true)
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    private fun getNextAttachment(): AttachmentEntity? =
+        attachmentList.firstOrNull() { it.status == Constants.AttachmentStatus.SENDING.status }
 
 }

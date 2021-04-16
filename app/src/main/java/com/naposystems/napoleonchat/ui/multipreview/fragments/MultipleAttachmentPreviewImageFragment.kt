@@ -15,7 +15,6 @@ class MultipleAttachmentPreviewImageFragment(
 ) : Fragment() {
 
     private lateinit var binding: FragmentMultipleAttachmentPreviewImageBinding
-    private var isShowing = true
     private var listener: MultipleAttachmentPreviewListener? = null
 
     override fun onCreateView(
@@ -28,10 +27,24 @@ class MultipleAttachmentPreviewImageFragment(
 
     override fun onStart() {
         super.onStart()
-        binding.imagePreview.setOnClickListener {
-            listener?.changeVisibilityOptions()
+        binding.imagePreview.setOnClickListener { listener?.changeVisibilityOptions() }
+        if (file.messageAndAttachment == null) {
+            loadImage()
+        } else {
+            loadImageFromBody()
         }
-        loadImage()
+    }
+
+    private fun loadImageFromBody() {
+        try {
+            binding.apply {
+                Glide.with(root.context)
+                    .load(file.messageAndAttachment?.attachment?.body)
+                    .into(imagePreview)
+            }
+        } catch (exception: Exception) {
+
+        }
     }
 
     private fun loadImage() {

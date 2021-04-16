@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.service.syncManager
 
+import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -255,54 +256,91 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
+
         GlobalScope.launch {
-
-            getContacts()
-
             val databaseMessage =
-                messageLocalDataSource.getMessageByWebId(
-                    newMessageDataEventRes.messageId,
-                    false
-                )
+                messageLocalDataSource.getMessageByWebId(newMessageDataEventRes.messageId, false)
 
-            if (databaseMessage == null) {
-
-                val newMessageEventMessageResData: String = if (BuildConfig.ENCRYPT_API) {
-                    cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
-                } else {
-                    newMessageDataEventRes.message
+            /**
+             * Si el mensaje no existe dejamos el proceso como estaba, en caso contrario,
+             * solo tomaremos el attachment que acompaña el mensaje que nos llega para agregarlo
+             * a la database local
+             */
+            try {
+                databaseMessage?.let {
+                    getMessageIdAndSaveAttachmentLocally(
+                        newMessageDataEventRes,
+                        it.messageEntity.id
+                    )
+                } ?: run {
+                    insertNewMessageAndAttachmentLocally(newMessageDataEventRes)
                 }
-                val moshi = Moshi.Builder().build()
-                val jsonAdapter: JsonAdapter<NewMessageEventMessageRes> =
-                    moshi.adapter(NewMessageEventMessageRes::class.java)
-
-                jsonAdapter.fromJson(newMessageEventMessageResData)
-                    ?.let { newMessageEventMessageRes ->
-                        val message = newMessageEventMessageRes.toMessageEntity(
-                            Constants.IsMine.NO.value
-                        )
-
-                        val messageId = messageLocalDataSource.insertMessage(message)
-                        Timber.d("Conversation insertó mensajes")
-
-                        if (newMessageEventMessageRes.quoted.isNotEmpty()) {
-                            insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
-                        }
-
-                        val listAttachments =
-                            NewMessageEventAttachmentRes.toListConversationAttachment(
-                                messageId.toInt(),
-                                newMessageEventMessageRes.attachments
-                            )
-
-                        attachmentLocalDataSource.insertAttachments(listAttachments)
-                        Timber.d("Conversation insertó attachment")
-
-                        RxBus.publish(
-                            RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-                        )
-                    }
+            } catch (exception: Exception) {
+                exception.printStackTrace()
             }
+
+        }
+    }
+
+    private suspend fun getMessageIdAndSaveAttachmentLocally(
+        newMessageDataEventRes: NewMessageDataEventRes,
+        idMessage: Int
+    ) {
+        Log.i("JkDev", "getMessageIdAndSaveAttachmentLocally: $idMessage")
+        val newMessageEventData = if (BuildConfig.ENCRYPT_API) {
+            cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
+        } else {
+            newMessageDataEventRes.message
+        }
+
+        val jsonAdapter =
+            Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
+
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
+            if (newMessageEvent.quoted.isNotEmpty()) {
+                insertQuote(newMessageEvent.quoted, idMessage)
+            }
+            val listAttachments =
+                NewMessageEventAttachmentRes.toListConversationAttachment(
+                    idMessage,
+                    newMessageEvent.attachments
+                )
+            attachmentLocalDataSource.insertAttachments(listAttachments)
+            RxBus.publish(
+                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
+            )
+        }
+    }
+
+    private suspend fun insertNewMessageAndAttachmentLocally(
+        newMessageDataEventRes: NewMessageDataEventRes
+    ) {
+        getContacts()
+        val newMessageEventData = if (BuildConfig.ENCRYPT_API) {
+            cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
+        } else {
+            newMessageDataEventRes.message
+        }
+
+        val jsonAdapter =
+            Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
+
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
+            val message = newMessageEvent.toMessageEntity(Constants.IsMine.NO.value)
+            val messageId = messageLocalDataSource.insertMessage(message)
+            Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
+            if (newMessageEvent.quoted.isNotEmpty()) {
+                insertQuote(newMessageEvent.quoted, messageId.toInt())
+            }
+            val listAttachments =
+                NewMessageEventAttachmentRes.toListConversationAttachment(
+                    messageId.toInt(),
+                    newMessageEvent.attachments
+                )
+            attachmentLocalDataSource.insertAttachments(listAttachments)
+            RxBus.publish(
+                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
+            )
         }
     }
 

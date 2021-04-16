@@ -33,6 +33,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     private var isShowingOptions = true
     private var listFiles = mutableListOf<MultipleAttachmentFileItem>()
     private var contact: ContactEntity? = null
+    private var modeOnlyView: Boolean = false
 
     private val _state = MutableLiveData<MultipleAttachmentPreviewState>()
     val state: LiveData<MultipleAttachmentPreviewState>
@@ -195,17 +196,28 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                 }
             }
         } else {
-            // we can create notification for upload attachments
-            // todo: mover esto a un activity para usar el context
-            val intent = Intent(context, MultipleUploadService::class.java).apply {
-                putExtras(Bundle().apply {
-                    putParcelable(MESSAGE_KEY, messageEntity)
-                    putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
-                })
-            }
-            context.startService(intent)
-            actions.value = MultipleAttachmentPreviewAction.ExitToConversation
+            initUploadServiceForSendFiles(messageEntity, attachments)
         }
+    }
+
+    private fun initUploadServiceForSendFiles(
+        messageEntity: MessageEntity,
+        attachments: List<AttachmentEntity?>
+    ) {
+        // we can create notification for upload attachments
+        // todo: mover esto a un activity para usar el context
+        val intent = Intent(context, MultipleUploadService::class.java).apply {
+            putExtras(Bundle().apply {
+                putParcelable(MESSAGE_KEY, messageEntity)
+                putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
+            })
+        }
+        context.startService(intent)
+        actions.value = MultipleAttachmentPreviewAction.ExitToConversation
+    }
+
+    fun defineModeOnlyViewInConversation(modeOnlyView: Boolean) {
+        this.modeOnlyView = modeOnlyView
     }
 
 }

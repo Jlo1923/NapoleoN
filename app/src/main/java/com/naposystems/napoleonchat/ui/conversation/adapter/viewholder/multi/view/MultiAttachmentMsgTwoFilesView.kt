@@ -24,6 +24,10 @@ class MultiAttachmentMsgTwoFilesView @JvmOverloads constructor(
         )
 
     init {
+//        viewBinding.apply {
+//            viewFileOne.bindDefault()
+//            viewFileTwo.bindDefault()
+//        }
     }
 
     fun bindAttachments(listAttachments: List<AttachmentEntity>) {

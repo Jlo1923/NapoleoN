@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract
 
 interface IContractIncomingMultiAttachmentMsg {
 

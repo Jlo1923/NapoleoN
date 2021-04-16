@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.di.module.general
 
 import com.naposystems.napoleonchat.service.notificationClient.*
-import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClient
-import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
+import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClient
+import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotificationImp
 import dagger.Binds

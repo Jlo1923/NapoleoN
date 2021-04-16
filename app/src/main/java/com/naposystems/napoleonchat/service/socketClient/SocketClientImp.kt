@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -533,6 +534,7 @@ class SocketClientImp
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
+                                        Log.i("JkDev", "syncManager.insertNewMessage")
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
                                         val messageString: String = if (BuildConfig.ENCRYPT_API) {
@@ -550,18 +552,14 @@ class SocketClientImp
                                                 if (messageModel.numberAttachments == 0 &&
                                                     NapoleonApplication.currentConversationContactId != messageModel.userAddressee
                                                 ) {
-
-                                                    val listMessagesToReceived = listOf(
-                                                        messageModel
-                                                    ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
-
-
+                                                    val listMessagesToReceived =
+                                                        listOf(messageModel).toMessagesReqDTO(
+                                                            Constants.StatusMustBe.RECEIVED
+                                                        )
                                                     syncManager.notifyMessageReceived(
                                                         listMessagesToReceived
                                                     )
-
                                                     emitClientConversation(listMessagesToReceived)
-
                                                 }
                                             }
                                     }

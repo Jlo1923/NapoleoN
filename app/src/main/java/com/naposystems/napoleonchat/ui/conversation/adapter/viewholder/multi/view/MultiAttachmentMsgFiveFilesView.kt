@@ -42,13 +42,10 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
         defineViewListeners()
     }
 
-    private fun validateMustShowMoreFiles() {
-
-        viewBinding.apply {
-            val difference = listAttachments.size - 5
-            textMoreFilesQuantity.text = "+$difference"
-            textMoreFilesQuantity.show(difference > 0)
-        }
+    private fun validateMustShowMoreFiles() = viewBinding.apply {
+        val difference = listAttachments.size - 5
+        textMoreFilesQuantity.text = "+$difference"
+        textMoreFilesQuantity.show(difference > 0)
     }
 
     private fun defineViewListeners() {
@@ -61,7 +58,7 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
 
             textMoreFilesQuantity.setOnClickListener {
                 listener?.onMsgItemFileAction(
-                    MultiAttachmentMsgItemAction.ViewAttachment(listAttachments[5], 5)
+                    MultiAttachmentMsgItemAction.ViewAttachment(5)
                 )
             }
         }

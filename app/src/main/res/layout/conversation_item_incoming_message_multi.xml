@@ -13,7 +13,8 @@
         android:layout_width="0dp"
         android:layout_height="230dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgTwoFilesView
@@ -62,14 +63,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
-            android:drawableStart="@drawable/ic_baseline_arrow_upward_24"
+            android:drawableEnd="@drawable/ic_baseline_arrow_downward_24"
             android:drawablePadding="@dimen/x_small_padding"
             android:drawableTint="@color/black"
             android:gravity="center"
             android:padding="@dimen/x_small_padding"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="8 / 10"
             tools:visibility="visible" />
 
@@ -82,7 +83,7 @@
         android:src="@drawable/ic_file_upload_black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/container_message"
-        app:layout_constraintEnd_toStartOf="@id/container_message"
+        app:layout_constraintStart_toEndOf="@id/container_message"
         app:layout_constraintTop_toTopOf="@id/container_message"
         tools:visibility="visible" />
 
@@ -112,6 +113,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.3" />
+        app:layout_constraintGuide_percent="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

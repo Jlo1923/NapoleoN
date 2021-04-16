@@ -24,6 +24,7 @@ class MultiAttachmentMsgThreeFilesView @JvmOverloads constructor(
         )
 
     init {
+
     }
 
     fun bindAttachments(listAttachments: List<AttachmentEntity>) {
@@ -51,6 +52,4 @@ class MultiAttachmentMsgThreeFilesView @JvmOverloads constructor(
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         listener?.onMsgItemFileAction(action)
     }
-
-
 }

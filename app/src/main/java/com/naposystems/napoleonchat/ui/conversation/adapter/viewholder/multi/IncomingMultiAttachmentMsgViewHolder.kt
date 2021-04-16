@@ -3,8 +3,7 @@ package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
-import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageMultiBinding
+import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
@@ -16,6 +15,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
 import com.naposystems.napoleonchat.utility.extensions.hide
@@ -23,9 +23,9 @@ import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
-class MyMultiAttachmentMsgViewHolder(
-    private val binding: ConversationItemMyMessageMultiBinding,
-    //private val viewModel: MyMultiAttachmentMsgViewModel,
+class IncomingMultiAttachmentMsgViewHolder(
+    private val binding: ConversationItemIncomingMessageMultiBinding,
+    private val viewModel: IncomingMultiAttachmentMsgViewModel,
     private val listener: MultiAttachmentMsgListener
 ) : ConversationViewHolder(binding.root, binding.root.context),
     MultiAttachmentMsgItemListener {
@@ -36,17 +36,16 @@ class MyMultiAttachmentMsgViewHolder(
     companion object {
         fun from(
             parent: ViewGroup,
-            //viewModel: MyMultiAttachmentMsgViewModel,
+            viewModel: IncomingMultiAttachmentMsgViewModel,
             listener: MultiAttachmentMsgListener
-        ): MyMultiAttachmentMsgViewHolder {
+        ): IncomingMultiAttachmentMsgViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val binding = ConversationItemMyMessageMultiBinding.inflate(
+            val binding = ConversationItemIncomingMessageMultiBinding.inflate(
                 layoutInflater,
                 parent,
                 false
             )
-            //return MyMultiAttachmentMsgViewHolder(binding, viewModel, listener)
-            return MyMultiAttachmentMsgViewHolder(binding, listener)
+            return IncomingMultiAttachmentMsgViewHolder(binding, viewModel, listener)
         }
     }
 
@@ -59,30 +58,17 @@ class MyMultiAttachmentMsgViewHolder(
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         msgAndAttachment = item
-        //viewModel.getAttachmentsInMessage(item.messageEntity.id)
+        viewModel.getAttachmentsInMessage(item.messageEntity.id)
         configListenersViews()
         bindViewModel()
-        paintAttachments()
-    }
-
-    private fun paintAttachments() {
-        msgAndAttachment.attachmentEntityList.apply {
-            when (this.size) {
-                2 -> showTwoItems(this)
-                3 -> showThreeElements(this)
-                4 -> showFourItems(this)
-                5 -> showFiveItems(this)
-                else -> showFiveItems(this)
-            }
-        }
     }
 
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         when (action) {
-//            is CancelDownload -> viewModel.cancelDownload(action.attachmentEntity)
-//            is CancelUpload -> viewModel.cancelUpload(action.attachmentEntity)
-//            is RetryDownload -> viewModel.retryDownload(action.attachmentEntity)
-//            is RetryUpload -> viewModel.retryUpload(action.attachmentEntity)
+            is CancelDownload -> viewModel.cancelDownload(action.attachmentEntity)
+            is CancelUpload -> viewModel.cancelUpload(action.attachmentEntity)
+            is RetryDownload -> viewModel.retryDownload(action.attachmentEntity)
+            is RetryUpload -> viewModel.retryUpload(action.attachmentEntity)
             is ViewAttachment -> launchActionViewAttachment(action)
         }
     }
@@ -104,15 +90,15 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun configListenersViews() = binding.apply {
-        viewTwoFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
-        viewThreeFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
-        viewFourFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
-        viewFiveFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
+        viewTwoFiles.defineListener(this@IncomingMultiAttachmentMsgViewHolder)
+        viewThreeFiles.defineListener(this@IncomingMultiAttachmentMsgViewHolder)
+        viewFourFiles.defineListener(this@IncomingMultiAttachmentMsgViewHolder)
+        viewFiveFiles.defineListener(this@IncomingMultiAttachmentMsgViewHolder)
     }
 
     private fun bindViewModel() {
-        //viewModel.state.observe(binding.root.context as LifecycleOwner, { handleState(it) })
-        //viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
+        viewModel.state.observe(binding.root.context as LifecycleOwner, { handleState(it) })
+        viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
     }
 
     private fun handleActions(action: MultiAttachmentMsgEvent) {
