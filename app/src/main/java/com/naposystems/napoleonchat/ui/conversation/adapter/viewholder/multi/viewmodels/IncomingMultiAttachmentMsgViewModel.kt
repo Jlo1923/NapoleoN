@@ -21,28 +21,6 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
     private val actions: SingleLiveEvent<MultiAttachmentMsgEvent> = SingleLiveEvent()
     fun actions(): LiveData<MultiAttachmentMsgEvent> = actions
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    override fun getAttachmentsInMessage(messageId: Int) {
-        viewModelScope.launch {
-            try {
-                val msgAndAttachments = repository.getAttachmentsByMessage(messageId)
-                msgAndAttachments?.attachmentEntityList?.let {
-                    _state.value = when (it.size) {
-                        2 -> MultiAttachmentMsgState.ShowTwoItem(it)
-                        3 -> MultiAttachmentMsgState.ShowThreeItem(it)
-                        4 -> MultiAttachmentMsgState.ShowFourItem(it)
-                        5 -> MultiAttachmentMsgState.ShowFiveItem(it)
-                        else -> MultiAttachmentMsgState.ShowMoreItem(it)
-                    }
-                    validateStatusAndQuantity(it)
-                }
-            } catch (exception: Exception) {
-                //_state.value = MultipleAttachmentState.Error
-            }
-        }
-
-    }
-
     private fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
         val countSent = listAttachments.filter { it.isSent() }
         if (countSent.size == listAttachments.size) {

@@ -58,7 +58,7 @@ class IncomingMultiAttachmentMsgViewHolder(
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         msgAndAttachment = item
-        viewModel.getAttachmentsInMessage(item.messageEntity.id)
+        //viewModel.getAttachmentsInMessage(item.messageEntity.id)
         configListenersViews()
         bindViewModel()
     }
