@@ -86,6 +86,11 @@ class ConversationCallActivity :
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
+        if (webRTCClient.isActiveCall.not())
+            webRTCClient.reInit()
+        else
+            enableControls()
+
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
         webRTCClient.setWebRTCClientListener(this)
@@ -122,11 +127,6 @@ class ConversationCallActivity :
             }
         }
 
-        if (callModel.isVideoCall && binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-            webRTCClient.startCaptureVideo()
-            binding.viewSwitcher.showNext()
-        }
-
         if (webRTCClient.isActiveCall.not()) {
 
             when (callModel.typeCall) {
@@ -141,13 +141,13 @@ class ConversationCallActivity :
             if (callModel.isVideoCall) {
                 webRTCClient.renderRemoteVideo()
                 showRemoteVideo()
-                binding.surfaceRender.isVisible = webRTCClient.isHideVideo.not()
+                binding.localSurfaceRender.isVisible = webRTCClient.isHideVideo.not()
                 binding.cameraOff.containerCameraOff.isVisible =
                     webRTCClient.contactCameraIsVisible
             }
             binding.imageButtonMicOff.setChecked(webRTCClient.isMicOn.not(), false)
             binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
-            binding.imageButtonMuteVideo.setChecked(webRTCClient.isHideVideo, false)
+            binding.imageButtonToggleVideo.setChecked(webRTCClient.isHideVideo, false)
             binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive, false)
         }
 
@@ -184,7 +184,7 @@ class ConversationCallActivity :
             Timber.d("startCallActivity, onBackPressed")
 
             if (webRTCClient.callModel.isVideoCall) {
-                webRTCClient.hideVideo(checked = true, itsFromBackPressed = true)
+                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
             }
 
             NapoleonApplication.isShowingCallActivity = false
@@ -218,11 +218,7 @@ class ConversationCallActivity :
             webRTCClient.isActiveCall.not() &&
             callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
-            binding.fabAnswer.visibility = View.GONE
-
-            webRTCClient.stopRingAndVibrate()
-
-            webRTCClient.createAnswer()
+            answerCall()
         }
     }
 
@@ -272,6 +268,9 @@ class ConversationCallActivity :
 
     private fun setUIListeners() {
 
+        if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+            binding.fabAnswer.visibility = View.GONE
+
         binding.fabAnswer.setOnClickListener {
             if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                 answerCall()
@@ -295,8 +294,8 @@ class ConversationCallActivity :
             webRTCClient.changeToVideoCall()
         }
 
-        binding.imageButtonMuteVideo.setOnCheckedChangeListener { _, isChecked ->
-            webRTCClient.hideVideo(isChecked)
+        binding.imageButtonToggleVideo.setOnCheckedChangeListener { _, isChecked ->
+            webRTCClient.toggleVideo(isChecked)
         }
 
         binding.imageButtonSwitchCamera.setOnClickListener {
@@ -381,15 +380,14 @@ class ConversationCallActivity :
         Timber.d("LLAMADA PASO: INICIANDO LAS SUPERFICIES DE RENDERIZADO")
 
         runOnUiThread {
-            webRTCClient.setLocalVideoView(binding.surfaceRender)
+            webRTCClient.setLocalVideoView(binding.localSurfaceRender)
             webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
             webRTCClient.initSurfaceRenders()
-        }
-    }
 
-    //region Implementation WebRTCClient.WebRTCClientListener
-    override fun toggleContactCamera(isVisible: Boolean) {
-        binding.cameraOff.containerCameraOff.visibility = if (isVisible) View.VISIBLE else View.GONE
+            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id)
+                binding.viewSwitcher.showNext()
+
+        }
     }
 
     override fun contactWantChangeToVideoCall() {
@@ -405,18 +403,30 @@ class ConversationCallActivity :
                 R.string.text_accept,
                 R.string.text_cancel,
                 clickPositiveButton = {
+
+                    callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+
+                    callModel.isVideoCall = true
+
                     initSurfaceRenders()
-                    webRTCClient.acceptChangeToVideoCall()
+
+                    webRTCClient.meAcceptChangeToVideoCall()
+
                     binding.textViewTitle.text =
                         getString(R.string.text_encrypted_video_call)
                 }, clickNegativeButton = {
-                    webRTCClient.cancelChangeToVideoCall()
+                    webRTCClient.meCancelChangeToVideoCall()
                 }
             )
         })
     }
 
     override fun contactAcceptChangeToVideoCall() {
+
+        callModel.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+
+        callModel.isVideoCall = true
+
         initSurfaceRenders()
     }
 
@@ -472,7 +482,7 @@ class ConversationCallActivity :
             constraintSet.clone(binding.containerVideoCall)
 
             // Obtenemos el id del elemento a modificar
-            val id = binding.surfaceRender.id
+            val id = binding.localSurfaceRender.id
 
             // Cambiamos el margen
             constraintSet.setMargin(id, ConstraintSet.END, Utils.dpToPx(this, 16f))
@@ -515,7 +525,16 @@ class ConversationCallActivity :
     }
 
     override fun toggleLocalRenderVisibility(visibility: Int) {
-        binding.surfaceRender.visibility = visibility
+        runOnUiThread(Runnable {
+            binding.localSurfaceRender.visibility = visibility
+        })
+    }
+
+    //region Implementation WebRTCClient.WebRTCClientListener
+    override fun toggleContactCamera(visibility: Int) {
+        runOnUiThread(Runnable {
+            binding.cameraOff.containerCameraOff.visibility = visibility
+        })
     }
 
     override fun toggleBluetoothButtonVisibility(isVisible: Boolean) {

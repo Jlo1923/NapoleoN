@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.service.socketClient
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.os.Bundle
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -15,7 +16,10 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.*
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReadedRESDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReceivedRESDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
@@ -127,6 +131,7 @@ class SocketClientImp
                         pusher.connect()
                     }
                 })
+
             } else if (pusher.connection.state == ConnectionState.CONNECTED) {
 
                 Timber.d("LLAMADA PASO: EN SOCKET CONECTADO  mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
@@ -297,7 +302,15 @@ class SocketClientImp
 
                     override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                 })
+
+        } else {
+
+            unSubscribePresenceChannel(channelName = callModel.channelName)
+
+            subscribeToPresenceChannel(callModel)
+
         }
+
     }
 
     override fun disconnectSocket() {
@@ -534,7 +547,6 @@ class SocketClientImp
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
-                                        Log.i("JkDev", "syncManager.insertNewMessage")
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
                                         val messageString: String = if (BuildConfig.ENCRYPT_API) {
@@ -552,14 +564,18 @@ class SocketClientImp
                                                 if (messageModel.numberAttachments == 0 &&
                                                     NapoleonApplication.currentConversationContactId != messageModel.userAddressee
                                                 ) {
-                                                    val listMessagesToReceived =
-                                                        listOf(messageModel).toMessagesReqDTO(
-                                                            Constants.StatusMustBe.RECEIVED
-                                                        )
+
+                                                    val listMessagesToReceived = listOf(
+                                                        messageModel
+                                                    ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
+
+
                                                     syncManager.notifyMessageReceived(
                                                         listMessagesToReceived
                                                     )
+
                                                     emitClientConversation(listMessagesToReceived)
+
                                                 }
                                             }
                                     }
@@ -899,9 +915,43 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.REJECTED_CALL.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
-                        NapoleonApplication.isShowingCallActivity = false
-                        Timber.d("LLAMADA PASO REJECTED: LlAMADA RECHAZADA")
-                        socketEventListener.contactRejectCall(event.channelName)
+
+                        try {
+
+                            NapoleonApplication.isShowingCallActivity = false
+
+                            Timber.d("RejectedCallEvent: ${event.data}, notificationId: ${HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE}")
+
+                            val jsonObject = JSONObject(event.data)
+
+                            if (jsonObject.has("data")) {
+
+                                val jsonData = jsonObject.getJSONObject("data")
+
+                                if (jsonData.has("channel_private")) {
+
+                                    val presenceChannel = jsonData.getString("channel_private")
+
+                                    if (NapoleonApplication.isShowingCallActivity)
+                                        socketEventListener.contactRejectCall(presenceChannel)
+                                    else {
+                                        val callModel = CallModel()
+                                        callModel.channelName = presenceChannel
+                                        val intent = Intent(context, WebRTCService::class.java)
+                                        intent.action = WebRTCService.ACTION_CALL_END
+                                        intent.putExtras(Bundle().apply {
+                                            putSerializable(
+                                                Constants.CallKeys.CALL_MODEL,
+                                                callModel
+                                            )
+                                        })
+                                        context.startService(intent)
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e)
+                        }
                     }
 
                     override fun onAuthenticationFailure(
@@ -919,20 +969,40 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.CANCEL_CALL.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent) {
+
                         try {
+
                             NapoleonApplication.isShowingCallActivity = false
+
                             Timber.d("CancelCallEvent: ${event.data}, notificationId: ${HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE}")
+
                             val jsonObject = JSONObject(event.data)
+
                             if (jsonObject.has("data")) {
+
                                 val jsonData = jsonObject.getJSONObject("data")
+
                                 if (jsonData.has("channel_private")) {
-                                    val privateChannel = jsonData.getString("channel_private")
-                                    socketEventListener.contactCancelCall(privateChannel)
+
+                                    val presenceChannel = jsonData.getString("channel_private")
+
+                                    if (NapoleonApplication.isShowingCallActivity)
+                                        socketEventListener.contactCancelCall(presenceChannel)
+                                    else {
+                                        val callModel = CallModel()
+                                        callModel.channelName = presenceChannel
+                                        val intent = Intent(context, WebRTCService::class.java)
+                                        intent.action = WebRTCService.ACTION_CALL_END
+                                        intent.putExtras(Bundle().apply {
+                                            putSerializable(
+                                                Constants.CallKeys.CALL_MODEL,
+                                                callModel
+                                            )
+                                        })
+                                        context.startService(intent)
+                                    }
                                 }
                             }
-                            val intent = Intent(context, WebRTCService::class.java)
-                            intent.action = WebRTCService.ACTION_CALL_END
-                            context.startService(intent)
                         } catch (e: Exception) {
                             Timber.e(e)
                         }
