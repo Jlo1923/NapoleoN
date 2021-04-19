@@ -77,7 +77,7 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.SECONDS.toMillis(30),
+        TimeUnit.MINUTES.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
@@ -200,77 +200,86 @@ class WebRTCClientImp
     }
 
     override fun reInit() {
+        try {
 
-        audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-        audioManager.mode = AudioManager.MODE_NORMAL
+            audioManager.mode = AudioManager.MODE_NORMAL
 
-        audioManager.stopBluetoothSco()
+            audioManager.stopBluetoothSco()
 
-        audioManager.isBluetoothScoOn = false
+            audioManager.isBluetoothScoOn = false
 
-        audioManager.isSpeakerphoneOn = false
+            audioManager.isSpeakerphoneOn = false
 
-        wakeLock =
-            (context.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(
-                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
-                WebRTCClientImp::class.simpleName
-            )
+            wakeLock =
+                (context.getSystemService(Context.POWER_SERVICE) as PowerManager).newWakeLock(
+                    PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                    WebRTCClientImp::class.simpleName
+                )
 
-        iceCandidatesCaller = mutableListOf()
-
-        callTime = 0
-
-        isActiveCall = false
-        isHideVideo = false
-        contactCameraIsVisible = false
-        isMicOn = true
-        isBluetoothActive = false
-        mediaPlayerHasStopped = false
-        renegotiateCall = false
-        isFirstTimeBluetoothAvailable = false
-        isBluetoothAvailable = false
-        isHeadsetConnected = false
-        isBluetoothStopped = false
-        isReturnCall = false
-
-        textViewTimer = null
-
-        bluetoothStateManager = null
-
-        webRTCClientListener = null
-
-        mediaConstraints = null
-
-        remoteSurfaceViewRenderer = null
-
-        if (::remoteMediaStream.isInitialized)
             try {
-                remoteMediaStream.dispose()
-            } catch (e: java.lang.Exception) {
-                Timber.e(e.localizedMessage)
+                iceCandidatesCaller.clear()
+            } catch (e: Exception) {
+                Timber.e("iceCandidatesCaller")
             }
 
-        localSurfaceViewRenderer = null
+            callTime = 0
 
-        localAudioTrack = null
+            isActiveCall = false
+            isHideVideo = false
+            contactCameraIsVisible = false
+            isMicOn = true
+            isBluetoothActive = false
+            mediaPlayerHasStopped = false
+            renegotiateCall = false
+            isFirstTimeBluetoothAvailable = false
+            isBluetoothAvailable = false
+            isHeadsetConnected = false
+            isBluetoothStopped = false
+            isReturnCall = false
 
-        localVideoTrack = null
+            textViewTimer = null
 
-        localVideoSource = null
+            bluetoothStateManager = null
 
-        if (::localMediaStream.isInitialized)
-            try {
-                localMediaStream.dispose()
-            } catch (e: java.lang.Exception) {
-                Timber.e(e.localizedMessage)
-            }
+            webRTCClientListener = null
 
-        videoCapturerAndroid?.dispose()
+            mediaConstraints = null
 
-        videoCapturerAndroid = null
+            remoteSurfaceViewRenderer = null
 
-        peerConnection = null
+            if (::remoteMediaStream.isInitialized)
+                try {
+                    remoteMediaStream.dispose()
+                } catch (e: java.lang.Exception) {
+                    Timber.e(e.localizedMessage)
+                }
+
+            localSurfaceViewRenderer = null
+
+            localAudioTrack = null
+
+            localVideoTrack = null
+
+            localVideoSource = null
+
+            if (::localMediaStream.isInitialized)
+                try {
+                    localMediaStream.dispose()
+                } catch (e: java.lang.Exception) {
+                    Timber.e(e.localizedMessage)
+                }
+
+            videoCapturerAndroid?.dispose()
+
+            videoCapturerAndroid = null
+
+            peerConnection = null
+
+        } catch (e: Exception) {
+            Timber.e("LLAMADA PASO: REINIT ${e.localizedMessage}")
+        }
     }
 
 
@@ -433,23 +442,24 @@ class WebRTCClientImp
 
                         super.onIceConnectionChange(iceConnectionState)
 
-                        Timber.d("LLAMADA PASO: onIceConnectionChange $iceConnectionState")
-
                         when (iceConnectionState) {
 
-                            PeerConnection.IceConnectionState.CHECKING -> webRTCClientListener?.showConnectingTitle()
-                            PeerConnection.IceConnectionState.CONNECTED -> connectCall()
+                            PeerConnection.IceConnectionState.CHECKING -> {
+                                webRTCClientListener?.showConnectingTitle()
+                            }
+                            PeerConnection.IceConnectionState.CONNECTED -> {
+                                connectCall()
+                            }
+                            PeerConnection.IceConnectionState.DISCONNECTED -> {
+                                webRTCClientListener?.showReConnectingTitle()
+                            }
                             PeerConnection.IceConnectionState.FAILED -> {
                                 disposeCall()
                             }
                             PeerConnection.IceConnectionState.NEW,
                             PeerConnection.IceConnectionState.COMPLETED,
-                            PeerConnection.IceConnectionState.DISCONNECTED,
                             PeerConnection.IceConnectionState.CLOSED ->
                                 Timber.d("IceConnectionState UNHANDLER $iceConnectionState")
-
-                            else -> Timber.e("IceConnectionState Not Recognized")
-
                         }
                     }
                 })

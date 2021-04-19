@@ -50,6 +50,7 @@
     <string name="text_call_not_internet_connection">No se logro realizar la llamada. Comprueba tu conexión a internet e intenta nuevamente.</string>
     <string name="text_encrypting_videocall">Cifrando videollamada</string>
     <string name="text_encrypting_call">Cifrando llamada</string>
+    <string name="text_reconnecting">Reconectando</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d día</item>
         <item quantity="other">%d días</item>

@@ -460,6 +460,13 @@ class ConversationCallActivity :
         }
     }
 
+    override fun showReConnectingTitle() {
+        runOnUiThread {
+            binding.textViewCalling.isVisible = true
+            binding.textViewCalling.text = getString(R.string.text_reconnecting)
+        }
+    }
+
     override fun enableControls() {
         runOnUiThread {
             binding.containerControls.visibility = View.VISIBLE

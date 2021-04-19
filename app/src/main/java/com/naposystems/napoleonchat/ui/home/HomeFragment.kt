@@ -19,6 +19,11 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
@@ -37,6 +42,7 @@ import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
@@ -227,6 +233,16 @@ class HomeFragment : BaseFragment() {
         }*/
 
         RxBus.publish(RxEvent.HideOptionMenuRecoveryAccount())
+
+        this.verifyPermission(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_PHONE_STATE,
+            drawableIconId = R.drawable.ic_camera_primary,
+            message = R.string.text_explanation_camera_to_receive_calls
+        ) {
+            //Intentionally empty
+        }
 
         return binding.root
     }

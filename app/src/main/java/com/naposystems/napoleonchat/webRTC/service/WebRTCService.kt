@@ -25,6 +25,7 @@ class WebRTCService : Service() {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
         const val ACTION_DENY_CALL = "DENY_CALL"
         const val ACTION_CALL_END = "CALL_END"
+        const val ACTION_FAILED_CALL_END = "FAILED_CALL_END"
         const val ACTION_HANG_UP = "HANG_UP"
         const val ACTION_OPEN_CALL = "OPEN_CALL"
     }
@@ -97,12 +98,18 @@ class WebRTCService : Service() {
                     stopForeground(true)
                     stopSelf()
                 }
+
                 ACTION_CALL_END -> {
                     Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
                     stopForeground(true)
                     stopSelf()
                     if (NapoleonApplication.isShowingCallActivity.not())
                         repository.disposeCall(callModel)
+                }
+
+                ACTION_FAILED_CALL_END -> {
+                    stopForeground(true)
+                    stopSelf()
                 }
 
                 ACTION_HANG_UP -> {

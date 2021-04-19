@@ -14,6 +14,7 @@ interface WebRTCClientListener {
     //UI
     fun showTimer()
     fun showConnectingTitle()
+    fun showReConnectingTitle()
     fun enableControls()
     fun showRemoteVideo()
     fun changeTextviewTitle(stringResourceId: Int)
