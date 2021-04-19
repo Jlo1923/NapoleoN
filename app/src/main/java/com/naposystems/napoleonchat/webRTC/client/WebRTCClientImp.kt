@@ -77,13 +77,15 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.MINUTES.toMillis(30),
+        TimeUnit.SECONDS.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
             Timber.d("CountDown finish")
             if (isActiveCall.not()) {
-                webRTCClientListener?.onContactNotAnswer()
+
+                hideNotification()
+
                 disposeCall()
             }
         }
@@ -605,8 +607,6 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: STARTWEBRTCSERVICE")
 
-        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-
         val intent = Intent(context, WebRTCService::class.java).apply {
             putExtras(Bundle().apply {
                 putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
@@ -976,6 +976,8 @@ class WebRTCClientImp
 
             createOffer()
 
+            startWebRTCService(callModel)
+
         }
     }
 
@@ -1029,18 +1031,18 @@ class WebRTCClientImp
         }
     }
 
-    override fun contactRejectCall(channelName: String, disposeService: Boolean) {
+    override fun contactRejectCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
-            disposeCall(disposeService = disposeService)
+            disposeCall()
         }
     }
 
-    override fun contactCancelCall(channelName: String, disposeService: Boolean) {
+    override fun contactCancelCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
-            disposeCall(disposeService = disposeService)
+            disposeCall()
         }
     }
 
@@ -1171,7 +1173,22 @@ class WebRTCClientImp
         }
     }
 
-    override fun disposeCall(callModel: CallModel?, disposeService: Boolean) {
+    override fun hideNotification(){
+        webRTCClientListener?.onContactNotAnswer()
+
+        val intent = Intent(context, WebRTCService::class.java)
+
+        intent.action = WebRTCService.ACTION_HIDE_NOTIFICATION
+
+        intent.putExtras(Bundle().apply {
+            putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
+        })
+
+        context.startService(intent)
+    }
+
+
+    override fun disposeCall(callModel: CallModel?) {
 
         var auxModel = this.callModel
 
@@ -1179,21 +1196,6 @@ class WebRTCClientImp
             auxModel = callModel
 
         try {
-
-            if (disposeService) {
-
-                Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
-
-                val intent = Intent(context, WebRTCService::class.java)
-
-                intent.action = WebRTCService.ACTION_CALL_END
-
-                intent.putExtras(Bundle().apply {
-                    putSerializable(Constants.CallKeys.CALL_MODEL, auxModel)
-                })
-
-                context.startService(intent)
-            }
 
             RxBus.publish(RxEvent.CallEnd())
 

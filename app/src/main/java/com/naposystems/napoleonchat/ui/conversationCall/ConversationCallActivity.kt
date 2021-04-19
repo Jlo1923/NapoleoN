@@ -371,6 +371,8 @@ class ConversationCallActivity :
             webRTCClient.emitHangUp()
         }
 
+        webRTCClient.hideNotification()
+
         webRTCClient.disposeCall()
 
     }
