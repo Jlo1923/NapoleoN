@@ -81,6 +81,6 @@ interface WebRTCClient {
     //Hang Up
     fun emitHangUp()
 
-    fun disposeCall(callModel: CallModel? = null, disposeService: Boolean = true)
+    fun disposeCall(callModel: CallModel? = null)
 
 }

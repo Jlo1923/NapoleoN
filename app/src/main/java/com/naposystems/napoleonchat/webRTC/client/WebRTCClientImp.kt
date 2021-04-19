@@ -71,9 +71,9 @@ class WebRTCClientImp
     override var isBluetoothActive: Boolean = false
     //endregion
 
-    private var mHandler: Handler = Handler(Looper.getMainLooper())
+    private var callTimerHandler: Handler = Handler(Looper.getMainLooper())
 
-    private var mCallTimeRunnable = Runnable { startCallTimer() }
+    private var callTimerRunnable = Runnable { startCallTimer() }
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
@@ -454,6 +454,15 @@ class WebRTCClientImp
                                 webRTCClientListener?.showReConnectingTitle()
                             }
                             PeerConnection.IceConnectionState.FAILED -> {
+                                val intent = Intent(context, WebRTCService::class.java)
+                                intent.action = WebRTCService.ACTION_FAILED_CALL_END
+                                intent.putExtras(Bundle().apply {
+                                    putSerializable(
+                                        Constants.CallKeys.CALL_MODEL,
+                                        callModel
+                                    )
+                                })
+                                context.startService(intent)
                                 disposeCall()
                             }
                             PeerConnection.IceConnectionState.NEW,
@@ -925,7 +934,7 @@ class WebRTCClientImp
             Utils.getDuration(callTime, callTime >= TimeUnit.HOURS.toMillis(1))
         val oneSecond = TimeUnit.SECONDS.toMillis(1)
         callTime += oneSecond
-        mHandler.postDelayed(mCallTimeRunnable, oneSecond)
+        callTimerHandler.postDelayed(callTimerRunnable, oneSecond)
     }
 
     override fun setItsReturnCall(itsReturnCall: Boolean) {
@@ -1029,18 +1038,18 @@ class WebRTCClientImp
         }
     }
 
-    override fun contactRejectCall(channelName: String, disposeService: Boolean) {
+    override fun contactRejectCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
-            disposeCall(disposeService = disposeService)
+            disposeCall()
         }
     }
 
-    override fun contactCancelCall(channelName: String, disposeService: Boolean) {
+    override fun contactCancelCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
-            disposeCall(disposeService = disposeService)
+            disposeCall()
         }
     }
 
@@ -1131,8 +1140,8 @@ class WebRTCClientImp
 
         webRTCClientListener?.enableControls()
 
-        mHandler.postDelayed(
-            mCallTimeRunnable,
+        callTimerHandler.postDelayed(
+            callTimerRunnable,
             TimeUnit.SECONDS.toMillis(1)
         )
 
@@ -1171,7 +1180,7 @@ class WebRTCClientImp
         }
     }
 
-    override fun disposeCall(callModel: CallModel?, disposeService: Boolean) {
+    override fun disposeCall(callModel: CallModel?) {
 
         var auxModel = this.callModel
 
@@ -1179,21 +1188,6 @@ class WebRTCClientImp
             auxModel = callModel
 
         try {
-
-            if (disposeService) {
-
-                Timber.d("LLAMADA PASO: PIDE ENVIAR A SERVICIO CALL END")
-
-                val intent = Intent(context, WebRTCService::class.java)
-
-                intent.action = WebRTCService.ACTION_CALL_END
-
-                intent.putExtras(Bundle().apply {
-                    putSerializable(Constants.CallKeys.CALL_MODEL, auxModel)
-                })
-
-                context.startService(intent)
-            }
 
             RxBus.publish(RxEvent.CallEnd())
 
@@ -1218,7 +1212,7 @@ class WebRTCClientImp
 
             stopProximitySensor()
 
-            mHandler.removeCallbacks(mCallTimeRunnable)
+            callTimerHandler.removeCallbacks(callTimerRunnable)
 
             Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
             webRTCClientListener?.callEnded()

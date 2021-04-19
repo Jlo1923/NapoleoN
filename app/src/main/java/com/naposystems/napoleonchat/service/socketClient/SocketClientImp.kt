@@ -931,8 +931,10 @@ class SocketClientImp
 
                                     val presenceChannel = jsonData.getString("channel_private")
 
-                                    if (NapoleonApplication.isShowingCallActivity)
+                                    if (NapoleonApplication.isShowingCallActivity){
+
                                         socketEventListener.contactRejectCall(presenceChannel)
+                                    }
                                     else {
                                         val callModel = CallModel()
                                         callModel.channelName = presenceChannel

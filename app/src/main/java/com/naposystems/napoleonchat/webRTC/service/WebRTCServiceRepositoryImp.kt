@@ -30,6 +30,6 @@ class WebRTCServiceRepositoryImp
     }
 
     override fun disposeCall(callModel: CallModel) {
-        webRTCClient.disposeCall(callModel, disposeService = false)
+        webRTCClient.disposeCall(callModel)
     }
 }

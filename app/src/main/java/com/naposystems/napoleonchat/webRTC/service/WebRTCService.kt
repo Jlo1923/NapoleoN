@@ -79,49 +79,52 @@ class WebRTCService : Service() {
 
             when (action) {
                 ACTION_ANSWER_CALL -> {
-                    Timber.d("LLAMADA PASO: CONTESTANDO LLAMADA")
+                    Timber.d("LLAMADA PASO: CONTESTANDO LLAMADA EN SERVICIO")
                     startConversationCallActivity(
                         action = ACTION_ANSWER_CALL,
                         callModel = callModel
                     )
                 }
                 ACTION_DENY_CALL -> {
-
-                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA EN SERVICIO")
+                    stopForeground(true)
+                    stopSelf()
                     repository.rejectCall(callModel)
                     if (NapoleonApplication.isShowingCallActivity) {
                         RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     } else {
                         repository.disposeCall(callModel)
                     }
-
-                    stopForeground(true)
-                    stopSelf()
                 }
 
                 ACTION_CALL_END -> {
-                    Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
+                    Timber.d("LLAMADA PASO: LLAMADA FINALIZADA EN SERVICIO")
                     stopForeground(true)
                     stopSelf()
-                    if (NapoleonApplication.isShowingCallActivity.not())
+                    if (NapoleonApplication.isShowingCallActivity.not()) {
                         repository.disposeCall(callModel)
+                    }
+
                 }
 
                 ACTION_FAILED_CALL_END -> {
+                    Timber.d("LLAMADA PASO: LLAMADA FALLIDA EN SERVICIO")
                     stopForeground(true)
                     stopSelf()
                 }
 
                 ACTION_HANG_UP -> {
-                    Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
-                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                    Timber.d("LLAMADA PASO: COLGANDO LLAMADA EN SERVICIO")
                     stopForeground(true)
                     stopSelf()
-                    if (NapoleonApplication.isShowingCallActivity.not())
+                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                    if (NapoleonApplication.isShowingCallActivity.not()) {
                         repository.disposeCall(callModel)
+                    }
                 }
 
                 ACTION_OPEN_CALL -> {
+                    Timber.d("LLAMADA PASO: ABRIENDO LLAMADA EN SERVICIO")
                     startConversationCallActivity(callModel = callModel)
                 }
 
