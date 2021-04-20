@@ -21,7 +21,6 @@ sealed class MultiAttachmentMsgItemAction {
     ) : MultiAttachmentMsgItemAction()
 
     class ViewAttachment(
-        val attachmentEntity: AttachmentEntity,
         val index: Int
     ) : MultiAttachmentMsgItemAction()
 

@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.di.module.general
 
+import com.naposystems.napoleonchat.service.download.DownloadAttachmentsService
 import com.naposystems.napoleonchat.service.firebase.NapoleonFirebaseMessagingService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.phoneState.PhoneStateBroadcastReceiver
@@ -22,6 +23,9 @@ abstract class ServiceModule {
 
     @ContributesAndroidInjector
     abstract fun contributeMultipleUploadService(): MultipleUploadService
+
+    @ContributesAndroidInjector
+    abstract fun contributeDownloadAttachmentsService(): DownloadAttachmentsService
 
     @ContributesAndroidInjector
     abstract fun contributeNapoleonFirebaseMessagingService(): NapoleonFirebaseMessagingService

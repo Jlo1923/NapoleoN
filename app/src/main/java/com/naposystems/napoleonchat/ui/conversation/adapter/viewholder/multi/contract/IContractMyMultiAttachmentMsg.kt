@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract
 
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -8,9 +8,13 @@ interface IContractMyMultiAttachmentMsg {
 
     interface ViewModel {
 
-        fun getAttachmentsInMessage(id: Int)
+        fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>)
 
         fun retryUploadAllFiles()
+
+        fun cancelUpload(attachmentEntity: AttachmentEntity)
+
+        fun retryUpload(attachmentEntity: AttachmentEntity)
 
     }
 

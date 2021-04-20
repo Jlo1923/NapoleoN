@@ -9,6 +9,8 @@ sealed class MultipleAttachmentAction {
 
     object BackToFolderList : MultipleAttachmentAction()
 
+    object ShowDialogConfirmExit : MultipleAttachmentAction()
+
     class ShowSelectFolderName(
         val folderName: String
     ) : MultipleAttachmentAction()

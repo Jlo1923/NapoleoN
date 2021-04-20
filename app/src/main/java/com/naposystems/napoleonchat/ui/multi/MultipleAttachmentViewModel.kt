@@ -87,7 +87,11 @@ class MultipleAttachmentViewModel @Inject constructor(
             _state.value = MultipleAttachmentState.SuccessFolders(cacheListFolders)
             isShowingFiles = false
         } else {
-            actions.value = MultipleAttachmentAction.Exit
+            if (selectedLists.isEmpty()) {
+                actions.value = MultipleAttachmentAction.Exit
+            } else {
+                actions.value = MultipleAttachmentAction.ShowDialogConfirmExit
+            }
         }
     }
 

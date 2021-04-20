@@ -53,6 +53,7 @@ import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -64,10 +65,11 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
@@ -86,6 +88,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
+import com.naposystems.napoleonchat.utility.extras.MODE_ONLY_VIEW
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
@@ -138,7 +141,6 @@ class ConversationFragment
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
-
     @Inject
     lateinit var mediaPlayerManager: MediaPlayerManager
 
@@ -176,6 +178,7 @@ class ConversationFragment
     }
 
     private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
+    private val incomingMultiAttachmentMsgViewModel: IncomingMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
 
     private val documentsMimeTypeAllowed = arrayOf(
         Constants.MimeType.PDF.type,
@@ -1087,7 +1090,7 @@ class ConversationFragment
                         enterConversation = true
                     }
                 }
-
+                //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             } else conversationAdapter.submitList(conversationList)
@@ -1773,7 +1776,8 @@ class ConversationFragment
     private fun setupAdapter() {
 
         val viewModels = ConversationViewModelsForViewHolders(
-            myMultiAttachmentMsgViewModel
+            myMultiAttachmentMsgViewModel,
+            incomingMultiAttachmentMsgViewModel
         )
 
         val listeners = ConversationListeners(
@@ -2287,7 +2291,6 @@ class ConversationFragment
                 setSeventhView(actionViewSchedule!!)
                 showFromSeventh()
             }
-
             showShowCase = true
         }
     }
@@ -2299,19 +2302,12 @@ class ConversationFragment
     }
 
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
-        val files = action.listElements.map {
-            MultipleAttachmentFileItem(
-                id = it.id,
-                attachmentType = it.type,
-                contentUri = Uri.parse(it.thumbnailUri),
-                isSelected = false
-            )
-        }
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
             //putParcelable(MULTI_EXTRA_CONTACT, contact)
-            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(files))
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
+            putBoolean(MODE_ONLY_VIEW, true)
         })
         startActivity(intent)
     }
