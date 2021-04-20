@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.multiattachment
+package com.naposystems.napoleonchat.service.multiattachment.contract
 
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity

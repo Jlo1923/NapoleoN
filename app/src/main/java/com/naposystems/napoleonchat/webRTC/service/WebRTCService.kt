@@ -26,6 +26,7 @@ class WebRTCService : Service() {
         const val ACTION_DENY_CALL = "DENY_CALL"
         const val ACTION_CALL_END = "CALL_END"
         const val ACTION_HANG_UP = "HANG_UP"
+        const val ACTION_OPEN_CALL = "OPEN_CALL"
     }
 
     @Inject
@@ -87,8 +88,12 @@ class WebRTCService : Service() {
 
                     Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
                     repository.rejectCall(callModel)
-                    if (NapoleonApplication.isShowingCallActivity)
+                    if (NapoleonApplication.isShowingCallActivity) {
                         RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                    } else {
+                        repository.disposeCall(callModel)
+                    }
+
                     stopForeground(true)
                     stopSelf()
                 }
@@ -96,13 +101,23 @@ class WebRTCService : Service() {
                     Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
                     stopForeground(true)
                     stopSelf()
+                    if (NapoleonApplication.isShowingCallActivity.not())
+                        repository.disposeCall(callModel)
                 }
+
                 ACTION_HANG_UP -> {
                     Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
                     RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     stopForeground(true)
                     stopSelf()
+                    if (NapoleonApplication.isShowingCallActivity.not())
+                        repository.disposeCall(callModel)
                 }
+
+                ACTION_OPEN_CALL -> {
+                    startConversationCallActivity(callModel = callModel)
+                }
+
                 else ->
                     Timber.e("Action no recognized")
 

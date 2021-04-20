@@ -48,7 +48,7 @@ interface WebRTCClient {
     fun renderRemoteVideo()
 
     //Camera
-    fun hideVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
+    fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
     fun switchCamera()
 
     //Ringtone
@@ -80,6 +80,7 @@ interface WebRTCClient {
 
     //Hang Up
     fun emitHangUp()
-    fun disposeCall()
+
+    fun disposeCall(callModel: CallModel? = null, disposeService: Boolean = true)
 
 }

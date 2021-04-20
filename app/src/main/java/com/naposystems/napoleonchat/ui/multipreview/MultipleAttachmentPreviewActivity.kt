@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.multipreview.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachmentPreviewListener
@@ -32,6 +33,7 @@ import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
+import com.naposystems.napoleonchat.utility.extras.MODE_ONLY_VIEW
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
@@ -40,7 +42,6 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
 import java.util.*
 import javax.inject.Inject
-
 
 class MultipleAttachmentPreviewActivity
     : AppCompatActivity(),
@@ -74,6 +75,7 @@ class MultipleAttachmentPreviewActivity
         bindViewModel()
         extractContactFromExtras()
         extractFilesFromExtras()
+        extractIsModeViewInConversation()
         defineListeners()
     }
 
@@ -140,13 +142,16 @@ class MultipleAttachmentPreviewActivity
         )
     }
 
-    private fun extractFilesFromExtras() {
-        intent.extras?.let { bundle ->
-            val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>(MULTI_EXTRA_FILES)
-            files?.let {
-                viewModel.defineListFiles(it)
-            }
+    private fun extractFilesFromExtras() = intent.extras?.let { bundle ->
+        val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>(MULTI_EXTRA_FILES)
+        files?.let {
+            viewModel.defineListFiles(it)
         }
+    }
+
+    private fun extractIsModeViewInConversation() = intent.extras?.let { bundle ->
+        val modeOnlyView = bundle.getBoolean(MODE_ONLY_VIEW)
+        viewModel.defineModeOnlyViewInConversation(modeOnlyView)
     }
 
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
@@ -217,20 +222,20 @@ class MultipleAttachmentPreviewActivity
 
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
         when (action) {
-            MultipleAttachmentPreviewAction.Exit -> exitPreview()
-            MultipleAttachmentPreviewAction.ExitToConversation -> exitPreview()
-            MultipleAttachmentPreviewAction.HideAttachmentOptions -> hideAnimAttachmentOptions()
-            MultipleAttachmentPreviewAction.ShowAttachmentOptions -> showAnimAttachmentOptions()
-            MultipleAttachmentPreviewAction.ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
-            MultipleAttachmentPreviewAction.HideFileTabs -> hideBottomTabs()
-            is MultipleAttachmentPreviewAction.ShowSelectFolderName -> TODO()
-            is MultipleAttachmentPreviewAction.SelectItemInTabLayout -> removeElementPager(action.indexItem)
-            is MultipleAttachmentPreviewAction.ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
-            is MultipleAttachmentPreviewAction.SendMessageToRemote -> sendMessageToRemote(action)
+            Exit -> exitPreview()
+            ExitToConversation -> exitPreview()
+            HideAttachmentOptions -> hideAnimAttachmentOptions()
+            ShowAttachmentOptions -> showAnimAttachmentOptions()
+            ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
+            HideFileTabs -> hideBottomTabs()
+            is ShowSelectFolderName -> TODO()
+            is SelectItemInTabLayout -> removeElementPager(action.indexItem)
+            is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
+            is SendMessageToRemote -> sendMessageToRemote(action)
         }
     }
 
-    private fun sendMessageToRemote(action: MultipleAttachmentPreviewAction.SendMessageToRemote) =
+    private fun sendMessageToRemote(action: SendMessageToRemote) =
         viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
 
     private fun showSelfDestruction(selfDestruction: Int) {
@@ -260,8 +265,9 @@ class MultipleAttachmentPreviewActivity
     private fun addListenerToTabLayout() = viewBinding.viewPreviewBottom.getTabLayout()
         .addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
-            override fun onTabSelected(tab: TabLayout.Tab) =
+            override fun onTabSelected(tab: TabLayout.Tab) {
                 (tab.customView as ViewMultipleAttachmentTabView).selected(true)
+            }
 
             override fun onTabUnselected(tab: TabLayout.Tab) =
                 (tab.customView as ViewMultipleAttachmentTabView).selected(false)
@@ -272,18 +278,16 @@ class MultipleAttachmentPreviewActivity
         })
 
     private fun addListenerToViewPager() =
-        viewBinding.viewPagerAttachments.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
+        viewBinding.viewPagerAttachments.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
 
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                viewModel.loadSelfDestructionTimeByIndex(position)
-            }
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    viewModel.loadSelfDestructionTimeByIndex(position)
+                    viewModel.validateMustMarkAsReaded(position)
+                }
 
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-        })
+            })
 
 
     private fun defineListeners() = viewBinding.apply {

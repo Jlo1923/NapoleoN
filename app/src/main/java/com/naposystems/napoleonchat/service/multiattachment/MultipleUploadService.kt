@@ -6,7 +6,8 @@ import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationUploadClient.NotificationUploadClientImp
+import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.SENDING
@@ -55,13 +56,7 @@ class MultipleUploadService : Service() {
                 bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
         }
 
-        currentMessage.let { msg ->
-            val nextAttachment = getNextAttachment()
-            nextAttachment?.let {
-                repository.uploadAttachment(it, msg)
-                showNotification()
-            } ?: run { handleUploadSuccess() }
-        }
+        handleTryNextAttachment()
 
         intent.action?.let { action ->
             Timber.d("onStartCommand action: $action")

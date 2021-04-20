@@ -21,7 +21,7 @@ import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.MediaStoreAudio
-import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity

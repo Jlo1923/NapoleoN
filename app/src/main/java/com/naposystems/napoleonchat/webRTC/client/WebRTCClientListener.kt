@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.webRTC.client
 interface WebRTCClientListener {
 
     //Turn ON/OFF Camera
-    fun toggleContactCamera(isVisible: Boolean)
+    fun toggleContactCamera(visibility: Int)
 
     //Change to videocall
     fun contactWantChangeToVideoCall()

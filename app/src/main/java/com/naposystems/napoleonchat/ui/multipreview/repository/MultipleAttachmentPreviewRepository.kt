@@ -10,6 +10,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENT
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
 import com.naposystems.napoleonchat.utility.extensions.isVideo
@@ -40,7 +41,7 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
     ): List<AttachmentEntity?> {
         val attachments = listFiles.map { fileItem ->
             val file = getFileFromFileItem(fileItem)
-            file?.let { fileItem.toAttachmentEntityWithFile(it) }
+            file?.let { fileItem.toAttachmentEntityWithFile(it, fileItem.selfDestruction) }
         }
         attachments.forEach {
             it?.let {
@@ -63,7 +64,9 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
                     messageEntity,
                     messageResponse.body()!!,
                     Constants.IsMine.YES.value
-                ),
+                ).apply {
+                    status = SENT.status
+                },
                 messageResponse.body()?.id ?: ""
             )
         }

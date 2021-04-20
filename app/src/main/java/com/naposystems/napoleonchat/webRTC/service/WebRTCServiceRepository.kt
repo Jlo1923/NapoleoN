@@ -4,4 +4,5 @@ import com.naposystems.napoleonchat.model.CallModel
 
 interface WebRTCServiceRepository {
     fun rejectCall(callModel: CallModel)
+    fun disposeCall(callModel: CallModel)
 }

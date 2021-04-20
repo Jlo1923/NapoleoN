@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.ui.conversation
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
-import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
@@ -15,7 +14,7 @@ import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelatio
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
-import com.naposystems.napoleonchat.utility.DownloadAttachmentResult
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.utility.UploadResult
 import com.vincent.videocompressor.VideoCompressResult
 import kotlinx.coroutines.channels.ProducerScope
@@ -136,6 +135,7 @@ interface IContractConversation {
         suspend fun deleteMessagesForAll(deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
         suspend fun copyMessagesSelected(contactId: Int): List<String>
         suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
+
         suspend fun downloadAttachment(
             messageAndAttachmentRelation: MessageAttachmentRelation,
             itemPosition: Int

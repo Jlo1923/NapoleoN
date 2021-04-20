@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.previewMedia
 
 import android.content.Context
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -10,6 +11,7 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemAttachment
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -17,7 +19,8 @@ import javax.inject.Inject
 class PreviewMediaRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
-    private val messageLocalDataSource: MessageLocalDataSource
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val attachmentLocalDataSource: AttachmentLocalDataSource
 ) :
     IContractPreviewMedia.Repository {
 
@@ -62,6 +65,38 @@ class PreviewMediaRepository @Inject constructor(
             }
         } catch (ex: Exception) {
             Timber.e(ex)
+        }
+    }
+
+    override suspend fun sentAttachmentAsRead(
+        attachment: MultipleAttachmentItemAttachment,
+        contactId: Int
+    ): Boolean {
+        try {
+            val messagesReqDTO = MessagesReqDTO(
+                messages = listOf(
+                    MessageDTO(
+                        id = attachment.webId,
+                        status = Constants.StatusMustBe.READED.status,
+                        type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+                        user = contactId
+                    )
+                )
+            )
+
+            val response = napoleonApi.sendMessagesRead(messagesReqDTO)
+
+            if (response.isSuccessful) {
+                attachmentLocalDataSource.updateAttachmentStatus(
+                    listOf(attachment.webId),
+                    Constants.AttachmentStatus.READED.status
+                )
+                return true
+            }
+            return false
+        } catch (ex: Exception) {
+            Timber.e(ex)
+            return false
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.notificationUploadClient
+package com.naposystems.napoleonchat.service.uploadService.notification
 
 import android.app.Notification
 import android.content.Context
