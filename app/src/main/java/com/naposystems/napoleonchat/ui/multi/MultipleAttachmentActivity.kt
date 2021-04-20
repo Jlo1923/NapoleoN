@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.contacts.showToast
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
+import com.naposystems.napoleonchat.ui.multi.fragments.MultipleAttachmentExitBottomSheetDialogFragment
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
@@ -44,10 +45,10 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
+        viewBinding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
+
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentViewModel::class.java)
-
-        viewBinding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
 
         intent.extras?.let {
             if (it.containsKey(MULTI_EXTRA_CONTACT)) {
@@ -85,11 +86,22 @@ class MultipleAttachmentActivity : AppCompatActivity() {
             MultipleAttachmentAction.BackToFolderList -> showFoldersAgain()
             MultipleAttachmentAction.Exit -> finish()
             MultipleAttachmentAction.HideListSelectedFiles -> hidePreviewList()
+            MultipleAttachmentAction.ShowDialogConfirmExit -> showConfirmDialogExit()
             MultipleAttachmentAction.ShowHasMaxFilesAttached -> showMaxFilesAttached()
             is MultipleAttachmentAction.ContinueToPreview -> continueToPreview(action.listElements)
             is MultipleAttachmentAction.ShowSelectFolderName -> showFolderName(action.folderName)
             is MultipleAttachmentAction.ShowPreviewSelectedFiles -> showPreviewList(action.listElements)
         }
+    }
+
+    private fun showConfirmDialogExit() {
+        val dialogForDelete = MultipleAttachmentExitBottomSheetDialogFragment {
+            finish()
+        }
+        dialogForDelete.show(
+            supportFragmentManager,
+            "MultipleAttachmentExitBottomSheetDialogFragment"
+        )
     }
 
     private fun continueToPreview(listElements: List<MultipleAttachmentFileItem>) {
@@ -180,7 +192,10 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         groupieAdapter.updateAsync(listElements) { showFoldersList() }
 
     private fun showFiles(listElements: List<Item<*>>) =
-        groupieAdapterFiles.updateAsync(listElements) { showFilesList() }
+        groupieAdapterFiles.updateAsync(listElements) {
+            showFilesList()
+            showButtonTopAsBack()
+        }
 
     private fun showFolderName(folderName: String) = viewBinding.textExplain.apply {
         text = folderName
@@ -190,6 +205,15 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     private fun showFoldersAgain() {
         showFoldersList()
         showFolderName("")
+        showButtonTopAsClose()
+    }
+
+    private fun showButtonTopAsClose() = viewBinding.apply {
+        imageBack.setImageDrawable(root.context.getDrawable(R.drawable.ic_close_black_24))
+    }
+
+    private fun showButtonTopAsBack() = viewBinding.apply {
+        imageBack.setImageDrawable(root.context.getDrawable(R.drawable.ic_keyboard_arrow_left_black))
     }
 
     private fun showFoldersList() = viewBinding.apply {

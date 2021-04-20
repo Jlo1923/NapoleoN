@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.os.Bundle
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
@@ -546,6 +547,7 @@ class SocketClientImp
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
+                                        Timber.d("syncManager.insertNewMessage")
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
                                         val messageString: String = if (BuildConfig.ENCRYPT_API) {

@@ -48,8 +48,10 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
-import com.naposystems.napoleonchat.service.multiattachment.IContractMultipleUpload
-import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadRepository
+import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
+import com.naposystems.napoleonchat.service.download.repository.DownloadServiceRepository
+import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
@@ -69,7 +71,7 @@ import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
 import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
 import com.naposystems.napoleonchat.ui.contacts.IContractContacts
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IContractMyMultiAttachmentMsg
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
@@ -108,7 +110,6 @@ import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFor
 import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
 import dagger.Binds
 import dagger.Module
-import javax.inject.Singleton
 
 @Module
 abstract class RepositoryModule {
@@ -279,5 +280,10 @@ abstract class RepositoryModule {
     abstract fun provideMyMultiAttachmentMsgRepository(
         repository: MyMultiAttachmentMsgRepository
     ): IContractMyMultiAttachmentMsg.Repository
+
+    @Binds
+    abstract fun provideDownloadServiceRepository(
+        repository: DownloadServiceRepository
+    ): IContractDownloadService.Repository
 
 }

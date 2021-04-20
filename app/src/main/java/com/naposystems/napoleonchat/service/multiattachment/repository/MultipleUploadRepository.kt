@@ -1,10 +1,11 @@
-package com.naposystems.napoleonchat.service.multiattachment
+package com.naposystems.napoleonchat.service.multiattachment.repository
 
 import android.content.Context
 import android.webkit.MimeTypeMap
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -131,7 +132,7 @@ class MultipleUploadRepository @Inject constructor(
             val requestBodyMessageId = createPartFromString(messageWebId)
             val requestBodyType = createPartFromString(type)
             val requestBodyDuration = createPartFromString(duration.toString())
-            val requestBodyDestroy = createPartFromString(7.toString())
+            val requestBodyDestroy = createPartFromString(this.duration.toString())
 
             val requestBodyFilePart = createPartFromFile(
                 this, job,
@@ -188,16 +189,15 @@ class MultipleUploadRepository @Inject constructor(
                 messageWebId = attachmentResDTO.messageId
                 body = attachmentResDTO.body
                 status = Constants.AttachmentStatus.SENT.status
+
+                updateAttachment(this)
+                if (BuildConfig.ENCRYPT_API && type != AttachmentType.GIF_NN.type) {
+                    saveEncryptedFile(this)
+                }
+                publishEventTryNext()
             }
         }
 
-        currentAttachment.apply {
-            updateAttachment(this)
-            if (BuildConfig.ENCRYPT_API && type != AttachmentType.GIF_NN.type) {
-                saveEncryptedFile(this)
-            }
-            publishEventTryNext()
-        }
     }
 
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) =
@@ -260,21 +260,18 @@ class MultipleUploadRepository @Inject constructor(
 
 
     private fun getDestFileForCompress(attachmentEntity: AttachmentEntity): Pair<File, File> {
-        val path =
-            File(
-                context.cacheDir!!,
-                FileManager.getSubfolderByAttachmentType(attachmentEntity.type)
-            )
-        if (!path.exists())
-            path.mkdirs()
-        val sourceFile = File(path, attachmentEntity.fileName)
-        val destFile = File(
-            path, "${
-                attachmentEntity.fileName
-                    .replace("_compress", "")
-                    .split('.')[0]
-            }_compress.${attachmentEntity.extension}"
+        val path = File(
+            context.cacheDir!!,
+            FileManager.getSubfolderByAttachmentType(attachmentEntity.type)
         )
+        if (!path.exists()) path.mkdirs()
+        val sourceFile = File(path, attachmentEntity.fileName)
+        val child = "${
+            attachmentEntity.fileName
+                .replace("_compress", "")
+                .split('.')[0]
+        }_compress.${attachmentEntity.extension}"
+        val destFile = File(path, child)
         return Pair(sourceFile, destFile)
     }
 

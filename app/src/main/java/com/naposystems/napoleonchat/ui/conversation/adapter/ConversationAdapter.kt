@@ -23,8 +23,8 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.In
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.MyMessageGifNNViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.IncomingMessageImageViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.MyMessageImageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IncomingMultiAttachmentMsgViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewHolder
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.IncomingMessageVideoViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.MyMessageVideoViewHolder
 import com.naposystems.napoleonchat.utility.Constants
@@ -378,6 +378,12 @@ class ConversationAdapter(
                 viewmodels.viewModelMultiAttachment,
                 listeners.listenerMultiAttachment
             )
+            TYPE_INCOMING_MULTI_ATTACHMENT -> IncomingMultiAttachmentMsgViewHolder.from(
+                parent,
+                viewmodels.viewModelIncomingMultiAttachment,
+                listeners.listenerMultiAttachment
+            )
+
             //TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
@@ -425,7 +431,14 @@ class ConversationAdapter(
                 TYPE_GROUP_DATE_MESSAGES -> (holder as GroupDateMessageViewHolder)
                     .bind(item)
                 TYPE_MY_MULTI_ATTACHMENT ->
-                    (holder as MyMultiAttachmentMsgViewHolder)
+                    (holder as MyMultiAttachmentMsgViewHolder).bind(
+                        item,
+                        clickListener,
+                        isFirst,
+                        timeFormat
+                    )
+                TYPE_INCOMING_MULTI_ATTACHMENT ->
+                    (holder as IncomingMultiAttachmentMsgViewHolder)
                         .bind(item, clickListener, isFirst, timeFormat)
             }
         }
