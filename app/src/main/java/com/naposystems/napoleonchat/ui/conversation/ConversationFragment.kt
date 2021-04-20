@@ -1898,13 +1898,12 @@ class ConversationFragment
         messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
-
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             recyclerView.setOnTouchListener { _, event ->
-                swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
-                        event?.action == MotionEvent.ACTION_UP
+                swipeBack = event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
+
                     if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {
                         binding.inputPanel.openQuote(messageAndAttachmentRelation)
                     }
