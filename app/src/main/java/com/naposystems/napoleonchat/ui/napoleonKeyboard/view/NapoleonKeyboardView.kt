@@ -153,7 +153,8 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
         when (pageSelected) {
             GIF_PAGE ->
                 mListener?.showInputTextMain(false)
-            else ->  mListener?.showInputTextMain(true)
+            else ->
+                mListener?.showInputTextMain(true)
         }
     }
 
