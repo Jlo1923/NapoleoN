@@ -17,16 +17,14 @@ fun bindAvatar(imageView: ImageView, @Nullable loadImage: String?) {
     val context = imageView.context
     val defaultAvatar = ContextCompat.getDrawable(context, R.drawable.ic_default_avatar)
 
-    Glide.with(context)
-        .load(loadImage)
-        .apply(
-            RequestOptions()
-                .priority(Priority.NORMAL)
-                .fitCenter()
-        ).error(defaultAvatar)
-        .circleCrop()
-        .into(imageView)
-
+    if (loadImage.isNullOrEmpty()) {
+        imageView.setImageDrawable(defaultAvatar)
+    } else {
+        Glide.with(context)
+            .load(loadImage)
+            .circleCrop()
+            .into(imageView)
+    }
 }
 
 @BindingAdapter("name")
