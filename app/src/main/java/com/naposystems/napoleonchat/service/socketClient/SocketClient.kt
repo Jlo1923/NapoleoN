@@ -17,10 +17,10 @@ interface SocketClient {
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean = false, callModel: CallModel? = null)
 
     fun subscribeToPresenceChannel(callModel: CallModel)
-    
+
     fun disconnectSocket()
 
-    fun unSubscribePresenceChannel(channelName: String)
+    fun  unSubscribePresenceChannel(channelName: String)
 
     fun emitClientConversation(messages: List<ValidateMessage>)
 

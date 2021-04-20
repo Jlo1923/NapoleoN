@@ -110,7 +110,7 @@ class ConversationCallActivity :
             initSurfaceRenders()
         }
 
-        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
+        webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -456,7 +456,8 @@ class ConversationCallActivity :
 
     override fun showConnectingTitle() {
         runOnUiThread {
-            binding.textViewCalling.isVisible = true
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
             binding.textViewCalling.text =
                 getString(if (callModel.isVideoCall) R.string.text_encrypting_videocall else R.string.text_encrypting_call)
         }
@@ -464,7 +465,8 @@ class ConversationCallActivity :
 
     override fun showReConnectingTitle() {
         runOnUiThread {
-            binding.textViewCalling.isVisible = true
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
             binding.textViewCalling.text = getString(R.string.text_reconnecting)
         }
     }

@@ -276,19 +276,28 @@ class SocketClientImp
 
                         listenCallEvents(channelName)
 
-                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
-                            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL)
-                                socketEventListener.itsSubscribedToPresenceChannelIncomingCall(
-                                    callModel
-                                )
+                        if (NapoleonApplication.isActiveCall.not()) {
 
-                        } else {
-                            Timber.d("LLAMADA PASO 3: Usuarios solo uno")
-                            if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
-                                socketEventListener.itsSubscribedToPresenceChannelOutgoingCall(
-                                    callModel
-                                )
+                            if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
+
+                                pusher.getPresenceChannel(callModel.channelName).users.forEach {
+                                    Timber.d("LLAMADA PASO User: ${it.id} ${it.info}")
+                                }
+
+                                Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
+                                if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL)
+                                    socketEventListener.itsSubscribedToPresenceChannelIncomingCall(
+                                        callModel
+                                    )
+
+                            } else {
+                                Timber.d("LLAMADA PASO 3: Usuarios solo uno")
+                                if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+                                    socketEventListener.itsSubscribedToPresenceChannelOutgoingCall(
+                                        callModel
+                                    )
+                            }
+
                         }
                     }
 
@@ -391,7 +400,12 @@ class SocketClientImp
                 }
 
                 //Disconnect Pusher
-                pusher.disconnect()
+
+                try {
+                    pusher.disconnect()
+                } catch (e: Exception) {
+                    Timber.e("LLAMADA PASO: INTENTANDO DESCONECTAR PUSHER")
+                }
 
             }
         } catch (e: Exception) {
@@ -403,7 +417,12 @@ class SocketClientImp
         if (pusher.getPresenceChannel(channelName) != null) {
             Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
             NapoleonApplication.isCurrentOnCall = false
-            pusher.unsubscribe(channelName)
+
+            try {
+                pusher.unsubscribe(channelName)
+            } catch (e: Exception) {
+                Timber.e("LLAMADA PASO: INTENTANDO DESSUBSCRIBIR PRESENCIA")
+            }
         }
     }
 

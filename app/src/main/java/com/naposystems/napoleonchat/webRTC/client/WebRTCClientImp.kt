@@ -102,6 +102,19 @@ class WebRTCClientImp
         override fun onTick(millisUntilFinished: Long) = Unit
     }
 
+    private var countDownReconnecting: CountDownTimer = object : CountDownTimer(
+        TimeUnit.SECONDS.toMillis(15),
+        TimeUnit.SECONDS.toMillis(1)
+    ) {
+        override fun onFinish() {
+            Timber.d("CountDown finish")
+            hideNotification()
+            disposeCall()
+        }
+
+        override fun onTick(millisUntilFinished: Long) = Unit
+    }
+
     private val eglBase: EglBase by lazy {
         EglBase.create()
     }
@@ -229,6 +242,7 @@ class WebRTCClientImp
             callTime = 0
 
             isActiveCall = false
+            NapoleonApplication.isActiveCall = false
             isHideVideo = false
             contactCameraIsVisible = false
             isMicOn = true
@@ -251,12 +265,12 @@ class WebRTCClientImp
 
             remoteSurfaceViewRenderer = null
 
-            if (::remoteMediaStream.isInitialized)
-                try {
+            try {
+                if (::remoteMediaStream.isInitialized)
                     remoteMediaStream.dispose()
-                } catch (e: java.lang.Exception) {
-                    Timber.e(e.localizedMessage)
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT remoteMediaStream ${e.localizedMessage}")
+            }
 
             localSurfaceViewRenderer = null
 
@@ -266,18 +280,25 @@ class WebRTCClientImp
 
             localVideoSource = null
 
-            if (::localMediaStream.isInitialized)
-                try {
+            try {
+                if (::localMediaStream.isInitialized)
                     localMediaStream.dispose()
-                } catch (e: java.lang.Exception) {
-                    Timber.e(e.localizedMessage)
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT localMediaStream ${e.localizedMessage}")
+            }
 
             videoCapturerAndroid?.dispose()
 
             videoCapturerAndroid = null
 
-            peerConnection = null
+            try {
+                peerConnection = null
+            } catch (e: Exception) {
+                Timber.e("LLAMADA PASO: INTENTANDO NULEAR")
+            }
+
+
+            Timber.d("LLAMADA PASO: FINALIZANDO REINIT")
 
         } catch (e: Exception) {
             Timber.e("LLAMADA PASO: REINIT ${e.localizedMessage}")
@@ -449,13 +470,19 @@ class WebRTCClientImp
                             PeerConnection.IceConnectionState.CHECKING -> {
                                 webRTCClientListener?.showConnectingTitle()
                             }
+
                             PeerConnection.IceConnectionState.CONNECTED -> {
+                                webRTCClientListener?.showTimer()
                                 connectCall()
                             }
+
                             PeerConnection.IceConnectionState.DISCONNECTED -> {
                                 webRTCClientListener?.showReConnectingTitle()
+                                countDownReconnecting.start()
                             }
+
                             PeerConnection.IceConnectionState.FAILED -> {
+                                hideNotification()
                                 disposeCall()
                             }
                             PeerConnection.IceConnectionState.NEW,
@@ -1127,6 +1154,8 @@ class WebRTCClientImp
 
         isActiveCall = true
 
+        NapoleonApplication.isActiveCall = true
+
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         countDownRingCall.cancel()
@@ -1173,7 +1202,7 @@ class WebRTCClientImp
         }
     }
 
-    override fun hideNotification(){
+    override fun hideNotification() {
         webRTCClientListener?.onContactNotAnswer()
 
         val intent = Intent(context, WebRTCService::class.java)
@@ -1211,12 +1240,18 @@ class WebRTCClientImp
 
             countDownRingCall.cancel()
 
+            countDownReconnecting.cancel()
+
             bluetoothStateManager?.onDestroy()
 
             isActiveCall = false
 
+            NapoleonApplication.isActiveCall = false
+
             Timber.d("LLAMADA PASO: DESUBSCRIBIR A CANAL")
             socketClient.unSubscribePresenceChannel(auxModel.channelName)
+
+            socketClient.disconnectSocket()
 
             stopProximitySensor()
 
