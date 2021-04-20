@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.naposystems.napoleonchat.databinding.ItemViewMultiAttachmentMsgItemBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.RetryUpload
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.ViewAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.utility.BlurTransformation
@@ -50,12 +51,38 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         showUiByStatus()
     }
 
+    fun defineListener(listener: MultiAttachmentMsgItemListener) {
+        this.listener = listener
+    }
+
     private fun showUiByStatus() = viewBinding.apply {
         theAttachment?.let {
+            when (it.type) {
+                Constants.AttachmentType.IMAGE.type -> handleImageStatus()
+                Constants.AttachmentType.VIDEO.type -> handleVideoStatus()
+            }
+        }
+    }
+
+    private fun handleVideoStatus() {
+        theAttachment?.let {
             when (it.status) {
-                SENDING.status -> uiModeSending()
-                SENT.status -> uiModeSent()
+                SENDING.status -> uiModeProcessing()
+                SENT.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
                 ERROR.status -> uiModeError()
+                NOT_DOWNLOADED.status -> launchDownload()
+                else -> Unit
+            }
+        }
+    }
+
+    private fun handleImageStatus() {
+        theAttachment?.let {
+            when (it.status) {
+                SENDING.status -> uiModeProcessing()
+                SENT.status, NOT_DOWNLOADED.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
+                ERROR.status -> uiModeError()
+                else -> Unit
             }
         }
     }
@@ -65,22 +92,14 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         hideViews(progressBar, imageViewAttachment, imageViewIconShow)
     }
 
-    private fun uiModeSent() = viewBinding.apply {
+    private fun uiModeDone() = viewBinding.apply {
         showViews(imageViewAttachment, imageViewIconShow)
         hideViews(progressBar, imageRetry)
     }
 
-    private fun uiModeSending() = viewBinding.apply {
+    private fun uiModeProcessing() = viewBinding.apply {
         hideViews(imageViewAttachment, imageViewIconShow, imageRetry)
         showViews(progressBar)
-    }
-
-    private fun uiModeDefault() = viewBinding.apply {
-        hideViews(imageViewAttachment, imageViewIconShow, imageRetry, progressBar)
-    }
-
-    fun defineListener(listener: MultiAttachmentMsgItemListener) {
-        this.listener = listener
     }
 
     private fun defineViewListeners() = viewBinding.apply {
@@ -89,13 +108,16 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
                 listener.onMsgItemFileAction(ViewAttachment(mIndex))
             }
         }
+
         imageRetry.setOnClickListener {
             ifNotNull(theAttachment, listener) { attachment, listener ->
-                listener.onMsgItemFileAction(
-                    MultiAttachmentMsgItemAction.RetryUpload(attachment)
-                )
+                listener.onMsgItemFileAction(RetryUpload(attachment))
             }
         }
+    }
+
+    private fun launchDownload() = ifNotNull(theAttachment, listener) { attachment, listener ->
+        listener.onMsgItemFileAction(MultiAttachmentMsgItemAction.RetryDownload(attachment))
     }
 
     private fun loadImage() {

@@ -81,5 +81,7 @@ data class AttachmentEntity(
     }
 
     fun isSent(): Boolean = status == AttachmentStatus.SENT.status
+    
+    fun isDownloaded(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
 
 }

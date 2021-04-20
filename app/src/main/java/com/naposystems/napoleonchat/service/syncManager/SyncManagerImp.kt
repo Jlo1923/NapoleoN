@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class SyncManagerImp @Inject constructor(
@@ -44,6 +45,9 @@ class SyncManagerImp @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val userLocalDataSource: UserLocalDataSource
 ) : SyncManager {
+
+    val queueNewMessageDataEventRes: Queue<NewMessageDataEventRes> =
+        LinkedList<NewMessageDataEventRes>()
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
@@ -257,28 +261,51 @@ class SyncManagerImp @Inject constructor(
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
 
-        GlobalScope.launch {
-            val databaseMessage =
-                messageLocalDataSource.getMessageByWebId(newMessageDataEventRes.messageId, false)
+        if (queueNewMessageDataEventRes.isEmpty()) {
+            queueNewMessageDataEventRes.add(newMessageDataEventRes)
+            tryHandleNextItemInQueue()
+        } else {
+            queueNewMessageDataEventRes.add(newMessageDataEventRes)
+        }
 
-            /**
-             * Si el mensaje no existe dejamos el proceso como estaba, en caso contrario,
-             * solo tomaremos el attachment que acompaña el mensaje que nos llega para agregarlo
-             * a la database local
-             */
-            try {
-                databaseMessage?.let {
-                    getMessageIdAndSaveAttachmentLocally(
-                        newMessageDataEventRes,
-                        it.messageEntity.id
-                    )
-                } ?: run {
-                    insertNewMessageAndAttachmentLocally(newMessageDataEventRes)
-                }
-            } catch (exception: Exception) {
-                exception.printStackTrace()
+    }
+
+    private fun tryHandleNextItemInQueue() {
+        GlobalScope.launch {
+
+            val element = if (queueNewMessageDataEventRes.isEmpty().not()) {
+                queueNewMessageDataEventRes.first()
+            } else {
+                null
             }
 
+            element?.let {
+
+                Timber.d("insertNewMessage element.messageId $element.messageId")
+
+                val databaseMessage =
+                    messageLocalDataSource.getMessageByWebId(element.messageId, false)
+
+                /**
+                 * Si el mensaje no existe dejamos el proceso como estaba, en caso contrario,
+                 * solo tomaremos el attachment que acompaña el mensaje que nos llega para agregarlo
+                 * a la database local
+                 */
+                try {
+                    databaseMessage?.let {
+                        Timber.d("insertNewMessage getMessageIdAndSaveAttachmentLocally")
+                        getMessageIdAndSaveAttachmentLocally(element, it.messageEntity.id)
+                    } ?: run {
+                        Timber.d("insertNewMessage insertNewMessageAndAttachmentLocally")
+                        insertNewMessageAndAttachmentLocally(element)
+                    }
+                    queueNewMessageDataEventRes.poll()
+                    tryHandleNextItemInQueue()
+                } catch (exception: Exception) {
+                    Timber.d("syncManager.insertNewMessage")
+                    exception.printStackTrace()
+                }
+            }
         }
     }
 

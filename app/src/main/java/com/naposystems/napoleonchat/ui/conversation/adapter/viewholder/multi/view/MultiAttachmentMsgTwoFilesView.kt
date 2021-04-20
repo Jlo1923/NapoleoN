@@ -23,22 +23,11 @@ class MultiAttachmentMsgTwoFilesView @JvmOverloads constructor(
             true
         )
 
-    init {
-//        viewBinding.apply {
-//            viewFileOne.bindDefault()
-//            viewFileTwo.bindDefault()
-//        }
-    }
-
-    fun bindAttachments(listAttachments: List<AttachmentEntity>) {
-        viewBinding.apply {
-            viewFileOne.bindAttachment(listAttachments[0], 0)
-            viewFileTwo.bindAttachment(listAttachments[1], 1)
-        }
-        viewBinding.apply {
-            viewFileOne.defineListener(this@MultiAttachmentMsgTwoFilesView)
-            viewFileTwo.defineListener(this@MultiAttachmentMsgTwoFilesView)
-        }
+    fun bindAttachments(listAttachments: List<AttachmentEntity>) = viewBinding.apply {
+        viewFileOne.defineListener(this@MultiAttachmentMsgTwoFilesView)
+        viewFileTwo.defineListener(this@MultiAttachmentMsgTwoFilesView)
+        viewFileOne.bindAttachment(listAttachments[0], 0)
+        viewFileTwo.bindAttachment(listAttachments[1], 1)
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {

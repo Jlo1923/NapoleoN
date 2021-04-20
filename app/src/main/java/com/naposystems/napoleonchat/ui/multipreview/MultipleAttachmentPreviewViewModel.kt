@@ -3,7 +3,9 @@ package com.naposystems.napoleonchat.ui.multipreview
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.net.toUri
 import androidx.lifecycle.*
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.ATTACHMENT_KEY
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.MESSAGE_KEY
@@ -17,14 +19,19 @@ import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.SelectItemInTabLayout
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
+import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
+import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.extensions.isVideo
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MultipleAttachmentPreviewViewModel @Inject constructor(
     private val repository: IContractSelfDestructTime.Repository,
     private val repositoryMessages: IContractMultipleAttachmentPreview.Repository,
+    private val repositoryPreviewMedia: IContractPreviewMedia.Repository,
     private val context: Context
 ) : ViewModel(),
     IContractMultipleAttachmentPreview.ViewModel,
@@ -61,9 +68,46 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun defineListFiles(files: ArrayList<MultipleAttachmentFileItem>) {
-        listFiles = files
-        defineDefaultSelfDestructionTime()
-        showFilesAsPager()
+        /**
+         * Cuando el video es local, osea soy el que envia, no necesitamos nada adicional, pero si
+         * el video es descargado, osea soy el receptor, debemos crear el archivo temporal ó generar
+         * el uri segun sea el caso
+         */
+        val filesWithoutUri = files.filter { it.contentUri == null }
+        if (filesWithoutUri.isEmpty()) {
+            listFiles = files
+            defineDefaultSelfDestructionTime()
+            showFilesAsPager()
+        } else {
+            createUriForFiles(filesWithoutUri)
+        }
+    }
+
+    private fun createUriForFiles(filesWithoutUri: List<MultipleAttachmentFileItem>) {
+        viewModelScope.launch {
+            filesWithoutUri.forEach { file ->
+                if (file.isVideo()) {
+                    if (BuildConfig.ENCRYPT_API) {
+                        val attachmentEntity =
+                            file.messageAndAttachment?.attachment?.toAttachmentEntity()
+                        attachmentEntity?.let { attachment ->
+                            val newUri = repositoryPreviewMedia.createTempFile(attachment)
+                            newUri?.let { file.contentUri = it.toUri() }
+                        }
+                    } else {
+                        file.contentUri = Utils.getFileUri(
+                            context = context,
+                            subFolder = Constants.CacheDirectories.VIDEOS.folder,
+                            fileName = file.messageAndAttachment?.attachment?.fileName ?: ""
+                        )
+                    }
+                }
+            }
+
+            listFiles = filesWithoutUri.toMutableList()
+            defineDefaultSelfDestructionTime()
+            showFilesAsPager()
+        }
     }
 
     fun forceShowOptions() {
@@ -91,8 +135,24 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun loadSelfDestructionTimeByIndex(position: Int) {
-        actions.value =
-            ShowSelfDestruction(listFiles[position].selfDestruction)
+        actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+    }
+
+    fun validateMustMarkAsReaded(position: Int) {
+        viewModelScope.launch {
+            val attachment = listFiles[position].messageAndAttachment?.attachment
+            attachment?.let {
+                val msgAttachment = listFiles[position].messageAndAttachment
+                msgAttachment?.let {
+                    if (it.isRead.not() && it.isMine == Constants.IsMine.NO.value) {
+                        it.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
+                            it.attachment,
+                            it.contactId
+                        )
+                    }
+                }
+            }
+        }
     }
 
     fun setContact(contactEntity: ContactEntity) {
@@ -219,5 +279,6 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     fun defineModeOnlyViewInConversation(modeOnlyView: Boolean) {
         this.modeOnlyView = modeOnlyView
     }
+
 
 }

@@ -1,18 +1,24 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels
 
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.*
+import com.google.android.exoplayer2.offline.DownloadService
+import com.naposystems.napoleonchat.service.download.DownloadAttachmentsService
+import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractIncomingMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class IncomingMultiAttachmentMsgViewModel @Inject constructor(
     private val repository: IContractMyMultiAttachmentMsg.Repository
-) : ViewModel(), IContractMyMultiAttachmentMsg.ViewModel, LifecycleObserver {
+) : ViewModel(), IContractIncomingMultiAttachmentMsg.ViewModel, LifecycleObserver {
 
     private val _state = MutableLiveData<MultiAttachmentMsgState>()
     val state: LiveData<MultiAttachmentMsgState>
@@ -21,8 +27,8 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
     private val actions: SingleLiveEvent<MultiAttachmentMsgEvent> = SingleLiveEvent()
     fun actions(): LiveData<MultiAttachmentMsgEvent> = actions
 
-    private fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
-        val countSent = listAttachments.filter { it.isSent() }
+    override fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
+        val countSent = listAttachments.filter { it.isDownloaded() }
         if (countSent.size == listAttachments.size) {
             actions.value = MultiAttachmentMsgEvent.HideQuantity
         } else {
@@ -31,23 +37,25 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
         }
     }
 
-    override fun retryUploadAllFiles() {
+    override fun retryDownloadAllFiles() {
+        Log.i("JkDev", "retryDownloadAllFiles")
     }
 
-    fun cancelDownload(attachmentEntity: AttachmentEntity) {
-
+    override fun cancelDownload(attachmentEntity: AttachmentEntity) {
+        Log.i("JkDev", "cancelDownload ${attachmentEntity.id}")
     }
 
-    fun cancelUpload(attachmentEntity: AttachmentEntity) {
-
+    override fun retryDownload(attachmentEntity: AttachmentEntity, context: Context) {
+        val intent = Intent(context, DownloadAttachmentsService::class.java).apply {
+            putExtras(Bundle().apply {
+                putParcelableArrayList(
+                    MultipleUploadService.ATTACHMENT_KEY,
+                    ArrayList(listOf(attachmentEntity))
+                )
+            })
+        }
+        context.startService(intent)
     }
 
-    fun retryDownload(attachmentEntity: AttachmentEntity) {
-
-    }
-
-    fun retryUpload(attachmentEntity: AttachmentEntity) {
-
-    }
 
 }

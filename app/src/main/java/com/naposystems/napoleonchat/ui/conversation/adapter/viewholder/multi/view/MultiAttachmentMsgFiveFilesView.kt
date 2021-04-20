@@ -27,17 +27,20 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
     lateinit var listAttachments: List<AttachmentEntity>
 
     fun bindAttachments(listAttachments: List<AttachmentEntity>) {
-
         this.listAttachments = listAttachments
-
         viewBinding.apply {
+            viewFileOne.defineListener(this@MultiAttachmentMsgFiveFilesView)
+            viewFileTwo.defineListener(this@MultiAttachmentMsgFiveFilesView)
+            viewFileThree.defineListener(this@MultiAttachmentMsgFiveFilesView)
+            viewFileFour.defineListener(this@MultiAttachmentMsgFiveFilesView)
+            viewFileFive.defineListener(this@MultiAttachmentMsgFiveFilesView)
+
             viewFileOne.bindAttachment(listAttachments[0], 0)
             viewFileTwo.bindAttachment(listAttachments[1], 1)
             viewFileThree.bindAttachment(listAttachments[2], 2)
             viewFileFour.bindAttachment(listAttachments[3], 3)
             viewFileFive.bindAttachment(listAttachments[4], 4)
         }
-
         validateMustShowMoreFiles()
         defineViewListeners()
     }
@@ -50,12 +53,6 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
 
     private fun defineViewListeners() {
         viewBinding.apply {
-            viewFileOne.defineListener(this@MultiAttachmentMsgFiveFilesView)
-            viewFileTwo.defineListener(this@MultiAttachmentMsgFiveFilesView)
-            viewFileThree.defineListener(this@MultiAttachmentMsgFiveFilesView)
-            viewFileFour.defineListener(this@MultiAttachmentMsgFiveFilesView)
-            viewFileFive.defineListener(this@MultiAttachmentMsgFiveFilesView)
-
             textMoreFilesQuantity.setOnClickListener {
                 listener?.onMsgItemFileAction(
                     MultiAttachmentMsgItemAction.ViewAttachment(5)

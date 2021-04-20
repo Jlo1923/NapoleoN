@@ -375,7 +375,7 @@ class ConversationAdapter(
             TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             TYPE_MY_MULTI_ATTACHMENT -> MyMultiAttachmentMsgViewHolder.from(
                 parent,
-                //viewmodels.viewModelMultiAttachment,
+                viewmodels.viewModelMultiAttachment,
                 listeners.listenerMultiAttachment
             )
             TYPE_INCOMING_MULTI_ATTACHMENT -> IncomingMultiAttachmentMsgViewHolder.from(

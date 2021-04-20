@@ -25,7 +25,7 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
 class MyMultiAttachmentMsgViewHolder(
     private val binding: ConversationItemMyMessageMultiBinding,
-    //private val viewModel: MyMultiAttachmentMsgViewModel,
+    private val viewModel: MyMultiAttachmentMsgViewModel,
     private val listener: MultiAttachmentMsgListener
 ) : ConversationViewHolder(binding.root, binding.root.context),
     MultiAttachmentMsgItemListener {
@@ -36,7 +36,7 @@ class MyMultiAttachmentMsgViewHolder(
     companion object {
         fun from(
             parent: ViewGroup,
-            //viewModel: MyMultiAttachmentMsgViewModel,
+            viewModel: MyMultiAttachmentMsgViewModel,
             listener: MultiAttachmentMsgListener
         ): MyMultiAttachmentMsgViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -45,8 +45,7 @@ class MyMultiAttachmentMsgViewHolder(
                 parent,
                 false
             )
-            //return MyMultiAttachmentMsgViewHolder(binding, viewModel, listener)
-            return MyMultiAttachmentMsgViewHolder(binding, listener)
+            return MyMultiAttachmentMsgViewHolder(binding, viewModel, listener)
         }
     }
 
@@ -79,10 +78,10 @@ class MyMultiAttachmentMsgViewHolder(
 
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         when (action) {
-//            is CancelDownload -> viewModel.cancelDownload(action.attachmentEntity)
-//            is CancelUpload -> viewModel.cancelUpload(action.attachmentEntity)
-//            is RetryDownload -> viewModel.retryDownload(action.attachmentEntity)
-//            is RetryUpload -> viewModel.retryUpload(action.attachmentEntity)
+            is CancelDownload -> Unit
+            is RetryDownload -> Unit
+            is CancelUpload -> viewModel.cancelUpload(action.attachmentEntity)
+            is RetryUpload -> viewModel.retryUpload(action.attachmentEntity)
             is ViewAttachment -> launchActionViewAttachment(action)
         }
     }
@@ -111,8 +110,9 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun bindViewModel() {
+        //TODO: habilitar el state cuando logremos inyectar instancias del viewmodel por item
         //viewModel.state.observe(binding.root.context as LifecycleOwner, { handleState(it) })
-        //viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
+        viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
     }
 
     private fun handleActions(action: MultiAttachmentMsgEvent) {
@@ -122,16 +122,16 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
-        textViewCountFiles.text = "${data.first} / ${data.second}"
-    }
-
     private fun handleState(state: MultiAttachmentMsgState) = when (state) {
         is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
         is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
         is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
         is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
         is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
+    }
+
+    private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
+        textViewCountFiles.text = "${data.first} / ${data.second}"
     }
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {

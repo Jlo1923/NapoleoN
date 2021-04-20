@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -21,7 +22,7 @@ class MyMultiAttachmentMsgViewModel @Inject constructor(
     private val actions: SingleLiveEvent<MultiAttachmentMsgEvent> = SingleLiveEvent()
     fun actions(): LiveData<MultiAttachmentMsgEvent> = actions
 
-    private fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
+    override fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
         val countSent = listAttachments.filter { it.isSent() }
         if (countSent.size == listAttachments.size) {
             actions.value = MultiAttachmentMsgEvent.HideQuantity
@@ -32,22 +33,15 @@ class MyMultiAttachmentMsgViewModel @Inject constructor(
     }
 
     override fun retryUploadAllFiles() {
+        Log.i("JkDev", "retryUploadAllFiles")
     }
 
-    fun cancelDownload(attachmentEntity: AttachmentEntity) {
-
+    override fun cancelUpload(attachmentEntity: AttachmentEntity) {
+        Log.i("JkDev", "cancelUpload")
     }
 
-    fun cancelUpload(attachmentEntity: AttachmentEntity) {
-
-    }
-
-    fun retryDownload(attachmentEntity: AttachmentEntity) {
-
-    }
-
-    fun retryUpload(attachmentEntity: AttachmentEntity) {
-
+    override fun retryUpload(attachmentEntity: AttachmentEntity) {
+        Log.i("JkDev", "retryUpload")
     }
 
 }

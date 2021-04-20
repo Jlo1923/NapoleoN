@@ -7,11 +7,12 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
+import com.naposystems.napoleonchat.service.download.notification.NOTIFICATION_DOWNLOADING_MULTI
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
-import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.NOT_DOWNLOADED
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -33,7 +34,7 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     lateinit var notificationDownloadClient: NotificationDownloadClient
 
     private lateinit var napoleonApplication: NapoleonApplication
-    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING
+    private val notificationId = NOTIFICATION_DOWNLOADING_MULTI
     private val compositeDisposable = CompositeDisposable()
     lateinit var attachmentList: List<AttachmentEntity>
 
@@ -81,9 +82,9 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
             .subscribe { Timber.d("RxEvent.UploadStart") }
 
         val disposableUploadSuccess = RxBus.listen(RxEvent.MultiUploadSuccess::class.java)
-            .subscribe { handleUploadSuccess() }
+            .subscribe { handleDownloadSuccess() }
 
-        val disposableUploadTryNext = RxBus.listen(RxEvent.MultiUploadTryNextAttachment::class.java)
+        val disposableUploadTryNext = RxBus.listen(RxEvent.MultiDownloadTryNextAttachment::class.java)
             .subscribe { handleTryNextAttachment() }
 
         val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
@@ -107,7 +108,7 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         }
     }
 
-    private fun handleUploadSuccess() {
+    private fun handleDownloadSuccess() {
         Timber.d("RxEvent.UploadSuccess")
         stopService()
     }
@@ -117,7 +118,7 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         nextAttachment?.let {
             repository.downloadAttachment(it)
             showNotification()
-        } ?: run { handleUploadSuccess() }
+        } ?: run { handleDownloadSuccess() }
     }
 
     private fun handleUploadError() {
@@ -136,6 +137,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     }
 
     private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() { it.status == Constants.AttachmentStatus.SENDING.status }
+        attachmentList.firstOrNull() { it.status == NOT_DOWNLOADED.status }
 
 }

@@ -16,7 +16,6 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
@@ -58,18 +57,33 @@ class IncomingMultiAttachmentMsgViewHolder(
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         msgAndAttachment = item
-        //viewModel.getAttachmentsInMessage(item.messageEntity.id)
         configListenersViews()
         bindViewModel()
+        paintAttachments()
+    }
+
+    private fun paintAttachments() {
+        msgAndAttachment.attachmentEntityList.apply {
+            when (this.size) {
+                2 -> showTwoItems(this)
+                3 -> showThreeElements(this)
+                4 -> showFourItems(this)
+                5 -> showFiveItems(this)
+                else -> showFiveItems(this)
+            }
+        }
     }
 
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         when (action) {
             is CancelDownload -> viewModel.cancelDownload(action.attachmentEntity)
-            is CancelUpload -> viewModel.cancelUpload(action.attachmentEntity)
-            is RetryDownload -> viewModel.retryDownload(action.attachmentEntity)
-            is RetryUpload -> viewModel.retryUpload(action.attachmentEntity)
+            is RetryDownload -> viewModel.retryDownload(
+                action.attachmentEntity,
+                binding.root.context
+            )
             is ViewAttachment -> launchActionViewAttachment(action)
+            is CancelUpload -> Unit
+            is RetryUpload -> Unit
         }
     }
 
@@ -97,7 +111,9 @@ class IncomingMultiAttachmentMsgViewHolder(
     }
 
     private fun bindViewModel() {
-        viewModel.state.observe(binding.root.context as LifecycleOwner, { handleState(it) })
+        //TODO: habilitar el state cuando logremos inyectar instancias del viewmodel por item
+        //viewModel.state.observe(binding.root.context as LifecycleOwner, { handleState(it) })
+
         viewModel.actions().observe(binding.root.context as LifecycleOwner, { handleActions(it) })
     }
 

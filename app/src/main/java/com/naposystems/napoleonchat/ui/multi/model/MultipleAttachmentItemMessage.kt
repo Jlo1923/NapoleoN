@@ -10,6 +10,7 @@ data class MultipleAttachmentItemMessage(
     val attachment: MultipleAttachmentItemAttachment,
     val isMine: Int,
     val webId: String,
-    val contactId: Int
+    val contactId: Int,
+    var isRead: Boolean = false
 ) : Parcelable
 

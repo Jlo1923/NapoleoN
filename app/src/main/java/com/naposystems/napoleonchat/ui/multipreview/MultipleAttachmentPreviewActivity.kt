@@ -43,7 +43,6 @@ import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attach
 import java.util.*
 import javax.inject.Inject
 
-
 class MultipleAttachmentPreviewActivity
     : AppCompatActivity(),
     ViewAttachmentOptionsListener,
@@ -266,8 +265,9 @@ class MultipleAttachmentPreviewActivity
     private fun addListenerToTabLayout() = viewBinding.viewPreviewBottom.getTabLayout()
         .addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
 
-            override fun onTabSelected(tab: TabLayout.Tab) =
+            override fun onTabSelected(tab: TabLayout.Tab) {
                 (tab.customView as ViewMultipleAttachmentTabView).selected(true)
+            }
 
             override fun onTabUnselected(tab: TabLayout.Tab) =
                 (tab.customView as ViewMultipleAttachmentTabView).selected(false)
@@ -278,18 +278,16 @@ class MultipleAttachmentPreviewActivity
         })
 
     private fun addListenerToViewPager() =
-        viewBinding.viewPagerAttachments.registerOnPageChangeCallback(object :
-            ViewPager2.OnPageChangeCallback() {
+        viewBinding.viewPagerAttachments.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
 
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                viewModel.loadSelfDestructionTimeByIndex(position)
-            }
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    viewModel.loadSelfDestructionTimeByIndex(position)
+                    viewModel.validateMustMarkAsReaded(position)
+                }
 
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-        })
+            })
 
 
     private fun defineListeners() = viewBinding.apply {

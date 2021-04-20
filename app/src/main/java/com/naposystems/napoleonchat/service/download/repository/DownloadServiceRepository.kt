@@ -2,6 +2,8 @@ package com.naposystems.napoleonchat.service.download.repository
 
 import android.content.Context
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -100,6 +102,7 @@ class DownloadServiceRepository @Inject constructor(
             if (BuildConfig.ENCRYPT_API && attachment.type != GIF_NN.type) {
                 saveEncryptedFile(attachment)
             }
+            publishEventTryNext()
             //                            offer(
             //                                DownloadAttachmentResult.Success(
             //                                    messageAndAttachmentRelation,
@@ -127,6 +130,10 @@ class DownloadServiceRepository @Inject constructor(
             inputStream?.close()
             outputStream?.close()
         }
+    }
+
+    private fun publishEventTryNext() {
+        RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
     }
 
     private fun updateAttachmentStatus(

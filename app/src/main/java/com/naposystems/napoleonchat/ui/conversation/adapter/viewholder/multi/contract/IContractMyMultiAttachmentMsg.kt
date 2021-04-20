@@ -8,7 +8,13 @@ interface IContractMyMultiAttachmentMsg {
 
     interface ViewModel {
 
+        fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>)
+
         fun retryUploadAllFiles()
+
+        fun cancelUpload(attachmentEntity: AttachmentEntity)
+
+        fun retryUpload(attachmentEntity: AttachmentEntity)
 
     }
 

@@ -547,6 +547,7 @@ class SocketClientImp
 
                                     dataEvent?.data?.let { newMessageDataEventRes ->
 
+                                        Timber.d("syncManager.insertNewMessage")
                                         syncManager.insertNewMessage(newMessageDataEventRes)
 
                                         val messageString: String = if (BuildConfig.ENCRYPT_API) {

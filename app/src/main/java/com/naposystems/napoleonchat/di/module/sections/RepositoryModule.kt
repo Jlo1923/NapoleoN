@@ -48,6 +48,8 @@ import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeReposi
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
+import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
+import com.naposystems.napoleonchat.service.download.repository.DownloadServiceRepository
 import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
 import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
@@ -278,5 +280,10 @@ abstract class RepositoryModule {
     abstract fun provideMyMultiAttachmentMsgRepository(
         repository: MyMultiAttachmentMsgRepository
     ): IContractMyMultiAttachmentMsg.Repository
+
+    @Binds
+    abstract fun provideDownloadServiceRepository(
+        repository: DownloadServiceRepository
+    ): IContractDownloadService.Repository
 
 }
