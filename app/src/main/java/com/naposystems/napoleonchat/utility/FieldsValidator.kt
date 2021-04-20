@@ -37,7 +37,7 @@ class FieldsValidator {
                         context.getString(R.string.text_cant_contain_special_characters)
                     return false
                 }
-                (!textContainLetter(nickname.substring(0, 1)))->{
+                (!textContainLetter(nickname.substring(0, 1))) -> {
                     textInputLayout.error = context.getString(R.string.text_only_start_letter)
                     return false
                 }
@@ -60,7 +60,8 @@ class FieldsValidator {
                     }
 
                     if (!textValidLastNumber(nickname)) {
-                        textInputLayout.error = context.getString(R.string.text_nickname_unavailable)
+                        textInputLayout.error =
+                            context.getString(R.string.text_nickname_unavailable)
                         return false
                     }
                 }
@@ -76,7 +77,7 @@ class FieldsValidator {
             textInputLayout.error = null
 
             if (displayName.isNotEmpty()) {
-                if (displayName.length < 2) {
+                if (displayName.replace(" ", "").length < 2) {
                     textInputLayout.error =
                         context.getString(R.string.text_name_not_contain_enough_char)
                     return false

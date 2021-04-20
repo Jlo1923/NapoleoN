@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
@@ -101,6 +102,7 @@ import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNoti
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.custom_input_panel_widget.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
@@ -116,7 +118,8 @@ class ConversationFragment
     : BaseFragment(),
     ConversationAdapter.ClickListener,
     InputPanelWidget.Listener,
-    MultiAttachmentMsgListener {
+    MultiAttachmentMsgListener,
+    NapoleonKeyboard.InputTextMainListener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -355,9 +358,10 @@ class ConversationFragment
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditText()
+            binding.inputPanel.getEditText(),
+            this
         )
-
+        binding.inputPanel.getEditText().isCursorVisible = true
         binding.lifecycleOwner = this
 
         binding.contact = args.contact
@@ -1946,7 +1950,7 @@ class ConversationFragment
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        NapoleonApplication.currentConversationContactId =  Constants.UserNotExist.USER_NO_EXIST.user
+        NapoleonApplication.currentConversationContactId = Constants.UserNotExist.USER_NO_EXIST.user
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
@@ -2311,6 +2315,27 @@ class ConversationFragment
         })
         startActivity(intent)
     }
+
+    //NapoleonInputTextMainListener
+    override fun isShowInputTextMain(value: Boolean) {
+        binding.inputPanel.viewSwitcher.isVisible = value
+    }
+
+    override fun updateIconEmoji(showEmoji: Boolean) {
+        val image = if (showEmoji) {
+            R.drawable.ic_insert_emoticon_black
+        } else {
+            R.drawable.ic_keyboard
+        }
+        binding.inputPanel.getImageButtonEmoji()
+            .setImageDrawable(ContextCompat.getDrawable(requireContext(), image))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        emojiKeyboard?.updateKeyboardStateClosed()
+    }
+
 
     //endregion
 }
