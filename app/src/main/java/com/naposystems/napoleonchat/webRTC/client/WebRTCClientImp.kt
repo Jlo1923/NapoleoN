@@ -58,6 +58,8 @@ class WebRTCClientImp
         offer = ""
     )
 
+    private var disposingCall = false
+
     override var renegotiateCall: Boolean = false
 
     override var isActiveCall: Boolean = false
@@ -286,6 +288,8 @@ class WebRTCClientImp
             videoCapturerAndroid?.dispose()
 
             videoCapturerAndroid = null
+
+            disposingCall = false
 
             try {
                 peerConnection = null
@@ -1217,13 +1221,23 @@ class WebRTCClientImp
         context.startService(intent)
     }
 
-
     override fun disposeCall(callModel: CallModel?) {
+        if (disposingCall.not()) {
 
-        var auxModel = this.callModel
+            webRTCClientListener?.showFinishingTitle()
 
-        if (callModel != null)
-            auxModel = callModel
+            disposingCall = true
+
+            var auxModel = this.callModel
+
+            if (callModel != null)
+                auxModel = callModel
+
+            socketClient.disconnectSocket(auxModel.channelName)
+        }
+    }
+
+    override fun disposeCallTest() {
 
         try {
 
@@ -1248,13 +1262,15 @@ class WebRTCClientImp
             bluetoothStateManager?.onDestroy()
 
             Timber.d("LLAMADA PASO: DESCONECTAR SOCKET")
-            socketClient.unSubscribePresenceChannel(auxModel.channelName)
+//            socketClient.unSubscribePresenceChannel(auxModel.channelName)
 
             stopProximitySensor()
 
             mHandler.removeCallbacks(mCallTimeRunnable)
 
             isActiveCall = false
+
+            NapoleonApplication.isCurrentOnCall = false
 
             Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
             webRTCClientListener?.callEnded()

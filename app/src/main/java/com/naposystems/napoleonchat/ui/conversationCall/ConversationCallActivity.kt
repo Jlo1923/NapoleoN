@@ -469,7 +469,15 @@ class ConversationCallActivity :
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
-            binding.textViewCalling.text = getString(R.string.text_reconnecting)
+            binding.textViewCalling.text = getString(R.string.text_reconnecting_call)
+        }
+    }
+
+    override fun showFinishingTitle() {
+        runOnUiThread {
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
+            binding.textViewCalling.text = getString(R.string.text_finishing_call)
         }
     }
 
@@ -595,6 +603,7 @@ class ConversationCallActivity :
         Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
         NapoleonApplication.isShowingCallActivity = false
         NapoleonApplication.isActiveCall = false
+        NapoleonApplication.isCurrentOnCall = false
         finish()
     }
     //endregion
