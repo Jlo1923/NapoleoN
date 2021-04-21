@@ -58,6 +58,8 @@ class WebRTCClientImp
         offer = ""
     )
 
+    private var disposingCall = false
+
     override var renegotiateCall: Boolean = false
 
     override var isActiveCall: Boolean = false
@@ -77,13 +79,12 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.MINUTES.toMillis(30),
+        TimeUnit.SECONDS.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
             Timber.d("CountDown finish")
             if (isActiveCall.not()) {
-                webRTCClientListener?.onContactNotAnswer()
                 disposeCall()
             }
         }
@@ -96,6 +97,18 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() = Unit
+
+        override fun onTick(millisUntilFinished: Long) = Unit
+    }
+
+    private var countDownReconnecting: CountDownTimer = object : CountDownTimer(
+        TimeUnit.SECONDS.toMillis(15),
+        TimeUnit.SECONDS.toMillis(1)
+    ) {
+        override fun onFinish() {
+            Timber.d("CountDown finish")
+            disposeCall()
+        }
 
         override fun onTick(millisUntilFinished: Long) = Unit
     }
@@ -227,6 +240,7 @@ class WebRTCClientImp
             callTime = 0
 
             isActiveCall = false
+            NapoleonApplication.isActiveCall = false
             isHideVideo = false
             contactCameraIsVisible = false
             isMicOn = true
@@ -249,12 +263,12 @@ class WebRTCClientImp
 
             remoteSurfaceViewRenderer = null
 
-            if (::remoteMediaStream.isInitialized)
-                try {
+            try {
+                if (::remoteMediaStream.isInitialized)
                     remoteMediaStream.dispose()
-                } catch (e: java.lang.Exception) {
-                    Timber.e(e.localizedMessage)
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT remoteMediaStream ${e.localizedMessage}")
+            }
 
             localSurfaceViewRenderer = null
 
@@ -264,18 +278,26 @@ class WebRTCClientImp
 
             localVideoSource = null
 
-            if (::localMediaStream.isInitialized)
-                try {
+            try {
+                if (::localMediaStream.isInitialized)
                     localMediaStream.dispose()
-                } catch (e: java.lang.Exception) {
-                    Timber.e(e.localizedMessage)
-                }
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT localMediaStream ${e.localizedMessage}")
+            }
 
             videoCapturerAndroid?.dispose()
 
             videoCapturerAndroid = null
 
-            peerConnection = null
+            disposingCall = false
+
+            try {
+                peerConnection = null
+            } catch (e: Exception) {
+                Timber.e("LLAMADA PASO: INTENTANDO NULEAR")
+            }
+
+            Timber.d("LLAMADA PASO: FINALIZANDO REINIT")
 
         } catch (e: Exception) {
             Timber.e("LLAMADA PASO: REINIT ${e.localizedMessage}")
@@ -447,29 +469,36 @@ class WebRTCClientImp
                             PeerConnection.IceConnectionState.CHECKING -> {
                                 webRTCClientListener?.showConnectingTitle()
                             }
+
                             PeerConnection.IceConnectionState.CONNECTED -> {
+                                webRTCClientListener?.showTimer()
                                 connectCall()
                             }
+
                             PeerConnection.IceConnectionState.DISCONNECTED -> {
                                 webRTCClientListener?.showReConnectingTitle()
+                                countDownReconnecting.start()
                             }
-                            PeerConnection.IceConnectionState.FAILED -> {
-                                val intent = Intent(context, WebRTCService::class.java)
-                                intent.action = WebRTCService.ACTION_FAILED_CALL_END
-                                intent.putExtras(Bundle().apply {
-                                    putSerializable(
-                                        Constants.CallKeys.CALL_MODEL,
-                                        callModel
-                                    )
-                                })
-                                context.startService(intent)
-                                disposeCall()
-                            }
-                            PeerConnection.IceConnectionState.NEW,
-                            PeerConnection.IceConnectionState.COMPLETED,
-                            PeerConnection.IceConnectionState.CLOSED ->
+
+                            else ->
                                 Timber.d("IceConnectionState UNHANDLER $iceConnectionState")
                         }
+                    }
+
+
+                    override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
+                        super.onSignalingChange(signalingState)
+
+                        when (signalingState) {
+                            PeerConnection.SignalingState.CLOSED -> {
+                                peerConnection = null
+                            }
+                            else -> {
+                                Timber.d("SignalingState UNHANDLER $signalingState")
+                            }
+
+                        }
+
                     }
                 })
 
@@ -545,10 +574,6 @@ class WebRTCClientImp
         socketClient.subscribeToPresenceChannel(callModel)
     }
 
-    override fun unSubscribePresenceChannel() {
-        socketClient.unSubscribePresenceChannel(callModel.channelName)
-    }
-
     override fun setOffer(offer: String?) {
 
         Timber.d("LLAMADA PASO 4: SETEANDO oferta")
@@ -613,8 +638,6 @@ class WebRTCClientImp
     override fun startWebRTCService(callModel: CallModel) {
 
         Timber.d("LLAMADA PASO: STARTWEBRTCSERVICE")
-
-        callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
 
         val intent = Intent(context, WebRTCService::class.java).apply {
             putExtras(Bundle().apply {
@@ -985,6 +1008,8 @@ class WebRTCClientImp
 
             createOffer()
 
+            startWebRTCService(callModel)
+
         }
     }
 
@@ -1134,6 +1159,8 @@ class WebRTCClientImp
 
         isActiveCall = true
 
+        NapoleonApplication.isActiveCall = true
+
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         countDownRingCall.cancel()
@@ -1180,14 +1207,41 @@ class WebRTCClientImp
         }
     }
 
+    override fun hideNotification() {
+        webRTCClientListener?.onContactNotAnswer()
+
+        val intent = Intent(context, WebRTCService::class.java)
+
+        intent.action = WebRTCService.ACTION_HIDE_NOTIFICATION
+
+        intent.putExtras(Bundle().apply {
+            putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
+        })
+
+        context.startService(intent)
+    }
+
     override fun disposeCall(callModel: CallModel?) {
+        if (disposingCall.not()) {
 
-        var auxModel = this.callModel
+            webRTCClientListener?.showFinishingTitle()
 
-        if (callModel != null)
-            auxModel = callModel
+            disposingCall = true
+
+            var auxModel = this.callModel
+
+            if (callModel != null)
+                auxModel = callModel
+
+            socketClient.disconnectSocket(auxModel.channelName)
+        }
+    }
+
+    override fun disposeCallTest() {
 
         try {
+
+            hideNotification()
 
             RxBus.publish(RxEvent.CallEnd())
 
@@ -1203,16 +1257,20 @@ class WebRTCClientImp
 
             countDownRingCall.cancel()
 
+            countDownReconnecting.cancel()
+
             bluetoothStateManager?.onDestroy()
 
-            isActiveCall = false
-
-            Timber.d("LLAMADA PASO: DESUBSCRIBIR A CANAL")
-            socketClient.unSubscribePresenceChannel(auxModel.channelName)
+            Timber.d("LLAMADA PASO: DESCONECTAR SOCKET")
+//            socketClient.unSubscribePresenceChannel(auxModel.channelName)
 
             stopProximitySensor()
 
             callTimerHandler.removeCallbacks(callTimerRunnable)
+
+            isActiveCall = false
+
+            NapoleonApplication.isCurrentOnCall = false
 
             Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
             webRTCClientListener?.callEnded()

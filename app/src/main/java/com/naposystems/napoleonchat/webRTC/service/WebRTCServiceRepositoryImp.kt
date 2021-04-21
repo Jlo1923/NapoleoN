@@ -24,7 +24,7 @@ class WebRTCServiceRepositoryImp
             val response = napoleonApi.rejectCall(rejectCallReqDTO)
 
             if (response.isSuccessful) {
-                Timber.d("LLamada rechazada bb")
+                Timber.d("LLAMADA PASO: LLAMADA RECHAZADA DESDE EL SERVICIO")
             }
         }
     }

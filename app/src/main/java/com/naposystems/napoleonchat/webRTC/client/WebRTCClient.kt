@@ -27,7 +27,6 @@ interface WebRTCClient {
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
 
     fun subscribeToPresenceChannel()
-    fun unSubscribePresenceChannel()
 
     fun setOffer(offer: String?)
 
@@ -80,7 +79,7 @@ interface WebRTCClient {
 
     //Hang Up
     fun emitHangUp()
-
+    fun hideNotification()
     fun disposeCall(callModel: CallModel? = null)
 
 }

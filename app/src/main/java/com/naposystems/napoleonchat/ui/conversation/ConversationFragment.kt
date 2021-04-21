@@ -2321,7 +2321,7 @@ class ConversationFragment
         val image = if (showEmoji) {
             R.drawable.ic_insert_emoticon_black
         } else {
-            R.drawable.ic_keyboard
+            R.drawable.ic_insert_emoticon_black
         }
         binding.inputPanel.getImageButtonEmoji()
             .setImageDrawable(ContextCompat.getDrawable(requireContext(), image))
