@@ -18,9 +18,9 @@ interface SocketClient {
 
     fun subscribeToPresenceChannel(callModel: CallModel)
 
-    fun disconnectSocket()
+    fun disconnectSocket(channelPresenceName: String = "")
 
-    fun  unSubscribePresenceChannel(channelName: String)
+    fun unSubscribePresenceChannel(channelName: String)
 
     fun emitClientConversation(messages: List<ValidateMessage>)
 

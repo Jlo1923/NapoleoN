@@ -83,9 +83,6 @@ class WebRTCClientImp
         override fun onFinish() {
             Timber.d("CountDown finish")
             if (isActiveCall.not()) {
-
-                hideNotification()
-
                 disposeCall()
             }
         }
@@ -108,7 +105,6 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("CountDown finish")
-            hideNotification()
             disposeCall()
         }
 
@@ -297,7 +293,6 @@ class WebRTCClientImp
                 Timber.e("LLAMADA PASO: INTENTANDO NULEAR")
             }
 
-
             Timber.d("LLAMADA PASO: FINALIZANDO REINIT")
 
         } catch (e: Exception) {
@@ -481,15 +476,25 @@ class WebRTCClientImp
                                 countDownReconnecting.start()
                             }
 
-                            PeerConnection.IceConnectionState.FAILED -> {
-                                hideNotification()
-                                disposeCall()
-                            }
-                            PeerConnection.IceConnectionState.NEW,
-                            PeerConnection.IceConnectionState.COMPLETED,
-                            PeerConnection.IceConnectionState.CLOSED ->
+                            else ->
                                 Timber.d("IceConnectionState UNHANDLER $iceConnectionState")
                         }
+                    }
+
+
+                    override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
+                        super.onSignalingChange(signalingState)
+
+                        when (signalingState) {
+                            PeerConnection.SignalingState.CLOSED -> {
+                                peerConnection = null
+                            }
+                            else -> {
+                                Timber.d("SignalingState UNHANDLER $signalingState")
+                            }
+
+                        }
+
                     }
                 })
 
@@ -563,10 +568,6 @@ class WebRTCClientImp
     override fun subscribeToPresenceChannel() {
         Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
         socketClient.subscribeToPresenceChannel(callModel)
-    }
-
-    override fun unSubscribePresenceChannel() {
-        socketClient.unSubscribePresenceChannel(callModel.channelName)
     }
 
     override fun setOffer(offer: String?) {
@@ -1226,6 +1227,8 @@ class WebRTCClientImp
 
         try {
 
+            hideNotification()
+
             RxBus.publish(RxEvent.CallEnd())
 
             Timber.d("LLAMADA PASO: DISPOSE CALL")
@@ -1244,18 +1247,14 @@ class WebRTCClientImp
 
             bluetoothStateManager?.onDestroy()
 
-            isActiveCall = false
-
-            NapoleonApplication.isActiveCall = false
-
-            Timber.d("LLAMADA PASO: DESUBSCRIBIR A CANAL")
+            Timber.d("LLAMADA PASO: DESCONECTAR SOCKET")
             socketClient.unSubscribePresenceChannel(auxModel.channelName)
-
-            socketClient.disconnectSocket()
 
             stopProximitySensor()
 
             mHandler.removeCallbacks(mCallTimeRunnable)
+
+            isActiveCall = false
 
             Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
             webRTCClientListener?.callEnded()

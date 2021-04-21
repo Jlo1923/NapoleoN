@@ -27,7 +27,6 @@ interface WebRTCClient {
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
 
     fun subscribeToPresenceChannel()
-    fun unSubscribePresenceChannel()
 
     fun setOffer(offer: String?)
 

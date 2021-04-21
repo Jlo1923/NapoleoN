@@ -88,8 +88,10 @@ class ConversationCallActivity :
 
         if (webRTCClient.isActiveCall.not())
             webRTCClient.reInit()
-        else
+        else {
+            showTimer()
             enableControls()
+        }
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
@@ -355,14 +357,14 @@ class ConversationCallActivity :
             Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
             when (callModel.typeCall) {
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
-                    Timber.d("HANGUP: SEND MISSED CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE ENVIA LLAMADA PERDIDA")
                     viewModel.sendMissedCall(callModel)
-                    Timber.d("HANGUP: CANCELL CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
                     viewModel.cancelCall(callModel)
                 }
 
                 Constants.TypeCall.IS_INCOMING_CALL -> {
-                    Timber.d("HANGUP: CANCELL CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
                     viewModel.cancelCall(callModel)
                 }
             }
@@ -583,7 +585,7 @@ class ConversationCallActivity :
 
     override fun onContactNotAnswer() {
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-            Timber.d("CancelCall")
+            Timber.d("LLAMADA PASO: CONTACTO NO CONTESTO Y SE CANCELA LLAMADA")
             viewModel.cancelCall(callModel)
             viewModel.sendMissedCall(callModel)
         }
@@ -592,6 +594,7 @@ class ConversationCallActivity :
     override fun callEnded() {
         Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
         NapoleonApplication.isShowingCallActivity = false
+        NapoleonApplication.isActiveCall = false
         finish()
     }
     //endregion
