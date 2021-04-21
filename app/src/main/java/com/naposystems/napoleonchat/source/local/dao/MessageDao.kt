@@ -31,13 +31,15 @@ interface MessageDao {
     fun getMessagesAndAttachmentsDistinctUntilChanged(contactId: Int) =
         getMessagesAndAttachments(contactId).distinctUntilChanged()
 
+    //TODO:REVISAR CONSULTA
     @Query(
-        "SELECT *, COUNT(CASE WHEN status=3 " +
-                "AND ${DBConstants.Message.COLUMN_IS_MINE}=0 THEN 1 END) AS messagesUnReads " +
-                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+        "SELECT * FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE (${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} > strftime('%s','now') OR ${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} >= 0) " +
-                "GROUP BY ${DBConstants.Message.COLUMN_CONTACT_ID} " +
-                "ORDER BY ${DBConstants.Message.COLUMN_ID} DESC"
+                "AND ${DBConstants.Message.COLUMN_ID} IN (SELECT MAX(${DBConstants.Message.COLUMN_ID}) " +
+                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                "GROUP BY ${DBConstants.Message.COLUMN_CONTACT_ID})" +
+                " ORDER BY ${DBConstants.Message.COLUMN_ID} DESC"
+
     )
     fun getMessagesForHome(): Flow<List<MessageAttachmentRelation>>
 
@@ -264,6 +266,14 @@ interface MessageDao {
 
     @Query("SELECT * FROM message WHERE id=:id")
     suspend fun getMessageById(id: Int): MessageAttachmentRelation?
+
+    //TODO:REVISAR CONSULTA
+    @Query(
+        " SELECT COUNT(CASE WHEN status=3 then 1 end)" +
+                " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id"
+    )
+    suspend fun countUnreadByContactId(id: Int): Int
 
     @Query(
         "SELECT * " +

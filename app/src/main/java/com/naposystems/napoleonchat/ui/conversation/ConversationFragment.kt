@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
@@ -52,6 +53,7 @@ import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -63,10 +65,11 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
@@ -85,6 +88,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
+import com.naposystems.napoleonchat.utility.extras.MODE_ONLY_VIEW
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
@@ -101,6 +105,7 @@ import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNoti
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.custom_input_panel_widget.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
@@ -116,7 +121,8 @@ class ConversationFragment
     : BaseFragment(),
     ConversationAdapter.ClickListener,
     InputPanelWidget.Listener,
-    MultiAttachmentMsgListener {
+    MultiAttachmentMsgListener,
+    NapoleonKeyboard.InputTextMainListener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -134,7 +140,6 @@ class ConversationFragment
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
-
 
     @Inject
     lateinit var mediaPlayerManager: MediaPlayerManager
@@ -173,6 +178,7 @@ class ConversationFragment
     }
 
     private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
+    private val incomingMultiAttachmentMsgViewModel: IncomingMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
 
     private val documentsMimeTypeAllowed = arrayOf(
         Constants.MimeType.PDF.type,
@@ -355,9 +361,10 @@ class ConversationFragment
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditText()
+            binding.inputPanel.getEditText(),
+            this
         )
-
+        binding.inputPanel.getEditText().isCursorVisible = true
         binding.lifecycleOwner = this
 
         binding.contact = args.contact
@@ -1083,7 +1090,7 @@ class ConversationFragment
                         enterConversation = true
                     }
                 }
-
+                //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             } else conversationAdapter.submitList(conversationList)
@@ -1769,7 +1776,8 @@ class ConversationFragment
     private fun setupAdapter() {
 
         val viewModels = ConversationViewModelsForViewHolders(
-            myMultiAttachmentMsgViewModel
+            myMultiAttachmentMsgViewModel,
+            incomingMultiAttachmentMsgViewModel
         )
 
         val listeners = ConversationListeners(
@@ -1946,7 +1954,7 @@ class ConversationFragment
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        NapoleonApplication.currentConversationContactId =  Constants.UserNotExist.USER_NO_EXIST.user
+        NapoleonApplication.currentConversationContactId = Constants.UserNotExist.USER_NO_EXIST.user
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
@@ -2283,7 +2291,6 @@ class ConversationFragment
                 setSeventhView(actionViewSchedule!!)
                 showFromSeventh()
             }
-
             showShowCase = true
         }
     }
@@ -2295,22 +2302,36 @@ class ConversationFragment
     }
 
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
-        val files = action.listElements.map {
-            MultipleAttachmentFileItem(
-                id = it.id,
-                attachmentType = it.type,
-                contentUri = Uri.parse(it.thumbnailUri),
-                isSelected = false
-            )
-        }
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
             //putParcelable(MULTI_EXTRA_CONTACT, contact)
-            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(files))
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
+            putBoolean(MODE_ONLY_VIEW, true)
         })
         startActivity(intent)
     }
+
+    //NapoleonInputTextMainListener
+    override fun isShowInputTextMain(value: Boolean) {
+        binding.inputPanel.viewSwitcher.isVisible = value
+    }
+
+    override fun updateIconEmoji(showEmoji: Boolean) {
+        val image = if (showEmoji) {
+            R.drawable.ic_insert_emoticon_black
+        } else {
+            R.drawable.ic_keyboard
+        }
+        binding.inputPanel.getImageButtonEmoji()
+            .setImageDrawable(ContextCompat.getDrawable(requireContext(), image))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        emojiKeyboard?.updateKeyboardStateClosed()
+    }
+
 
     //endregion
 }

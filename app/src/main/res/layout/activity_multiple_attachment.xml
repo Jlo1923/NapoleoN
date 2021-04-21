@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/normal_padding"
-        android:src="@drawable/ic_keyboard_arrow_left_black"
+        android:src="@drawable/ic_close_black_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

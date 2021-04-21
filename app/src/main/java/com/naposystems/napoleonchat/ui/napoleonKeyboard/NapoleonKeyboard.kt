@@ -24,7 +24,8 @@ import java.io.Serializable
 
 class NapoleonKeyboard constructor(
     private val rootView: View,
-    private val editText: EmojiAppCompatEditText
+    private val editText: EmojiAppCompatEditText,
+    private val inputTextMainListener: InputTextMainListener
 ) : IContractNapoleonKeyboard, EmojiResultReceiver.Listener,
     NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener,
     NapoleonKeyboardView.NapoleonKeyboardViewListener,
@@ -48,11 +49,21 @@ class NapoleonKeyboard constructor(
     private var isShowingGifPageBigger = false
     private var popupWindowHeight: Int = 0
     private var windowInsets: WindowInsets? = null
+    private var isOpenEmojiWindow = false
 
     private val emojiResultReceiver = EmojiResultReceiver(Handler(Looper.getMainLooper()))
 
     init {
         try {
+
+            popupWindowEmoji.setOnDismissListener {
+
+                isOpenEmojiWindow = false
+                inputTextMainListener.isShowInputTextMain(true)
+                inputTextMainListener.updateIconEmoji(true)
+                //change current item bottom bar to emoji
+                (popupWindowEmoji.contentView as NapoleonKeyboardView).changeCurrentItemToEmoji()
+            }
             popupWindowEmoji.apply {
 //                isFocusable = true
                 contentView = NapoleonKeyboardView(mainActivity)
@@ -96,7 +107,7 @@ class NapoleonKeyboard constructor(
         }
     }
 
-    private fun updateKeyboardStateClosed() {
+    fun updateKeyboardStateClosed() {
         if (isShowing()) {
             dismiss()
         }
@@ -182,6 +193,8 @@ class NapoleonKeyboard constructor(
 
     //region Implementation IContractEmojiKeyboard
     override fun toggle(keyboardHeight: Int) {
+        validateEmoji()
+
         if (!popupWindowEmoji.isShowing) {
             editText.requestFocus()
 
@@ -199,6 +212,15 @@ class NapoleonKeyboard constructor(
         } else {
             dismiss()
         }
+    }
+
+    private fun validateEmoji() {
+        if (isOpenEmojiWindow) {
+            inputTextMainListener.updateIconEmoji(true)
+        } else {
+            inputTextMainListener.updateIconEmoji(false)
+        }
+        isOpenEmojiWindow = !isOpenEmojiWindow
     }
 
     override fun isShowing() = popupWindowEmoji.isShowing
@@ -254,35 +276,42 @@ class NapoleonKeyboard constructor(
                     popupWindowEmoji.height
                 )
             }
-
             mainActivity.changeLayoutHeight(popupWindowEmoji.height - it.stableInsetTop)
-
             isShowingKeyboard = true
         }
     }
 
     /** [NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener] */
-    //region Implementation NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener
+//region Implementation NapoleonKeyboardGifFragment.NapoleonKeyboardGifListener
     override fun onGifSelected() {
         dismiss()
     }
-    //endregion
+//endregion
 
-    //endregion
+//endregion
 
     /** [NapoleonKeyboardView.NapoleonKeyboardViewListener] */
-    //region Implementation NapoleonKeyboardView.NapoleonKeyboardViewListener
+//region Implementation NapoleonKeyboardView.NapoleonKeyboardViewListener
     override fun onPageChange(page: Int) {
         if (page != GIF_PAGE && isShowingGifPageBigger) {
             normalizePopupHeight()
         }
     }
-    //endregion
+
+    override fun showInputTextMain(value: Boolean) {
+        inputTextMainListener.isShowInputTextMain(value)
+    }
+//endregion
 
     /** [NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener] */
-    //region Implementation NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener
+//region Implementation NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener
     override fun onStickerSelected() {
         dismiss()
     }
-    //endregion
+//endregion
+
+    interface InputTextMainListener {
+        fun isShowInputTextMain(value: Boolean)
+        fun updateIconEmoji(showEmoji: Boolean)
+    }
 }
