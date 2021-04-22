@@ -319,6 +319,11 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
             searchView.close(Constants.LocationAddContact.CONTACTS.location)
         }
     }
+
+    override fun onStop() {
+        super.onStop()
+        searchView.close()
+    }
 }
 
 fun showToast(context: Context, message: String) {
