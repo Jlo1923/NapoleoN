@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.source.local.entity
 
+import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.Nullable
 import androidx.room.Embedded

@@ -163,20 +163,6 @@
                 app:layout_constraintTop_toBottomOf="@id/textView_nickname"
                 tools:text="@tools:sample/full_names" />
 
-            <TextView
-                android:id="@+id/textView_call_duration"
-                style="@style/CallDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/small_margin"
-                android:elevation="2dp"
-                android:singleLine="true"
-                android:text="00:00"
-                android:textAlignment="center"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_name" />
         </LinearLayout>
 
         <View
@@ -189,6 +175,21 @@
 
             app:layout_constraintTop_toBottomOf="@id/container_top" />
 
+
+        <TextView
+            android:id="@+id/textView_call_duration"
+            style="@style/CallDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:elevation="4dp"
+            android:singleLine="true"
+            android:text="00:00"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_top_separator" />
 
         <TextView
             android:id="@+id/textView_calling"

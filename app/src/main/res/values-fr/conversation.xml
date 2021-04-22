@@ -50,6 +50,8 @@
     <string name="text_call_not_internet_connection">A été atteint pas fait l\'appel. Vérifiez votre connexion Internet et essayez à nouveau.</string>
     <string name="text_encrypting_videocall">Crypter appel vidéo</string>
     <string name="text_encrypting_call">Appel cryptage</string>
+    <string name="text_reconnecting_call">Reconnexion</string>
+    <string name="text_finishing_call">Fin de l\'appel</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d jour</item>
         <item quantity="other">%d jours</item>

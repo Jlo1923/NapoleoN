@@ -98,19 +98,6 @@ class NotificationClientImp
 
             }
 
-            Constants.NotificationType.CANCEL_CALL.type -> {
-
-                Timber.d("CANCEL_CALL")
-
-                NapoleonApplication.isCurrentOnCall = false
-
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-                notificationManager.cancelAll()
-
-            }
-
         }
 
     }

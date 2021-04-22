@@ -53,6 +53,7 @@ import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.napoleonchat.ui.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment
 import com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -217,5 +218,8 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeHelpFragment(): HelpFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributePermissionDialogFragment(): PermissionDialogFragment
 
 }

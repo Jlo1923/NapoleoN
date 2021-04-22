@@ -121,9 +121,11 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
             imageViewOptionClickListener(binding.imageViewGif, GIF_PAGE)
         }
     }
+
     fun changeCurrentItemToEmoji() {
         imageViewOptionClickListener(binding.imageViewEmoji, EMOJI_PAGE)
     }
+
     private fun imageViewOptionClickListener(imageView: ImageView, pageSelected: Int) {
         validateInputTextMain(pageSelected)
         if (actualPageSelected != pageSelected) {
@@ -149,18 +151,12 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
 
     private fun validateInputTextMain(pageSelected: Int) {
         when (pageSelected) {
-            EMOJI_PAGE ->
-                mListener?.showInputTextMain(true)
-
-            NAPOLEON_STICKER_PAGE ->
-                mListener?.showInputTextMain(true)
-
             GIF_PAGE ->
                 mListener?.showInputTextMain(false)
-
+            else ->
+                mListener?.showInputTextMain(true)
         }
     }
-
 
     private fun changeTintToColorPrimary(imageView: ImageView) {
         val imageColor = Utils.convertAttrToColorResource(context, R.attr.colorPrimary)
