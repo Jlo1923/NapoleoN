@@ -17,8 +17,8 @@ interface SocketClient {
     fun connectSocket(mustSubscribeToPresenceChannel: Boolean = false, callModel: CallModel? = null)
 
     fun subscribeToPresenceChannel(callModel: CallModel)
-    
-    fun disconnectSocket()
+
+    fun disconnectSocket(channelPresenceName: String = "")
 
     fun unSubscribePresenceChannel(channelName: String)
 
