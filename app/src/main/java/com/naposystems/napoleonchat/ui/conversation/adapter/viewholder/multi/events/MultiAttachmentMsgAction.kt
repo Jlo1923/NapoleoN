@@ -6,7 +6,8 @@ sealed class MultiAttachmentMsgAction {
 
     class OpenMultipleAttachmentPreview(
         val listElements: List<MultipleAttachmentFileItem>,
-        val index: Int
+        val index: Int,
+        val message: String? = null
     ) : MultiAttachmentMsgAction()
 
 }

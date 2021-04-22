@@ -88,10 +88,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
-import com.naposystems.napoleonchat.utility.extras.MODE_ONLY_VIEW
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
-import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
+import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
@@ -2307,6 +2304,7 @@ class ConversationFragment
             //putParcelable(MULTI_EXTRA_CONTACT, contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
+            action.message?.let { putString(MESSAGE_TEXT, it) }
             putBoolean(MODE_ONLY_VIEW, true)
         })
         startActivity(intent)

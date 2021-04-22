@@ -31,8 +31,24 @@ class ViewAttachmentOptions @JvmOverloads constructor(
 
     init {
         configureRecycler()
-        configureElements()
+        configureElementsForCreate()
         defineListenerItemOption()
+    }
+
+    fun configureElementsForCreate() {
+        val listElements = mutableListOf<AttachmentOptionItemView>()
+        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
+        val elementDelete = AttachmentOptionItemView(item = DELETE)
+        listElements.add(elementDelete)
+        listElements.add(elementAutoDestruction)
+        groupieAdapter.update(listElements)
+    }
+
+    fun configureElementsForView() {
+        val listElements = mutableListOf<AttachmentOptionItemView>()
+        val elementDelete = AttachmentOptionItemView(item = DELETE)
+        listElements.add(elementDelete)
+        groupieAdapter.update(listElements)
     }
 
     fun defineListener(listener: ViewAttachmentOptionsListener) {
@@ -47,14 +63,6 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         }
     }
 
-    private fun configureElements() {
-        val listElements = mutableListOf<AttachmentOptionItemView>()
-        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
-        val elementDelete = AttachmentOptionItemView(item = DELETE)
-        listElements.add(elementDelete)
-        listElements.add(elementAutoDestruction)
-        groupieAdapter.update(listElements)
-    }
 
     private fun defineListenerItemOption() = groupieAdapter.setOnItemClickListener { item, _ ->
         when (item) {
@@ -78,5 +86,6 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         val itemView = groupieAdapter.getItem(1) as AttachmentOptionItemView
         itemView.changeDrawableIcon(iconSelfDestruction)
     }
+
 
 }

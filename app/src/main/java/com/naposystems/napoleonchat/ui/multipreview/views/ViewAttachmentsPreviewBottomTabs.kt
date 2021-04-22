@@ -7,6 +7,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.tabs.TabLayout
 import com.naposystems.napoleonchat.databinding.ViewAttachmentPreviewBottomTabLayoutBinding
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.hideViews
+import com.naposystems.napoleonchat.utility.extensions.show
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 
@@ -30,11 +32,10 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
         groupieAdapter.update(listElements)
     }
 
-    fun setOnClickListenerButton(function: () -> Unit) {
+    fun setOnClickListenerButton(function: () -> Unit) =
         viewBinding.buttonSend.setOnClickListener {
             function.invoke()
         }
-    }
 
     fun hideTabLayout() = viewBinding.tabLayoutFiles.hide()
 
@@ -45,4 +46,14 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
         selectTab(tab)
     }
 
+    fun configForCreate() = viewBinding.apply { editTextMessage.show() }
+
+    fun configForViewAttachments() = viewBinding.apply { hideViews(editTextMessage, buttonSend) }
+
+    fun setMessage(message: String) = viewBinding.apply { textMessage.text = message }
+
+    fun showTextByPosition(position: Int) = viewBinding.apply {
+        textMessage.show(position == 0)
+        if (textMessage.text.toString().isEmpty()) textMessage.hide()
+    }
 }

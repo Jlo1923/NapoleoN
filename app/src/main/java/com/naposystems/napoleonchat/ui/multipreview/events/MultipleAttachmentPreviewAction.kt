@@ -11,6 +11,9 @@ sealed class MultipleAttachmentPreviewAction {
     object ShowAttachmentOptionsWithoutAnim : MultipleAttachmentPreviewAction()
     object HideAttachmentOptions : MultipleAttachmentPreviewAction()
     object HideFileTabs : MultipleAttachmentPreviewAction()
+    object RemoveAttachInCreate : MultipleAttachmentPreviewAction()
+    object RemoveAttachForReceiver : MultipleAttachmentPreviewAction()
+    object RemoveAttachForSender : MultipleAttachmentPreviewAction()
 
     class ShowSelectFolderName(
         val folderName: String
