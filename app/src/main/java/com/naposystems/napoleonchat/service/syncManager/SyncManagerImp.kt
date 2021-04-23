@@ -4,6 +4,7 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
@@ -260,7 +261,6 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
-
         if (queueNewMessageDataEventRes.isEmpty()) {
             queueNewMessageDataEventRes.add(newMessageDataEventRes)
             tryHandleNextItemInQueue()
@@ -323,19 +323,27 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, idMessage)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, idMessage)
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     idMessage,
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
+
+            notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 
@@ -352,22 +360,30 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            val message = newMessageEvent.toMessageEntity(Constants.IsMine.NO.value)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            val message = newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
             val messageId = messageLocalDataSource.insertMessage(message)
             Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, messageId.toInt())
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     messageId.toInt(),
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
+
+            notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 

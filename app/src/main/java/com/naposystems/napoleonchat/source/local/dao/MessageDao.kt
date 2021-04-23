@@ -262,7 +262,9 @@ interface MessageDao {
     )
     suspend fun deleteDuplicatesMessages()
 
-    @Query("UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16)) WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL")
+    @Query("UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+            "SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16)) " +
+            "WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5")
     suspend fun addUUID()
 
     @Query("SELECT * FROM message WHERE id=:id")

@@ -390,9 +390,7 @@ class SocketClientImp
 
                 Timber.e("UNBIND GLOBAL")
 
-                pusher.getPrivateChannel(
-                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                )
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
                     .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
                         SubscriptionEventListener {}
                     )
@@ -512,7 +510,6 @@ class SocketClientImp
         Timber.d("Pusher 6.1: Emitir")
 
         try {
-
             val adapterValidate = moshi.adapter(MessagesReqDTO::class.java)
 
             val jsonObject = adapterValidate.toJson(messages)
@@ -525,10 +522,7 @@ class SocketClientImp
                         jsonObject
                     )
             }
-
-
         } catch (e: Exception) {
-
             Timber.e("Pusher Paso IN 6.4: $e}")
         }
 
