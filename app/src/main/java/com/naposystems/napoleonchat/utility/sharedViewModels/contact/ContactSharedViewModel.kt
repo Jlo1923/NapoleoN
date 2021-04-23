@@ -4,17 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.repository.sharedRepository.ShareContactRepository
+import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class ShareContactViewModel @Inject constructor(
-    private val repository: ShareContactRepository
-) : ViewModel(), IContractShareContact.ViewModel {
+class ContactSharedViewModel
+@Inject constructor(
+    private val sharedRepository: ContactSharedRepository
+) : ViewModel() {
 
     private val _webServiceErrors = MutableLiveData<List<String>>()
     val webServiceErrors: LiveData<List<String>>
@@ -28,17 +28,17 @@ class ShareContactViewModel @Inject constructor(
     val conversationDeleted: LiveData<Boolean>
         get() = _conversationDeleted
 
-    override fun sendBlockedContact(contact: ContactEntity) {
+    fun sendBlockedContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
-                val response = repository.sendBlockedContact(contact)
+                val response = sharedRepository.sendBlockedContact(contact)
 
                 if (response.isSuccessful) {
                     contact.statusBlocked = true
                     contact.stateNotification = false
-                    repository.blockContactLocal(contact)
+                    sharedRepository.blockContactLocal(contact)
                 } else {
-                    _webServiceErrors.value = repository.getDefaultBlockedError(response)
+                    _webServiceErrors.value = sharedRepository.getDefaultBlockedError(response)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -46,15 +46,15 @@ class ShareContactViewModel @Inject constructor(
         }
     }
 
-    override fun unblockContact(contactId: Int) {
+    fun unblockContact(contactId: Int) {
         viewModelScope.launch {
             try {
-                val response = repository.unblockContact(contactId)
+                val response = sharedRepository.unblockContact(contactId)
 
                 if (response.isSuccessful) {
-                    repository.unblockContactLocal(contactId)
+                    sharedRepository.unblockContactLocal(contactId)
                 } else {
-                    _webServiceErrors.value = repository.getDefaultUnblockError(response)
+                    _webServiceErrors.value = sharedRepository.getDefaultUnblockError(response)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -62,15 +62,15 @@ class ShareContactViewModel @Inject constructor(
         }
     }
 
-    override fun sendDeleteContact(contact: ContactEntity) {
+    fun sendDeleteContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
-                val response = repository.sendDeleteContact(contact)
+                val response = sharedRepository.sendDeleteContact(contact)
 
                 if (response.isSuccessful) {
-                    repository.deleteContactLocal(contact)
+                    sharedRepository.deleteContactLocal(contact)
                 } else {
-                    _webServiceErrors.value = repository.getDefaultDeleteError(response)
+                    _webServiceErrors.value = sharedRepository.getDefaultDeleteError(response)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -78,25 +78,25 @@ class ShareContactViewModel @Inject constructor(
         }
     }
 
-    override fun deleteConversation(contactId: Int) {
+    fun deleteConversation(contactId: Int) {
         viewModelScope.launch {
-            repository.deleteConversation(contactId)
+            sharedRepository.deleteConversation(contactId)
             _conversationDeleted.value = true
         }
     }
 
-    override fun muteConversation(contactId: Int, contactSilenced: Boolean) {
+    fun muteConversation(contactId: Int, contactSilenced: Boolean) {
         viewModelScope.launch {
             try {
-                val response = repository.muteConversation(contactId, MuteConversationReqDTO())
+                val response = sharedRepository.muteConversation(contactId, MuteConversationReqDTO())
 
                 if (response.isSuccessful) {
-                    repository.muteConversationLocal(
+                    sharedRepository.muteConversationLocal(
                         contactId,
                         Utils.convertBooleanToInvertedInt(contactSilenced)
                     )
                 } else {
-                    _muteConversationWsError.value = repository.muteError(response)
+                    _muteConversationWsError.value = sharedRepository.muteError(response)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)

@@ -54,7 +54,7 @@ import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
@@ -145,21 +145,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ColorSchemeViewModel::class)
     internal abstract fun bindColorSchemeViewModel(viewModel: ColorSchemeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(UserDisplayFormatShareViewModel::class)
-    internal abstract fun bindUserDisplayFormatShareViewModel(viewModel: UserDisplayFormatShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TimeFormatShareViewModel::class)
-    internal abstract fun bindTimeFormatShareViewModel(viewModel: TimeFormatShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(UserProfileShareViewModel::class)
-    internal abstract fun bindUserProfileShareViewModel(viewModel: UserProfileShareViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -263,11 +248,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ShareContactViewModel::class)
-    internal abstract fun bindShareContactViewModel(viewModel: ShareContactViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
     internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
 
@@ -275,31 +255,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AttachmentAudioViewModel::class)
     internal abstract fun bindAttachmentAudioViewModel(viewModel: AttachmentAudioViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ConversationShareViewModel::class)
-    internal abstract fun bindConversationShareViewModel(viewModel: ConversationShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ContactProfileShareViewModel::class)
-    internal abstract fun bindContactProfileShareViewModel(viewModel: ContactProfileShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ContactRepositoryShareViewModel::class)
-    internal abstract fun bindContactRepositoryShareViewModel(viewModel: ContactRepositoryShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(GalleryShareViewModel::class)
-    internal abstract fun bindGalleryShareViewModel(viewModel: GalleryShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CameraShareViewModel::class)
-    internal abstract fun bindCameraShareViewModel(viewModel: CameraShareViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -350,11 +305,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CancelSubscriptionDialogViewModel::class)
     internal abstract fun bindCancelSubscriptionDialogViewModel(viewModel: CancelSubscriptionDialogViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(FriendShipActionShareViewModel::class)
-    internal abstract fun bindFriendShipActionShareViewModel(viewModel: FriendShipActionShareViewModel): ViewModel
 
     @Binds
     @IntoMap

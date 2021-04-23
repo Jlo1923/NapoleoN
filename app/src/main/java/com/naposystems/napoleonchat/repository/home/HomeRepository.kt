@@ -6,20 +6,15 @@ import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocal
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.quoteMessage.QuoteLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.entity.*
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.home.IContractHome
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
-import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -29,7 +24,6 @@ class HomeRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketClient: SocketClient,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
@@ -37,16 +31,18 @@ class HomeRepository @Inject constructor(
 ) :
     IContractHome.Repository {
 
-    private val firebaseId by lazy {
-        sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_FIREBASE_ID, "")
-    }
-
     override suspend fun getFriendshipQuantity(): Response<FriendshipRequestQuantityResDTO> {
-        return napoleonApi.getFriendshipRequestQuantity()
+        val response = napoleonApi.getFriendshipRequestQuantity()
+
+        return response
     }
 
     override suspend fun getFriendshipRequestHome(): Response<List<FriendshipRequestReceivedDTO>> {
-        return napoleonApi.getFriendShipRequestReceivedHome()
+
+        val response = napoleonApi.getFriendShipRequestReceivedHome()
+
+        return response
+
     }
 
     override suspend fun getUserLiveData(): LiveData<UserEntity> {
@@ -73,10 +69,6 @@ class HomeRepository @Inject constructor(
                         val message = MessageResDTO.toMessageEntity(
                             null, messageRes, Constants.IsMine.NO.value
                         )
-
-//                        if (BuildConfig.ENCRYPT_API) {
-//                            message.encryptBody(cryptoMessage)
-//                        }
 
                         val messageId = messageLocalDataSource.insertMessage(message)
 

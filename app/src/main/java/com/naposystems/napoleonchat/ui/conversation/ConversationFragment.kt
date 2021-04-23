@@ -93,7 +93,7 @@ import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
 import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
@@ -163,7 +163,7 @@ class ConversationFragment
     private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
         viewModelFactory
     }
-    private val shareContactViewModel: ShareContactViewModel by viewModels {
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels {
         viewModelFactory
     }
     private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
@@ -940,7 +940,7 @@ class ConversationFragment
             }
         }
 
-        shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
+        contactSharedViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
@@ -1569,7 +1569,7 @@ class ConversationFragment
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.sendBlockedContact(args.contact)
+            contactSharedViewModel.sendBlockedContact(args.contact)
             findNavController().popBackStack(R.id.homeFragment, false)
         }
     }
@@ -1590,7 +1590,7 @@ class ConversationFragment
 
     private fun disableSilence() {
         contactProfileShareViewModel.contact.value?.let { contact ->
-            shareContactViewModel.muteConversation(args.contact.id, contact.silenced)
+            contactSharedViewModel.muteConversation(args.contact.id, contact.silenced)
         }
     }
 
@@ -1601,7 +1601,7 @@ class ConversationFragment
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.deleteConversation(args.contact.id)
+            contactSharedViewModel.deleteConversation(args.contact.id)
         }
     }
 

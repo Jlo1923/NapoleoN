@@ -45,7 +45,7 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
 import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -76,7 +76,7 @@ class ContactProfileFragment : BaseFragment() {
     lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
-    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
@@ -213,7 +213,7 @@ class ContactProfileFragment : BaseFragment() {
         ) {
             contactProfileShareViewModel.contact.value?.let { contact ->
                 if (contact.statusBlocked) {
-                    shareContactViewModel.unblockContact(contact.id)
+                    contactSharedViewModel.unblockContact(contact.id)
                 } else {
                     if (contact.stateNotification) {
                         handlerNotificationChannel.deleteUserChannel(
@@ -221,7 +221,7 @@ class ContactProfileFragment : BaseFragment() {
                             contact.getNickName()
                         )
                     }
-                    shareContactViewModel.sendBlockedContact(contact)
+                    contactSharedViewModel.sendBlockedContact(contact)
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
             }
@@ -248,7 +248,7 @@ class ContactProfileFragment : BaseFragment() {
                         contact.getNickName()
                     )
                 }
-                shareContactViewModel.sendDeleteContact(contact)
+                contactSharedViewModel.sendDeleteContact(contact)
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
         }
@@ -261,7 +261,7 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.deleteConversation(args.contactId)
+            contactSharedViewModel.deleteConversation(args.contactId)
             findNavController().popBackStack(R.id.homeFragment, false)
         }
     }

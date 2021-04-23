@@ -8,16 +8,8 @@ import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConve
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import retrofit2.Response
 
-interface IContractShareContact {
-    interface ViewModel {
-        fun sendBlockedContact(contact: ContactEntity)
-        fun unblockContact(contactId: Int)
-        fun sendDeleteContact(contact: ContactEntity)
-        fun deleteConversation(contactId: Int)
-        fun muteConversation(contactId: Int, contactSilenced: Boolean)
-    }
+interface ContactSharedRepository {
 
-    interface Repository {
         //region Block Contact
         suspend fun sendBlockedContact(contact: ContactEntity) : Response<BlockedContactResDTO>
         suspend fun blockContactLocal(contact: ContactEntity)
@@ -43,5 +35,4 @@ interface IContractShareContact {
         fun getDefaultDeleteError(response: Response<DeleteContactResDTO>): List<String>
         fun muteError(response: Response<MuteConversationResDTO>): ArrayList<String>
         //endregion
-    }
 }

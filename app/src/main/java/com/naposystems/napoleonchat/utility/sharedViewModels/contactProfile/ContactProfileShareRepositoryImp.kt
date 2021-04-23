@@ -1,15 +1,14 @@
-package com.naposystems.napoleonchat.repository.sharedRepository
+package com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile
 
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.IContractContactProfileShare
 import javax.inject.Inject
 
-class ContactProfileShareRepository
+class ContactProfileShareRepositoryImp
 @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource
-) : IContractContactProfileShare.Repository {
+) : ContactProfileShareRepository {
 
     override fun getLocalContact(contactId: Int): LiveData<ContactEntity> {
         return contactLocalDataSource.getContact(contactId)

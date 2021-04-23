@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.repository.sharedRepository
+package com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository
 
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -6,7 +6,6 @@ import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.IContractContactRepositoryShare
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import timber.log.Timber
 import javax.inject.Inject
