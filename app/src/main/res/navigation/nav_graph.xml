@@ -353,7 +353,7 @@
         android:label="@string/text_color_scheme" />
     <dialog
         android:id="@+id/userDisplayFormatDialogFragment"
-        android:name="com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:name="com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogFragment"
         android:label="user_display_format_dialog_fragment"
         tools:layout="@layout/user_display_format_dialog_fragment" />
     <fragment

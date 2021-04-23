@@ -50,9 +50,9 @@ import com.naposystems.napoleonchat.ui.splash.SplashFragment
 import com.naposystems.napoleonchat.ui.status.StatusFragment
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionFragment
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogFragment
-import com.naposystems.napoleonchat.ui.timeFormat.TimeFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment
-import com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector

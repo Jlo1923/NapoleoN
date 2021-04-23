@@ -21,7 +21,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import java.util.*
@@ -44,9 +43,6 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
     private val contactSharedViewModel: ContactSharedViewModel by activityViewModels { viewModelFactory }
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
-        viewModelFactory
-    }
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -85,7 +81,7 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts(
+        contactSharedViewModel.getContacts(
             Constants.FriendShipState.BLOCKED.state,
             Constants.LocationGetContact.BLOCKED.location
         )

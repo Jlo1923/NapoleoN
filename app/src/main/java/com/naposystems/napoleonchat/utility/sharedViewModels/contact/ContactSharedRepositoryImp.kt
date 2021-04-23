@@ -3,9 +3,10 @@ package com.naposystems.napoleonchat.utility.sharedViewModels.contact
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
-import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSourceImp
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.blockedContact.BlockedContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.deleteContact.DeleteContactErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.deleteContact.DeleteContactResDTO
@@ -14,19 +15,63 @@ import com.naposystems.napoleonchat.source.remote.dto.contacts.unblockContact.Un
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationResDTO
+import com.naposystems.napoleonchat.utility.Constants
 import com.squareup.moshi.Moshi
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 class ContactSharedRepositoryImp
 @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val contactLocalDataSource: ContactLocalDataSource,
-    private val messageLocalDataSourceImp: MessageLocalDataSourceImp
+    private val messageLocalDataSource: MessageLocalDataSource
 ) : ContactSharedRepository {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()
+    }
+
+    override suspend fun getContacts(state : String, location : Int): Boolean {
+        return try {
+            val response = napoleonApi.getContactsByState(state)
+
+            if (response.isSuccessful) {
+
+                val contactResDTO = response.body()!!
+
+                val contacts = if (state == Constants.FriendShipState.BLOCKED.state)
+                    ContactResDTO.toEntityList(contactResDTO.contacts, true)
+                else
+                    ContactResDTO.toEntityList(contactResDTO.contacts)
+
+                val contactsToDelete = contactLocalDataSource.insertOrUpdateContactList(
+                    contacts, location
+                )
+
+                if (contactsToDelete.isNotEmpty() && location == Constants.LocationGetContact.OTHER.location) {
+                    contactsToDelete.forEach { contact ->
+                        messageLocalDataSource.deleteMessageByType(
+                            contact.id,
+                            Constants.MessageType.NEW_CONTACT.type
+                        )
+
+                        RxBus.publish(RxEvent.DeleteChannel(contact))
+
+                        contactLocalDataSource.deleteContact(contact)
+                        Timber.d("*TestDelete: ContactDelete ${contact.getNickName()}")
+
+                    }
+                }
+                true
+            } else {
+                Timber.e(response.errorBody()!!.string())
+                false
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            true
+        }
     }
 
     override suspend fun sendBlockedContact(contact: ContactEntity): Response<BlockedContactResDTO> {
@@ -56,7 +101,7 @@ class ContactSharedRepositoryImp
     }
 
     override suspend fun deleteConversation(contactId: Int) {
-        messageLocalDataSourceImp.deleteMessages(contactId)
+        messageLocalDataSource.deleteMessages(contactId)
     }
 
     override suspend fun muteConversation(

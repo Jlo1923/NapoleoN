@@ -15,10 +15,9 @@ import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
 import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
-import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
-import com.naposystems.napoleonchat.repository.defaultPreferences.DefaultPreferencesRepository
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepositoryImp
 import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepository
 import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
@@ -43,18 +42,15 @@ import com.naposystems.napoleonchat.repository.splash.SplashRepository
 import com.naposystems.napoleonchat.repository.status.StatusRepository
 import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
 import com.naposystems.napoleonchat.repository.timeAccessPin.TimeAccessPinRepository
-import com.naposystems.napoleonchat.repository.timeFormat.TimeFormatRepository
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepositoryImp
 import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeRepository
-import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
-import com.naposystems.napoleonchat.repository.userDisplayFormat.UserDisplayFormatRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
 import com.naposystems.napoleonchat.service.download.repository.DownloadServiceRepository
 import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
 import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
-import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
-import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
+import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
 import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
 import com.naposystems.napoleonchat.ui.activateBiometrics.IContractActivateBiometrics
 import com.naposystems.napoleonchat.ui.addContact.IContractAddContact
@@ -70,10 +66,13 @@ import com.naposystems.napoleonchat.ui.colorScheme.IContractColorScheme
 import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
 import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
 import com.naposystems.napoleonchat.ui.contacts.IContractContacts
+import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepository
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepositoryImp
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.ui.home.IContractHome
@@ -82,13 +81,13 @@ import com.naposystems.napoleonchat.ui.logout.IContractLogout
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
 import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
-import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.profile.IContractProfile
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
@@ -104,10 +103,11 @@ import com.naposystems.napoleonchat.ui.splash.IContractSplash
 import com.naposystems.napoleonchat.ui.status.IContractStatus
 import com.naposystems.napoleonchat.ui.subscription.IContractSubscription
 import com.naposystems.napoleonchat.ui.timeAccessPin.IContractTimeAccessPin
-import com.naposystems.napoleonchat.ui.timeFormat.IContractTimeFormat
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepository
 import com.naposystems.napoleonchat.ui.unlockAppTime.IContractUnlockAppTime
-import com.naposystems.napoleonchat.ui.userDisplayFormat.IContractUserDisplayFormat
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.IContractDefaultPreferences
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepository
+import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
+import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import dagger.Binds
 import dagger.Module
 
@@ -117,8 +117,6 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindBaseRepository(repository: BaseRepository): IContractBase.Repository
 
-    @Binds
-    abstract fun bindAccountAttackDialogRepository(repository: AccountAttackDialogRepository): IContractAccountAttackDialog.Repository
 
     @Binds
     abstract fun bindActivateBiometricsRepository(repository: ActivateBiometricsRepository): IContractActivateBiometrics.Repository
@@ -145,9 +143,6 @@ abstract class RepositoryModule {
     abstract fun bindCancelSubscriptionRepository(repository: CancelSubscriptionRepository): IContractCancelSubscription.Repository
 
     @Binds
-    abstract fun bindChangeParamsDialogRepository(repository: ChangeParamsDialogRepository): IContractChangeDialogParams.Repository
-
-    @Binds
     abstract fun bindColorSchemeRepository(repository: ColorSchemeRepository): IContractColorScheme.Repository
 
     @Binds
@@ -167,8 +162,6 @@ abstract class RepositoryModule {
 
     //CreateAccountRepository
 
-    @Binds
-    abstract fun bindDefaultPreferencesRepository(repository: DefaultPreferencesRepository): IContractDefaultPreferences.Repository
 
     @Binds
     abstract fun bindEditAccessPinRepository(repository: EditAccessPinRepository): IContractEditAccessPin.Repository
@@ -246,13 +239,7 @@ abstract class RepositoryModule {
     abstract fun bindTimeAccessPinRepository(repository: TimeAccessPinRepository): IContractTimeAccessPin.Repository
 
     @Binds
-    abstract fun bindTimeFormatRepository(repository: TimeFormatRepository): IContractTimeFormat.Repository
-
-    @Binds
     abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepository): IContractUnlockAppTime.Repository
-
-    @Binds
-    abstract fun bindUserDisplayFormatRepository(repository: UserDisplayFormatRepository): IContractUserDisplayFormat.Repository
 
     @Binds
     abstract fun bindValidateNicknameRepository(repository: ValidateNicknameRepository): IContractValidateNickname.Repository
@@ -285,5 +272,6 @@ abstract class RepositoryModule {
     abstract fun provideDownloadServiceRepository(
         repository: DownloadServiceRepository
     ): IContractDownloadService.Repository
+
 
 }

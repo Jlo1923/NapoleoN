@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactsItemBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 
 class ContactsAdapter constructor(
         private val clickListener: ContactClickListener,
-        private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+        private val userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel
     ) :
     ListAdapter<ContactEntity, ContactsAdapter.ContactsViewHolder>(DiffCallback) {
 
@@ -36,20 +36,20 @@ class ContactsAdapter constructor(
 
     override fun onBindViewHolder(holder: ContactsViewHolder, position: Int) {
         val item = getItem(position)
-        holder.bind(item, clickListener, userDisplayFormatShareViewModel)
+        holder.bind(item, clickListener, userDisplayFormatDialogViewModel)
     }
 
     class ContactsViewHolder constructor(private val binding: ContactsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ContactEntity,
                  clickListener: ContactClickListener,
-                 userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel
+                 userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel
         ) {
             binding.clickListener = clickListener
 
             binding.apply {
                 contact = item
-                userDisplayFormat = userDisplayFormatShareViewModel.getUserDisplayFormat()
+                userDisplayFormat = userDisplayFormatDialogViewModel.getUserDisplayFormat()
 
                 buttonMore.setOnClickListener {
                     clickListener.onMoreClick(item, it)

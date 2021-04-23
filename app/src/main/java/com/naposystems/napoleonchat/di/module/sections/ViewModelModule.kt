@@ -29,13 +29,13 @@ import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewMo
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
-import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -53,17 +53,7 @@ import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -305,11 +295,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CancelSubscriptionDialogViewModel::class)
     internal abstract fun bindCancelSubscriptionDialogViewModel(viewModel: CancelSubscriptionDialogViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(DefaultPreferencesViewModel::class)
-    internal abstract fun bindDefaultPreferencesViewModel(viewModel: DefaultPreferencesViewModel): ViewModel
 
     @Binds
     @IntoMap

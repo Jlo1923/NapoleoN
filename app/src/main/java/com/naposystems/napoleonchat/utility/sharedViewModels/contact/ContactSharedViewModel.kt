@@ -13,8 +13,12 @@ import javax.inject.Inject
 
 class ContactSharedViewModel
 @Inject constructor(
-    private val sharedRepository: ContactSharedRepository
+    private val repository: ContactSharedRepository
 ) : ViewModel() {
+
+    private val _contactsWasLoaded = MutableLiveData<Boolean>()
+    val contactsWasLoaded: LiveData<Boolean>
+        get() = _contactsWasLoaded
 
     private val _webServiceErrors = MutableLiveData<List<String>>()
     val webServiceErrors: LiveData<List<String>>
@@ -28,17 +32,27 @@ class ContactSharedViewModel
     val conversationDeleted: LiveData<Boolean>
         get() = _conversationDeleted
 
+    fun getContacts(state: String, location: Int) {
+        viewModelScope.launch {
+            try {
+                _contactsWasLoaded.value = repository.getContacts(state, location)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     fun sendBlockedContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
-                val response = sharedRepository.sendBlockedContact(contact)
+                val response = repository.sendBlockedContact(contact)
 
                 if (response.isSuccessful) {
                     contact.statusBlocked = true
                     contact.stateNotification = false
-                    sharedRepository.blockContactLocal(contact)
+                    repository.blockContactLocal(contact)
                 } else {
-                    _webServiceErrors.value = sharedRepository.getDefaultBlockedError(response)
+                    _webServiceErrors.value = repository.getDefaultBlockedError(response)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
@@ -49,12 +63,12 @@ class ContactSharedViewModel
     fun unblockContact(contactId: Int) {
         viewModelScope.launch {
             try {
-                val response = sharedRepository.unblockContact(contactId)
+                val response = repository.unblockContact(contactId)
 
                 if (response.isSuccessful) {
-                    sharedRepository.unblockContactLocal(contactId)
+                    repository.unblockContactLocal(contactId)
                 } else {
-                    _webServiceErrors.value = sharedRepository.getDefaultUnblockError(response)
+                    _webServiceErrors.value = repository.getDefaultUnblockError(response)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -65,12 +79,12 @@ class ContactSharedViewModel
     fun sendDeleteContact(contact: ContactEntity) {
         viewModelScope.launch {
             try {
-                val response = sharedRepository.sendDeleteContact(contact)
+                val response = repository.sendDeleteContact(contact)
 
                 if (response.isSuccessful) {
-                    sharedRepository.deleteContactLocal(contact)
+                    repository.deleteContactLocal(contact)
                 } else {
-                    _webServiceErrors.value = sharedRepository.getDefaultDeleteError(response)
+                    _webServiceErrors.value = repository.getDefaultDeleteError(response)
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -80,7 +94,7 @@ class ContactSharedViewModel
 
     fun deleteConversation(contactId: Int) {
         viewModelScope.launch {
-            sharedRepository.deleteConversation(contactId)
+            repository.deleteConversation(contactId)
             _conversationDeleted.value = true
         }
     }
@@ -88,15 +102,15 @@ class ContactSharedViewModel
     fun muteConversation(contactId: Int, contactSilenced: Boolean) {
         viewModelScope.launch {
             try {
-                val response = sharedRepository.muteConversation(contactId, MuteConversationReqDTO())
+                val response = repository.muteConversation(contactId, MuteConversationReqDTO())
 
                 if (response.isSuccessful) {
-                    sharedRepository.muteConversationLocal(
+                    repository.muteConversationLocal(
                         contactId,
                         Utils.convertBooleanToInvertedInt(contactSilenced)
                     )
                 } else {
-                    _muteConversationWsError.value = sharedRepository.muteError(response)
+                    _muteConversationWsError.value = repository.muteError(response)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)

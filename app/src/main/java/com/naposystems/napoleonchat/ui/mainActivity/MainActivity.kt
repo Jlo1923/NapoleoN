@@ -54,7 +54,7 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.extensions.*
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import dagger.android.AndroidInjection
@@ -86,9 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var viewModel: MainActivityViewModel
 
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
-        viewModelFactory
-    }
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
 
     private var accountStatus: Int = 0
 
@@ -213,7 +211,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    contactRepositoryShareViewModel.getContacts(
+                    contactSharedViewModel.getContacts(
                         Constants.FriendShipState.ACTIVE.state,
                         Constants.LocationGetContact.OTHER.location
                     )

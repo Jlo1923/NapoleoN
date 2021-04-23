@@ -39,10 +39,9 @@ import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
@@ -75,17 +74,13 @@ class HomeFragment : BaseFragment() {
 
     private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
 
-    private val shareFriendShipViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
+    private val shareFriendShipViewModel: FriendShipActionSharedViewModel by viewModels { viewModelFactory }
 
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
+    private val userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
 
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
-        viewModelFactory
-    }
-
-    private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
+    private val timeFormatShareViewModel: TimeFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -243,7 +238,7 @@ class HomeFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts(
+        contactSharedViewModel.getContacts(
             Constants.FriendShipState.ACTIVE.state,
             Constants.LocationGetContact.OTHER.location
         )
@@ -637,7 +632,7 @@ class HomeFragment : BaseFragment() {
                     }
                 }
             },
-            userDisplayFormatShareViewModel.getUserDisplayFormat(),
+            userDisplayFormatDialogViewModel.getUserDisplayFormat(),
             timeFormatShareViewModel.getValTimeFormat()
         )
         binding.recyclerViewChats.apply {

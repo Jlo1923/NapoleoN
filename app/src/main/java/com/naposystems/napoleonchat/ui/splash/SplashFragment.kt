@@ -1,13 +1,11 @@
 package com.naposystems.napoleonchat.ui.splash
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.biometric.BiometricManager
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,9 +13,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SplashFragmentBinding
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,7 +24,7 @@ class SplashFragment : DaggerFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
-    private val viewModelDefaultPreferences: DefaultPreferencesViewModel by viewModels { viewModelFactory }
+    private val viewModelDefaultPreferencesShared: DefaultPreferencesSharedViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SplashFragmentBinding
 
     //region Variables Access Pin
@@ -153,7 +150,7 @@ class SplashFragment : DaggerFragment() {
         })
 
         //region Set DefaultPreferences
-        viewModelDefaultPreferences.setDefaultPreferences()
+        viewModelDefaultPreferencesShared.setDefaultPreferences()
         viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(requireContext()))
         setDefaultBiometricsOption()
         //endregion

@@ -10,6 +10,7 @@ import retrofit2.Response
 
 interface ContactSharedRepository {
 
+        suspend fun getContacts(state: String, location: Int): Boolean
         //region Block Contact
         suspend fun sendBlockedContact(contact: ContactEntity) : Response<BlockedContactResDTO>
         suspend fun blockContactLocal(contact: ContactEntity)
@@ -35,4 +36,5 @@ interface ContactSharedRepository {
         fun getDefaultDeleteError(response: Response<DeleteContactResDTO>): List<String>
         fun muteError(response: Response<MuteConversationResDTO>): ArrayList<String>
         //endregion
+
 }

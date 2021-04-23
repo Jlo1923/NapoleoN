@@ -1,46 +1,55 @@
 package com.naposystems.napoleonchat.di.module.shared
 
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareRepository
-import com.naposystems.napoleonchat.repository.sharedRepository.FriendShipActionShareRepository
-import com.naposystems.napoleonchat.repository.sharedRepository.UserProfileShareRepository
+import com.naposystems.napoleonchat.repository.accountAttackDialog.AccountAttackDialogRepository
+import com.naposystems.napoleonchat.repository.changeFakes.ChangeParamsDialogRepository
+import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
+import com.naposystems.napoleonchat.ui.changeParams.IContractChangeDialogParams
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepository
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepositoryImp
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepository
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepositoryImp
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedRepository
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedRepositoryImp
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareRepository
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareRepositoryImp
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.IContractContactRepositoryShare
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.IContractFriendShipAction
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.IContractUserProfileShare
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedRepository
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedRepositoryImp
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepository
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepositoryImp
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedRepository
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedRepositoryImp
+import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedRepository
+import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedRepositoryImp
 import dagger.Binds
 import dagger.Module
-import javax.inject.Singleton
 
 @Module
 abstract class SharedRepositoryModule {
 
     @Binds
-    @Singleton
-    abstract fun bindShareContactRepository(repository: ContactSharedRepositoryImp): ContactSharedRepository
+    abstract fun bindContactSharedRepository(repository: ContactSharedRepositoryImp): ContactSharedRepository
 
     @Binds
-    @Singleton
-    abstract fun bindContactProfileShareRepository(repository: ContactProfileShareRepositoryImp): ContactProfileShareRepository
-    @Binds
-    @Singleton
-    abstract fun bindContactRepositoryShareRepository(
-        repository: ContactRepositoryShareRepository
-    ): IContractContactRepositoryShare.Repository
-
+    abstract fun bindContactProfileShareRepository(repository: ContactProfileSharedRepositoryImp): ContactProfileSharedRepository
 
     @Binds
-    @Singleton
-    abstract fun bindFriendShipActionShareRepository(
-        repository: FriendShipActionShareRepository
-    ): IContractFriendShipAction.Repository
+    abstract fun bindFriendShipActionSharedRepository(repository: FriendShipActionSharedRepositoryImp): FriendShipActionSharedRepository
 
     @Binds
-    @Singleton
-    abstract fun bindUserProfileShareRepository(
-        repository: UserProfileShareRepository
-    ): IContractUserProfileShare.Repository
+    abstract fun bindUserProfileSharedRepository(repository: UserProfileSharedRepositoryImp): UserProfileSharedRepository
+
+    @Binds
+    abstract fun bindDefaultPreferencesSharedRepository(repository: DefaultPreferencesSharedRepositoryImp): DefaultPreferencesSharedRepository
+
+    //Dialog
+    @Binds
+    abstract fun bindAccountAttackDialogRepository(repository: AccountAttackDialogRepository): IContractAccountAttackDialog.Repository
+
+    @Binds
+    abstract fun bindChangeParamsDialogRepository(repository: ChangeParamsDialogRepository): IContractChangeDialogParams.Repository
+
+    @Binds
+    abstract fun bindUserDisplayFormatDialogRepository(repository: UserDisplayFormatDialogRepositoryImp): UserDisplayFormatDialogRepository
+
+    @Binds
+    abstract fun bindTimeFormatDialogRepository(repository: TimeFormatDialogRepositoryImp): TimeFormatDialogRepository
 
 }

@@ -28,20 +28,19 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
-import com.naposystems.napoleonchat.ui.timeFormat.TimeFormatDialogFragment
-import com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
-import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -71,8 +70,8 @@ class AppearanceSettingsFragment : BaseFragment() {
         viewModelFactory
     }
 
-    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
-    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
+    private val gallerySharedViewModel: GallerySharedViewModel by activityViewModels()
+    private val cameraSharedViewModel: CameraSharedViewModel by activityViewModels()
 
     private lateinit var binding: AppearanceSettingsFragmentBinding
     private lateinit var fileName: String
@@ -93,12 +92,12 @@ class AppearanceSettingsFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
-            galleryShareViewModel.uriImageSelected.observe(activity, Observer { uri ->
+            gallerySharedViewModel.uriImageSelected.observe(activity, Observer { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
             })
-            cameraShareViewModel.uriImageTaken.observe(activity, Observer { uri ->
+            cameraSharedViewModel.uriImageTaken.observe(activity, Observer { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }

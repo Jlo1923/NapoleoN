@@ -39,13 +39,12 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
-import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -69,11 +68,11 @@ class ProfileFragment : BaseFragment() {
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
-    private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
+    private val userProfileSharedViewModel: UserProfileSharedViewModel by viewModels {
         viewModelFactory
     }
-    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
-    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
+    private val gallerySharedViewModel: GallerySharedViewModel by activityViewModels()
+    private val cameraSharedViewModel: CameraSharedViewModel by activityViewModels()
     private var compressedFile: File? = null
     private lateinit var fileName: String
     private lateinit var subFolder: String
@@ -145,12 +144,12 @@ class ProfileFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        galleryShareViewModel.uriImageSelected.observe(requireActivity(), Observer { uri ->
+        gallerySharedViewModel.uriImageSelected.observe(requireActivity(), Observer { uri ->
             if (uri != null) {
                 cropImage(uri)
             }
         })
-        cameraShareViewModel.uriImageTaken.observe(requireActivity(), Observer { uri ->
+        cameraSharedViewModel.uriImageTaken.observe(requireActivity(), Observer { uri ->
             if (uri != null) {
                 cropImage(uri)
             }
@@ -213,7 +212,7 @@ class ProfileFragment : BaseFragment() {
                                 .load(uri)
                                 .into(binding.imageViewBackground)
 
-                            userProfileShareViewModel.updateUserLocal(user)
+                            userProfileSharedViewModel.updateUserLocal(user)
                         }
                     }
                 }
@@ -231,7 +230,7 @@ class ProfileFragment : BaseFragment() {
                 avatar = avatar
             )
             showAvatarProgress()
-            userProfileShareViewModel.updateUserInfo(user, updateUserInfoReqDTO)
+            userProfileSharedViewModel.updateUserInfo(user, updateUserInfoReqDTO)
         }
     }
 
@@ -275,13 +274,13 @@ class ProfileFragment : BaseFragment() {
             }
         })
 
-        userProfileShareViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
+        userProfileSharedViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 hideAvatarProgressBar()
             }
         })
 
-        userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
+        userProfileSharedViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 val snackbarUtils = SnackbarUtils(binding.coordinator, it)
                 snackbarUtils.showSnackbar {}
@@ -382,7 +381,7 @@ class ProfileFragment : BaseFragment() {
                         Constants.LocationImageSelectorBottomSheet.BANNER_PROFILE.location -> {
                             viewModel.getUser()?.let { user ->
                                 user.headerUri = ""
-                                userProfileShareViewModel.updateUserLocal(user)
+                                userProfileSharedViewModel.updateUserLocal(user)
                             }
                         }
                     }

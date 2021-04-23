@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ContactsFragmentBinding
@@ -23,15 +22,14 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCustomView.OnEventListener {
+class ContactsFragment : BaseFragment(), SearchView.OnSearchView,
+    EmptyStateCustomView.OnEventListener {
 
     companion object {
         fun newInstance() = ContactsFragment()
@@ -45,13 +43,12 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+    private val userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
-        viewModelFactory
-    }
-    private lateinit var contactSharedViewModel: ContactSharedViewModel
+
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
+
     private lateinit var binding: ContactsFragmentBinding
     private lateinit var adapter: ContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -86,12 +83,12 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        try {
-            contactSharedViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
-                .get(ContactSharedViewModel::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
+//        try {
+//            contactSharedViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
+//                .get(ContactSharedViewModel::class.java)
+//        } catch (e: Exception) {
+//            Timber.e(e)
+//        }
 
         viewModel.resetTextSearch()
 
@@ -102,7 +99,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
         observeContacts()
 
         viewModel.webServiceErrors.observe(viewLifecycleOwner, Observer {
-            SnackbarUtils(binding.coordinator, it).showSnackbar{}
+            SnackbarUtils(binding.coordinator, it).showSnackbar {}
         })
 
         viewModel.contactsLoaded.observe(viewLifecycleOwner, Observer {
@@ -115,7 +112,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     }
 
     private fun getContacts() {
-        contactRepositoryShareViewModel.getContacts(
+        contactSharedViewModel.getContacts(
             Constants.FriendShipState.ACTIVE.state,
             Constants.LocationGetContact.OTHER.location
         )
@@ -183,7 +180,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
     }
 
     override fun onPause() {
-        if (::popup.isInitialized){
+        if (::popup.isInitialized) {
             popup.dismiss()
         }
         super.onPause()
@@ -218,7 +215,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
                 }
                 popup.show()
             }
-        }, userDisplayFormatShareViewModel)
+        }, userDisplayFormatDialogViewModel)
         binding.recyclerViewContacts.adapter = adapter
         binding.recyclerViewContacts.itemAnimator = ItemAnimator()
 
@@ -226,11 +223,12 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView, EmptyStateCust
 
     private fun goToConversation(item: ContactEntity) {
         searchView.close()
-        findNavController().currentDestination?.getAction(R.id.action_contactsFragment_to_conversationFragment)?.let {
-            findNavController().navigate(
-                ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
-            )
-        }
+        findNavController().currentDestination?.getAction(R.id.action_contactsFragment_to_conversationFragment)
+            ?.let {
+                findNavController().navigate(
+                    ContactsFragmentDirections.actionContactsFragmentToConversationFragment(item)
+                )
+            }
     }
 
     private fun goToAddContacts() {
