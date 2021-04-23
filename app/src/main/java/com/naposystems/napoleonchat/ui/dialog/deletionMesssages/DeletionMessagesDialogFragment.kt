@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.deletionDialog
+package com.naposystems.napoleonchat.ui.dialog.deletionMesssages
 
 import android.os.Bundle
 import android.view.LayoutInflater

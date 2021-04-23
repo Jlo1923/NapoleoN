@@ -409,8 +409,22 @@ class SyncManagerImp @Inject constructor(
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                messageLocalDataSource.deletedMessages(response.body()!!)
+            if (response.isSuccessful) {
+                response.body()?.messagesId.let {
+                    it?.let {
+                        messageLocalDataSource.deletedMessages(
+                            it
+                        )
+                    }
+                }
+
+                response.body()?.attachmentsId.let {
+                    it?.let {
+                        attachmentLocalDataSource.deletedAttachment(
+                            it
+                        )
+                    }
+                }
             }
         }
     }

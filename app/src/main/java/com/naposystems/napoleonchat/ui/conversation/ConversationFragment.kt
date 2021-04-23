@@ -73,7 +73,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.vie
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
-import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.deletionMesssages.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem

@@ -226,7 +226,7 @@ interface NapoleonApi {
     suspend fun deleteMessagesForAll(@Body deleteMessagesReqDTO: DeleteMessagesReqDTO): Response<DeleteMessagesResDTO>
 
     @GET(DELETE_MESSAGES_FOR_ALL)
-    suspend fun getDeletedMessages(): Response<List<String>>
+    suspend fun getDeletedMessages(): Response<MessageAndAttachmentResDTO>
 
     @POST(BLOCK_ATTACKER)
     suspend fun blockAttacker(@Body accountAttackDialogReqDTO: AccountAttackDialogReqDTO): Response<AccountAttackDialogResDTO>

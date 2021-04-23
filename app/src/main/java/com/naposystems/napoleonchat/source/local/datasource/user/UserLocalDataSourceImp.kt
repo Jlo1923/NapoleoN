@@ -23,6 +23,7 @@ class UserLocalDataSourceImp @Inject constructor(
         return userDao.getUser(firebaseId)
     }
 
+    //TODO: Corregir este metodo deberia traer solo el User no un LiveData
     override suspend fun getUserLiveData(firebaseId: String): LiveData<UserEntity> {
         return userDao.getUserLiveData(firebaseId)
     }

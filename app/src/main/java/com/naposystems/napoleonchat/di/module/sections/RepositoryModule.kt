@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.di.module.sections
 
-import com.naposystems.napoleonchat.repository.accountAttackDialog.AccountAttackDialogRepository
 import com.naposystems.napoleonchat.repository.activateBiometrics.ActivateBiometricsRepository
 import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
 import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepository
@@ -10,18 +9,16 @@ import com.naposystems.napoleonchat.repository.attachmentLocation.AttachmentLoca
 import com.naposystems.napoleonchat.repository.base.BaseRepository
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
 import com.naposystems.napoleonchat.repository.cancelSubscription.CancelSubscriptionRepository
-import com.naposystems.napoleonchat.repository.changeFakes.ChangeParamsDialogRepository
 import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
 import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepositoryImp
 import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepository
 import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
-import com.naposystems.napoleonchat.repository.home.HomeRepository
+import com.naposystems.napoleonchat.repository.home.HomeRepositoryImp
 import com.naposystems.napoleonchat.repository.languageSelection.LanguageSelectionRepository
 import com.naposystems.napoleonchat.repository.logout.LogoutRepository
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
@@ -42,7 +39,6 @@ import com.naposystems.napoleonchat.repository.splash.SplashRepository
 import com.naposystems.napoleonchat.repository.status.StatusRepository
 import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
 import com.naposystems.napoleonchat.repository.timeAccessPin.TimeAccessPinRepository
-import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepositoryImp
 import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
@@ -51,7 +47,6 @@ import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMu
 import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
-import com.naposystems.napoleonchat.ui.accountAttack.IContractAccountAttackDialog
 import com.naposystems.napoleonchat.ui.activateBiometrics.IContractActivateBiometrics
 import com.naposystems.napoleonchat.ui.addContact.IContractAddContact
 import com.naposystems.napoleonchat.ui.appearanceSettings.IContractAppearanceSettings
@@ -61,7 +56,6 @@ import com.naposystems.napoleonchat.ui.attachmentLocation.IContractAttachmentLoc
 import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
 import com.naposystems.napoleonchat.ui.blockedContacts.IContractBlockedContact
 import com.naposystems.napoleonchat.ui.cancelSubscription.IContractCancelSubscription
-import com.naposystems.napoleonchat.ui.changeParams.IContractChangeDialogParams
 import com.naposystems.napoleonchat.ui.colorScheme.IContractColorScheme
 import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
 import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
@@ -71,11 +65,9 @@ import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
 import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
-import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepository
-import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogRepositoryImp
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
-import com.naposystems.napoleonchat.ui.home.IContractHome
+import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.logout.IContractLogout
 import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
@@ -103,9 +95,7 @@ import com.naposystems.napoleonchat.ui.splash.IContractSplash
 import com.naposystems.napoleonchat.ui.status.IContractStatus
 import com.naposystems.napoleonchat.ui.subscription.IContractSubscription
 import com.naposystems.napoleonchat.ui.timeAccessPin.IContractTimeAccessPin
-import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogRepository
 import com.naposystems.napoleonchat.ui.unlockAppTime.IContractUnlockAppTime
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import dagger.Binds
@@ -117,6 +107,8 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindBaseRepository(repository: BaseRepository): IContractBase.Repository
 
+    @Binds
+    abstract fun bindHomeRepository(repository: HomeRepositoryImp): HomeRepository
 
     @Binds
     abstract fun bindActivateBiometricsRepository(repository: ActivateBiometricsRepository): IContractActivateBiometrics.Repository
@@ -171,9 +163,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindEnterPinRepository(repository: EnterPinRepository): IContractEnterPin.Repository
-
-    @Binds
-    abstract fun bindHomeRepository(repository: HomeRepository): IContractHome.Repository
 
     @Binds
     abstract fun bindLanguageSelectionRepository(repository: LanguageSelectionRepository): IContractLanguageSelection.Repository

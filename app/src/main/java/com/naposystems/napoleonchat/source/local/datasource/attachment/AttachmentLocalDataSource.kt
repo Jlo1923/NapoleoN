@@ -16,6 +16,8 @@ interface AttachmentLocalDataSource {
 
     suspend fun updateAttachmentStatus(attachmentsWebIds: List<String>, status: Int)
 
+    suspend fun deletedAttachment(attachmentsWebIds: List<String>)
+
     fun existAttachment(id: String): Boolean
 
     suspend fun getAttachmentByWebId(webId: String): AttachmentEntity?

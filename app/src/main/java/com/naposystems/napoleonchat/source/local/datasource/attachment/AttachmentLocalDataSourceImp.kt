@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.source.local.datasource.attachment
 
+import android.content.Context
 import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
@@ -12,7 +13,8 @@ import javax.inject.Inject
 class AttachmentLocalDataSourceImp @Inject constructor(
     private val attachmentDao: AttachmentDao,
     private val contactDao: ContactDao,
-    private val messageDao: MessageDao
+    private val messageDao: MessageDao,
+    private val context: Context
 ) : AttachmentLocalDataSource {
 
 
@@ -117,5 +119,13 @@ class AttachmentLocalDataSourceImp @Inject constructor(
             }
         }
 
+    }
+
+    override suspend fun deletedAttachment(attachmentsWebIds: List<String>) {
+        attachmentsWebIds.forEach { webId ->
+            attachmentDao.getAttachmentByWebId(webId)?.let { attachmentEntity ->
+                attachmentEntity.deleteFile(context)
+            }
+        }
     }
 }
