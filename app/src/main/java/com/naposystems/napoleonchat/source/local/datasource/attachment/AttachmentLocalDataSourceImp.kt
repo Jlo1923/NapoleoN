@@ -121,12 +121,13 @@ class AttachmentLocalDataSourceImp @Inject constructor(
 
     }
 
-    override suspend fun deletedAttachment(attachmentsWebIds: List<String>) {
+    override suspend fun deletedAttachments(attachmentsWebIds: List<String>) {
         attachmentsWebIds.forEach { webId ->
             attachmentDao.getAttachmentByWebId(webId)?.let { attachmentEntity ->
                 attachmentEntity.deleteFile(context)
+                attachmentDao.deletedAttachment(webId)
             }
-            attachmentDao.deletedAttachment(webId)
         }
+        //TODO: JuankDev12 Aqui debes borrar el mensajes cuando todos los adjuntos de multiadjuntos debes eliminar el mensaje tambn
     }
 }

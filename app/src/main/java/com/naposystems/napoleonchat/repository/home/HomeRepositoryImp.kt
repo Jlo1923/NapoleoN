@@ -116,17 +116,13 @@ class HomeRepositoryImp @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.messagesId.let {
                     it?.let {
-                        messageLocalDataSource.deletedMessages(
-                            it
-                        )
+                        messageLocalDataSource.deletedMessages(it)
                     }
                 }
 
                 response.body()?.attachmentsId.let {
                     it?.let {
-                        attachmentLocalDataSource.deletedAttachment(
-                            it
-                        )
+                        attachmentLocalDataSource.deletedAttachments(it)
                     }
                 }
             }

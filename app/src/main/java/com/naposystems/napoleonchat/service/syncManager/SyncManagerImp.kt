@@ -420,7 +420,7 @@ class SyncManagerImp @Inject constructor(
 
                 response.body()?.attachmentsId.let {
                     it?.let {
-                        attachmentLocalDataSource.deletedAttachment(
+                        attachmentLocalDataSource.deletedAttachments(
                             it
                         )
                     }
