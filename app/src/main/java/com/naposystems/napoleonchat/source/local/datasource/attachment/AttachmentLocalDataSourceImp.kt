@@ -126,6 +126,7 @@ class AttachmentLocalDataSourceImp @Inject constructor(
             attachmentDao.getAttachmentByWebId(webId)?.let { attachmentEntity ->
                 attachmentEntity.deleteFile(context)
             }
+            attachmentDao.deletedAttachment(webId)
         }
     }
 }
