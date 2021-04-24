@@ -6,7 +6,7 @@ import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSett
 import com.naposystems.napoleonchat.repository.attachmentGallery.AttachmentGalleryRepository
 import com.naposystems.napoleonchat.repository.attachmentGalleryFolder.AttachmentGalleryFolderRepository
 import com.naposystems.napoleonchat.repository.attachmentLocation.AttachmentLocationRepository
-import com.naposystems.napoleonchat.repository.base.BaseRepository
+import com.naposystems.napoleonchat.repository.base.BaseRepositoryImp
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
 import com.naposystems.napoleonchat.repository.cancelSubscription.CancelSubscriptionRepository
 import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
@@ -21,7 +21,7 @@ import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
 import com.naposystems.napoleonchat.repository.home.HomeRepositoryImp
 import com.naposystems.napoleonchat.repository.languageSelection.LanguageSelectionRepository
 import com.naposystems.napoleonchat.repository.logout.LogoutRepository
-import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
+import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepositoryImp
 import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepository
 import com.naposystems.napoleonchat.repository.notificationSettings.NotificationSettingRepository
 import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
@@ -53,7 +53,7 @@ import com.naposystems.napoleonchat.ui.appearanceSettings.IContractAppearanceSet
 import com.naposystems.napoleonchat.ui.attachmentGallery.IContractAttachmentGallery
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.IContractAttachmentGalleryFolders
 import com.naposystems.napoleonchat.ui.attachmentLocation.IContractAttachmentLocation
-import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
+import com.naposystems.napoleonchat.repository.base.BaseRepository
 import com.naposystems.napoleonchat.ui.blockedContacts.IContractBlockedContact
 import com.naposystems.napoleonchat.ui.cancelSubscription.IContractCancelSubscription
 import com.naposystems.napoleonchat.ui.colorScheme.IContractColorScheme
@@ -70,7 +70,7 @@ import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.logout.IContractLogout
-import com.naposystems.napoleonchat.ui.mainActivity.IContractMainActivity
+import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
 import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
@@ -105,7 +105,10 @@ import dagger.Module
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun bindBaseRepository(repository: BaseRepository): IContractBase.Repository
+    abstract fun bindBaseRepository(repository: BaseRepositoryImp): BaseRepository
+
+    @Binds
+    abstract fun bindMainActivityRepository(repository: MainActivityRepositoryImp): MainActivityRepository
 
     @Binds
     abstract fun bindHomeRepository(repository: HomeRepositoryImp): HomeRepository
@@ -169,9 +172,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindLogoutRepository(repository: LogoutRepository): IContractLogout.Repository
-
-    @Binds
-    abstract fun bindMainActivityRepository(repository: MainActivityRepository): IContractMainActivity.Repository
 
     @Binds
     abstract fun bindConversationMuteRepository(repository: ConversationMuteRepository): IMuteConversation.Repository
