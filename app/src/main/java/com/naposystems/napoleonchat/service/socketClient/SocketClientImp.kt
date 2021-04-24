@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.service.socketClient
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
@@ -39,6 +40,7 @@ import com.squareup.moshi.Moshi
 import org.json.JSONObject
 import org.webrtc.SessionDescription
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SocketClientImp
@@ -77,6 +79,21 @@ class SocketClientImp
     //region Conexion
     override fun setSocketEventListener(socketEventListener: SocketEventListener) {
         this.socketEventListener = socketEventListener
+    }
+
+    private var countDownDisconnect: CountDownTimer = object : CountDownTimer(
+        TimeUnit.SECONDS.toMillis(5),
+        TimeUnit.SECONDS.toMillis(1)
+    ) {
+        override fun onFinish() {
+            Timber.d("CountDown finish")
+            if (NapoleonApplication.isCurrentOnCall) {
+                if (socketEventListener != null)
+                    socketEventListener.disposeCallTest()
+            }
+        }
+
+        override fun onTick(millisUntilFinished: Long) = Unit
     }
 
     override fun getStatusSocket(): ConnectionState {
@@ -390,9 +407,7 @@ class SocketClientImp
 
                 Timber.e("UNBIND GLOBAL")
 
-                pusher.getPrivateChannel(
-                    Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName
-                )
+                pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
                     .unbind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
                         SubscriptionEventListener {}
                     )
@@ -455,7 +470,11 @@ class SocketClientImp
             //Disconnect Pusher
 
             try {
+
+                countDownDisconnect.start()
+
                 pusher.disconnect()
+
             } catch (e: Exception) {
                 Timber.e("LLAMADA PASO: INTENTANDO DESCONECTAR PUSHER")
             }
@@ -512,7 +531,6 @@ class SocketClientImp
         Timber.d("Pusher 6.1: Emitir")
 
         try {
-
             val adapterValidate = moshi.adapter(MessagesReqDTO::class.java)
 
             val jsonObject = adapterValidate.toJson(messages)
@@ -525,10 +543,7 @@ class SocketClientImp
                         jsonObject
                     )
             }
-
-
         } catch (e: Exception) {
-
             Timber.e("Pusher Paso IN 6.4: $e}")
         }
 

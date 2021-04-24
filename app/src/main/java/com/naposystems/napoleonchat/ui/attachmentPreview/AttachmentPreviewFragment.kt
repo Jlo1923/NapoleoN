@@ -26,8 +26,8 @@ import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -39,7 +39,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
         fun newInstance() = AttachmentPreviewFragment()
     }
 
-    private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
+    private val conversationSharedViewModel: ConversationSharedViewModel by activityViewModels()
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -47,7 +47,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
     @Inject
     lateinit var handlerNotificationChannel: HandlerNotificationChannel
 
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
     private lateinit var binding: AttachmentPreviewFragmentBinding
@@ -92,11 +92,11 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
             inflater, R.layout.attachment_preview_fragment, container, false
         )
 
-        binding.viewModel = conversationShareViewModel
+        binding.viewModel = conversationSharedViewModel
         binding.galleryItemId = args.galleryItemId
         binding.inputPanel.setListener(this)
 
-        conversationShareViewModel.setAttachmentTaken(attachmentEntity)
+        conversationSharedViewModel.setAttachmentTaken(attachmentEntity)
 
         when (attachmentEntity.type) {
             Constants.AttachmentType.IMAGE.type,
@@ -202,7 +202,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { eventContact ->
-                    contactProfileShareViewModel.contact.value?.let { contact ->
+                    contactProfileSharedViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
                                 handlerNotificationChannel.deleteUserChannel(
@@ -238,7 +238,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
     override fun onDestroy() {
         deleteFile()
         disposable.dispose()
-        conversationShareViewModel.resetAttachmentTaken()
+        conversationSharedViewModel.resetAttachmentTaken()
         super.onDestroy()
     }
 
@@ -275,7 +275,7 @@ class AttachmentPreviewFragment : BaseFragment(), InputPanelWidget.Listener {
     }
 
     override fun onSendButtonClicked() {
-        with(conversationShareViewModel) {
+        with(conversationSharedViewModel) {
             setQuoteWebId(args.quote)
             setMessage(binding.inputPanel.getEditText().text.toString().trim())
             setAttachmentSelected(args.attachment)

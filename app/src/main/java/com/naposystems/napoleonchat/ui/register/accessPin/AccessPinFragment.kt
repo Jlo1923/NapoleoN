@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.register.accessPin
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,8 +20,7 @@ import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
-import dagger.android.support.AndroidSupportInjection
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedViewModel
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -40,7 +37,7 @@ class AccessPinFragment : DaggerFragment() {
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private lateinit var viewModel: AccessPinViewModel
-    private val viewModelDefaultPreferences: DefaultPreferencesViewModel by viewModels { viewModelFactory }
+    private val viewModelDefaultPreferencesShared: DefaultPreferencesSharedViewModel by viewModels { viewModelFactory }
 
     @Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle
@@ -126,7 +123,7 @@ class AccessPinFragment : DaggerFragment() {
             if (it == true) {
                 observerCreateUser = true
                 viewModel.createdUserPref()
-                viewModelDefaultPreferences.setDefaultPreferences()
+                viewModelDefaultPreferencesShared.setDefaultPreferences()
                 viewModel.onOpenedHomeFragment()
                 validateNextView()
             }

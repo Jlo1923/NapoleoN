@@ -15,6 +15,7 @@ open class BaseFragment : DaggerFragment() {
 
     @Inject
     open lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel: BaseViewModel by viewModels { viewModelFactory }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
