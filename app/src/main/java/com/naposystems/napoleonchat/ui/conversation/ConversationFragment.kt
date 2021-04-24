@@ -98,6 +98,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.Conver
 import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
@@ -389,7 +390,7 @@ class ConversationFragment
 
         binding.buttonCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-            this.verifyCameraAndMicPermission {
+            this.verifyCameraAndMicPermissionForCall {
                 viewModel.setIsVideoCall(false)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false
@@ -400,7 +401,7 @@ class ConversationFragment
 
         binding.buttonVideoCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-            this.verifyCameraAndMicPermission {
+            this.verifyCameraAndMicPermissionForCall {
                 viewModel.setIsVideoCall(true)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false

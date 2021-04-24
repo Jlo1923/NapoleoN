@@ -78,6 +78,7 @@ interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
         fun create(application: Application): Builder
 
         fun build(): ApplicationComponent
+
     }
 
 }

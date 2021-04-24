@@ -42,7 +42,6 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListen
 import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedViewModel
-import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
 import timber.log.Timber
@@ -61,19 +60,20 @@ class ProfileFragment : BaseFragment() {
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
-    @Inject
-    override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var binding: ProfileFragmentBinding
+
     private val viewModel: ProfileViewModel by viewModels { viewModelFactory }
-    private val baseViewModel: BaseViewModel by viewModels {
-        viewModelFactory
-    }
-    private val userProfileSharedViewModel: UserProfileSharedViewModel by viewModels {
-        viewModelFactory
-    }
+
+    private val baseViewModel: BaseViewModel by viewModels { viewModelFactory }
+
+    private val userProfileSharedViewModel: UserProfileSharedViewModel by viewModels { viewModelFactory }
+
     private val gallerySharedViewModel: GallerySharedViewModel by activityViewModels()
+
     private val cameraSharedViewModel: CameraSharedViewModel by activityViewModels()
+
     private var compressedFile: File? = null
+
     private lateinit var fileName: String
     private lateinit var subFolder: String
     private var aspectRatioX: Float = 1f

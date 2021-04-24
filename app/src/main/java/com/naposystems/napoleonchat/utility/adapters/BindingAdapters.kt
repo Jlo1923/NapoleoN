@@ -20,8 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textfield.TextInputEditText
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -30,7 +28,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.model.conversationCall.ConversationCall
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.GlideManager
 import com.naposystems.napoleonchat.utility.Utils
@@ -87,6 +84,16 @@ fun Fragment.verifyCameraAndMicPermission(successCallback: () -> Unit) {
         Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
         drawableIconId = R.drawable.ic_camera_primary,
         message = R.string.text_explanation_camera_to_attachment_picture
+    ) {
+        successCallback()
+    }
+}
+
+fun Fragment.verifyCameraAndMicPermissionForCall(successCallback: () -> Unit) {
+    this.verifyPermission(
+        Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
+        drawableIconId = R.drawable.ic_call_primary,
+        message = R.string.text_explanation_to_make_call
     ) {
         successCallback()
     }

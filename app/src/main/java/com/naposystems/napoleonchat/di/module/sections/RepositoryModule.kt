@@ -26,7 +26,7 @@ import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeybo
 import com.naposystems.napoleonchat.repository.notificationSettings.NotificationSettingRepository
 import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
 import com.naposystems.napoleonchat.repository.previewMedia.PreviewMediaRepository
-import com.naposystems.napoleonchat.repository.profile.ProfileRepository
+import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
 import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
 import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
@@ -80,7 +80,7 @@ import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyb
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.profile.IContractProfile
+import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.napoleonchat.ui.register.enterCode.IContractEnterCode
@@ -112,6 +112,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindHomeRepository(repository: HomeRepositoryImp): HomeRepository
+
+    @Binds
+    abstract fun bindProfileRepository(repository: ProfileRepositoryImp): ProfileRepository
 
     @Binds
     abstract fun bindActivateBiometricsRepository(repository: ActivateBiometricsRepository): IContractActivateBiometrics.Repository
@@ -188,8 +191,6 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindPreviewMediaRepository(repository: PreviewMediaRepository): IContractPreviewMedia.Repository
 
-    @Binds
-    abstract fun bindProfileRepository(repository: ProfileRepository): IContractProfile.Repository
 
     @Binds
     abstract fun bindRecoveryAccountRepository(repository: RecoveryAccountRepository): IContractRecoveryAccount.Repository
