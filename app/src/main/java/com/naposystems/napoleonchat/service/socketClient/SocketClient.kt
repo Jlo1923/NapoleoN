@@ -30,4 +30,6 @@ interface SocketClient {
 
     fun emitClientCall(channel: String, eventType: Int)
 
+    fun isConnected(): Boolean
+
 }
