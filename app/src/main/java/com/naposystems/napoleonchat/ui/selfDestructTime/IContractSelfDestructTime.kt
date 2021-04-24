@@ -27,6 +27,8 @@ interface IContractSelfDestructTime {
         suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
 
         suspend fun getSelfDestructTimeByContact(contactId: Int): LiveData<Int>
+        
+        suspend fun getSelfDestructTimeAsIntByContact(contactId: Int): Int
 
         fun getMessageSelfDestructTimeNotSent(): Int
 

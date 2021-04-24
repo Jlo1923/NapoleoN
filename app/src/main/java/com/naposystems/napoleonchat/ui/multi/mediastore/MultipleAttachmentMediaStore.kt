@@ -90,6 +90,7 @@ class MultipleAttachmentMediaStore @Inject constructor(
 
     override fun getFilesByFolder(
         folderParent: String,
+        folderName: String?,
         mapIds: Map<Int, Int>
     ): List<MultipleAttachmentFileItem> {
         val galleryFiles = mutableListOf<MultipleAttachmentFileItem>()
@@ -100,8 +101,17 @@ class MultipleAttachmentMediaStore @Inject constructor(
             projectionApiLvl24Files
         }
 
-        val whereCondition = whereForMediaStoreFiles
-        val selectionArgs = getSelectionArgsForFilesByFolderName(folderParent)
+        val whereCondition = folderName?.let {
+            whereForMediaStoreFilesWithName
+        } ?: run {
+            whereForMediaStoreFiles
+        }
+
+        val selectionArgs = folderName?.let {
+            getSelectionArgsForFilesByFolderName(it)
+        } ?: run {
+            getSelectionArgsForFilesByFolderParent(folderParent)
+        }
         val sorter = sortForFiles
 
         context.contentResolver.query(

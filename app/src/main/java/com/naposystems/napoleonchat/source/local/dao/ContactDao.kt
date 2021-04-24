@@ -161,6 +161,13 @@ interface ContactDao {
                 "FROM ${DBConstants.Contact.TABLE_NAME_CONTACT} " +
                 "WHERE ${DBConstants.Contact.COLUMN_ID} = :contactId "
     )
+    fun getSelfDestructTimeAsIntByContact(contactId: Int): Int
+
+    @Query(
+        "SELECT ${DBConstants.Contact.COLUMN_SELF_DESTRUCT_TIME} " +
+                "FROM ${DBConstants.Contact.TABLE_NAME_CONTACT} " +
+                "WHERE ${DBConstants.Contact.COLUMN_ID} = :contactId "
+    )
     fun getSelfDestructTimeByContactWithOutLiveData(contactId: Int): Int
 
 

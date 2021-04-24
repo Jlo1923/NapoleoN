@@ -195,9 +195,14 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun defineDefaultSelfDestructionTime() {
-        val selfDestructionTime = repository.getSelfDestructTime()
-        listFiles.forEach {
-            it.selfDestruction = selfDestructionTime
+        contact?.let {
+            viewModelScope.launch {
+                val selfDestructionTime =
+                    repository.getSelfDestructTimeAsIntByContact(contactId = it.id)
+                listFiles.forEach {
+                    it.selfDestruction = selfDestructionTime
+                }
+            }
         }
     }
 

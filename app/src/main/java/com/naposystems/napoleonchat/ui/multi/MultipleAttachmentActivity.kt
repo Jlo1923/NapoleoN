@@ -28,6 +28,8 @@ import com.xwray.groupie.Item
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
+const val MULTI_ATTACHMENT_PREVIEW_INTENT = 1000
+
 class MultipleAttachmentActivity : AppCompatActivity() {
 
     @Inject
@@ -69,11 +71,6 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         bindViewModel()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        finish()
-    }
-
     override fun onBackPressed() = viewModel.handleBackAction()
 
     private fun bindViewModel() {
@@ -110,7 +107,17 @@ class MultipleAttachmentActivity : AppCompatActivity() {
             putParcelable(MULTI_EXTRA_CONTACT, contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
         })
-        startActivity(intent)
+        startActivityForResult(intent, MULTI_ATTACHMENT_PREVIEW_INTENT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
+            when (resultCode) {
+                RESULT_OK -> finish()
+                RESULT_CANCELED -> Unit
+            }
+        }
     }
 
     private fun showMaxFilesAttached() {

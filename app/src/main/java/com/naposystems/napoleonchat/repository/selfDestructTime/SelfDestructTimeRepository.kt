@@ -34,6 +34,10 @@ class SelfDestructTimeRepository @Inject constructor(
         return contactLocalDataSource.getSelfDestructTimeByContact(contactId)
     }
 
+    override suspend fun getSelfDestructTimeAsIntByContact(contactId: Int) : Int {
+        return contactLocalDataSource.getSelfDestructTimeAsIntByContact(contactId)
+    }
+
     override fun getMessageSelfDestructTimeNotSent(): Int {
         return sharedPreferencesManager.getInt(
             Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT

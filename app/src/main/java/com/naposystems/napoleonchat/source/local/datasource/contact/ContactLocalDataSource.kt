@@ -9,9 +9,9 @@ interface ContactLocalDataSource {
 
     suspend fun getLocaleContacts(): List<ContactEntity>
 
-    fun getContact(contactId : Int): LiveData<ContactEntity>
+    fun getContact(contactId: Int): LiveData<ContactEntity>
 
-    fun getContactById(contactId : Int): ContactEntity?
+    fun getContactById(contactId: Int): ContactEntity?
 
     suspend fun restoreContact(contactId: Int)
 
@@ -19,9 +19,12 @@ interface ContactLocalDataSource {
 
     suspend fun insertContact(contact: ContactEntity)
 
-    suspend fun insertOrUpdateContactList(contactList: List<ContactEntity>, location : Int = 0): List<ContactEntity>
+    suspend fun insertOrUpdateContactList(
+        contactList: List<ContactEntity>,
+        location: Int = 0
+    ): List<ContactEntity>
 
-    fun getBlockedContacts() : LiveData<List<ContactEntity>>
+    fun getBlockedContacts(): LiveData<List<ContactEntity>>
 
     suspend fun blockContact(contactId: Int)
 
@@ -31,19 +34,21 @@ interface ContactLocalDataSource {
 
     suspend fun deleteContacts(contacts: List<ContactEntity>)
 
-    suspend fun updateContactSilenced(contactId: Int, contactSilenced : Int)
+    suspend fun updateContactSilenced(contactId: Int, contactSilenced: Int)
 
-    suspend fun getContactSilenced(contactId: Int) : Boolean
+    suspend fun getContactSilenced(contactId: Int): Boolean
 
     suspend fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int)
 
-    suspend fun getSelfDestructTimeByContact(contactId: Int) : LiveData<Int>
+    suspend fun getSelfDestructTimeByContact(contactId: Int): LiveData<Int>
+    
+    suspend fun getSelfDestructTimeAsIntByContact(contactId: Int): Int
 
     suspend fun restoreImageByContact(contactId: Int)
 
     suspend fun updateChannelId(contactId: Int, channelId: String)
 
-    suspend fun updateStateChannel(contactId: Int, state:Boolean)
+    suspend fun updateStateChannel(contactId: Int, state: Boolean)
 
     suspend fun updateContact(contact: ContactEntity)
 }

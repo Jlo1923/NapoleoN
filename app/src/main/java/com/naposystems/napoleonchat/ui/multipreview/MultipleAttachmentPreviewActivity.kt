@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.multipreview
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -303,7 +304,11 @@ class MultipleAttachmentPreviewActivity
         viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
     }
 
-    private fun exitPreview() = finish()
+    private fun exitPreview() {
+        val intentResult = Intent()
+        setResult(RESULT_OK, intent);
+        finish()
+    }
 
     private fun hideBottomTabs() = viewBinding.viewPreviewBottom.hideTabLayout()
 
