@@ -11,18 +11,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageNotSentEntity
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.service.uploadService.UploadService
+import com.naposystems.napoleonchat.source.local.entity.*
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEntity
@@ -443,7 +438,18 @@ class ConversationViewModel @Inject constructor(
     }
 
     override fun callContact() {
-        val channel = "presence-private.${contactEntity.id}_${userEntity.id}"
+        val mayor: Int
+        val minor: Int
+
+        if (contactEntity.id > userEntity.id) {
+            mayor = contactEntity.id
+            minor = userEntity.id
+        } else {
+            mayor = userEntity.id
+            minor = contactEntity.id
+        }
+
+        val channel = "presence-private.${minor}_${mayor}"
         _contactCalledSuccessfully.value = channel
     }
 

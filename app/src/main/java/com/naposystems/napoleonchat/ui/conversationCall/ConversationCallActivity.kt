@@ -88,8 +88,10 @@ class ConversationCallActivity :
 
         if (webRTCClient.isActiveCall.not())
             webRTCClient.reInit()
-        else
+        else {
+            showTimer()
             enableControls()
+        }
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 
@@ -110,7 +112,7 @@ class ConversationCallActivity :
             initSurfaceRenders()
         }
 
-        webRTCClient.setTextViewCallDuration(binding.textViewCalling)
+        webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -355,14 +357,14 @@ class ConversationCallActivity :
             Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
             when (callModel.typeCall) {
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
-                    Timber.d("HANGUP: SEND MISSED CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE ENVIA LLAMADA PERDIDA")
                     viewModel.sendMissedCall(callModel)
-                    Timber.d("HANGUP: CANCELL CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
                     viewModel.cancelCall(callModel)
                 }
 
                 Constants.TypeCall.IS_INCOMING_CALL -> {
-                    Timber.d("HANGUP: CANCELL CALL")
+                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
                     viewModel.cancelCall(callModel)
                 }
             }
@@ -370,6 +372,8 @@ class ConversationCallActivity :
             Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
             webRTCClient.emitHangUp()
         }
+
+        webRTCClient.hideNotification()
 
         webRTCClient.disposeCall()
 
@@ -454,9 +458,26 @@ class ConversationCallActivity :
 
     override fun showConnectingTitle() {
         runOnUiThread {
-            binding.textViewCalling.isVisible = true
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
             binding.textViewCalling.text =
                 getString(if (callModel.isVideoCall) R.string.text_encrypting_videocall else R.string.text_encrypting_call)
+        }
+    }
+
+    override fun showReConnectingTitle() {
+        runOnUiThread {
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
+            binding.textViewCalling.text = getString(R.string.text_reconnecting_call)
+        }
+    }
+
+    override fun showFinishingTitle() {
+        runOnUiThread {
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
+            binding.textViewCalling.text = getString(R.string.text_finishing_call)
         }
     }
 
@@ -572,7 +593,7 @@ class ConversationCallActivity :
 
     override fun onContactNotAnswer() {
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-            Timber.d("CancelCall")
+            Timber.d("LLAMADA PASO: CONTACTO NO CONTESTO Y SE CANCELA LLAMADA")
             viewModel.cancelCall(callModel)
             viewModel.sendMissedCall(callModel)
         }
@@ -581,6 +602,8 @@ class ConversationCallActivity :
     override fun callEnded() {
         Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
         NapoleonApplication.isShowingCallActivity = false
+        NapoleonApplication.isActiveCall = false
+        NapoleonApplication.isCurrentOnCall = false
         finish()
     }
     //endregion

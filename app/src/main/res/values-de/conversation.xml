@@ -50,6 +50,8 @@
     <string name="text_call_not_internet_connection">Den Anruf nicht erreicht wurde machen. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
     <string name="text_encrypting_videocall">Verschlüsseln von Videoanruf</string>
     <string name="text_encrypting_call">Verschlüsseln Anruf</string>
+    <string name="text_reconnecting_call">Wiederverbindung</string>
+    <string name="text_finishing_call">Anruf beenden</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d tag</item>
         <item quantity="other">%d tage</item>
