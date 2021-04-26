@@ -141,10 +141,10 @@ class SyncManagerImp @Inject constructor(
         val listMessagesNotify: MutableList<MessageAttachmentRelation> = mutableListOf()
 
         listMessages.forEach { messsageRes ->
-            messsageRes.id?.let { message_id_web ->
+            messsageRes.id.let { messageIdWeb ->
 
                 val messageAttachmentRelation =
-                    messageLocalDataSource.getMessageByWebId(message_id_web, false)
+                    messageLocalDataSource.getMessageByWebId(messageIdWeb, false)
 
                 if (messageAttachmentRelation != null)
                     listMessagesNotify.add(messageAttachmentRelation)
@@ -153,10 +153,6 @@ class SyncManagerImp @Inject constructor(
 
         notifyMessageReceived(listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED))
 
-//        Timber.d("Conversation insertó attachment")
-//        if (NapoleonApplication.currentConversationContactId != 0) {
-//            notifyMessagesReaded()
-//        }
         contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
     }
 
@@ -240,7 +236,7 @@ class SyncManagerImp @Inject constructor(
                 jsonAdapter.fromJson(messageString)
                     ?.let { newMessageEventMessageRes ->
 
-                        if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                        if (newMessageEventMessageRes.messageType == Constants.MessageTextType.NEW_CONTACT.type) {
                             getRemoteContact()
                         }
 
@@ -431,12 +427,6 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun updateAttachmentsStatus(attachmentsWebIds: List<String>, state: Int) {
-        attachmentsWebIds.forEach {
-            Timber.d("updateAttachmentsStatus id: ${it}")
-        }
-
-        Timber.d("updateAttachmentsStatus State: ${state}")
-
         GlobalScope.launch(Dispatchers.IO) {
             attachmentLocalDataSource.updateAttachmentStatus(
                 attachmentsWebIds,
@@ -545,7 +535,7 @@ class SyncManagerImp @Inject constructor(
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
@@ -604,12 +594,12 @@ class SyncManagerImp @Inject constructor(
             val textMessagesUnread = messagesUnread
                 .filter {
                     it.attachmentEntityList.isEmpty() ||
-                            it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
-                            it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+                            it.messageEntity.messageType == Constants.MessageTextType.MISSED_CALL.type ||
+                            it.messageEntity.messageType == Constants.MessageTextType.MISSED_VIDEO_CALL.type
                 }.map {
                     MessageDTO(
                         id = it.messageEntity.webId,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = it.messageEntity.contactId,
                         status = StatusMustBe.READED.status
                     )
@@ -621,7 +611,7 @@ class SyncManagerImp @Inject constructor(
                 }.map {
                     MessageDTO(
                         id = it.messageEntity.webId,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = it.messageEntity.contactId,
                         status = StatusMustBe.READED.status
                     )
@@ -688,7 +678,7 @@ class SyncManagerImp @Inject constructor(
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))

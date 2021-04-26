@@ -256,7 +256,7 @@ interface MessageDao {
     //TODO: Pasar el estado de fallido a una constante
     @Query(
         " DELETE FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " WHERE  ${DBConstants.Message.COLUMN_STATUS} != ${Constants.StatusMessage.FAILED}  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
+                " WHERE  ${DBConstants.Message.COLUMN_STATUS} != 5  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) "
@@ -265,7 +265,7 @@ interface MessageDao {
 
     @Query(
         "UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16))" +
-                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != ${Constants.StatusMessage.FAILED}"
+                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5"
     )
     suspend fun addUUID()
 

@@ -67,7 +67,7 @@ class FriendShipActionSharedViewModel
                         body = body,
                         numberAttachments = 0,
                         destroy = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
-                        messageType = Constants.MessageType.NEW_CONTACT.type
+                        messageType = Constants.MessageTextType.NEW_CONTACT.type
                     )
 
                     val responseMessage = repository.sendNewContactMessage(messageReqDTO)
@@ -90,7 +90,7 @@ class FriendShipActionSharedViewModel
                             isMine = Constants.IsMine.YES.value,
                             status = Constants.MessageStatus.SENT.status,
                             numberAttachments = 0,
-                            messageType = Constants.MessageType.NEW_CONTACT.type,
+                            messageType = Constants.MessageTextType.NEW_CONTACT.type,
                             selfDestructionAt = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
                             totalSelfDestructionAt = currentTime.plus(
                                 Utils.convertItemOfTimeInSeconds(Constants.SelfDestructTime.EVERY_SEVEN_DAY.time)

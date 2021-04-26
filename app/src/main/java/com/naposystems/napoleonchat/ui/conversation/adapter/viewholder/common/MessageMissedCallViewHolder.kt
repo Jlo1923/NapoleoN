@@ -190,7 +190,7 @@ class MessageMissedCallViewHolder constructor(
             val stringId: Int
 
             when (item.messageEntity.messageType) {
-                Constants.MessageType.MISSED_CALL.type -> {
+                Constants.MessageTextType.MISSED_CALL.type -> {
                     iconId = R.drawable.ic_call_missed_red
                     stringId = R.string.text_missed_voice_call_at
                 }

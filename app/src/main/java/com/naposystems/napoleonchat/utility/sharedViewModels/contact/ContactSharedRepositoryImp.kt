@@ -53,7 +53,7 @@ class ContactSharedRepositoryImp
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))

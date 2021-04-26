@@ -158,10 +158,6 @@ object Constants {
         //endregion
     }
 
-    object StatusMessage {
-        const val FAILED = 5
-    }
-
     object ValidConnection {
         const val REQUEST_PIN = "ping -c 1 www.google.com"
     }
@@ -431,23 +427,25 @@ object Constants {
         ERROR(5)
     }
 
+    //Este estado es el usado en el Backend Para Recibido/Leido
+    //Difiere del Estado de Mensaje y del Adjunto en Local
     enum class StatusMustBe(val status: Int) {
         RECEIVED(1),
         READED(2)
     }
 
     //Enumerable que describe el tipo de mensaje de texto
-    enum class MessageType(val type: Int) {
-        MESSAGE(1),
+    enum class MessageTextType(val type: Int) {
+        NORMAL(1),
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4),
-        MESSAGES_GROUP_DATE(5)
+        GROUP_DATE(5)
     }
 
     //Enumerable que describe el tipo de mensaje recibido por el estado
-    enum class MessageTypeByStatus(val type: Int) {
-        MESSAGE(0),
+    enum class MessageType(val type: Int) {
+        TEXT(0),
         ATTACHMENT(1)
     }
 

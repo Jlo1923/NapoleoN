@@ -49,8 +49,8 @@ class ConversationCallViewModel
                     body = "",
                     numberAttachments = 0,
                     destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
-                    messageType = if (callModel.isVideoCall) Constants.MessageType.MISSED_VIDEO_CALL.type
-                    else Constants.MessageType.MISSED_CALL.type
+                    messageType = if (callModel.isVideoCall) Constants.MessageTextType.MISSED_VIDEO_CALL.type
+                    else Constants.MessageTextType.MISSED_CALL.type
                 )
 
                 val messageResponse = repository.sendMissedCall(messageReqDTO)

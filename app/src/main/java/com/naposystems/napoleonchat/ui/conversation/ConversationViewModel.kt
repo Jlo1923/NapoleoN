@@ -491,7 +491,7 @@ class ConversationViewModel @Inject constructor(
                         body = messageEntity.getBody(cryptoMessage),
                         numberAttachments = 1,
                         destroy = selfAutoDestruction,
-                        messageType = Constants.MessageType.MESSAGE.type,
+                        messageType = Constants.MessageTextType.NORMAL.type,
                         uuidSender = messageEntity.uuid
                     )
 
@@ -623,7 +623,7 @@ class ConversationViewModel @Inject constructor(
                     body = messageEntity.body,
                     numberAttachments = 0,
                     destroy = selfDestructTime,
-                    messageType = Constants.MessageType.MESSAGE.type,
+                    messageType = Constants.MessageTextType.NORMAL.type,
                     uuidSender = messageEntity.uuid
                 )
 

@@ -40,7 +40,7 @@ fun ItemMessage.getMessageEntityForCreate(): MessageEntity {
         isMine = Constants.IsMine.YES.value,
         status = Constants.MessageStatus.SENDING.status,
         numberAttachments = numberAttachments,
-        messageType = Constants.MessageType.MESSAGE.type,
+        messageType = Constants.MessageTextType.NORMAL.type,
         selfDestructionAt = selfDestructTime
     )
 }
@@ -101,7 +101,7 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     body = getBody(cryptoMessage),
     numberAttachments = numberAttachments,
     destroy = 7,
-    messageType = Constants.MessageType.MESSAGE.type,
+    messageType = Constants.MessageTextType.NORMAL.type,
     uuidSender = uuid
 )
 

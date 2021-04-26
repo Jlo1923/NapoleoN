@@ -859,7 +859,7 @@ class SocketClientImp
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
@@ -1006,7 +1006,7 @@ class SocketClientImp
                                 //Seccion Actualizar MESSAGE UNREAD
                                 messages?.filter {
                                     it.status == Constants.MessageEventType.UNREAD.status &&
-                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                            it.type == Constants.MessageType.TEXT.type
                                 }?.map {
                                     it.id
                                 }?.let {
@@ -1019,7 +1019,7 @@ class SocketClientImp
                                 //Seccion Actualizar MESSAGE READED
                                 messages?.filter {
                                     it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                            it.type == Constants.MessageType.TEXT.type
                                 }?.map {
                                     it.id
                                 }?.let {
@@ -1039,7 +1039,7 @@ class SocketClientImp
                                 //Seccion Actualizar ATTACHMENT UNREAD
                                 attachments?.filter {
                                     it.status == Constants.MessageEventType.UNREAD.status &&
-                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                            it.type == Constants.MessageType.ATTACHMENT.type
                                 }?.map {
                                     it.id
                                 }?.let {
@@ -1052,7 +1052,7 @@ class SocketClientImp
                                 //Seccion Actualizar ATTACHMENT READED
                                 attachments?.filter {
                                     it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                            it.type == Constants.MessageType.ATTACHMENT.type
                                 }?.map {
                                     it.id
                                 }?.let {

@@ -367,7 +367,7 @@ class ConversationRepository @Inject constructor(
             val messagesRead = listIds.map {
                 MessageDTO(
                     id = it,
-                    type = Constants.MessageTypeByStatus.MESSAGE.type,
+                    type = Constants.MessageType.TEXT.type,
                     user = contactId,
                     status = Constants.StatusMustBe.READED.status
                 )
@@ -436,7 +436,7 @@ class ConversationRepository @Inject constructor(
         }.map {
             MessageDTO(
                 user = contactId,
-                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                type = Constants.MessageType.TEXT.type,
                 status = Constants.StatusMustBe.READED.status,
                 id = it
             )
@@ -809,7 +809,7 @@ class ConversationRepository @Inject constructor(
                     MessageDTO(
                         id = messageAndAttachmentRelation.messageEntity.webId,
                         status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = messageAndAttachmentRelation.messageEntity.contactId
                     )
                 )
@@ -850,7 +850,7 @@ class ConversationRepository @Inject constructor(
                             MessageDTO(
                                 id = messageAttachmentRelation.messageEntity.webId,
                                 status = Constants.StatusMustBe.READED.status,
-                                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                                type = Constants.MessageType.TEXT.type,
                                 user = messageAttachmentRelation.messageEntity.contactId
                             )
                         )
