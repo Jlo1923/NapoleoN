@@ -40,9 +40,14 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
         listFiles: MutableList<MultipleAttachmentFileItem>,
         messageId: Int
     ): List<AttachmentEntity?> {
-        val attachments = listFiles.map { fileItem ->
-            val file = getFileFromFileItem(fileItem)
-            file?.let { fileItem.toAttachmentEntityWithFile(it, fileItem.selfDestruction) }
+        val attachments = listFiles.map { multipleAttachmentFile ->
+            val file = getFileFromFileItem(multipleAttachmentFile)
+            file?.let {
+                multipleAttachmentFile.toAttachmentEntityWithFile(
+                    it,
+                    multipleAttachmentFile.selfDestruction
+                )
+            }
         }
         attachments.forEach {
             it?.let {
@@ -55,6 +60,7 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
     }
 
     override suspend fun sendMessage(messageEntity: MessageEntity): Pair<MessageEntity?, String>? {
+
         try {
             val messageReqDTO = messageEntity.toMessageReqDto(cryptoMessage)
             val messageResponse = repository.sendMessage(messageReqDTO)
@@ -71,8 +77,8 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
                     messageResponse.body()?.id ?: ""
                 )
             }
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+        } catch (exception: Exception) {
+            return null
         }
         return null
     }
