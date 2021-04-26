@@ -38,7 +38,6 @@ class MultipleAttachmentFolderItemView(
     private fun loadImage() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
                 val uri =
                     if (item.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI
@@ -68,7 +67,6 @@ class MultipleAttachmentFolderItemView(
         } catch (exception: Exception) {
 
         }
-
     }
 
 }

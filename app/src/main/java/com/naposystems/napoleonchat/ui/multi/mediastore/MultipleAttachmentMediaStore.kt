@@ -120,11 +120,11 @@ class MultipleAttachmentMediaStore @Inject constructor(
         )?.use { newCursor ->
 
             if (newCursor.moveToFirst()) {
-                val idColumnIndex = newCursor.getColumnIndexOrThrow(_ID)
-                val mediaTypeColumnIndex = newCursor.getColumnIndexOrThrow(MEDIA_TYPE)
-                val mediaType = newCursor.getInt(mediaTypeColumnIndex)
-
                 do {
+                    val idColumnIndex = newCursor.getColumnIndexOrThrow(_ID)
+                    val mediaTypeColumnIndex = newCursor.getColumnIndexOrThrow(MEDIA_TYPE)
+                    val mediaType = newCursor.getInt(mediaTypeColumnIndex)
+
                     val fileId = newCursor.getInt(idColumnIndex)
                     val attachmentType = when (mediaType) {
                         MEDIA_TYPE_IMAGE -> Constants.AttachmentType.IMAGE.type
