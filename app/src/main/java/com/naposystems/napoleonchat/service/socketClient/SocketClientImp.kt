@@ -1045,7 +1045,7 @@ class SocketClientImp
                                 }?.let {
                                     syncManager.updateAttachmentsStatus(
                                         it,
-                                        Constants.MessageStatus.UNREAD.status
+                                        Constants.AttachmentStatus.RECEIVED.status
                                     )
                                 }
 
@@ -1058,7 +1058,7 @@ class SocketClientImp
                                 }?.let {
                                     syncManager.validateMessageType(
                                         it,
-                                        Constants.MessageStatus.READED.status
+                                        Constants.AttachmentStatus.READED.status
                                     )
                                 }
 

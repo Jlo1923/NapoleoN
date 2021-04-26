@@ -431,6 +431,12 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun updateAttachmentsStatus(attachmentsWebIds: List<String>, state: Int) {
+        attachmentsWebIds.forEach {
+            Timber.d("updateAttachmentsStatus id: ${it}")
+        }
+
+        Timber.d("updateAttachmentsStatus State: ${state}")
+
         GlobalScope.launch(Dispatchers.IO) {
             attachmentLocalDataSource.updateAttachmentStatus(
                 attachmentsWebIds,
