@@ -4,9 +4,8 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.model.toAttachmentResDTO
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
-import com.naposystems.napoleonchat.model.toMessagesReqDTOFrom
+import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
@@ -30,7 +29,6 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Constants.IsMine.NO
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -77,9 +75,10 @@ class SyncManagerImp @Inject constructor(
                 if (response.isSuccessful) {
                     val messageResList = response.body()!!.toMutableList()
                     if (messageResList.isNotEmpty()) {
-                        for (messageRes in messageResList) {
-                            handleMessageRes(messageRes, contactId)
+                        messageResList.forEach { messageRes ->
+                            handlerMessage(messageRes)
                         }
+                        handlerNotify(messageResList, contactId)
                     }
                 }
             } catch (e: Exception) {
@@ -88,49 +87,77 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    private suspend fun handleMessageRes(
-        messageRes: MessageResDTO,
-        contactId: Int?
-    ) {
-        val databaseMessage =
-            messageLocalDataSource.getMessageByWebId(messageRes.id, false)
-        databaseMessage?.let {
-            val message = MessageResDTO.toMessageEntity(null, messageRes, NO.value)
+    @Synchronized
+    suspend fun handlerMessage(messageRes: MessageResDTO) {
+
+        val databaseMessage = messageLocalDataSource.getMessageByWebId(messageRes.id, false)
+
+        //Validar si existe mensaje
+        if (databaseMessage == null) {
+
+            val message = MessageResDTO.toMessageEntity(null, messageRes, Constants.IsMine.NO.value)
+
             val messageId = messageLocalDataSource.insertMessage(message)
+
             Timber.d("Conversation insertó mensajes")
 
-            if (messageRes.quoted.isNotEmpty()) {
+            if (messageRes.quoted.isNotEmpty())
                 insertQuote(messageRes.quoted, messageId.toInt())
-            }
 
-            val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                messageId.toInt(),
-                messageRes.attachments
-            )
+            handlerAttachments(messageRes.attachments, messageId.toInt())
 
-            val attachmentsToNotify = mutableListOf<AttachmentEntity>()
-            /**
-             * Solo hacemos insersion de attachments sino existe
-             * por medio de su id
-             */
-            listAttachments.forEach { attachment ->
-                attachmentLocalDataSource.apply {
-                    if (this.existAttachment(attachment.id.toString()).not()) {
-                        this.insertAttachments(listOf(attachment))
-                        attachmentsToNotify.add(attachment)
-                    }
+        } else {
+            handlerAttachments(messageRes.attachments, databaseMessage.messageEntity.id)
+        }
+
+    }
+
+    @Synchronized
+    suspend fun handlerAttachments(
+        attachments: List<AttachmentResDTO>,
+        messageId: Int
+    ) {
+        val listAttachments = AttachmentResDTO.toListConversationAttachment(
+            messageId,
+            attachments
+        )
+
+        /**
+         * Solo hacemos insersion de attachments sino existe
+         * por medio de su id
+         */
+        listAttachments.forEach { attachment ->
+            attachmentLocalDataSource.apply {
+                if (this.existAttachment(attachment.id.toString()).not()) {
+                    this.insertAttachments(listOf(attachment))
                 }
             }
-
-            messageRes.attachments = attachmentsToNotify.map { it.toAttachmentResDTO() }
-            notifyMessageReceived(listOf(messageRes).toMessagesReqDTOFrom(StatusMustBe.RECEIVED))
-
-            Timber.d("Conversation insertó attachment")
-            if (NapoleonApplication.currentConversationContactId != 0) {
-                notifyMessagesReaded()
-            }
-            contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
         }
+    }
+
+    @Synchronized
+    suspend fun handlerNotify(listMessages: MutableList<MessageResDTO>, contactId: Int?) {
+
+        val listMessagesNotify: MutableList<MessageAttachmentRelation> = mutableListOf()
+
+        listMessages.forEach { messsageRes ->
+            messsageRes.id?.let { message_id_web ->
+
+                val messageAttachmentRelation =
+                    messageLocalDataSource.getMessageByWebId(message_id_web, false)
+
+                if (messageAttachmentRelation != null)
+                    listMessagesNotify.add(messageAttachmentRelation)
+            }
+        }
+
+        notifyMessageReceived(listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED))
+
+//        Timber.d("Conversation insertó attachment")
+//        if (NapoleonApplication.currentConversationContactId != 0) {
+//            notifyMessagesReaded()
+//        }
+        contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
     }
 
     override fun verifyMessagesReceived() {
@@ -225,11 +252,10 @@ class SyncManagerImp @Inject constructor(
 
                         Timber.d("**Paso 7.2: Validar WebId ${newMessageEventMessageRes.id}")
 
-
                         if (databaseMessage == null) {
 
                             val message =
-                                newMessageEventMessageRes.toMessageEntity(NO.value)
+                                newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
 
                             Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
 
@@ -244,16 +270,6 @@ class SyncManagerImp @Inject constructor(
                                     newMessageEventMessageRes.quoted,
                                     messageId.toInt()
                                 )
-                            }
-
-                            val listAttachments =
-                                NewMessageEventAttachmentRes.toListConversationAttachment(
-                                    messageId.toInt(),
-                                    newMessageEventMessageRes.attachments
-                                )
-                            if (listAttachments.isNotEmpty()) {
-                                Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
-                                attachmentLocalDataSource.insertAttachments(listAttachments)
                             }
                         }
                     }
@@ -365,7 +381,7 @@ class SyncManagerImp @Inject constructor(
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
         jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
-            val message = newMessageEventMessageRes.toMessageEntity(NO.value)
+            val message = newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
             val messageId = messageLocalDataSource.insertMessage(message)
             Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
             if (newMessageEventMessageRes.quoted.isNotEmpty()) {
@@ -503,6 +519,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    @Synchronized
     suspend fun getContacts() {
         try {
             val response =
@@ -700,7 +717,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    //
+//
 //
 //    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
 //        try {

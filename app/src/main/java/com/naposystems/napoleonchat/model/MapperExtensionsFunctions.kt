@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.model
 
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
@@ -102,6 +103,42 @@ fun List<MessageResDTO>.toMessagesReqDTOFrom(mustStatus: Constants.StatusMustBe)
         messages
     )
 
+}
+
+fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Constants.StatusMustBe): MessagesReqDTO {
+
+    val messages = filter {
+        it.attachmentEntityList.isNotEmpty()
+    }.flatMap { messageAndAttachmentRelation ->
+
+        val contactId = messageAndAttachmentRelation.messageEntity.contactId
+
+        messageAndAttachmentRelation.attachmentEntityList.map { attachmentEntity ->
+            MessageDTO(
+                id = attachmentEntity.webId,
+                type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+                user = contactId,
+                status = mustStatus.status
+            )
+        }
+
+    }
+
+    return MessagesReqDTO(
+        messages
+    )
+
+}
+
+fun List<MessageAttachmentRelation>.toMessageResDto(mustStatus: Constants.StatusMustBe): List<MessageDTO> {
+    return map {
+        MessageDTO(
+            id = it.messageEntity.webId,
+            type = Constants.MessageTypeByStatus.MESSAGE.type,
+            user = it.contact?.let { it.id }?.run { 0 },
+            status = mustStatus.status
+        )
+    }
 }
 
 fun AttachmentEntity.toAttachmentResDTO(): AttachmentResDTO {
