@@ -200,7 +200,11 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                 val selfDestructionTime =
                     repository.getSelfDestructTimeAsIntByContact(contactId = it.id)
                 listFiles.forEach {
-                    it.selfDestruction = selfDestructionTime
+                    if (selfDestructionTime == -1) {
+                        it.selfDestruction = 7
+                    } else {
+                        it.selfDestruction = selfDestructionTime
+                    }
                 }
             }
         }
