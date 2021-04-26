@@ -116,22 +116,14 @@ class SocketClientImp
 
                         when (connectionStateChange?.currentState) {
 
-                            ConnectionState.CONNECTED -> {
+                            ConnectionState.CONNECTED ->
+                                handlerStateConnectedSocket(
+                                    mustSubscribeToPresenceChannel,
+                                    callModel
+                                )
 
-                                subscribeChannels()
-
-                                if (mustSubscribeToPresenceChannel) {
-                                    Timber.d("LLAMADA PASO: CONEXION SUCCESS")
-                                    callModel?.let { subscribeToPresenceChannel(it) }
-                                }
-                            }
                             ConnectionState.DISCONNECTING,
-                            ConnectionState.DISCONNECTED -> {
-                                if (socketEventListener != null) {
-                                    socketEventListener.disposeCallTest()
-                                    Timber.d("LLAMADA PASO: AQUI FINALIZO LLAMADA")
-                                }
-                            }
+                            ConnectionState.DISCONNECTED -> handlerStateDisconnectedSocket()
                             else -> {
                                 Timber.e("ConnectionStateChange Unhandling ${connectionStateChange?.currentState}")
                             }
@@ -162,6 +154,25 @@ class SocketClientImp
                 }
 
             }
+        }
+    }
+
+    private fun handlerStateConnectedSocket(
+        mustSubscribeToPresenceChannel: Boolean,
+        callModel: CallModel?
+    ) {
+        subscribeChannels()
+
+        if (mustSubscribeToPresenceChannel) {
+            Timber.d("LLAMADA PASO: CONEXION SUCCESS")
+            callModel?.let { subscribeToPresenceChannel(it) }
+        }
+    }
+
+    private fun handlerStateDisconnectedSocket() {
+        if (socketEventListener != null) {
+            socketEventListener.disposeCallTest()
+            Timber.d("LLAMADA PASO: AQUI FINALIZO LLAMADA")
         }
     }
 

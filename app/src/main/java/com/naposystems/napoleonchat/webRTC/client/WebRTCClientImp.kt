@@ -311,40 +311,8 @@ class WebRTCClientImp
             .subscribe {
 
                 when (it.state) {
-
-                    Constants.HeadsetState.PLUGGED.state -> {
-                        Timber.d("Headset plugged")
-                        stopProximitySensor()
-                        isHeadsetConnected = true
-                        if (callModel.isVideoCall) {
-                            if (isBluetoothAvailable.not()) {
-                                audioManager.isSpeakerphoneOn = false
-                            }
-                        } else {
-                            if (audioManager.isSpeakerphoneOn) {
-                                audioManager.isSpeakerphoneOn = false
-                                webRTCClientListener?.toggleCheckedSpeaker(false)
-                            }
-                        }
-                    }
-
-                    Constants.HeadsetState.UNPLUGGED.state -> {
-                        isHeadsetConnected = false
-                        Timber.d("Headset unplugged")
-
-                        if (callModel.isVideoCall) {
-                            if (isBluetoothAvailable) {
-                                audioManager.isSpeakerphoneOn = false
-                                startProximitySensor()
-                            } else {
-                                audioManager.isSpeakerphoneOn = true
-                            }
-
-                        } else if (isSpeakerOn().not()) {
-                            startProximitySensor()
-                        }
-                    }
-
+                    Constants.HeadsetState.PLUGGED.state -> handlerHeadsetPlugged()
+                    Constants.HeadsetState.UNPLUGGED.state -> handlerHeadsetUnplugged()
                 }
             }
 
@@ -360,6 +328,39 @@ class WebRTCClientImp
         disposable.add(disposableHeadsetState)
 
         disposable.add(disposableHangupByNotification)
+    }
+
+    private fun handlerHeadsetPlugged() {
+        Timber.d("Headset plugged")
+        stopProximitySensor()
+        isHeadsetConnected = true
+        if (callModel.isVideoCall) {
+            if (isBluetoothAvailable.not()) {
+                audioManager.isSpeakerphoneOn = false
+            }
+        } else {
+            if (audioManager.isSpeakerphoneOn) {
+                audioManager.isSpeakerphoneOn = false
+                webRTCClientListener?.toggleCheckedSpeaker(false)
+            }
+        }
+    }
+
+    private fun handlerHeadsetUnplugged() {
+        isHeadsetConnected = false
+        Timber.d("Headset unplugged")
+
+        if (callModel.isVideoCall) {
+            if (isBluetoothAvailable) {
+                audioManager.isSpeakerphoneOn = false
+                startProximitySensor()
+            } else {
+                audioManager.isSpeakerphoneOn = true
+            }
+
+        } else if (isSpeakerOn().not()) {
+            startProximitySensor()
+        }
     }
 
     override fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener) {
