@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel" />
+            type="com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel" />
 
         <variable
             name="galleryItemId"

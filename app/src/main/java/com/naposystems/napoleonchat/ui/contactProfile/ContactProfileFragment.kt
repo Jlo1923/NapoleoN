@@ -44,10 +44,10 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.yalantis.ucrop.UCrop
@@ -76,14 +76,14 @@ class ContactProfileFragment : BaseFragment() {
     lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: ContactProfileViewModel by viewModels { viewModelFactory }
-    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
     private val baseViewModel: BaseViewModel by viewModels {
         viewModelFactory
     }
 
-    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
-    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val gallerySharedViewModel: GallerySharedViewModel by activityViewModels()
+    private val cameraSharedViewModel: CameraSharedViewModel by activityViewModels()
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -109,12 +109,12 @@ class ContactProfileFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         activity?.let { activity ->
 
-            galleryShareViewModel.uriImageSelected.observe(activity, { uri ->
+            gallerySharedViewModel.uriImageSelected.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
             })
-            cameraShareViewModel.uriImageTaken.observe(activity, { uri ->
+            cameraSharedViewModel.uriImageTaken.observe(activity, { uri ->
                 if (uri != null) {
                     cropImage(uri)
                 }
@@ -190,7 +190,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun showPreviewImage() {
-        contactProfileShareViewModel.contact.value?.let { contact ->
+        contactProfileSharedViewModel.contact.value?.let { contact ->
             val extra = FragmentNavigatorExtras(
                 binding.imageViewProfileContact to "transition_image_preview"
             )
@@ -211,9 +211,9 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            contactProfileShareViewModel.contact.value?.let { contact ->
+            contactProfileSharedViewModel.contact.value?.let { contact ->
                 if (contact.statusBlocked) {
-                    shareContactViewModel.unblockContact(contact.id)
+                    contactSharedViewModel.unblockContact(contact.id)
                 } else {
                     if (contact.stateNotification) {
                         handlerNotificationChannel.deleteUserChannel(
@@ -221,7 +221,7 @@ class ContactProfileFragment : BaseFragment() {
                             contact.getNickName()
                         )
                     }
-                    shareContactViewModel.sendBlockedContact(contact)
+                    contactSharedViewModel.sendBlockedContact(contact)
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
             }
@@ -234,7 +234,7 @@ class ContactProfileFragment : BaseFragment() {
     }
 
     private fun optionDeleteContactClickListener() {
-        val getContact = contactProfileShareViewModel.contact.value
+        val getContact = contactProfileSharedViewModel.contact.value
         getContact?.let { contact ->
             handlerDialog.generalDialog(
                 getString(R.string.text_delete_contact),
@@ -248,7 +248,7 @@ class ContactProfileFragment : BaseFragment() {
                         contact.getNickName()
                     )
                 }
-                shareContactViewModel.sendDeleteContact(contact)
+                contactSharedViewModel.sendDeleteContact(contact)
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
         }
@@ -261,7 +261,7 @@ class ContactProfileFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.deleteConversation(args.contactId)
+            contactSharedViewModel.deleteConversation(args.contactId)
             findNavController().popBackStack(R.id.homeFragment, false)
         }
     }
@@ -284,11 +284,11 @@ class ContactProfileFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        binding.viewModel = contactProfileShareViewModel
+        binding.viewModel = contactProfileSharedViewModel
 
         baseViewModel.getOutputControl()
 
-        contactProfileShareViewModel.getLocalContact(args.contactId)
+        contactProfileSharedViewModel.getLocalContact(args.contactId)
 
         viewModel.muteConversationWsError.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
@@ -301,7 +301,7 @@ class ContactProfileFragment : BaseFragment() {
             showSimpleSnackbar(binding.coordinator, it, 2)
         })
 
-        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, { contact ->
+        contactProfileSharedViewModel.contact.observe(viewLifecycleOwner, { contact ->
             contact?.let {
                 checkSilenceConversation(contact.silenced)
                 setTextToolbar(contact)
@@ -440,7 +440,7 @@ class ContactProfileFragment : BaseFragment() {
             }
 
             override fun galleryOptionSelected(location: Int) {
-                contactProfileShareViewModel.contact.value?.let { contact ->
+                contactProfileSharedViewModel.contact.value?.let { contact ->
                     findNavController().navigate(
                         ContactProfileFragmentDirections.actionContactProfileFragmentToAttachmentGalleryFoldersFragment(
                             contact,

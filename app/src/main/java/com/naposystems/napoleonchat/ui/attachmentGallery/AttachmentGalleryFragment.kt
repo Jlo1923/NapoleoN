@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.attachmentGallery
 
-import android.content.Context
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
@@ -10,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -30,9 +28,8 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MAX_IMAGE_VIDEO_FILE_SIZE
 import com.naposystems.napoleonchat.utility.FileManager
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
@@ -53,7 +50,7 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
         viewModelFactory
     }
 
-    private val galleryShareViewModel: GalleryShareViewModel by activityViewModels()
+    private val gallerySharedViewModel: GallerySharedViewModel by activityViewModels()
 
     private lateinit var binding: AttachmentGalleryFragmentBinding
     private lateinit var adapter: AttachmentGalleryAdapter
@@ -161,7 +158,7 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
                         }.let {}
                     }
                     else -> {
-                        with(galleryShareViewModel) {
+                        with(gallerySharedViewModel) {
                             galleryItem.contentUri?.let { uri ->
                                 setImageUriSelected(uri)
                                 resetUriImageSelected()

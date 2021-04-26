@@ -55,8 +55,13 @@ class MultipleAttachmentPreviewVideoFragment(
             ViewPreviewVideoEvent.AddFlagsKeepScreen -> addFlagsKeepScreen()
             ViewPreviewVideoEvent.PauseVideo -> uiInVideoPause()
             ViewPreviewVideoEvent.PlayingVideo -> uiInVideoPlaying()
-            ViewPreviewVideoEvent.RemoveFlagsKeepScreen -> removeFlagsKeepScreen()
+            ViewPreviewVideoEvent.VideoEnded -> uiInVideInit()
         }
+    }
+
+    private fun uiInVideInit() {
+        removeFlagsKeepScreen()
+        configVideoView()
     }
 
     override fun onPause() {

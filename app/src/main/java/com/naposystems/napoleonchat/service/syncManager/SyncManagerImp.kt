@@ -4,6 +4,9 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.toAttachmentResDTO
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
+import com.naposystems.napoleonchat.model.toMessagesReqDTOFrom
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
@@ -27,6 +30,8 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.IsMine.NO
+import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +42,8 @@ import java.util.*
 import javax.inject.Inject
 
 class SyncManagerImp @Inject constructor(
-    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
+    private val cryptoMessage: CryptoMessage,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
@@ -65,66 +70,66 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun getMyMessages(contactId: Int?) {
-
         GlobalScope.launch(Dispatchers.Main) {
-
             try {
-
                 getContacts()
-
                 val response = napoleonApi.getMyMessages()
-
                 if (response.isSuccessful) {
-
-                    val messageResList: MutableList<MessageResDTO> =
-                        response.body()!!.toMutableList()
-
+                    val messageResList = response.body()!!.toMutableList()
                     if (messageResList.isNotEmpty()) {
-
                         for (messageRes in messageResList) {
-
-                            val databaseMessage =
-                                messageLocalDataSource.getMessageByWebId(messageRes.id, false)
-
-                            if (databaseMessage == null) {
-
-                                val message = MessageResDTO.toMessageEntity(
-                                    null, messageRes, Constants.IsMine.NO.value
-                                )
-
-                                val messageId = messageLocalDataSource.insertMessage(message)
-
-                                Timber.d("Conversation insertó mensajes")
-
-                                if (messageRes.quoted.isNotEmpty()) {
-                                    insertQuote(messageRes.quoted, messageId.toInt())
-                                }
-
-                                val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                                    messageId.toInt(),
-                                    messageRes.attachments
-                                )
-
-                                attachmentLocalDataSource.insertAttachments(listAttachments)
-
-                                Timber.d("Conversation insertó attachment")
-
-                                if (NapoleonApplication.currentConversationContactId != 0) {
-                                    notifyMessagesReaded()
-                                }
-
-                                contactId?.let {
-                                    RxBus.publish(
-                                        RxEvent.NewMessageEventForCounter(contactId)
-                                    )
-                                }
-                            }
+                            handleMessageRes(messageRes, contactId)
                         }
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
             }
+        }
+    }
+
+    private suspend fun handleMessageRes(
+        messageRes: MessageResDTO,
+        contactId: Int?
+    ) {
+        val databaseMessage =
+            messageLocalDataSource.getMessageByWebId(messageRes.id, false)
+        databaseMessage?.let {
+            val message = MessageResDTO.toMessageEntity(null, messageRes, NO.value)
+            val messageId = messageLocalDataSource.insertMessage(message)
+            Timber.d("Conversation insertó mensajes")
+
+            if (messageRes.quoted.isNotEmpty()) {
+                insertQuote(messageRes.quoted, messageId.toInt())
+            }
+
+            val listAttachments = AttachmentResDTO.toListConversationAttachment(
+                messageId.toInt(),
+                messageRes.attachments
+            )
+
+            val attachmentsToNotify = mutableListOf<AttachmentEntity>()
+            /**
+             * Solo hacemos insersion de attachments sino existe
+             * por medio de su id
+             */
+            listAttachments.forEach { attachment ->
+                attachmentLocalDataSource.apply {
+                    if (this.existAttachment(attachment.id.toString()).not()) {
+                        this.insertAttachments(listOf(attachment))
+                        attachmentsToNotify.add(attachment)
+                    }
+                }
+            }
+
+            messageRes.attachments = attachmentsToNotify.map { it.toAttachmentResDTO() }
+            notifyMessageReceived(listOf(messageRes).toMessagesReqDTOFrom(StatusMustBe.RECEIVED))
+
+            Timber.d("Conversation insertó attachment")
+            if (NapoleonApplication.currentConversationContactId != 0) {
+                notifyMessagesReaded()
+            }
+            contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
         }
     }
 
@@ -224,7 +229,7 @@ class SyncManagerImp @Inject constructor(
                         if (databaseMessage == null) {
 
                             val message =
-                                newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
+                                newMessageEventMessageRes.toMessageEntity(NO.value)
 
                             Timber.d("**Paso 7.3: Mensaje no existe WebId ${newMessageEventMessageRes.id}")
 
@@ -260,7 +265,6 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
-
         if (queueNewMessageDataEventRes.isEmpty()) {
             queueNewMessageDataEventRes.add(newMessageDataEventRes)
             tryHandleNextItemInQueue()
@@ -323,19 +327,27 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, idMessage)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, idMessage)
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     idMessage,
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(StatusMustBe.RECEIVED)
+
+            //notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 
@@ -352,22 +364,30 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            val message = newMessageEvent.toMessageEntity(Constants.IsMine.NO.value)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            val message = newMessageEventMessageRes.toMessageEntity(NO.value)
             val messageId = messageLocalDataSource.insertMessage(message)
             Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, messageId.toInt())
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     messageId.toInt(),
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(StatusMustBe.RECEIVED)
+
+            //notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 
@@ -409,8 +429,22 @@ class SyncManagerImp @Inject constructor(
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                messageLocalDataSource.deletedMessages(response.body()!!)
+            if (response.isSuccessful) {
+                response.body()?.messagesId.let {
+                    it?.let {
+                        messageLocalDataSource.deletedMessages(
+                            it
+                        )
+                    }
+                }
+
+                response.body()?.attachmentsId.let {
+                    it?.let {
+                        attachmentLocalDataSource.deletedAttachments(
+                            it
+                        )
+                    }
+                }
             }
         }
     }
@@ -554,7 +588,7 @@ class SyncManagerImp @Inject constructor(
                         id = it.messageEntity.webId,
                         type = Constants.MessageTypeByStatus.MESSAGE.type,
                         user = it.messageEntity.contactId,
-                        status = Constants.StatusMustBe.READED.status
+                        status = StatusMustBe.READED.status
                     )
                 }
 
@@ -566,7 +600,7 @@ class SyncManagerImp @Inject constructor(
                         id = it.messageEntity.webId,
                         type = Constants.MessageTypeByStatus.MESSAGE.type,
                         user = it.messageEntity.contactId,
-                        status = Constants.StatusMustBe.READED.status
+                        status = StatusMustBe.READED.status
                     )
                 }
 

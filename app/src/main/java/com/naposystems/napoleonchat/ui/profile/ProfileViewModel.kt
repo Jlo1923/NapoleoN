@@ -4,16 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val repository: ProfileRepository
-) : ViewModel(),
-    IContractProfile.ViewModel {
+    private val repository: ProfileRepositoryImp
+) : ViewModel() {
 
     lateinit var userEntity: LiveData<UserEntity>
 
@@ -27,7 +26,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     //region Implementation IContractProfile.ViewModel
-    override fun getLocalUser() {
+    private fun getLocalUser() {
         viewModelScope.launch {
             try {
                 userEntity = repository.getUser()
@@ -38,7 +37,7 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    override fun updateLocalUser(newUserEntity: UserEntity) {
+    fun updateLocalUser(newUserEntity: UserEntity) {
         viewModelScope.launch {
             try {
                 repository.updateLocalUser(newUserEntity)
@@ -48,8 +47,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    override fun getUser() = this.userEntity.value
-    override fun disconnectSocket() {
+    fun getUser() = this.userEntity.value
+
+    fun disconnectSocket() {
         repository.disconnectSocket()
     }
 

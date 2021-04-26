@@ -49,6 +49,13 @@ interface AttachmentDao {
 
 
     @Query(
+        "DELETE " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID}  = :webId"
+    )
+    suspend fun deletedAttachment(webId: String)
+
+    @Query(
         "UPDATE ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
                 "SET ${DBConstants.Attachment.COLUMN_STATUS} = :status, " +
                 "${DBConstants.Attachment.COLUMN_UPDATED_AT} = :updateAttachmentStatus, " +

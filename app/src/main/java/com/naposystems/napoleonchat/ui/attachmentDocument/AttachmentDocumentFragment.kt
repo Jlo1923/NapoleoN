@@ -21,7 +21,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.attachmentDocument.adapter.AttachmentDocumentAdapter
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import kotlinx.coroutines.launch
 import java.io.FileInputStream
 
@@ -33,7 +33,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
     }
 
     private lateinit var mAdapter: AttachmentDocumentAdapter
-    private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
+    private val conversationSharedViewModel: ConversationSharedViewModel by activityViewModels()
 //    private lateinit var binding: AttachmentDocumentFragmentBinding
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                         duration = 0L
                     )
 
-                    with(conversationShareViewModel) {
+                    with(conversationSharedViewModel) {
                         setMessage("")
                         setAttachmentSelected(attachment)
                         resetAttachmentSelected()

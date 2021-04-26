@@ -403,6 +403,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                 if (messageAndAttachment.attachmentEntityList.isNotEmpty()) {
                     messageAndAttachment.attachmentEntityList.forEach { attachmentEntity: AttachmentEntity ->
                         attachmentEntity.deleteFile(context)
+                        attachmentDao.deletedAttachment(attachmentEntity.webId)
                     }
                 }
             }

@@ -14,16 +14,15 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
-import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.MESSAGE_ID
+import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.Utils
 import com.pusher.client.connection.ConnectionState
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -43,16 +42,10 @@ class HandlerNotificationMessageImp
     }
 
     var queueDataNotifications: MutableList<Map<String, String>> = mutableListOf()
-
     var queueNotifications: MutableList<RemoteMessage.Notification?> = mutableListOf()
 
-    private val moshi: Moshi by lazy {
-        Moshi.Builder().build()
-    }
-
-    private val disposable: CompositeDisposable by lazy {
-        CompositeDisposable()
-    }
+    private val moshi: Moshi by lazy { Moshi.Builder().build() }
+    private val disposable: CompositeDisposable by lazy { CompositeDisposable() }
 
     override fun handlerMessage(
         dataFromNotification: Map<String, String>,
@@ -60,28 +53,27 @@ class HandlerNotificationMessageImp
     ) {
         Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
 
-        if (dataFromNotification.containsKey(Constants.NotificationKeys.MESSAGE_ID)) {
-            if (!validateExistMessageId(dataFromNotification.getValue(Constants.NotificationKeys.MESSAGE_ID))) {
+        if (dataFromNotification.containsKey(MESSAGE_ID)) {
+            if (!validateExistMessageId(dataFromNotification.getValue(MESSAGE_ID))) {
                 Timber.d("**Paso 2: Registro en la cola $dataFromNotification")
                 queueDataNotifications.add(dataFromNotification)
                 queueNotifications.add(notification)
             }
         }
 
-        if (socketClient.getStatusSocket() == ConnectionState.CONNECTED &&
-            socketClient.getStatusGlobalChannel() == Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED.status
-        )
+        if (socketClient.isConnected()) {
             processQueueMessagesNotifications()
-        else {
+        } else {
             socketClient.connectSocket()
             listenConnectChannel()
         }
     }
 
+
     private fun validateExistMessageId(messageId: String): Boolean {
         var exist = false
         loop@ for (item in queueDataNotifications) {
-            if (item.getValue(Constants.NotificationKeys.MESSAGE_ID) == messageId) {
+            if (item.getValue(MESSAGE_ID) == messageId) {
                 exist = true
                 break@loop
             }
@@ -105,61 +97,46 @@ class HandlerNotificationMessageImp
         Timber.d("**Paso 4: Proceso de cola ${queueDataNotifications.size}")
 
         while (queueDataNotifications.size > 0) {
-
             Timber.d("**Paso 5: Cola superior a cero")
-
             val itemDataNotification = queueDataNotifications.first()
-
             val itemNotification = queueNotifications.first()
 
             Timber.d("**Paso 6: Proceso del item $itemDataNotification")
-
             queueDataNotifications.removeFirst()
-
             queueNotifications.removeFirst()
 
             if (itemDataNotification.containsKey(Constants.NotificationKeys.MESSAGE)) {
-
-                val messageString: String = if (BuildConfig.ENCRYPT_API) {
-                    cryptoMessage.decryptMessageBody(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
-                } else {
-                    itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE)
-                }
-
-                syncManager.insertMessage(messageString)
-
-                val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
-                    moshi.adapter(NewMessageEventMessageRes::class.java)
-
-                jsonAdapterMessage.fromJson(messageString)
-                    ?.let { messageModel ->
-
-                        val listMessagesToReceived = listOf(
-                            messageModel
-                        ).toMessagesReqDTO(Constants.StatusMustBe.RECEIVED)
-
-                        syncManager.notifyMessageReceived(
-                            listMessagesToReceived
-                        )
-
-                        socketClient.emitClientConversation(listMessagesToReceived)
-
-                    }
-
+                handleNormalMessages(itemDataNotification)
             } else {
                 syncManager.getMyMessages(null)
             }
 
             if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE).toBoolean()) {
-
                 Timber.d("**Paso 10: No Silenciado")
-
                 processNotification(itemDataNotification, itemNotification)
-
             }
             Timber.d("NUEVISIMO NUEVA DATACOLA $queueDataNotifications")
-
         }
+    }
+
+    private fun handleNormalMessages(itemDataNotification: Map<String, String>) {
+        val messageString: String = if (BuildConfig.ENCRYPT_API) {
+            cryptoMessage.decryptMessageBody(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+        } else {
+            itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE)
+        }
+
+        syncManager.insertMessage(messageString)
+
+        val jsonAdapterMessage: JsonAdapter<NewMessageEventMessageRes> =
+            moshi.adapter(NewMessageEventMessageRes::class.java)
+
+        jsonAdapterMessage.fromJson(messageString)
+            ?.let { messageModel ->
+                val listMessagesToReceived = listOf(messageModel).toMessagesReqDTO(RECEIVED)
+                syncManager.notifyMessageReceived(listMessagesToReceived)
+                socketClient.emitClientConversation(listMessagesToReceived)
+            }
     }
 
     private fun processNotification(

@@ -11,6 +11,6 @@ abstract class SocketModule {
 
     @Binds
     @Singleton
-    abstract fun bindSocketMessageService(socketMessageService: SocketClientImp): SocketClient
+    abstract fun bindSocketClient(socketClient: SocketClientImp): SocketClient
 
 }

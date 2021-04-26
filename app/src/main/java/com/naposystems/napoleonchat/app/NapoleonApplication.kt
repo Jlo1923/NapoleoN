@@ -16,11 +16,13 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
+import javax.inject.Inject
 
 class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
@@ -40,6 +42,9 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
         var currentCallContactId: Int = 0
 
     }
+
+    @Inject
+    lateinit var socketClient: SocketClient
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
         DaggerApplicationComponent.builder().create(this).build()
@@ -98,11 +103,15 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onStop(owner: LifecycleOwner) {
 
+        socketClient.disconnectSocket()
+
         isVisible = false
 
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
+
+        socketClient.disconnectSocket()
 
         isCurrentOnCall = false
 

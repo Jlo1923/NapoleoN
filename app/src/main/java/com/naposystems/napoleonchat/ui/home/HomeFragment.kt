@@ -19,11 +19,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
@@ -42,15 +37,12 @@ import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
-import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -67,35 +59,28 @@ class HomeFragment : BaseFragment() {
     }
 
     @Inject
-    override lateinit var viewModelFactory: ViewModelFactory
-
-    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+    lateinit var webRTCClient: WebRTCClient
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
+    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
 
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
+    //    private lateinit var mFirebaseStorage: FirebaseStorage
 
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
 
-    private val shareContactViewModel: ShareContactViewModel by viewModels { viewModelFactory }
+    private val shareFriendShipViewModel: FriendShipActionSharedViewModel by viewModels { viewModelFactory }
 
-    private val shareFriendShipViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
-
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+    private val userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
 
-    private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
-        viewModelFactory
-    }
-
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
+    private val timeFormatShareViewModel: TimeFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -105,28 +90,31 @@ class HomeFragment : BaseFragment() {
 
     private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
 
-    private var existConversation: Boolean = false
-
-    private var existFriendShip: Boolean = false
-
     private val disposable: CompositeDisposable by lazy {
         CompositeDisposable()
     }
+
     private lateinit var textViewBadge: TextView
 
-    private var showCase: ShowCaseManager? = null
-    private lateinit var mFirebaseRemoteConfig: FirebaseRemoteConfig
+    private var showCaseManager: ShowCaseManager? = null
 
-    //    private lateinit var mFirebaseStorage: FirebaseStorage
-
-    private var isShowingVersionDialog: Boolean = false
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
 
     private lateinit var popup: PopupMenu
 
     private var addContactsMenuItem: MenuItem? = null
+
     private var homeMenuItem: View? = null
-    private var menuCreated: Boolean = false
-    private var showShowCase: Boolean = false
+
+    private var existConversation: Boolean = false
+
+    private var existFriendShip: Boolean = false
+
+    private var isShowingVersionDialog: Boolean = false
+
+    private var isMenuCreated: Boolean = false
+
+    private var isShowingShowCase: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -250,10 +238,12 @@ class HomeFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts(
+        contactSharedViewModel.getContacts(
             Constants.FriendShipState.ACTIVE.state,
             Constants.LocationGetContact.OTHER.location
         )
+
+        timeFormatShareViewModel.getTimeFormat()
 
         viewModel.resetDuplicates()
 
@@ -273,30 +263,19 @@ class HomeFragment : BaseFragment() {
 
         observeFriendshipRequestAcceptedSuccessfully()
 
-        timeFormatShareViewModel.getTimeFormat()
+        observeConversations()
 
-        viewModel.conversations?.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
-                conversationAdapter.submitList(it)
-                conversationAdapter.notifyDataSetChanged()
-                existConversation = it.isNotEmpty()
-                validateViewSwitcher(existConversation, existFriendShip)
-                viewModel.resetConversations()
-            }
-        })
+        observeQuantityFriendshipRequest()
 
-        viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
-            if (it != -1) setupBadge(it)
-        })
+        observeFriendshipRequestReceived()
 
-        viewModel.friendShipRequestReceived.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                friendShipRequestReceivedAdapter.submitList(it)
-                binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
-                existFriendShip = it.isNotEmpty()
-                validateViewSwitcher(existConversation, existFriendShip)
-            }
-        })
+        observeUser()
+
+        observeJsonNotification()
+
+        observeJsonCleaned()
+
+        observeContact()
 
         //TODO:Subscription
         /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
@@ -338,16 +317,20 @@ class HomeFragment : BaseFragment() {
                 }
             })*/
 
-        viewModel.userEntity.observe(viewLifecycleOwner, Observer {
-            binding.textViewStatus.text = it.status
-        })
+        (activity as MainActivity).getUser()
+    }
 
-        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
-            if (!json.isNullOrEmpty()) {
-                viewModel.cleanJsonNotification(json)
+    private fun observeContact() {
+        viewModel.contact.observe(viewLifecycleOwner, Observer {
+            it?.let { contact ->
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
+                )
             }
         })
+    }
 
+    private fun observeJsonCleaned() {
         viewModel.jsonCleaned.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
@@ -366,16 +349,37 @@ class HomeFragment : BaseFragment() {
                 }
             }
         })
+    }
 
-        viewModel.contact.observe(viewLifecycleOwner, Observer {
-            it?.let { contact ->
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
-                )
+    private fun observeJsonNotification() {
+        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
+            if (!json.isNullOrEmpty()) {
+                viewModel.cleanJsonNotification(json)
             }
         })
+    }
 
-        (activity as MainActivity).getUser()
+    private fun observeUser() {
+        viewModel.userEntity.observe(viewLifecycleOwner, Observer {
+            binding.textViewStatus.text = it.status
+        })
+    }
+
+    private fun observeFriendshipRequestReceived() {
+        viewModel.friendShipRequestReceived.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                friendShipRequestReceivedAdapter.submitList(it)
+                binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
+                existFriendShip = it.isNotEmpty()
+                validateViewSwitcher(existConversation, existFriendShip)
+            }
+        })
+    }
+
+    private fun observeQuantityFriendshipRequest() {
+        viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
+            if (it != -1) setupBadge(it)
+        })
     }
 
     //TODO:Subscription
@@ -417,9 +421,9 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun onPause() {
-        showCase?.setPaused(true)
-        showCase?.dismiss()
-        showShowCase = false
+        showCaseManager?.setPaused(true)
+        showCaseManager?.dismiss()
+        isShowingShowCase = false
         shareFriendShipViewModel.clearMessageError()
         viewModel.cleanVariables()
         if (::popup.isInitialized) {
@@ -452,7 +456,7 @@ class HomeFragment : BaseFragment() {
         homeMenuItem =
             ((activity as MainActivity).findViewById(R.id.toolbar) as MaterialToolbar).getChildAt(1)
 
-        menuCreated = true
+        isMenuCreated = true
 
         showCase()
 
@@ -460,7 +464,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (showCase?.getStateShowCaseSixth() == true) {
+        if (showCaseManager?.getStateShowCaseSixth() == true) {
             this.verifyPermission(
                 Manifest.permission.CAMERA,
                 Manifest.permission.RECORD_AUDIO,
@@ -472,7 +476,7 @@ class HomeFragment : BaseFragment() {
             }
         }
 
-        showCase?.setPaused(false)
+        showCaseManager?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
         binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall
@@ -484,12 +488,12 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun getRemoteConfig() {
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
         val configSettings = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(3600)
             .build()
-        mFirebaseRemoteConfig.setConfigSettingsAsync(configSettings)
-        mFirebaseRemoteConfig.fetchAndActivate()
+        firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
+        firebaseRemoteConfig.fetchAndActivate()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     getVersion()
@@ -502,8 +506,8 @@ class HomeFragment : BaseFragment() {
 
     private fun getVersion() {
         try {
-            val versionApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
-            val versionCodeApp = mFirebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_CODE_KEY)
+            val versionApp = firebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_KEY)
+            val versionCodeApp = firebaseRemoteConfig.getString(REMOTE_CONFIG_VERSION_CODE_KEY)
 
 //            Timber.d("*TestVersion: $versionCodeApp")
 //            Toast.makeText(context, "*TestVersion: ${versionCodeApp.toInt()}", Toast.LENGTH_SHORT).show()
@@ -628,7 +632,7 @@ class HomeFragment : BaseFragment() {
                     }
                 }
             },
-            userDisplayFormatShareViewModel.getUserDisplayFormat(),
+            userDisplayFormatDialogViewModel.getUserDisplayFormat(),
             timeFormatShareViewModel.getValTimeFormat()
         )
         binding.recyclerViewChats.apply {
@@ -651,6 +655,18 @@ class HomeFragment : BaseFragment() {
                     HomeFragmentDirections.actionHomeFragmentToContactProfileFragment(contact.id)
                 )
             }
+    }
+
+    private fun observeConversations() {
+        viewModel.conversations?.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                conversationAdapter.submitList(it)
+                conversationAdapter.notifyDataSetChanged()
+                existConversation = it.isNotEmpty()
+                validateViewSwitcher(existConversation, existFriendShip)
+                viewModel.resetConversations()
+            }
+        })
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
@@ -712,7 +728,7 @@ class HomeFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.deleteConversation(contact.id)
+            contactSharedViewModel.deleteConversation(contact.id)
         }
     }
 
@@ -723,20 +739,20 @@ class HomeFragment : BaseFragment() {
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.sendBlockedContact(contact)
+            contactSharedViewModel.sendBlockedContact(contact)
         }
     }
 
     private fun showCase() {
         try {
             Handler().postDelayed({
-                if (menuCreated && !showShowCase) {
+                if (isMenuCreated && !isShowingShowCase) {
                     val drawerMenu = (requireActivity() as MainActivity).getNavView().menu
 
                     val securitySettingMenuItem =
                         drawerMenu.findItem(R.id.security_settings).actionView as LinearLayout
 
-                    showCase = ShowCaseManager().apply {
+                    showCaseManager = ShowCaseManager().apply {
                         setListener(object : ShowCaseManager.Listener {
                             override fun openSecuritySettings() {
                                 findNavController().navigate(
@@ -759,7 +775,7 @@ class HomeFragment : BaseFragment() {
                         showFromFirst()
                     }
 
-                    showShowCase = true
+                    isShowingShowCase = true
                 }
             }, 500)
         } catch (e: Exception) {

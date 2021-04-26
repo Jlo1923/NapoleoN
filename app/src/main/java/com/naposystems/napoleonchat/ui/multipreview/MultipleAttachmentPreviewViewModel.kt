@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAt
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.SelectItemInTabLayout
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
@@ -48,6 +49,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private val actions: SingleLiveEvent<MultipleAttachmentPreviewAction> = SingleLiveEvent()
     fun actions(): LiveData<MultipleAttachmentPreviewAction> = actions
+
+    private val modes: SingleLiveEvent<MultipleAttachmentPreviewMode> = SingleLiveEvent()
+    fun modes(): LiveData<MultipleAttachmentPreviewMode> = modes
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun initUi() {
@@ -125,7 +129,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteElement(selectedIndexToDelete: Int) {
+    fun onDeleteElementInCreating(selectedIndexToDelete: Int) {
         removeFileFromListAndShowListInPager(selectedIndexToDelete)
         if (isTheLastFile()) {
             exitPreview()
@@ -135,7 +139,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun loadSelfDestructionTimeByIndex(position: Int) {
-        actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+        if (modeOnlyView.not()) {
+            actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+        }
     }
 
     fun validateMustMarkAsReaded(position: Int) {
@@ -189,9 +195,14 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun defineDefaultSelfDestructionTime() {
-        val selfDestructionTime = repository.getSelfDestructTime()
-        listFiles.forEach {
-            it.selfDestruction = selfDestructionTime
+        contact?.let {
+            viewModelScope.launch {
+                val selfDestructionTime =
+                    repository.getSelfDestructTimeAsIntByContact(contactId = it.id)
+                listFiles.forEach {
+                    it.selfDestruction = selfDestructionTime
+                }
+            }
         }
     }
 
@@ -276,9 +287,26 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         actions.value = MultipleAttachmentPreviewAction.ExitToConversation
     }
 
-    fun defineModeOnlyViewInConversation(modeOnlyView: Boolean) {
+    fun defineModeOnlyViewInConversation(modeOnlyView: Boolean, message: String?) {
         this.modeOnlyView = modeOnlyView
+        if (modeOnlyView) {
+            message?.let { modes.value = MultipleAttachmentPreviewMode.ModeView(it) }
+        } else {
+            modes.value = MultipleAttachmentPreviewMode.ModeCreate
+        }
     }
 
+    fun onDeleteAttachment() {
+        val msgAndAttach = listFiles[0].messageAndAttachment
+        msgAndAttach?.let {
+            if (it.isMine == Constants.IsMine.NO.value) {
+                actions.value = MultipleAttachmentPreviewAction.RemoveAttachForReceiver
+            } else {
+                actions.value = MultipleAttachmentPreviewAction.RemoveAttachForSender
+            }
+        } ?: run {
+            actions.value = MultipleAttachmentPreviewAction.RemoveAttachInCreate
+        }
+    }
 
 }

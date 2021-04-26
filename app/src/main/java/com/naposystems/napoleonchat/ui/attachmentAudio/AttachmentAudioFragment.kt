@@ -25,7 +25,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -50,7 +50,7 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
     lateinit var mediaPlayerGalleryManager: MediaPlayerGalleryManager
 
     private lateinit var viewModel: AttachmentAudioViewModel
-    private lateinit var conversationShareViewModel: ConversationShareViewModel
+    private lateinit var conversationSharedViewModel: ConversationSharedViewModel
     private lateinit var binding: AttachmentAudioFragmentBinding
     private lateinit var adapter: AttachmentAudioAdapter
     private val args: AttachmentAudioFragmentArgs by navArgs()
@@ -86,9 +86,9 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
         binding.lifecycleOwner = this
 
         binding.fabSend.setOnClickListener {
-            conversationShareViewModel.setAudiosSelected(viewModel.getAudiosSelected())
-            conversationShareViewModel.setAudioSendClicked()
-            conversationShareViewModel.resetAudioSendClicked()
+            conversationSharedViewModel.setAudiosSelected(viewModel.getAudiosSelected())
+            conversationSharedViewModel.setAudioSendClicked()
+            conversationSharedViewModel.resetAudioSendClicked()
             findNavController().navigateUp()
         }
 
@@ -135,8 +135,8 @@ class AttachmentAudioFragment : BaseFragment(), MediaPlayerGalleryManager.Listen
         //endregion
 
         //region ConversationShareViewModel
-        conversationShareViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
-            .get(ConversationShareViewModel::class.java)
+        conversationSharedViewModel = ViewModelProvider(requireActivity(), viewModelFactory)
+            .get(ConversationSharedViewModel::class.java)
         //endregion
     }
 

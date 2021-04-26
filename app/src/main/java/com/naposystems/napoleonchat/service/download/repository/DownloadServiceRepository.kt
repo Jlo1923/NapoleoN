@@ -34,6 +34,7 @@ class DownloadServiceRepository @Inject constructor(
     private var uploadJob: Job? = null
 
     override fun downloadAttachment(attachment: AttachmentEntity) {
+
         uploadJob = coroutineScope.launch {
             val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
             try {
@@ -44,19 +45,17 @@ class DownloadServiceRepository @Inject constructor(
                     }
                 } else {
                     Timber.e("Response failure")
-//                    offer(
-//                        DownloadAttachmentResult.Error(
-//                            attachment,
-//                            "File not downloaded",
-//                            itemPosition
-//                        )
-//                    )
+                    launchEventError(attachment)
                 }
             } catch (e: Exception) {
                 updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
+                launchEventError(attachment)
             }
         }
     }
+
+    override fun updateAttachment(attachmentEntity: AttachmentEntity) =
+        attachmentLocalDataSource.updateAttachment(attachmentEntity)
 
     private fun saveFileLocally(
         attachment: AttachmentEntity,
@@ -89,12 +88,7 @@ class DownloadServiceRepository @Inject constructor(
                 progress += count
                 val finalPercentage = (progress * 100 / contentLength)
                 if (finalPercentage > 0) {
-                    //                                    offer(
-                    //                                        DownloadAttachmentResult.Progress(
-                    //                                            itemPosition,
-                    //                                            finalPercentage.toFloat()
-                    //                                        )
-                    //                                    )
+                    publishEventProgress(attachment, finalPercentage)
                 }
             }
             outputStream.flush()
@@ -103,33 +97,28 @@ class DownloadServiceRepository @Inject constructor(
                 saveEncryptedFile(attachment)
             }
             publishEventTryNext()
-            //                            offer(
-            //                                DownloadAttachmentResult.Success(
-            //                                    messageAndAttachmentRelation,
-            //                                    itemPosition
-            //                                )
-            //                            )
         } catch (e: CancellationException) {
             updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
-            //                            offer(
-            //                                DownloadAttachmentResult.Cancel(
-            //                                    messageAndAttachmentRelation, itemPosition
-            //                                )
-            //                            )
+            launchEventError(attachment)
         } catch (e: IOException) {
-            Timber.e("IOException $e")
-            //                            offer(
-            //                                DownloadAttachmentResult.Error(
-            //                                    attachment,
-            //                                    "File not downloaded",
-            //                                    itemPosition
-            //                                )
-            //                            )
+            launchEventError(attachment)
             Timber.d("Failed to save the file!")
         } finally {
             inputStream?.close()
             outputStream?.close()
         }
+    }
+
+    private fun publishEventProgress(
+        attachment: AttachmentEntity,
+        finalPercentage: Long
+    ) {
+        RxBus.publish(
+            RxEvent.MultiDownloadProgress(
+                attachment,
+                finalPercentage.toFloat()
+            )
+        )
     }
 
     private fun publishEventTryNext() {
@@ -149,9 +138,6 @@ class DownloadServiceRepository @Inject constructor(
         }
     }
 
-    override fun updateAttachment(attachmentEntity: AttachmentEntity) =
-        attachmentLocalDataSource.updateAttachment(attachmentEntity)
-
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
     }
@@ -166,6 +152,16 @@ class DownloadServiceRepository @Inject constructor(
         GIF.type -> GIFS.folder
         GIF_NN.type -> GIFS.folder
         else -> IMAGES.folder
+    }
+
+    private fun launchEventError(attachment: AttachmentEntity) {
+        RxBus.publish(
+            RxEvent.MultiDownloadError(
+                attachment,
+                "File not downloaded",
+                null
+            )
+        )
     }
 
 }

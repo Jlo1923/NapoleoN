@@ -12,7 +12,7 @@ import com.naposystems.napoleonchat.databinding.NapoleonKeyboardEmojiPageFragmen
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
 import com.naposystems.napoleonchat.model.emojiKeyboard.EmojiCategory
 import com.naposystems.napoleonchat.ui.napoleonKeyboardEmojiPage.adapter.NapoleonKeyboardEmojiPageAdapter
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 
 class NapoleonKeyboardEmojiPageFragment : Fragment() {
 
@@ -31,7 +31,7 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
 
     private lateinit var binding: NapoleonKeyboardEmojiPageFragmentBinding
     private var emojiCategory: EmojiCategory? = null
-    private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val sharedViewModel: ConversationSharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +59,7 @@ class NapoleonKeyboardEmojiPageFragment : Fragment() {
             val adapter = NapoleonKeyboardEmojiPageAdapter(object :
                 NapoleonKeyboardEmojiPageAdapter.OnNapoleonKeyboardEmojiPageAdapterListener {
                 override fun onEmojiClick(emoji: Emoji) {
-                    shareViewModel.apply {
+                    sharedViewModel.apply {
                         setEmojiSelected(emoji)
                         resetEmojiSelected()
                     }

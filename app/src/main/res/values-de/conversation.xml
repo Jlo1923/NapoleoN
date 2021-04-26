@@ -11,6 +11,7 @@
     <string name="text_delete_contact">Blockkontakt</string>
     <string name="text_explanation_camera_to_attachment_picture">Um ein Foto zu senden, erlauben NAPOLEON Zugriff auf Ihre Kamera.</string>
     <string name="text_explanation_to_send_audio_attachment">Um ein Audio zu senden, napoleon erlaubt den Zugriff von Multimedia-Inhalte.</string>
+    <string name="text_explanation_to_make_call">Um einen Anruf zu tätigen, erlauben Sie NapoleoN, auf Ihre Kamera und Ihr Mikrofon zuzugreifen.</string>
     <string name="text_delete_messages">Nachrichten löschen?</string>
     <string name="text_delete_message_for_me">Für mich löschen</string>
     <string name="text_delete_message_for_all">Für alle löschen</string>

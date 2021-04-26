@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
@@ -15,9 +16,8 @@ import javax.inject.Inject
 
 class HomeViewModel
 @Inject constructor(
-    private val repository: IContractHome.Repository
-) : ViewModel(),
-    IContractHome.ViewModel {
+    private val repository: HomeRepository
+) : ViewModel() {
 
     private lateinit var _userEntity: LiveData<UserEntity>
     val userEntity: LiveData<UserEntity>
@@ -56,24 +56,7 @@ class HomeViewModel
     }
 
     //region Implementation IContractHome.ViewModel
-    override fun getFriendshipQuantity() {
-        viewModelScope.launch {
-            try {
-                val response = repository.getFriendshipQuantity()
-
-                if (response.isSuccessful) {
-                    val friendshipRequestReceived =
-                        response.body()!!.quantityFriendshipRequestReceived
-
-                    _quantityFriendshipRequest.value = friendshipRequestReceived
-                }
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
-    override fun getFriendshipRequestHome() {
+    fun getFriendshipRequestHome() {
         viewModelScope.launch {
             try {
                 val response = repository.getFriendshipRequestHome()
@@ -91,26 +74,26 @@ class HomeViewModel
         }
     }
 
-    override fun resetDuplicates() {
+    fun resetDuplicates() {
         viewModelScope.launch {
             repository.deleteDuplicatesMessages()
             repository.addUUID()
         }
     }
 
-    override fun getConversation() {
+    fun getConversation() {
         viewModelScope.launch {
             _conversations = repository.getMessagesForHome()
         }
     }
 
-    override fun getUserLiveData() {
+    fun getUserLiveData() {
         viewModelScope.launch {
             _userEntity = repository.getUserLiveData()
         }
     }
 
-    override fun getMessages() {
+    fun getMessages() {
         viewModelScope.launch {
             try {
                 repository.getRemoteMessages()
@@ -120,7 +103,7 @@ class HomeViewModel
         }
     }
 
-    override fun getDeletedMessages() {
+    fun getDeletedMessages() {
         viewModelScope.launch {
             try {
                 repository.getDeletedMessages()
@@ -130,58 +113,75 @@ class HomeViewModel
         }
     }
 
-    override fun insertSubscription() {
+    fun insertSubscription() {
         viewModelScope.launch {
             repository.insertSubscription()
         }
     }
 
-    override fun getFreeTrial(): Long {
+    fun getFreeTrial(): Long {
         return repository.getFreeTrial()
     }
 
-    override fun getSubscriptionTime(): Long {
+    fun getSubscriptionTime(): Long {
         return repository.getSubscriptionTime()
     }
 
-    override fun getJsonNotification() {
+    fun getJsonNotification() {
         _jsonNotification.value = repository.getJsonNotification()
     }
 
-    override fun getContact(contactId: Int) {
+    fun getContact(contactId: Int) {
         viewModelScope.launch {
             _contact.value = repository.getContact(contactId)
         }
     }
 
-    override fun cleanJsonNotification(json: String) {
+    fun cleanJsonNotification(json: String) {
         viewModelScope.launch {
             repository.cleanJsonNotification()
             _jsonCleaned.value = json
         }
     }
 
-    override fun resetConversations() {
+    fun resetConversations() {
         _conversations = null
     }
 
-    override fun cleanVariables() {
+    fun cleanVariables() {
         _contact.value = null
         _jsonNotification.value = null
         _jsonCleaned.value = null
     }
 
-    override fun verifyMessagesToDelete() {
+    fun verifyMessagesToDelete() {
         repository.verifyMessagesToDelete()
     }
 
-    override fun getDialogSubscription(): Int {
+    fun getDialogSubscription(): Int {
         return repository.getDialogSubscription()
     }
 
-    override fun setDialogSubscription() {
+    fun setDialogSubscription() {
         repository.setDialogSubscription()
     }
 
     //endregion
+
+    private fun getFriendshipQuantity() {
+        viewModelScope.launch {
+            try {
+                val response = repository.getFriendshipQuantity()
+
+                if (response.isSuccessful) {
+                    val friendshipRequestReceived =
+                        response.body()!!.quantityFriendshipRequestReceived
+
+                    _quantityFriendshipRequest.value = friendshipRequestReceived
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }
