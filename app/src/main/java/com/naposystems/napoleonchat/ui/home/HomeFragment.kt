@@ -136,7 +136,7 @@ class HomeFragment : BaseFragment() {
         setHasOptionsMenu(true)
 
         //TODO: Verificar los mensajes no se estan borrando
-        viewModel.verifyMessagesToDelete()
+//        viewModel.verifyMessagesToDelete()
 
         //TODO:Subscription
 //        billingClientLifecycle.queryPurchases()

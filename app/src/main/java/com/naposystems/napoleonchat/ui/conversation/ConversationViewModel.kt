@@ -156,7 +156,7 @@ class ConversationViewModel @Inject constructor(
     override fun getLocalMessages() {
         viewModelScope.launch {
             userEntity = repository.getLocalUser()
-            repository.verifyMessagesToDelete()
+//            repository.verifyMessagesToDelete()
             _messageMessagesRelation = repository.getLocalMessages(contactEntity.id)
         }
     }
@@ -271,7 +271,7 @@ class ConversationViewModel @Inject constructor(
                             if (isTheMsgMine(messageEntityFromResDto)) Constants.MessageStatus.UNREAD.status
                             else Constants.MessageStatus.SENT.status
                         repository.updateMessage(messageEntityFromResDto)
-                        Timber.d("updateMessage")
+
                     }
 
                     //setupNotificationSound(context, R.raw.tone_send_message)
