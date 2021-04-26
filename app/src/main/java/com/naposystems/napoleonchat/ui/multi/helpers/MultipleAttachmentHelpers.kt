@@ -38,7 +38,10 @@ val projectionApiLvl29Files = arrayOf(
     MediaStore.Files.FileColumns.MEDIA_TYPE,
     MediaStore.Files.FileColumns.DATE_MODIFIED,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT,
+    MediaStore.Files.FileColumns.DISPLAY_NAME,
+    MediaStore.Files.FileColumns.DURATION
 )
 
 val projectionApiLvl24Files = arrayOf(
