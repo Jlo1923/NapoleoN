@@ -199,7 +199,8 @@ object Constants {
         DOWNLOAD_ERROR(7),
         DOWNLOAD_CANCEL(8),
         UPLOAD_CANCEL(9),
-        READED(9),
+        RECEIVED(10),
+        READED(11),
     }
 
     enum class AttachmentType(val type: String) {

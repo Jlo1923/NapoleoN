@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
 import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityWithFile
 import com.naposystems.napoleonchat.utility.extensions.toMessageReqDto
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
@@ -54,21 +55,24 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
     }
 
     override suspend fun sendMessage(messageEntity: MessageEntity): Pair<MessageEntity?, String>? {
+        try {
+            val messageReqDTO = messageEntity.toMessageReqDto(cryptoMessage)
+            val messageResponse = repository.sendMessage(messageReqDTO)
 
-        val messageReqDTO = messageEntity.toMessageReqDto(cryptoMessage)
-        val messageResponse = repository.sendMessage(messageReqDTO)
-
-        if (messageResponse.isSuccessful) {
-            return Pair(
-                MessageResDTO.toMessageEntity(
-                    messageEntity,
-                    messageResponse.body()!!,
-                    Constants.IsMine.YES.value
-                ).apply {
-                    status = SENT.status
-                },
-                messageResponse.body()?.id ?: ""
-            )
+            if (messageResponse.isSuccessful) {
+                return Pair(
+                    MessageResDTO.toMessageEntity(
+                        messageEntity,
+                        messageResponse.body()!!,
+                        Constants.IsMine.YES.value
+                    ).apply {
+                        status = SENT.status
+                    },
+                    messageResponse.body()?.id ?: ""
+                )
+            }
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
         }
         return null
     }

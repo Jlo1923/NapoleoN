@@ -912,7 +912,7 @@ class SocketClientImp
 
                                     syncManager.updateAttachmentsStatus(
                                         ids,
-                                        Constants.AttachmentStatus.DOWNLOADING.status
+                                        Constants.AttachmentStatus.RECEIVED.status
                                     )
 
                                 }
