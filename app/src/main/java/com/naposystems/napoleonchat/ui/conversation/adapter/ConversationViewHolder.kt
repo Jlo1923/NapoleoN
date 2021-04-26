@@ -476,6 +476,7 @@ open class ConversationViewHolder constructor(
             Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
             Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
             Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
+            Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time -> R.string.text_every_twenty_four_hours
             else -> -1
         }
         if (stringId != -1) {

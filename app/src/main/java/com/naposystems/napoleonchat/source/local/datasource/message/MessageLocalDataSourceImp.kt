@@ -423,6 +423,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.deleteMessageByType(contactId, type)
     }
 
+    //Función para limpiar la conversación de mensajes exitosos duplicados
     override suspend fun deleteDuplicatesMessages() {
         return messageDao.deleteDuplicatesMessages()
     }

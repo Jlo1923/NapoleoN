@@ -304,10 +304,11 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.insertListMessage(messageEntityList)
     }
 
+    //actualizar tiempo de autodestrucción para los mensajes fallidos y enviados no leídos 
     override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
         when (messageEntity.status) {
-            Constants.MessageStatus.ERROR.status -> {
+            Constants.MessageStatus.ERROR.status , Constants.MessageStatus.SENT.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
                 )
