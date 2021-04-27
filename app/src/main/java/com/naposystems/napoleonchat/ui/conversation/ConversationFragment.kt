@@ -2301,7 +2301,7 @@ class ConversationFragment
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
-            //putParcelable(MULTI_EXTRA_CONTACT, contact)
+            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
             action.message?.let { putString(MESSAGE_TEXT, it) }
