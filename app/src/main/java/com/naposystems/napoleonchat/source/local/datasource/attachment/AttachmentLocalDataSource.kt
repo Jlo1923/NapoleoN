@@ -18,7 +18,7 @@ interface AttachmentLocalDataSource {
 
     suspend fun deletedAttachments(attachmentsWebIds: List<String>)
 
-    fun existAttachment(id: String): Boolean
+    fun existAttachmentByWebId(id: String): Boolean
 
     suspend fun getAttachmentByWebId(webId: String): AttachmentEntity?
 
