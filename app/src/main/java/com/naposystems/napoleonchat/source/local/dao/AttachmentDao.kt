@@ -32,9 +32,9 @@ interface AttachmentDao {
     @Query(
         "SELECT ${DBConstants.Attachment.COLUMN_ID} " +
                 "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
-                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID}  = :id"
+                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID}  = :webId"
     )
-    fun existAttachment(id: String): Int?
+    fun existAttachmentByWebId(webId: String): Int?
 
 
     @Query("SELECT * FROM  ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} =:id")
@@ -47,6 +47,13 @@ interface AttachmentDao {
     )
     fun getAttachmentSelfDestructTimeById(webId: String): Int
 
+
+    @Query(
+        "DELETE " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID}  = :webId"
+    )
+    suspend fun deletedAttachment(webId: String)
 
     @Query(
         "UPDATE ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +

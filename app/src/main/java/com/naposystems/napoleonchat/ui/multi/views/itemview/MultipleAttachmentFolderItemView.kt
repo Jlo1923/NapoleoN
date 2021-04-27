@@ -38,10 +38,13 @@ class MultipleAttachmentFolderItemView(
     private fun loadImage() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val contentUri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    item.id.toLong()
-                )
+                val uri =
+                    if (item.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    else
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+
+                val contentUri = ContentUris.withAppendedId(uri, item.id.toLong())
                 val bitmapThumbnail = binding.root.context.contentResolver.loadThumbnail(
                     contentUri,
                     Size(640, 480),
@@ -64,7 +67,6 @@ class MultipleAttachmentFolderItemView(
         } catch (exception: Exception) {
 
         }
-
     }
 
 }

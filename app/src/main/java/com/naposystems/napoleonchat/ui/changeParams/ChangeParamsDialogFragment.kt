@@ -18,9 +18,8 @@ import com.naposystems.napoleonchat.databinding.ChangeFakesDialogFragmentBinding
 import com.naposystems.napoleonchat.source.remote.dto.user.DisplayNameReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FieldsValidator
-import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
@@ -41,10 +40,10 @@ class ChangeParamsDialogFragment : DialogFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: ChangeParamsDialogViewModel by viewModels { viewModelFactory }
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
-    private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
+    private val userProfileSharedViewModel: UserProfileSharedViewModel by viewModels {
         viewModelFactory
     }
     private lateinit var binding: ChangeFakesDialogFragmentBinding
@@ -78,8 +77,8 @@ class ChangeParamsDialogFragment : DialogFragment() {
                         )
                     }
                     else -> {
-                        userProfileShareViewModel.userEntity.value?.let { user ->
-                            userProfileShareViewModel.updateUserInfo(
+                        userProfileSharedViewModel.userEntity.value?.let { user ->
+                            userProfileSharedViewModel.updateUserInfo(
                                 user,
                                 DisplayNameReqDTO(
                                     displayName = binding.editTextDisplay.text.toString()
@@ -111,7 +110,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
             )
         }
 
-        userProfileShareViewModel.getUser()
+        userProfileSharedViewModel.getUser()
 
         viewModel.responseEditFake.observe(viewLifecycleOwner, Observer {
             if (it) {
@@ -129,17 +128,17 @@ class ChangeParamsDialogFragment : DialogFragment() {
     private fun observers() {
         when (arguments?.getInt(OPTION)) {
             Constants.ChangeParams.NAME_USER.option -> {
-                userProfileShareViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
+                userProfileSharedViewModel.userUpdated.observe(viewLifecycleOwner, Observer {
                     if (it != null) {
                         dismiss()
                     }
                 })
-                userProfileShareViewModel.userEntity.observe(viewLifecycleOwner, Observer { user ->
+                userProfileSharedViewModel.userEntity.observe(viewLifecycleOwner, Observer { user ->
                     if (user != null) {
                         binding.editTextDisplay.setText(user.displayName)
                     }
                 })
-                userProfileShareViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
+                userProfileSharedViewModel.errorUpdatingUser.observe(viewLifecycleOwner, Observer {
                     if (it.isNotEmpty()) {
                         Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                     }
@@ -147,7 +146,7 @@ class ChangeParamsDialogFragment : DialogFragment() {
             }
             else -> {
                 activity?.let { activity ->
-                    contactProfileShareViewModel.contact.observe(activity, Observer { contact ->
+                    contactProfileSharedViewModel.contact.observe(activity, Observer { contact ->
                         if (contact != null) {
                             binding.editTextDisplay.setText(contact.getName())
                         }

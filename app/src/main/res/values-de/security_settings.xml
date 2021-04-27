@@ -8,6 +8,6 @@
     <string name="text_account_recovery_information">Konto-Wiederherstellung</string>
     <string name="text_allow_download_attachments">Zulassen, dass Download-Anhänge gesendet werden</string>
     <string name="text_unlock_options">Unlock-Optionen</string>
-    <string name="text_message_self_destruct_time_not_send">Destruct Zeit und ungelesene Nachrichten fehlgeschlagen</string>
+    <string name="text_message_self_destruct_time_not_send">Selbstzerstörungszeit für fehlgeschlagene Nachrichten</string>
     <string name="text_conversation">KONVERSATION</string>
 </resources>

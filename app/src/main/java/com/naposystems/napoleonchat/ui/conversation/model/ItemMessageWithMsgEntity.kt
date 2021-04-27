@@ -22,7 +22,7 @@ data class ItemMessageWithMsgEntity(
         body = messageEntity.getBody(cryptoMessage),
         numberAttachments = numberAttachments,
         destroy = selfDestructTime,
-        messageType = Constants.MessageType.MESSAGE.type,
+        messageType = Constants.MessageTextType.NORMAL.type,
         uuidSender = messageEntity.uuid
     )
 

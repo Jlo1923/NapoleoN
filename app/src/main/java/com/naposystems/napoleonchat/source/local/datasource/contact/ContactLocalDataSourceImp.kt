@@ -103,6 +103,10 @@ class ContactLocalDataSourceImp @Inject constructor(private val contactDao: Cont
         return contactDao.getSelfDestructTimeByContact(contactId)
     }
 
+    override suspend fun getSelfDestructTimeAsIntByContact(contactId: Int): Int {
+        return contactDao.getSelfDestructTimeAsIntByContact(contactId)
+    }
+
     override suspend fun restoreImageByContact(contactId: Int) {
         contactDao.restoreImageByContact(contactId)
     }

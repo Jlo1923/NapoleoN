@@ -81,7 +81,7 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachmentRelation: M
     var resourceId: Int?
     messageAndAttachmentRelation?.let { messageAndAttach ->
         resourceId = when (messageAndAttach.messageEntity.messageType) {
-            Constants.MessageType.MESSAGE.type -> {
+            Constants.MessageTextType.NORMAL.type -> {
                 if (messageAndAttach.attachmentEntityList.count() > 0) {
                     when (messageAndAttach.attachmentEntityList.last().type) {
                         Constants.AttachmentType.IMAGE.type -> R.drawable.ic_image
@@ -96,9 +96,9 @@ fun bindIconByConversation(imageView: ImageView, messageAndAttachmentRelation: M
                     null
                 }
             }
-            Constants.MessageType.MISSED_CALL.type -> R.drawable.ic_call_missed_red
-            Constants.MessageType.MISSED_VIDEO_CALL.type -> R.drawable.ic_videocall_missed_red
-            Constants.MessageType.NEW_CONTACT.type -> R.drawable.ic_people_tint
+            Constants.MessageTextType.MISSED_CALL.type -> R.drawable.ic_call_missed_red
+            Constants.MessageTextType.MISSED_VIDEO_CALL.type -> R.drawable.ic_videocall_missed_red
+            Constants.MessageTextType.NEW_CONTACT.type -> R.drawable.ic_people_tint
             else -> null
         }
 
@@ -118,7 +118,7 @@ fun bindBodyConversation(textView: TextView, messageAndAttachmentRelation: Messa
     var text = ""
     messageAndAttachmentRelation?.let { messageAndAttach ->
         text = when (messageAndAttach.messageEntity.messageType) {
-            Constants.MessageType.MESSAGE.type -> {
+            Constants.MessageTextType.NORMAL.type -> {
                 if (messageAndAttach.messageEntity.body.count() > 0) {
                     messageAndAttach.messageEntity.body
                 } else {
@@ -140,13 +140,13 @@ fun bindBodyConversation(textView: TextView, messageAndAttachmentRelation: Messa
                     }
                 }
             }
-            Constants.MessageType.MISSED_CALL.type -> {
+            Constants.MessageTextType.MISSED_CALL.type -> {
                 context.getString(R.string.text_missed_voice_call)
             }
-            Constants.MessageType.MISSED_VIDEO_CALL.type -> {
+            Constants.MessageTextType.MISSED_VIDEO_CALL.type -> {
                 context.getString(R.string.text_missed_video_call)
             }
-            Constants.MessageType.NEW_CONTACT.type -> {
+            Constants.MessageTextType.NEW_CONTACT.type -> {
                 context.getString(R.string.text_new_contact)
             }
             else -> ""
@@ -154,9 +154,9 @@ fun bindBodyConversation(textView: TextView, messageAndAttachmentRelation: Messa
 
         textView.text = text
         when (messageAndAttach.messageEntity.messageType) {
-            Constants.MessageType.MISSED_CALL.type,
-            Constants.MessageType.MISSED_VIDEO_CALL.type,
-            Constants.MessageType.NEW_CONTACT.type -> {
+            Constants.MessageTextType.MISSED_CALL.type,
+            Constants.MessageTextType.MISSED_VIDEO_CALL.type,
+            Constants.MessageTextType.NEW_CONTACT.type -> {
                 TextViewCompat.setTextAppearance(textView, R.style.italicText)
             }
             else -> {
@@ -174,7 +174,7 @@ fun bindUnreadMessages(textView: TextView, unreadMessages: Int, typeMessage : In
             textView.visibility = View.GONE
         }
         in 1..99 -> {
-            if (typeMessage == Constants.MessageType.MESSAGE.type || typeMessage == Constants.MessageType.MESSAGES_GROUP_DATE.type) {
+            if (typeMessage == Constants.MessageTextType.NORMAL.type || typeMessage == Constants.MessageTextType.GROUP_DATE.type) {
                 textView.visibility = View.VISIBLE
                 textView.text = unreadMessages.toString()
             } else {
@@ -193,7 +193,7 @@ fun bindStatusMessage(imageView: ImageView, messageEntity: MessageEntity) {
     val context = imageView.context
     when (messageEntity.isMine) {
         Constants.IsMine.YES.value -> {
-            if (messageEntity.messageType != Constants.MessageType.NEW_CONTACT.type) {
+            if (messageEntity.messageType != Constants.MessageTextType.NEW_CONTACT.type) {
                 imageView.visibility = View.VISIBLE
                 val drawable =
                     context.resources.getDrawable(drawableId(messageEntity.status), context.theme)

@@ -16,7 +16,6 @@ import androidx.camera.core.VideoCapture
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -32,7 +31,7 @@ import com.naposystems.napoleonchat.ui.custom.customVerticalSeekbar.CustomVertic
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
@@ -51,7 +50,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
     CameraButton.CameraButtonListener {
 
     private lateinit var binding: ConversationCameraFragmentBinding
-    private val cameraShareViewModel: CameraShareViewModel by activityViewModels()
+    private val cameraSharedViewModel: CameraSharedViewModel by activityViewModels()
     private val args: ConversationCameraFragmentArgs by navArgs()
 
     private lateinit var mainExecutor: Executor
@@ -299,7 +298,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
                                         subFolder = Constants.CacheDirectories.IMAGES.folder
                                     )
 
-                                    with(cameraShareViewModel) {
+                                    with(cameraSharedViewModel) {
                                         setImageUriTaken(uri)
                                         resetUriImageTaken()
                                     }

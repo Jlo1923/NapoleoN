@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.multipreview
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +14,7 @@ import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.multipreview.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachmentPreviewListener
@@ -20,6 +22,9 @@ import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachment
 import com.naposystems.napoleonchat.ui.multipreview.listeners.ViewAttachmentOptionsListener
 import com.naposystems.napoleonchat.ui.multipreview.listeners.events.MultipleAttachmentRemoveEvent
 import com.naposystems.napoleonchat.ui.multipreview.listeners.events.ViewAttachmentOptionEvent
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_CREATE
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_RECEIVER
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_SENDER
 import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemoveItem
 import com.naposystems.napoleonchat.ui.multipreview.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
@@ -33,10 +38,7 @@ import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
-import com.naposystems.napoleonchat.utility.extras.MODE_ONLY_VIEW
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
-import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
+import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
@@ -58,6 +60,7 @@ class MultipleAttachmentPreviewActivity
     private var adapter: MultipleAttachmentFragmentAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
@@ -92,11 +95,24 @@ class MultipleAttachmentPreviewActivity
 
     override fun onRemoveAttachment(event: MultipleAttachmentRemoveEvent) {
         when (event) {
-            MultipleAttachmentRemoveEvent.OnRemoveForAll -> TODO()
-            MultipleAttachmentRemoveEvent.OnRemoveForRecipient -> TODO()
-            MultipleAttachmentRemoveEvent.OnRemoveForSender -> TODO()
-            MultipleAttachmentRemoveEvent.OnSimpleRemove -> removeFile()
+            MultipleAttachmentRemoveEvent.OnRemoveForAll -> removeAttachmentForAll(event)
+            MultipleAttachmentRemoveEvent.OnRemoveForTheUser -> removeAttachmentForUser(event)
+            MultipleAttachmentRemoveEvent.OnSimpleRemove -> removeFileInCreating()
         }
+    }
+
+    private fun removeAttachmentForUser(event: MultipleAttachmentRemoveEvent) {
+        val selectedIndexFileToDelete = viewBinding.viewPagerAttachments.currentItem
+        viewModel.onDeleteAttachmentForUser(selectedIndexFileToDelete)
+    }
+
+    private fun removeAttachmentForAll(event: MultipleAttachmentRemoveEvent) {
+        val selectedIndexFileToDelete = viewBinding.viewPagerAttachments.currentItem
+        viewModel.onDeleteAttachmentForAll(selectedIndexFileToDelete)
+    }
+
+    override fun markAttachmentAsRead(fileItem: MultipleAttachmentFileItem) {
+        viewModel.markAttachmentVideoAsRead(fileItem)
     }
 
     private fun onChangeSelfDestruction() {
@@ -113,45 +129,29 @@ class MultipleAttachmentPreviewActivity
         dialog.show(supportFragmentManager, "SelfDestructTime")
     }
 
-    private fun removeFile() {
+    private fun removeFileInCreating() {
         val selectedIndexFileToDelete = viewBinding.viewPagerAttachments.currentItem
-        viewModel.onDeleteElement(selectedIndexFileToDelete)
+        viewModel.onDeleteElementInCreating(selectedIndexFileToDelete)
     }
 
     private fun onDeleteItem() {
-        val textsForDialog = getTextForDialog()
-        val dialogForDelete = MultipleAttachmentRemoveAttachmentDialogFragment(
-            textsForDialog, this
-        )
-        dialogForDelete.show(
-            supportFragmentManager,
-            "MultipleAttachmentRemoveAttachmentDialogFragment"
-        )
-    }
-
-    private fun getTextForDialog(): MultipleAttachmentRemoveItem {
-        val title = getString(R.string.multi_title_remove_file)
-        val message = getString(R.string.multi_msg_remove_file)
-        val option1 = getString(R.string.multi_button_accept)
-        val cancel = getString(R.string.multi_button_cancel)
-        return MultipleAttachmentRemoveItem(
-            title = title,
-            message = message,
-            option1 = option1,
-            cancelText = cancel
-        )
+        /**
+         * Necesitamos ir al viewmodel y validar si el usuario es el receptor o emisor, segun esta
+         * informacion, debemos crear el mensaje de eliminacion del archivo y su respectiva accion
+         * en cuanto al negocio
+         */
+        viewModel.onDeleteAttachment()
     }
 
     private fun extractFilesFromExtras() = intent.extras?.let { bundle ->
         val files = bundle.getParcelableArrayList<MultipleAttachmentFileItem>(MULTI_EXTRA_FILES)
-        files?.let {
-            viewModel.defineListFiles(it)
-        }
+        files?.let { viewModel.defineListFiles(it) }
     }
 
     private fun extractIsModeViewInConversation() = intent.extras?.let { bundle ->
         val modeOnlyView = bundle.getBoolean(MODE_ONLY_VIEW)
-        viewModel.defineModeOnlyViewInConversation(modeOnlyView)
+        val message = bundle.getString(MESSAGE_TEXT)
+        viewModel.defineModeOnlyViewInConversation(modeOnlyView, message)
     }
 
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
@@ -190,6 +190,29 @@ class MultipleAttachmentPreviewActivity
     private fun bindViewModel() {
         viewModel.actions().observe(this, { handleActions(it) })
         viewModel.state.observe(this, { handleState(it) })
+        viewModel.modes().observe(this, { handleMode(it) })
+    }
+
+    private fun handleMode(mode: MultipleAttachmentPreviewMode) {
+        when (mode) {
+            MultipleAttachmentPreviewMode.ModeCreate -> modeCreateAttachments()
+            is MultipleAttachmentPreviewMode.ModeView -> modeViewAttachments(mode.messageText)
+        }
+    }
+
+    private fun modeCreateAttachments() {
+        viewBinding.apply {
+            viewAttachmentOptions.configureElementsForCreate()
+            viewPreviewBottom.configForCreate()
+        }
+    }
+
+    private fun modeViewAttachments(message: String) {
+        viewBinding.apply {
+            viewAttachmentOptions.configureElementsForView()
+            viewPreviewBottom.configForViewAttachments()
+            viewPreviewBottom.setMessage(message)
+        }
     }
 
     private fun handleState(state: MultipleAttachmentPreviewState) {
@@ -228,11 +251,68 @@ class MultipleAttachmentPreviewActivity
             ShowAttachmentOptions -> showAnimAttachmentOptions()
             ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
             HideFileTabs -> hideBottomTabs()
+            RemoveAttachInCreate -> showBottomDialogForRemove(getTextForDialogForRemoveAttach())
+            RemoveAttachForReceiver -> showBottomDialogForRemove(getTextForDialogForReceiver())
+            RemoveAttachForSender -> showBottomDialogForRemove(getTextForDialogForSender())
             is ShowSelectFolderName -> TODO()
             is SelectItemInTabLayout -> removeElementPager(action.indexItem)
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
             is SendMessageToRemote -> sendMessageToRemote(action)
         }
+    }
+
+    private fun showBottomDialogForRemove(textsForDialog: MultipleAttachmentRemoveItem) {
+        val dialogForDelete = MultipleAttachmentRemoveAttachmentDialogFragment(
+            textsForDialog, this
+        )
+        dialogForDelete.show(
+            supportFragmentManager,
+            "MultipleAttachmentRemoveAttachmentDialogFragment"
+        )
+    }
+
+    private fun getTextForDialogForRemoveAttach(): MultipleAttachmentRemoveItem {
+        val title = getString(R.string.multi_title_remove_file)
+        val message = getString(R.string.multi_msg_remove_file)
+        val option1 = getString(R.string.multi_button_accept)
+        val cancel = getString(R.string.multi_button_cancel)
+        return MultipleAttachmentRemoveItem(
+            title = title,
+            message = message,
+            option1 = option1,
+            cancelText = cancel,
+            modeDelete = MODE_CREATE
+        )
+    }
+
+    private fun getTextForDialogForReceiver(): MultipleAttachmentRemoveItem {
+        val title = getString(R.string.multi_title_remove_file)
+        val message = getString(R.string.multi_msg_remove_file)
+        val option1 = getString(R.string.multi_button_remove_for_me)
+        val cancel = getString(R.string.multi_button_cancel)
+        return MultipleAttachmentRemoveItem(
+            title = title,
+            message = message,
+            option1 = option1,
+            cancelText = cancel,
+            modeDelete = MODE_RECEIVER
+        )
+    }
+
+    private fun getTextForDialogForSender(): MultipleAttachmentRemoveItem {
+        val title = getString(R.string.multi_title_remove_file)
+        val message = getString(R.string.multi_msg_remove_file)
+        val option1 = getString(R.string.multi_button_remove_for_me)
+        val option2 = getString(R.string.multi_button_remove_for_all)
+        val cancel = getString(R.string.multi_button_cancel)
+        return MultipleAttachmentRemoveItem(
+            title = title,
+            message = message,
+            option1 = option1,
+            option2 = option2,
+            cancelText = cancel,
+            modeDelete = MODE_SENDER
+        )
     }
 
     private fun sendMessageToRemote(action: SendMessageToRemote) =
@@ -243,7 +323,11 @@ class MultipleAttachmentPreviewActivity
         viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
     }
 
-    private fun exitPreview() = finish()
+    private fun exitPreview() {
+        val intentResult = Intent()
+        setResult(RESULT_OK, intent);
+        finish()
+    }
 
     private fun hideBottomTabs() = viewBinding.viewPreviewBottom.hideTabLayout()
 
@@ -279,12 +363,14 @@ class MultipleAttachmentPreviewActivity
 
     private fun addListenerToViewPager() =
         viewBinding.viewPagerAttachments.registerOnPageChangeCallback(
+
             object : ViewPager2.OnPageChangeCallback() {
 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     viewModel.loadSelfDestructionTimeByIndex(position)
                     viewModel.validateMustMarkAsReaded(position)
+                    viewBinding.apply { viewPreviewBottom.showTextByPosition(position) }
                 }
 
             })

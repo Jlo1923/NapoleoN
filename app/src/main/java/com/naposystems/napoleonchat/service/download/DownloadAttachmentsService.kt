@@ -84,8 +84,9 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         val disposableUploadSuccess = RxBus.listen(RxEvent.MultiUploadSuccess::class.java)
             .subscribe { handleDownloadSuccess() }
 
-        val disposableUploadTryNext = RxBus.listen(RxEvent.MultiDownloadTryNextAttachment::class.java)
-            .subscribe { handleTryNextAttachment() }
+        val disposableUploadTryNext =
+            RxBus.listen(RxEvent.MultiDownloadTryNextAttachment::class.java)
+                .subscribe { handleTryNextAttachment() }
 
         val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
             .subscribe { handleUploadError() }
@@ -137,6 +138,8 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     }
 
     private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() { it.status == NOT_DOWNLOADED.status }
+        attachmentList.firstOrNull() {
+            it.status == NOT_DOWNLOADED.status
+        }
 
 }

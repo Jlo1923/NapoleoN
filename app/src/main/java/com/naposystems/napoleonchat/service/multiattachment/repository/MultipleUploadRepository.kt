@@ -193,15 +193,18 @@ class MultipleUploadRepository @Inject constructor(
                 updateAttachment(this)
                 if (BuildConfig.ENCRYPT_API && type != AttachmentType.GIF_NN.type) {
                     saveEncryptedFile(this)
+                } else {
+                    publishEventTryNext()
                 }
-                publishEventTryNext()
             }
         }
 
     }
 
-    private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) =
+    private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
+        publishEventTryNext()
+    }
 
     private fun setStatusErrorMessageAndAttachment(
         messageEntity: MessageEntity,

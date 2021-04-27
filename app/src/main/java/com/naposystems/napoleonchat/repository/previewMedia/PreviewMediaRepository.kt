@@ -49,7 +49,7 @@ class PreviewMediaRepository @Inject constructor(
                     MessageDTO(
                         id = messageAttachmentRelation.messageEntity.webId,
                         status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = messageAttachmentRelation.messageEntity.contactId
                     )
                 )
@@ -78,7 +78,7 @@ class PreviewMediaRepository @Inject constructor(
                     MessageDTO(
                         id = attachment.webId,
                         status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+                        type = Constants.MessageType.ATTACHMENT.type,
                         user = contactId
                     )
                 )

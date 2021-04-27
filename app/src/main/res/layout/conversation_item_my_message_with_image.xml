@@ -168,7 +168,7 @@
             app:layout_constraintStart_toStartOf="@id/imageButton_state"
             app:layout_constraintTop_toTopOf="@id/imageButton_state"
             tools:progress="70"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/progressBar_indeterminate"
@@ -177,7 +177,7 @@
             app:layout_constraintEnd_toEndOf="@id/imageButton_state"
             app:layout_constraintStart_toStartOf="@id/imageButton_state"
             app:layout_constraintTop_toTopOf="@id/imageButton_state"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"

@@ -4,8 +4,11 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.toMessagesReqDTO
+import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -27,6 +30,7 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -37,8 +41,8 @@ import java.util.*
 import javax.inject.Inject
 
 class SyncManagerImp @Inject constructor(
-    private val cryptoMessage: CryptoMessage,
     private val napoleonApi: NapoleonApi,
+    private val cryptoMessage: CryptoMessage,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
@@ -53,6 +57,8 @@ class SyncManagerImp @Inject constructor(
         Moshi.Builder().build()
     }
 
+    private var getMessagesSocketListener: GetMessagesSocketListener? = null
+
     override fun getUserId(): Int {
 
         val user = userLocalDataSource.getMyUser()
@@ -64,68 +70,102 @@ class SyncManagerImp @Inject constructor(
 
     }
 
+    override fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener) {
+        this.getMessagesSocketListener = getMessagesSocketListener
+    }
+
     override fun getMyMessages(contactId: Int?) {
-
         GlobalScope.launch(Dispatchers.Main) {
-
             try {
-
                 getContacts()
-
                 val response = napoleonApi.getMyMessages()
-
                 if (response.isSuccessful) {
-
-                    val messageResList: MutableList<MessageResDTO> =
-                        response.body()!!.toMutableList()
-
+                    val messageResList = response.body()!!.toMutableList()
                     if (messageResList.isNotEmpty()) {
-
-                        for (messageRes in messageResList) {
-
-                            val databaseMessage =
-                                messageLocalDataSource.getMessageByWebId(messageRes.id, false)
-
-                            if (databaseMessage == null) {
-
-                                val message = MessageResDTO.toMessageEntity(
-                                    null, messageRes, Constants.IsMine.NO.value
-                                )
-
-                                val messageId = messageLocalDataSource.insertMessage(message)
-
-                                Timber.d("Conversation insertó mensajes")
-
-                                if (messageRes.quoted.isNotEmpty()) {
-                                    insertQuote(messageRes.quoted, messageId.toInt())
-                                }
-
-                                val listAttachments = AttachmentResDTO.toListConversationAttachment(
-                                    messageId.toInt(),
-                                    messageRes.attachments
-                                )
-
-                                attachmentLocalDataSource.insertAttachments(listAttachments)
-
-                                Timber.d("Conversation insertó attachment")
-
-                                if (NapoleonApplication.currentConversationContactId != 0) {
-                                    notifyMessagesReaded()
-                                }
-
-                                contactId?.let {
-                                    RxBus.publish(
-                                        RxEvent.NewMessageEventForCounter(contactId)
-                                    )
-                                }
-                            }
+                        messageResList.forEach { messageRes ->
+                            handlerMessage(messageRes)
                         }
+                        handlerNotify(messageResList, contactId)
                     }
                 }
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
+    }
+
+    @Synchronized
+    suspend fun handlerMessage(messageRes: MessageResDTO) {
+
+        val databaseMessage = messageLocalDataSource.getMessageByWebId(messageRes.id, false)
+
+        //Validar si existe mensaje
+        if (databaseMessage == null) {
+
+            val message = MessageResDTO.toMessageEntity(null, messageRes, Constants.IsMine.NO.value)
+
+            val messageId = messageLocalDataSource.insertMessage(message)
+
+            Timber.d("Conversation insertó mensajes")
+
+            if (messageRes.quoted.isNotEmpty())
+                insertQuote(messageRes.quoted, messageId.toInt())
+
+            handlerAttachments(messageRes.attachments, messageId.toInt())
+
+        } else {
+            handlerAttachments(messageRes.attachments, databaseMessage.messageEntity.id)
+        }
+
+    }
+
+    @Synchronized
+    suspend fun handlerAttachments(
+        attachments: List<AttachmentResDTO>,
+        messageId: Int
+    ) {
+        val listAttachments = AttachmentResDTO.toListConversationAttachment(
+            messageId,
+            attachments
+        )
+
+        /**
+         * Solo hacemos insersion de attachments sino existe
+         * por medio de su id
+         */
+        listAttachments.forEach { attachment ->
+            attachmentLocalDataSource.apply {
+                if (this.existAttachmentByWebId(attachment.webId).not()) {
+                    this.insertAttachments(listOf(attachment))
+                }
+            }
+        }
+    }
+
+    @Synchronized
+    suspend fun handlerNotify(listMessages: MutableList<MessageResDTO>, contactId: Int?) {
+
+        val listMessagesNotify: MutableList<MessageAttachmentRelation> = mutableListOf()
+
+        listMessages.forEach { messsageRes ->
+            messsageRes.id.let { messageIdWeb ->
+
+                val messageAttachmentRelation =
+                    messageLocalDataSource.getMessageByWebId(messageIdWeb, false)
+
+                if (messageAttachmentRelation != null)
+                    listMessagesNotify.add(messageAttachmentRelation)
+            }
+        }
+
+        val listMessagesReceived =
+            listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED)
+
+        notifyMessageReceived(listMessagesReceived)
+
+        getMessagesSocketListener?.emitSocketClientConversation(listMessagesReceived)
+
+        contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
     }
 
     override fun verifyMessagesReceived() {
@@ -208,7 +248,7 @@ class SyncManagerImp @Inject constructor(
                 jsonAdapter.fromJson(messageString)
                     ?.let { newMessageEventMessageRes ->
 
-                        if (newMessageEventMessageRes.messageType == Constants.MessageType.NEW_CONTACT.type) {
+                        if (newMessageEventMessageRes.messageType == Constants.MessageTextType.NEW_CONTACT.type) {
                             getRemoteContact()
                         }
 
@@ -219,7 +259,6 @@ class SyncManagerImp @Inject constructor(
                             )
 
                         Timber.d("**Paso 7.2: Validar WebId ${newMessageEventMessageRes.id}")
-
 
                         if (databaseMessage == null) {
 
@@ -240,16 +279,6 @@ class SyncManagerImp @Inject constructor(
                                     messageId.toInt()
                                 )
                             }
-
-                            val listAttachments =
-                                NewMessageEventAttachmentRes.toListConversationAttachment(
-                                    messageId.toInt(),
-                                    newMessageEventMessageRes.attachments
-                                )
-                            if (listAttachments.isNotEmpty()) {
-                                Timber.d("**Paso 7.5.2: insertar ${listAttachments.size} adjuntos")
-                                attachmentLocalDataSource.insertAttachments(listAttachments)
-                            }
                         }
                     }
             } catch (e: java.lang.Exception) {
@@ -260,7 +289,6 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes) {
-
         if (queueNewMessageDataEventRes.isEmpty()) {
             queueNewMessageDataEventRes.add(newMessageDataEventRes)
             tryHandleNextItemInQueue()
@@ -323,19 +351,27 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, idMessage)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, idMessage)
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     idMessage,
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(StatusMustBe.RECEIVED)
+
+            //notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 
@@ -352,22 +388,30 @@ class SyncManagerImp @Inject constructor(
         val jsonAdapter =
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
-        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEvent ->
-            val message = newMessageEvent.toMessageEntity(Constants.IsMine.NO.value)
+        jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+            val message = newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
             val messageId = messageLocalDataSource.insertMessage(message)
             Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
-            if (newMessageEvent.quoted.isNotEmpty()) {
-                insertQuote(newMessageEvent.quoted, messageId.toInt())
+            if (newMessageEventMessageRes.quoted.isNotEmpty()) {
+                insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
             }
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     messageId.toInt(),
-                    newMessageEvent.attachments
+                    newMessageEventMessageRes.attachments
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
-            RxBus.publish(
-                RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId)
-            )
+
+            val listMessagesToReceived = listOf(
+                newMessageEventMessageRes
+            ).toMessagesReqDTO(StatusMustBe.RECEIVED)
+
+            //notifyMessageReceived(listMessagesToReceived)
+
+            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
         }
     }
 
@@ -409,8 +453,22 @@ class SyncManagerImp @Inject constructor(
     override fun getDeletedMessages() {
         GlobalScope.launch {
             val response = napoleonApi.getDeletedMessages()
-            if (response.isSuccessful && (response.body()!!.count() > 0)) {
-                messageLocalDataSource.deletedMessages(response.body()!!)
+            if (response.isSuccessful) {
+                response.body()?.messagesId.let {
+                    it?.let {
+                        messageLocalDataSource.deletedMessages(
+                            it
+                        )
+                    }
+                }
+
+                response.body()?.attachmentsId.let {
+                    it?.let {
+                        attachmentLocalDataSource.deletedAttachments(
+                            it
+                        )
+                    }
+                }
             }
         }
     }
@@ -443,7 +501,7 @@ class SyncManagerImp @Inject constructor(
     override fun existMessageById(id: String): Boolean = messageLocalDataSource.existMessage(id)
 
     override fun existAttachmentById(id: String): Boolean =
-        attachmentLocalDataSource.existAttachment(id)
+        attachmentLocalDataSource.existAttachmentByWebId(id)
 
     override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -469,6 +527,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    @Synchronized
     suspend fun getContacts() {
         try {
             val response =
@@ -488,7 +547,7 @@ class SyncManagerImp @Inject constructor(
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
@@ -547,14 +606,14 @@ class SyncManagerImp @Inject constructor(
             val textMessagesUnread = messagesUnread
                 .filter {
                     it.attachmentEntityList.isEmpty() ||
-                            it.messageEntity.messageType == Constants.MessageType.MISSED_CALL.type ||
-                            it.messageEntity.messageType == Constants.MessageType.MISSED_VIDEO_CALL.type
+                            it.messageEntity.messageType == Constants.MessageTextType.MISSED_CALL.type ||
+                            it.messageEntity.messageType == Constants.MessageTextType.MISSED_VIDEO_CALL.type
                 }.map {
                     MessageDTO(
                         id = it.messageEntity.webId,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = it.messageEntity.contactId,
-                        status = Constants.StatusMustBe.READED.status
+                        status = StatusMustBe.READED.status
                     )
                 }
 
@@ -564,9 +623,9 @@ class SyncManagerImp @Inject constructor(
                 }.map {
                     MessageDTO(
                         id = it.messageEntity.webId,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = it.messageEntity.contactId,
-                        status = Constants.StatusMustBe.READED.status
+                        status = StatusMustBe.READED.status
                     )
                 }
 
@@ -631,7 +690,7 @@ class SyncManagerImp @Inject constructor(
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
@@ -666,7 +725,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    //
+//
 //
 //    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
 //        try {

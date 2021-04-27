@@ -1,9 +1,7 @@
 package com.naposystems.napoleonchat.ui.addContact
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -23,10 +21,9 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
-import dagger.android.support.AndroidSupportInjection
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.util.*
@@ -45,7 +42,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: AddContactViewModel by viewModels { viewModelFactory }
-    private val shareViewModel: FriendShipActionShareViewModel by viewModels { viewModelFactory }
+    private val sharedViewModel: FriendShipActionSharedViewModel by viewModels { viewModelFactory }
     private var _binding: AddContactFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -142,7 +139,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestAcceptedSuccessfully() {
-        shareViewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, {
+        sharedViewModel.friendshipRequestAcceptedSuccessfully.observe(viewLifecycleOwner, {
             if (it == true) {
                 viewModel.validateIfExistsOffer()
                 viewModel.getFriendshipRequests()
@@ -151,7 +148,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestPutSuccessfully() {
-        shareViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, {
+        sharedViewModel.friendshipRequestPutSuccessfully.observe(viewLifecycleOwner, {
             if (it == true) {
                 viewModel.validateIfExistsOffer()
                 viewModel.getFriendshipRequests()
@@ -160,7 +157,7 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun observeFriendshipRequestWsError() {
-        shareViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.friendshipRequestWsError.observe(viewLifecycleOwner, Observer {
             showError(it)
         })
 
@@ -234,15 +231,15 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
         friendshipRequestsAdapter =
             FriendshipRequestAdapter(object : FriendshipRequestAdapter.ClickListener {
                 override fun onRefuse(friendshipRequest: FriendShipRequest) {
-                    shareViewModel.refuseFriendshipRequest(friendshipRequest)
+                    sharedViewModel.refuseFriendshipRequest(friendshipRequest)
                 }
 
                 override fun onAccept(friendshipRequest: FriendShipRequest) {
-                    shareViewModel.acceptFriendshipRequest(friendshipRequest)
+                    sharedViewModel.acceptFriendshipRequest(friendshipRequest)
                 }
 
                 override fun onCancel(friendshipRequest: FriendShipRequest) {
-                    shareViewModel.cancelFriendshipRequest(friendshipRequest)
+                    sharedViewModel.cancelFriendshipRequest(friendshipRequest)
                 }
             }, childFragmentManager, handlerDialog, requireContext())
 
@@ -271,9 +268,9 @@ class AddContactFragment : BaseFragment(), SearchView.OnSearchView {
 
                 val request = viewModel.acceptOrRefuseRequest(contact, state)
                 if (state) {
-                    shareViewModel.acceptFriendshipRequest(request)
+                    sharedViewModel.acceptFriendshipRequest(request)
                 } else {
-                    shareViewModel.refuseFriendshipRequest(request)
+                    sharedViewModel.refuseFriendshipRequest(request)
                 }
 
             }

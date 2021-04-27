@@ -11,6 +11,7 @@
     <string name="text_delete_contact">Delete contact</string>
     <string name="text_explanation_camera_to_attachment_picture">To send a photo, allow NapoleoN to access your camera.</string>
     <string name="text_explanation_to_send_audio_attachment">To send an audio, allow NapoleoN to access your multimedia content.</string>
+    <string name="text_explanation_to_make_call">To make a call, allow NapoleoN to access your camera and mic.</string>
     <string name="text_delete_messages">Delete messages?</string>
     <string name="text_delete_message_for_me">Delete for me</string>
     <string name="text_delete_message_for_all">Delete for all</string>

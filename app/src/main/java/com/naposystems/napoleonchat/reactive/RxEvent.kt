@@ -90,7 +90,7 @@ class RxEvent {
 
     data class MultiDownloadStart(val attachmentEntity: AttachmentEntity)
 
-    class MultiDownloadTryNextAttachment()
+    class MultiDownloadTryNextAttachment
 
     data class MultiDownloadSuccess(val attachmentEntity: AttachmentEntity)
 

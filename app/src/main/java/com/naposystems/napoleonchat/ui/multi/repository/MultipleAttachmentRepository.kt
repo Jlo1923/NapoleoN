@@ -29,12 +29,13 @@ class MultipleAttachmentRepository @Inject constructor(
 
     override fun getFilesByFolder(
         folderParent: String,
+        folderName: String?,
         mapIds: Map<Int, Int>
     ): Flow<MultipleAttachmentState> = flow {
         withContext(Dispatchers.IO) {
             try {
                 emit(MultipleAttachmentState.Loading)
-                val files = mediaStore.getFilesByFolder(folderParent, mapIds)
+                val files = mediaStore.getFilesByFolder(folderParent, folderName, mapIds)
                 val items = files.map { MultipleAttachmentFileItemView(it) }
                 emit(MultipleAttachmentState.SuccessFiles(items))
             } catch (exception: Exception) {

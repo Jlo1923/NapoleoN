@@ -113,7 +113,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                                 numberAttachments = 0,
                                 selfDestructionAt = messageAndAttachment.messageEntity.selfDestructionAt,
                                 totalSelfDestructionAt = messageAndAttachment.messageEntity.totalSelfDestructionAt,
-                                messageType = Constants.MessageType.MESSAGES_GROUP_DATE.type
+                                messageType = Constants.MessageTextType.GROUP_DATE.type
                             ),
                             attachmentEntityList = arrayListOf(),
                             quoteEntity = null,
@@ -282,7 +282,6 @@ class MessageLocalDataSourceImp @Inject constructor(
 
         listMessages.let {
             updateMessageStatus(it, Constants.MessageStatus.UNREAD.status)
-
         }
     }
 
@@ -403,6 +402,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                 if (messageAndAttachment.attachmentEntityList.isNotEmpty()) {
                     messageAndAttachment.attachmentEntityList.forEach { attachmentEntity: AttachmentEntity ->
                         attachmentEntity.deleteFile(context)
+                        attachmentDao.deletedAttachment(attachmentEntity.webId)
                     }
                 }
             }

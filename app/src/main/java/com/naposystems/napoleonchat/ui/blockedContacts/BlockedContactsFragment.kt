@@ -6,7 +6,6 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,12 +20,9 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
-import dagger.android.support.AndroidSupportInjection
 import java.util.*
 import javax.inject.Inject
 
@@ -46,10 +42,7 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
     lateinit var handlerDialog: HandlerDialog
 
     private val viewModel: BlockedContactsViewModel by viewModels { viewModelFactory }
-    private val shareContactViewModel: ShareContactViewModel by activityViewModels { viewModelFactory }
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
-        viewModelFactory
-    }
+    private val contactSharedViewModel: ContactSharedViewModel by activityViewModels { viewModelFactory }
     private lateinit var binding: BlockedContactsFragmentBinding
     private lateinit var adapter: BlockedContactsAdapter
     private lateinit var mainActivity: MainActivity
@@ -88,7 +81,7 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        contactRepositoryShareViewModel.getContacts(
+        contactSharedViewModel.getContacts(
             Constants.FriendShipState.BLOCKED.state,
             Constants.LocationGetContact.BLOCKED.location
         )
@@ -206,7 +199,7 @@ class BlockedContactsFragment : BaseFragment(), SearchView.OnSearchView {
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.unblockContact(contact.id)
+            contactSharedViewModel.unblockContact(contact.id)
             showToast(requireContext(), getString(R.string.text_unblocked_contact))
         }
     }

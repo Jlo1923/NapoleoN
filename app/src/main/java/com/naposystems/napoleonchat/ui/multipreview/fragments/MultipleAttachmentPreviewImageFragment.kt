@@ -62,4 +62,9 @@ class MultipleAttachmentPreviewImageFragment(
         this.listener = listener
     }
 
+    override fun onPause() {
+        super.onPause()
+        binding.apply { imagePreview.fitToScreen() }
+    }
+
 }

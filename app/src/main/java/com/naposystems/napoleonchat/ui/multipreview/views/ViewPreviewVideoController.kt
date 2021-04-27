@@ -98,7 +98,7 @@ class ViewPreviewVideoController @JvmOverloads constructor(
 
     fun setMediaSource(media: MediaSource) {
         exoplayer.playWhenReady = false
-        exoplayer.repeatMode = Player.REPEAT_MODE_ALL
+        //exoplayer.repeatMode = Player.REPEAT_MODE_ALL
         exoplayer.seekTo(0, 1)
         exoplayer.prepare(media, false, false)
     }
@@ -143,7 +143,7 @@ class ViewPreviewVideoController @JvmOverloads constructor(
 
         //sentMessageReaded(false)
 
-        listener?.onVideoControllerEvent(ViewPreviewVideoEvent.RemoveFlagsKeepScreen)
+        listener?.onVideoControllerEvent(ViewPreviewVideoEvent.VideoEnded)
     }
 
     private fun handleOnPlayerStateReady(playWhenReady: Boolean) {

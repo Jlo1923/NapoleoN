@@ -12,12 +12,14 @@ import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadServic
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.SelectItemInTabLayout
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
@@ -39,7 +41,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private var isShowingOptions = true
     private var listFiles = mutableListOf<MultipleAttachmentFileItem>()
-    private var contact: ContactEntity? = null
+    private var contactEntity: ContactEntity? = null
     private var modeOnlyView: Boolean = false
 
     private val _state = MutableLiveData<MultipleAttachmentPreviewState>()
@@ -48,6 +50,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private val actions: SingleLiveEvent<MultipleAttachmentPreviewAction> = SingleLiveEvent()
     fun actions(): LiveData<MultipleAttachmentPreviewAction> = actions
+
+    private val modes: SingleLiveEvent<MultipleAttachmentPreviewMode> = SingleLiveEvent()
+    fun modes(): LiveData<MultipleAttachmentPreviewMode> = modes
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun initUi() {
@@ -125,7 +130,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    fun onDeleteElement(selectedIndexToDelete: Int) {
+    fun onDeleteElementInCreating(selectedIndexToDelete: Int) {
         removeFileFromListAndShowListInPager(selectedIndexToDelete)
         if (isTheLastFile()) {
             exitPreview()
@@ -135,16 +140,18 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun loadSelfDestructionTimeByIndex(position: Int) {
-        actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+        if (modeOnlyView.not()) {
+            actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+        }
     }
 
     fun validateMustMarkAsReaded(position: Int) {
         viewModelScope.launch {
             val attachment = listFiles[position].messageAndAttachment?.attachment
-            attachment?.let {
+            attachment?.let { attachment ->
                 val msgAttachment = listFiles[position].messageAndAttachment
                 msgAttachment?.let {
-                    if (it.isRead.not() && it.isMine == Constants.IsMine.NO.value) {
+                    if (attachment.status != Constants.AttachmentStatus.READED.status && it.isMine == Constants.IsMine.NO.value) {
                         it.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
                             it.attachment,
                             it.contactId
@@ -156,7 +163,69 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun setContact(contactEntity: ContactEntity) {
-        contact = contactEntity
+        this.contactEntity = contactEntity
+    }
+
+    fun sendMessageToRemote(
+        messageEntity: MessageEntity,
+        attachments: List<AttachmentEntity?>
+    ) {
+        if (messageEntity.mustSendToRemote()) {
+            viewModelScope.launch {
+                val messageResponse = repositoryMessages.sendMessage(messageEntity)
+                val attachmentsWithWebId =
+                    setMessageWebIdToAttachments(attachments, messageResponse)
+                messageResponse?.let { pairData ->
+                    pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
+                }
+            }
+        } else {
+            initUploadServiceForSendFiles(messageEntity, attachments)
+        }
+    }
+
+    fun defineModeOnlyViewInConversation(modeOnlyView: Boolean, message: String?) {
+        this.modeOnlyView = modeOnlyView
+        if (modeOnlyView) {
+            message?.let { modes.value = MultipleAttachmentPreviewMode.ModeView(it) }
+        } else {
+            modes.value = MultipleAttachmentPreviewMode.ModeCreate
+        }
+    }
+
+    fun onDeleteAttachment() {
+        val msgAndAttach = listFiles[0].messageAndAttachment
+        msgAndAttach?.let {
+            if (it.isMine == Constants.IsMine.NO.value) {
+                actions.value = MultipleAttachmentPreviewAction.RemoveAttachForReceiver
+            } else {
+                actions.value = MultipleAttachmentPreviewAction.RemoveAttachForSender
+            }
+        } ?: run {
+            actions.value = MultipleAttachmentPreviewAction.RemoveAttachInCreate
+        }
+    }
+
+    fun saveMessageAndAttachments(message: String) {
+        loading()
+        val itemMessage = getItemMessageToSend(message)
+        viewModelScope.launch {
+            try {
+                contactEntity?.let {
+                    repositoryMessages.apply {
+                        val messageEntity = insertMessageToContact(itemMessage)
+                        deleteMessageNotSent(it.id)
+                        val attachments = insertAttachmentsWithMsgId(listFiles, messageEntity.id)
+                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
+                            messageEntity,
+                            attachments
+                        )
+                    }
+                }
+            } catch (exception: Exception) {
+                actions.value = MultipleAttachmentPreviewAction.Exit
+            }
+        }
     }
 
     private fun showFilesAsPager() {
@@ -189,30 +258,17 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun defineDefaultSelfDestructionTime() {
-        val selfDestructionTime = repository.getSelfDestructTime()
-        listFiles.forEach {
-            it.selfDestruction = selfDestructionTime
-        }
-    }
-
-    fun saveMessageAndAttachments(message: String) {
-        loading()
-        val itemMessage = getItemMessageToSend(message)
-        viewModelScope.launch {
-            try {
-                contact?.let {
-                    repositoryMessages.apply {
-                        val messageEntity = insertMessageToContact(itemMessage)
-                        deleteMessageNotSent(it.id)
-                        val attachments = insertAttachmentsWithMsgId(listFiles, messageEntity.id)
-                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
-                            messageEntity,
-                            attachments
-                        )
+        contactEntity?.let {
+            viewModelScope.launch {
+                val selfDestructionTime =
+                    repository.getSelfDestructTimeAsIntByContact(contactId = it.id)
+                listFiles.forEach {
+                    if (selfDestructionTime == -1) {
+                        it.selfDestruction = 7
+                    } else {
+                        it.selfDestruction = selfDestructionTime
                     }
                 }
-            } catch (exception: Exception) {
-                actions.value = MultipleAttachmentPreviewAction.Exit
             }
         }
     }
@@ -234,31 +290,11 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             numberAttachments = listFiles.size,
             selfDestructTime = getHighestTimeInFiles(),
             quote = "",
-            contact = contact
+            contact = contactEntity
         )
     }
 
     private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
-
-    fun sendMessageToRemote(
-        messageEntity: MessageEntity,
-        attachments: List<AttachmentEntity?>
-    ) {
-        if (messageEntity.mustSendToRemote()) {
-            viewModelScope.launch {
-                val messageResponse = repositoryMessages.sendMessage(messageEntity)
-                val attachmentsWithWebId =
-                    setMessageWebIdToAttachments(attachments, messageResponse)
-                messageResponse?.let { pairData ->
-                    pairData.first?.let {
-                        sendMessageToRemote(it, attachmentsWithWebId)
-                    }
-                }
-            }
-        } else {
-            initUploadServiceForSendFiles(messageEntity, attachments)
-        }
-    }
 
     private fun initUploadServiceForSendFiles(
         messageEntity: MessageEntity,
@@ -276,9 +312,49 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         actions.value = MultipleAttachmentPreviewAction.ExitToConversation
     }
 
-    fun defineModeOnlyViewInConversation(modeOnlyView: Boolean) {
-        this.modeOnlyView = modeOnlyView
+    fun markAttachmentVideoAsRead(fileItem: MultipleAttachmentFileItem) {
+        viewModelScope.launch {
+            fileItem.messageAndAttachment?.let {
+                if (it.isMine == Constants.IsMine.NO.value) {
+                    repository.sentAttachmentReaded(fileItem)
+                }
+            }
+        }
     }
 
+    fun onDeleteAttachmentForUser(selectedIndexToDelete: Int) {
+        viewModelScope.launch {
+            val file = listFiles[selectedIndexToDelete]
+            file.messageAndAttachment?.let {
+                val isDelete = repository.deleteAttachmentLocally(it.attachment.webId)
+                if (isDelete) {
+                    removeFileFromListAndShowListInPager(selectedIndexToDelete)
+                }
+            }
+        }
+    }
+
+    fun onDeleteAttachmentForAll(selectedIndexToDelete: Int) {
+        viewModelScope.launch {
+            val file = listFiles[selectedIndexToDelete]
+            contactEntity?.let { contact ->
+                loading()
+                file.messageAndAttachment?.let {
+                    val isDelete = repository.deleteAttachmentLocally(it.attachment.webId)
+                    if (isDelete) {
+                        val contactId = contact.id
+                        val objectForDelete = DeleteMessagesReqDTO(
+                            userReceiver = contactId,
+                            attachmentsId = listOf(it.attachment.webId)
+                        )
+                        val response = repository.deleteMessagesForAll(objectForDelete)
+                        if (response.isSuccessful) {
+                            removeFileFromListAndShowListInPager(selectedIndexToDelete)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }

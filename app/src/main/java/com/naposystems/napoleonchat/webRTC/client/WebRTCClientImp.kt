@@ -1238,7 +1238,7 @@ class WebRTCClientImp
         }
     }
 
-    override fun disposeCallTest() {
+    override fun processDisposeCall() {
 
         try {
 
@@ -1252,7 +1252,9 @@ class WebRTCClientImp
 
             handlerMediaPlayerNotification.stopRingtone()
 
-            handlerMediaPlayerNotification.playEndTone()
+            if (NapoleonApplication.isCurrentOnCall) {
+                handlerMediaPlayerNotification.playEndTone()
+            }
 
             countDownEndCallBusy.cancel()
 
