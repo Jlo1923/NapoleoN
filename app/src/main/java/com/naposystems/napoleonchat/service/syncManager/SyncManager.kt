@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.service.syncManager
 
-import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationMessageListener
+import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
@@ -44,5 +44,5 @@ interface SyncManager {
     fun existAttachmentById(it: String): Boolean
 
 
-    fun setHandlerNotificationMessageListener(handlerNotificationMessageListener: HandlerNotificationMessageListener)
+    fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 }

@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
@@ -34,7 +35,7 @@ class HandlerNotificationMessageImp
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage,
     private val handlerNotification: HandlerNotification,
-) : HandlerNotificationMessage, HandlerNotificationMessageListener {
+) : HandlerNotificationMessage, GetMessagesSocketListener {
 
     companion object {
         const val SUMMARY_ID = 12345678
@@ -53,7 +54,7 @@ class HandlerNotificationMessageImp
     ) {
         Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
 
-        syncManager.setHandlerNotificationMessageListener(this)
+        syncManager.setGetMessagesSocketListener(this)
 
         if (dataFromNotification.containsKey(MESSAGE_ID)) {
             if (!validateExistMessageId(dataFromNotification.getValue(MESSAGE_ID))) {
@@ -174,7 +175,7 @@ class HandlerNotificationMessageImp
         }
     }
 
-    override fun emitClientConversation(listMessagesReceived: MessagesReqDTO) {
+    override fun emitSocketClientConversation(listMessagesReceived: MessagesReqDTO) {
         socketClient.emitClientConversation(listMessagesReceived)
     }
 

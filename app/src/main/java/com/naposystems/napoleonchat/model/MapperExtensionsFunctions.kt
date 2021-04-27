@@ -108,6 +108,17 @@ fun List<MessageResDTO>.toMessagesReqDTOFrom(mustStatus: Constants.StatusMustBe)
 fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Constants.StatusMustBe): MessagesReqDTO {
 
     val messages = filter {
+        it.attachmentEntityList.isEmpty()
+    }.map {
+        MessageDTO(
+            id = it.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = it.messageEntity.contactId,
+            status = mustStatus.status
+        )
+    }.toMutableList()
+
+    val attachments = filter {
         it.attachmentEntityList.isNotEmpty()
     }.flatMap { messageAndAttachmentRelation ->
 
@@ -123,6 +134,8 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Con
         }
 
     }
+
+    messages.addAll(attachments)
 
     return MessagesReqDTO(
         messages

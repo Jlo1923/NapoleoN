@@ -71,7 +71,7 @@ class SocketClientImp
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource
-) : SocketClient {
+) : SocketClient, GetMessagesSocketListener {
 
     private val moshi: Moshi by lazy { Moshi.Builder().build() }
     private var userId: Int = Constants.UserNotExist.USER_NO_EXIST.user
@@ -132,6 +132,8 @@ class SocketClientImp
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
         Timber.d("LLAMADA PASO: EN CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
+
+        syncManager.setGetMessagesSocketListener(this)
 
         userId = syncManager.getUserId()
 
@@ -1454,5 +1456,9 @@ class SocketClientImp
 
         return attachment != null
 
+    }
+
+    override fun emitSocketClientConversation(listMessagesReceived: MessagesReqDTO) {
+        emitClientConversation(listMessagesReceived)
     }
 }

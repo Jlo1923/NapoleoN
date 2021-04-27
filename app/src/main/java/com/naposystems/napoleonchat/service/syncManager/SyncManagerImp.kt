@@ -8,7 +8,7 @@ import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationMessageListener
+import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -57,7 +57,7 @@ class SyncManagerImp @Inject constructor(
         Moshi.Builder().build()
     }
 
-    private var handlerNotificationMessageListener: HandlerNotificationMessageListener? = null
+    private var getMessagesSocketListener: GetMessagesSocketListener? = null
 
     override fun getUserId(): Int {
 
@@ -70,8 +70,8 @@ class SyncManagerImp @Inject constructor(
 
     }
 
-    override fun setHandlerNotificationMessageListener(handlerNotificationMessageListener: HandlerNotificationMessageListener) {
-        this.handlerNotificationMessageListener = handlerNotificationMessageListener
+    override fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener) {
+        this.getMessagesSocketListener = getMessagesSocketListener
     }
 
     override fun getMyMessages(contactId: Int?) {
@@ -163,7 +163,7 @@ class SyncManagerImp @Inject constructor(
 
         notifyMessageReceived(listMessagesReceived)
 
-        handlerNotificationMessageListener?.emitClientConversation(listMessagesReceived)
+        getMessagesSocketListener?.emitSocketClientConversation(listMessagesReceived)
 
         contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
     }
