@@ -1252,7 +1252,9 @@ class WebRTCClientImp
 
             handlerMediaPlayerNotification.stopRingtone()
 
-            handlerMediaPlayerNotification.playEndTone()
+            if (NapoleonApplication.isCurrentOnCall) {
+                handlerMediaPlayerNotification.playEndTone()
+            }
 
             countDownEndCallBusy.cancel()
 
