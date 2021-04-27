@@ -419,6 +419,7 @@ class ConversationViewModel @Inject constructor(
         listMessageRelations.forEach {
             listReturn.add(it.messageEntity.webId)
         }
+        listMessageRelations
         return DeleteMessagesReqDTO(
             userReceiver = contactId,
             messagesId = listReturn

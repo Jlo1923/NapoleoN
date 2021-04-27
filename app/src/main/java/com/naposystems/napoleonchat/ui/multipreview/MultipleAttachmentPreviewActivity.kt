@@ -22,6 +22,9 @@ import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachment
 import com.naposystems.napoleonchat.ui.multipreview.listeners.ViewAttachmentOptionsListener
 import com.naposystems.napoleonchat.ui.multipreview.listeners.events.MultipleAttachmentRemoveEvent
 import com.naposystems.napoleonchat.ui.multipreview.listeners.events.ViewAttachmentOptionEvent
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_CREATE
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_RECEIVER
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_SENDER
 import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemoveItem
 import com.naposystems.napoleonchat.ui.multipreview.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
@@ -92,11 +95,24 @@ class MultipleAttachmentPreviewActivity
 
     override fun onRemoveAttachment(event: MultipleAttachmentRemoveEvent) {
         when (event) {
-            MultipleAttachmentRemoveEvent.OnRemoveForAll -> TODO()
-            MultipleAttachmentRemoveEvent.OnRemoveForRecipient -> TODO()
-            MultipleAttachmentRemoveEvent.OnRemoveForSender -> TODO()
+            MultipleAttachmentRemoveEvent.OnRemoveForAll -> removeAttachmentForAll(event)
+            MultipleAttachmentRemoveEvent.OnRemoveForTheUser -> removeAttachmentForUser(event)
             MultipleAttachmentRemoveEvent.OnSimpleRemove -> removeFileInCreating()
         }
+    }
+
+    private fun removeAttachmentForUser(event: MultipleAttachmentRemoveEvent) {
+        val selectedIndexFileToDelete = viewBinding.viewPagerAttachments.currentItem
+        viewModel.onDeleteAttachmentForUser(selectedIndexFileToDelete)
+    }
+
+    private fun removeAttachmentForAll(event: MultipleAttachmentRemoveEvent) {
+        val selectedIndexFileToDelete = viewBinding.viewPagerAttachments.currentItem
+        viewModel.onDeleteAttachmentForAll(selectedIndexFileToDelete)
+    }
+
+    override fun markAttachmentAsRead(fileItem: MultipleAttachmentFileItem) {
+        viewModel.markAttachmentVideoAsRead(fileItem)
     }
 
     private fun onChangeSelfDestruction() {
@@ -235,13 +251,13 @@ class MultipleAttachmentPreviewActivity
             ShowAttachmentOptions -> showAnimAttachmentOptions()
             ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
             HideFileTabs -> hideBottomTabs()
+            RemoveAttachInCreate -> showBottomDialogForRemove(getTextForDialogForRemoveAttach())
+            RemoveAttachForReceiver -> showBottomDialogForRemove(getTextForDialogForReceiver())
+            RemoveAttachForSender -> showBottomDialogForRemove(getTextForDialogForSender())
             is ShowSelectFolderName -> TODO()
             is SelectItemInTabLayout -> removeElementPager(action.indexItem)
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
             is SendMessageToRemote -> sendMessageToRemote(action)
-            RemoveAttachInCreate -> showBottomDialogForRemove(getTextForDialogForRemoveAttach())
-            RemoveAttachForReceiver -> showBottomDialogForRemove(getTextForDialogForReceiver())
-            RemoveAttachForSender -> showBottomDialogForRemove(getTextForDialogForSender())
         }
     }
 
@@ -264,7 +280,8 @@ class MultipleAttachmentPreviewActivity
             title = title,
             message = message,
             option1 = option1,
-            cancelText = cancel
+            cancelText = cancel,
+            modeDelete = MODE_CREATE
         )
     }
 
@@ -277,7 +294,8 @@ class MultipleAttachmentPreviewActivity
             title = title,
             message = message,
             option1 = option1,
-            cancelText = cancel
+            cancelText = cancel,
+            modeDelete = MODE_RECEIVER
         )
     }
 
@@ -292,7 +310,8 @@ class MultipleAttachmentPreviewActivity
             message = message,
             option1 = option1,
             option2 = option2,
-            cancelText = cancel
+            cancelText = cancel,
+            modeDelete = MODE_SENDER
         )
     }
 
