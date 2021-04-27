@@ -13,6 +13,7 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.MESSAGE_ID
@@ -33,7 +34,7 @@ class HandlerNotificationMessageImp
     private val syncManager: SyncManager,
     private val cryptoMessage: CryptoMessage,
     private val handlerNotification: HandlerNotification,
-) : HandlerNotificationMessage {
+) : HandlerNotificationMessage, HandlerNotificationMessageListener {
 
     companion object {
         const val SUMMARY_ID = 12345678
@@ -51,6 +52,8 @@ class HandlerNotificationMessageImp
         notification: RemoteMessage.Notification?
     ) {
         Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
+
+        syncManager.setHandlerNotificationMessageListener(this)
 
         if (dataFromNotification.containsKey(MESSAGE_ID)) {
             if (!validateExistMessageId(dataFromNotification.getValue(MESSAGE_ID))) {
@@ -169,6 +172,10 @@ class HandlerNotificationMessageImp
             )
             disposable.clear()
         }
+    }
+
+    override fun emitClientConversation(listMessagesReceived: MessagesReqDTO) {
+        socketClient.emitClientConversation(listMessagesReceived)
     }
 
 }

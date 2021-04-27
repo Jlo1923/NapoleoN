@@ -1238,7 +1238,7 @@ class WebRTCClientImp
         }
     }
 
-    override fun disposeCallTest() {
+    override fun processDisposeCall() {
 
         try {
 

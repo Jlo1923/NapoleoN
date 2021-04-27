@@ -89,7 +89,7 @@ class SocketClientImp
             Timber.d("CountDown finish")
             if (NapoleonApplication.isCurrentOnCall) {
                 if (socketEventListener != null)
-                    socketEventListener.disposeCallTest()
+                    socketEventListener.processDisposeCall()
             }
         }
 
@@ -477,7 +477,7 @@ class SocketClientImp
     // region Region Escuchadores de Eventos
     private fun handlerStateDisconnectedSocket() {
         if (socketEventListener != null) {
-            socketEventListener.disposeCallTest()
+            socketEventListener.processDisposeCall()
             Timber.d("LLAMADA PASO: AQUI FINALIZO LLAMADA")
         }
     }

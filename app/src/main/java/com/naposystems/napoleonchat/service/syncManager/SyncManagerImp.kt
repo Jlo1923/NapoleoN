@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationMessageListener
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -56,6 +57,8 @@ class SyncManagerImp @Inject constructor(
         Moshi.Builder().build()
     }
 
+    private var handlerNotificationMessageListener: HandlerNotificationMessageListener? = null
+
     override fun getUserId(): Int {
 
         val user = userLocalDataSource.getMyUser()
@@ -65,6 +68,10 @@ class SyncManagerImp @Inject constructor(
         else
             return Constants.UserNotExist.USER_NO_EXIST.user
 
+    }
+
+    override fun setHandlerNotificationMessageListener(handlerNotificationMessageListener: HandlerNotificationMessageListener) {
+        this.handlerNotificationMessageListener = handlerNotificationMessageListener
     }
 
     override fun getMyMessages(contactId: Int?) {
@@ -151,7 +158,12 @@ class SyncManagerImp @Inject constructor(
             }
         }
 
-        notifyMessageReceived(listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED))
+        val listMessagesReceived =
+            listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED)
+
+        notifyMessageReceived(listMessagesReceived)
+
+        handlerNotificationMessageListener?.emitClientConversation(listMessagesReceived)
 
         contactId?.let { RxBus.publish(RxEvent.NewMessageEventForCounter(contactId)) }
     }
@@ -411,6 +423,8 @@ class SyncManagerImp @Inject constructor(
             try {
                 Timber.d("**Paso 9.1: Proceso consumir recibido del item $messagesReqDTO")
                 napoleonApi.notifyMessageReceived(messagesReqDTO)
+
+
             } catch (e: Exception) {
                 Timber.e(e)
             }
