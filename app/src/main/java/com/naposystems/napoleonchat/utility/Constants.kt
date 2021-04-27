@@ -158,6 +158,10 @@ object Constants {
         //endregion
     }
 
+    object StatusMessage {
+        const val FAILED = 5
+    }
+
     object ValidConnection {
         const val REQUEST_PIN = "ping -c 1 www.google.com"
     }
