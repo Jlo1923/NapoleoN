@@ -80,9 +80,10 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         theAttachment?.let {
             when (it.status) {
                 SENDING.status -> uiModeProcessing()
-                SENT.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
+                SENT.status, DOWNLOAD_COMPLETE.status, READED.status, NOT_DOWNLOADED.status,
+                DOWNLOAD_ERROR.status -> uiModeDone()
                 ERROR.status -> uiModeError()
-                NOT_DOWNLOADED.status -> launchDownload()
+                //NOT_DOWNLOADED.status -> launchDownload()
                 else -> Unit
             }
         }
