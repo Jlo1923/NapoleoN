@@ -135,7 +135,7 @@ class SyncManagerImp @Inject constructor(
          */
         listAttachments.forEach { attachment ->
             attachmentLocalDataSource.apply {
-                if (this.existAttachment(attachment.id.toString()).not()) {
+                if (this.existAttachmentByWebId(attachment.webId).not()) {
                     this.insertAttachments(listOf(attachment))
                 }
             }
@@ -423,8 +423,6 @@ class SyncManagerImp @Inject constructor(
             try {
                 Timber.d("**Paso 9.1: Proceso consumir recibido del item $messagesReqDTO")
                 napoleonApi.notifyMessageReceived(messagesReqDTO)
-
-
             } catch (e: Exception) {
                 Timber.e(e)
             }
@@ -503,7 +501,7 @@ class SyncManagerImp @Inject constructor(
     override fun existMessageById(id: String): Boolean = messageLocalDataSource.existMessage(id)
 
     override fun existAttachmentById(id: String): Boolean =
-        attachmentLocalDataSource.existAttachment(id)
+        attachmentLocalDataSource.existAttachmentByWebId(id)
 
     override fun validateMessageType(messagesWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
