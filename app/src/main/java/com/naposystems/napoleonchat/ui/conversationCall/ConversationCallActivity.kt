@@ -29,6 +29,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
+import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
@@ -364,7 +365,7 @@ class ConversationCallActivity :
 
         Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
 
-        if (webRTCClient.isActiveCall.not()) {
+        if (NapoleonApplication.statusCall.isNoCall()) {
             Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
             when (callModel.typeCall) {
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
@@ -379,12 +380,10 @@ class ConversationCallActivity :
                     viewModel.cancelCall(callModel)
                 }
             }
-        } else {
-            Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
-            webRTCClient.emitHangUp()
         }
 
-        webRTCClient.hideNotification()
+        Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
+        webRTCClient.emitHangUp()
 
         webRTCClient.disposeCall()
 

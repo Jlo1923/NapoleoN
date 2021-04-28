@@ -197,14 +197,13 @@ class SocketClientImp
 
                         listenCallEvents(channelName)
 
-
                         Timber.d("LLAMADA PASO 2: ${NapoleonApplication.statusCall}")
 
                         if (NapoleonApplication.statusCall.isNoCall()) {
 
                             Timber.d("LLAMADA PASO 2: NO Esta en llamada")
 
-                            NapoleonApplication.statusCall = StatusCallEnum.STATUS_PROCESSING_CALL
+//                            NapoleonApplication.statusCall = StatusCallEnum.STATUS_PROCESSING_CALL
 
                             when (callModel.typeCall) {
                                 Constants.TypeCall.IS_INCOMING_CALL -> {

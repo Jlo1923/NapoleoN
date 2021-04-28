@@ -82,9 +82,8 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            if (isActiveCall.not()) {
-                disposeCall()
-            }
+            disposeCall()
+
         }
 
         override fun onTick(millisUntilFinished: Long) = Unit
