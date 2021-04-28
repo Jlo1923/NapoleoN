@@ -55,11 +55,11 @@ class MultipleAttachmentPreviewVideoFragment(
             ViewPreviewVideoEvent.AddFlagsKeepScreen -> addFlagsKeepScreen()
             ViewPreviewVideoEvent.PauseVideo -> uiInVideoPause()
             ViewPreviewVideoEvent.PlayingVideo -> uiInVideoPlaying()
-            ViewPreviewVideoEvent.VideoEnded -> uiInVideInit()
+            ViewPreviewVideoEvent.VideoEnded -> uiInVideoInit()
         }
     }
 
-    private fun uiInVideInit() {
+    private fun uiInVideoInit() {
         removeFlagsKeepScreen()
         configVideoView()
     }
@@ -108,7 +108,10 @@ class MultipleAttachmentPreviewVideoFragment(
 
     private fun uiInVideoPause() = binding.root.postDelayed({
         hidePlayerOptions()
-        listener?.changeVisibilityOptions()
+        listener?.let {
+            it.changeVisibilityOptions()
+            it.markAttachmentAsRead(file)
+        }
     }, 100)
 
     private fun addFlagsKeepScreen() {

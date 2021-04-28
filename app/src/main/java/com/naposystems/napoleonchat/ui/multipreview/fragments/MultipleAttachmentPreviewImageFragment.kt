@@ -64,9 +64,7 @@ class MultipleAttachmentPreviewImageFragment(
 
     override fun onPause() {
         super.onPause()
-        binding.apply {
-            imagePreview.fitToScreen()
-        }
+        binding.apply { imagePreview.fitToScreen() }
     }
 
 }

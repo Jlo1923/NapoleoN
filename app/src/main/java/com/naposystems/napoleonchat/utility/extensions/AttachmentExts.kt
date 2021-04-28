@@ -40,7 +40,7 @@ fun ItemMessage.getMessageEntityForCreate(): MessageEntity {
         isMine = Constants.IsMine.YES.value,
         status = Constants.MessageStatus.SENDING.status,
         numberAttachments = numberAttachments,
-        messageType = Constants.MessageType.MESSAGE.type,
+        messageType = Constants.MessageTextType.NORMAL.type,
         selfDestructionAt = selfDestructTime
     )
 }
@@ -91,7 +91,7 @@ fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(
         origin = Constants.AttachmentOrigin.GALLERY.origin,
         thumbnailUri = "",
         status = Constants.AttachmentStatus.SENDING.status,
-        duration = selfDestruction.toLong(),
+        selfDestructionAt = selfDestruction,
         extension = this.getExtensionByType()
     )
 
@@ -100,8 +100,8 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     quoted = "",
     body = getBody(cryptoMessage),
     numberAttachments = numberAttachments,
-    destroy = selfDestructionAt,
-    messageType = Constants.MessageType.MESSAGE.type,
+    destroy = 7,
+    messageType = Constants.MessageTextType.NORMAL.type,
     uuidSender = uuid
 )
 

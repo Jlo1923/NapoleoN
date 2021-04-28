@@ -8,6 +8,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.napoleonchat.databinding.FragmentMultipleAttachmentRemoveAttachmentDialogBinding
 import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachmentRemoveListener
 import com.naposystems.napoleonchat.ui.multipreview.listeners.events.MultipleAttachmentRemoveEvent
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_CREATE
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_RECEIVER
+import com.naposystems.napoleonchat.ui.multipreview.model.MODE_SENDER
 import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemoveItem
 import com.naposystems.napoleonchat.utility.extensions.hide
 
@@ -56,9 +59,21 @@ class MultipleAttachmentRemoveAttachmentDialogFragment(
 
         viewBinding.apply {
             buttonActionPrimary.setOnClickListener {
-                listener.onRemoveAttachment(MultipleAttachmentRemoveEvent.OnSimpleRemove)
+                when (itemTexts.modeDelete) {
+                    MODE_CREATE -> listener.onRemoveAttachment(MultipleAttachmentRemoveEvent.OnSimpleRemove)
+                    MODE_RECEIVER, MODE_SENDER -> listener.onRemoveAttachment(
+                        MultipleAttachmentRemoveEvent.OnRemoveForTheUser
+                    )
+                }
+
                 dismiss()
             }
+
+            buttonActionSecondary.setOnClickListener {
+                listener.onRemoveAttachment(MultipleAttachmentRemoveEvent.OnRemoveForAll)
+                dismiss()
+            }
+
             buttonActionCancel.setOnClickListener {
                 dismiss()
             }

@@ -34,8 +34,6 @@ class MultipleUploadService : Service() {
     private lateinit var napoleonApplication: NapoleonApplication
     private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING_MULTI
     private val compositeDisposable = CompositeDisposable()
-    private var attachmentsSentCount = 0
-    private var attachmentsPendingCount = 0
     lateinit var attachmentList: List<AttachmentEntity>
     lateinit var currentMessage: MessageEntity
 

@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.model
 
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
@@ -45,7 +46,7 @@ fun List<NewMessageEventMessageRes>.toMessagesReqDTO(mustStatus: Constants.Statu
     }.map {
         MessageDTO(
             id = it.id,
-            type = Constants.MessageTypeByStatus.MESSAGE.type,
+            type = Constants.MessageType.TEXT.type,
             user = it.userAddressee,
             status = mustStatus.status
         )
@@ -78,7 +79,7 @@ fun List<MessageResDTO>.toMessagesReqDTOFrom(mustStatus: Constants.StatusMustBe)
     }.map {
         MessageDTO(
             id = it.id,
-            type = Constants.MessageTypeByStatus.MESSAGE.type,
+            type = Constants.MessageType.TEXT.type,
             user = it.userAddressee,
             status = mustStatus.status
         )
@@ -102,6 +103,55 @@ fun List<MessageResDTO>.toMessagesReqDTOFrom(mustStatus: Constants.StatusMustBe)
         messages
     )
 
+}
+
+fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Constants.StatusMustBe): MessagesReqDTO {
+
+    val messages = filter {
+        it.attachmentEntityList.isEmpty()
+    }.map {
+        MessageDTO(
+            id = it.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = it.messageEntity.contactId,
+            status = mustStatus.status
+        )
+    }.toMutableList()
+
+    val attachments = filter {
+        it.attachmentEntityList.isNotEmpty()
+    }.flatMap { messageAndAttachmentRelation ->
+
+        val contactId = messageAndAttachmentRelation.messageEntity.contactId
+
+        messageAndAttachmentRelation.attachmentEntityList.map { attachmentEntity ->
+            MessageDTO(
+                id = attachmentEntity.webId,
+                type = Constants.MessageType.ATTACHMENT.type,
+                user = contactId,
+                status = mustStatus.status
+            )
+        }
+
+    }
+
+    messages.addAll(attachments)
+
+    return MessagesReqDTO(
+        messages
+    )
+
+}
+
+fun List<MessageAttachmentRelation>.toMessageResDto(mustStatus: Constants.StatusMustBe): List<MessageDTO> {
+    return map {
+        MessageDTO(
+            id = it.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = it.contact?.let { it.id }?.run { 0 },
+            status = mustStatus.status
+        )
+    }
 }
 
 fun AttachmentEntity.toAttachmentResDTO(): AttachmentResDTO {
@@ -129,7 +179,7 @@ fun mappingMessagesDto(
 
     return MessageDTO(
         id = attachment.id,
-        type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+        type = Constants.MessageType.ATTACHMENT.type,
         user = message.userAddressee,
         status = mustStatus.status
     )
@@ -148,7 +198,7 @@ fun mappingMessagesDtoFrom(
 
     return MessageDTO(
         id = attachment.id,
-        type = Constants.MessageTypeByStatus.ATTACHMENT.type,
+        type = Constants.MessageType.ATTACHMENT.type,
         user = message.userAddressee,
         status = mustStatus.status
     )
@@ -157,7 +207,7 @@ fun mappingMessagesDtoFrom(
 
 fun MessagesResDTO.extractIdsMessages(): List<String> {
     return messages.filter {
-        it.type == Constants.MessageTypeByStatus.MESSAGE.type
+        it.type == Constants.MessageType.TEXT.type
     }.map {
         it.id
     }
@@ -165,7 +215,7 @@ fun MessagesResDTO.extractIdsMessages(): List<String> {
 
 fun MessagesResDTO.extractIdsAttachments(): List<String> {
     return messages.filter {
-        it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+        it.type == Constants.MessageType.ATTACHMENT.type
     }.map {
         it.id
     }

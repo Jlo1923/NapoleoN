@@ -282,7 +282,7 @@ class ConversationFragment
             if (viewHolder.adapterPosition >= 0) {
                 conversationAdapter.getMessageAndAttachment(viewHolder.adapterPosition)
                     ?.let { messageAndAttachment ->
-                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
+                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageTextType.NORMAL.type &&
                             (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
                                     messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
                                     messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
@@ -1274,7 +1274,7 @@ class ConversationFragment
                 }.toList().count()
 
                 val quantitySystemMessage = listMessageAndAttachment.filter {
-                    it.messageEntity.messageType == Constants.MessageType.NEW_CONTACT.type
+                    it.messageEntity.messageType == Constants.MessageTextType.NEW_CONTACT.type
                 }.toList().count()
 
                 actionMode.hideCopyButton = false
@@ -2301,7 +2301,7 @@ class ConversationFragment
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
-            //putParcelable(MULTI_EXTRA_CONTACT, contact)
+            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
             action.message?.let { putString(MESSAGE_TEXT, it) }

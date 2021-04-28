@@ -282,7 +282,7 @@ class ConversationAdapter(
 
             return when (conversation.messageEntity.messageType) {
 
-                Constants.MessageType.MESSAGE.type -> {
+                Constants.MessageTextType.NORMAL.type -> {
                     /**
                      * Podemos tener distintos casos,
                      * sin Attachment
@@ -295,10 +295,10 @@ class ConversationAdapter(
                         else -> getItemForTwoOrMoreAttachments(conversation)
                     }
                 }
-                Constants.MessageType.MISSED_CALL.type,
-                Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
-                Constants.MessageType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
-                Constants.MessageType.MESSAGES_GROUP_DATE.type -> TYPE_GROUP_DATE_MESSAGES
+                Constants.MessageTextType.MISSED_CALL.type,
+                Constants.MessageTextType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
+                Constants.MessageTextType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
+                Constants.MessageTextType.GROUP_DATE.type -> TYPE_GROUP_DATE_MESSAGES
                 else -> {
                     if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE

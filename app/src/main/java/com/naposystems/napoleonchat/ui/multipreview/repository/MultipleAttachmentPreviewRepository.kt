@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
 import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityWithFile
 import com.naposystems.napoleonchat.utility.extensions.toMessageReqDto
+import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
@@ -39,9 +40,14 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
         listFiles: MutableList<MultipleAttachmentFileItem>,
         messageId: Int
     ): List<AttachmentEntity?> {
-        val attachments = listFiles.map { fileItem ->
-            val file = getFileFromFileItem(fileItem)
-            file?.let { fileItem.toAttachmentEntityWithFile(it, fileItem.selfDestruction) }
+        val attachments = listFiles.map { multipleAttachmentFile ->
+            val file = getFileFromFileItem(multipleAttachmentFile)
+            file?.let {
+                multipleAttachmentFile.toAttachmentEntityWithFile(
+                    it,
+                    multipleAttachmentFile.selfDestruction
+                )
+            }
         }
         attachments.forEach {
             it?.let {
@@ -55,20 +61,24 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
 
     override suspend fun sendMessage(messageEntity: MessageEntity): Pair<MessageEntity?, String>? {
 
-        val messageReqDTO = messageEntity.toMessageReqDto(cryptoMessage)
-        val messageResponse = repository.sendMessage(messageReqDTO)
+        try {
+            val messageReqDTO = messageEntity.toMessageReqDto(cryptoMessage)
+            val messageResponse = repository.sendMessage(messageReqDTO)
 
-        if (messageResponse.isSuccessful) {
-            return Pair(
-                MessageResDTO.toMessageEntity(
-                    messageEntity,
-                    messageResponse.body()!!,
-                    Constants.IsMine.YES.value
-                ).apply {
-                    status = SENT.status
-                },
-                messageResponse.body()?.id ?: ""
-            )
+            if (messageResponse.isSuccessful) {
+                return Pair(
+                    MessageResDTO.toMessageEntity(
+                        messageEntity,
+                        messageResponse.body()!!,
+                        Constants.IsMine.YES.value
+                    ).apply {
+                        status = SENT.status
+                    },
+                    messageResponse.body()?.id ?: ""
+                )
+            }
+        } catch (exception: Exception) {
+            return null
         }
         return null
     }

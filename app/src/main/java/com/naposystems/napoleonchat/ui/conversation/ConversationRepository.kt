@@ -304,9 +304,11 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.insertListMessage(messageEntityList)
     }
 
+    //actualizar tiempo de autodestrucción para los mensajes fallidos y enviados no leídos 
     override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
         when (messageEntity.status) {
+//            Constants.MessageStatus.ERROR.status -> {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
@@ -366,7 +368,7 @@ class ConversationRepository @Inject constructor(
             val messagesRead = listIds.map {
                 MessageDTO(
                     id = it,
-                    type = Constants.MessageTypeByStatus.MESSAGE.type,
+                    type = Constants.MessageType.TEXT.type,
                     user = contactId,
                     status = Constants.StatusMustBe.READED.status
                 )
@@ -435,7 +437,7 @@ class ConversationRepository @Inject constructor(
         }.map {
             MessageDTO(
                 user = contactId,
-                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                type = Constants.MessageType.TEXT.type,
                 status = Constants.StatusMustBe.READED.status,
                 id = it
             )
@@ -808,7 +810,7 @@ class ConversationRepository @Inject constructor(
                     MessageDTO(
                         id = messageAndAttachmentRelation.messageEntity.webId,
                         status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = messageAndAttachmentRelation.messageEntity.contactId
                     )
                 )
@@ -849,7 +851,7 @@ class ConversationRepository @Inject constructor(
                             MessageDTO(
                                 id = messageAttachmentRelation.messageEntity.webId,
                                 status = Constants.StatusMustBe.READED.status,
-                                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                                type = Constants.MessageType.TEXT.type,
                                 user = messageAttachmentRelation.messageEntity.contactId
                             )
                         )

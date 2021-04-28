@@ -31,7 +31,7 @@ interface SocketEventListener {
     fun contactHasHangup(channelName: String)
     //endregion
 
-    fun disposeCallTest()
+    fun processDisposeCall()
 
 }
 

@@ -71,7 +71,7 @@ class SocketClientImp
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource
-) : SocketClient {
+) : SocketClient, GetMessagesSocketListener {
 
     private val moshi: Moshi by lazy { Moshi.Builder().build() }
     private var userId: Int = Constants.UserNotExist.USER_NO_EXIST.user
@@ -89,7 +89,7 @@ class SocketClientImp
             Timber.d("CountDown finish")
             if (NapoleonApplication.isCurrentOnCall) {
                 if (socketEventListener != null)
-                    socketEventListener.disposeCallTest()
+                    socketEventListener.processDisposeCall()
             }
         }
 
@@ -132,6 +132,8 @@ class SocketClientImp
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
         Timber.d("LLAMADA PASO: EN CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
+
+        syncManager.setGetMessagesSocketListener(this)
 
         userId = syncManager.getUserId()
 
@@ -477,7 +479,7 @@ class SocketClientImp
     // region Region Escuchadores de Eventos
     private fun handlerStateDisconnectedSocket() {
         if (socketEventListener != null) {
-            socketEventListener.disposeCallTest()
+            socketEventListener.processDisposeCall()
             Timber.d("LLAMADA PASO: AQUI FINALIZO LLAMADA")
         }
     }
@@ -859,7 +861,7 @@ class SocketClientImp
                     contactsToDelete.forEach { contact ->
                         messageLocalDataSource.deleteMessageByType(
                             contact.id,
-                            Constants.MessageType.NEW_CONTACT.type
+                            Constants.MessageTextType.NEW_CONTACT.type
                         )
 
                         RxBus.publish(RxEvent.DeleteChannel(contact))
@@ -912,7 +914,7 @@ class SocketClientImp
 
                                     syncManager.updateAttachmentsStatus(
                                         ids,
-                                        Constants.AttachmentStatus.DOWNLOADING.status
+                                        Constants.AttachmentStatus.RECEIVED.status
                                     )
 
                                 }
@@ -1006,7 +1008,7 @@ class SocketClientImp
                                 //Seccion Actualizar MESSAGE UNREAD
                                 messages?.filter {
                                     it.status == Constants.MessageEventType.UNREAD.status &&
-                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                            it.type == Constants.MessageType.TEXT.type
                                 }?.map {
                                     it.id
                                 }?.let {
@@ -1019,7 +1021,7 @@ class SocketClientImp
                                 //Seccion Actualizar MESSAGE READED
                                 messages?.filter {
                                     it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.MESSAGE.type
+                                            it.type == Constants.MessageType.TEXT.type
                                 }?.map {
                                     it.id
                                 }?.let {
@@ -1039,26 +1041,26 @@ class SocketClientImp
                                 //Seccion Actualizar ATTACHMENT UNREAD
                                 attachments?.filter {
                                     it.status == Constants.MessageEventType.UNREAD.status &&
-                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                            it.type == Constants.MessageType.ATTACHMENT.type
                                 }?.map {
                                     it.id
                                 }?.let {
                                     syncManager.updateAttachmentsStatus(
                                         it,
-                                        Constants.MessageStatus.UNREAD.status
+                                        Constants.AttachmentStatus.RECEIVED.status
                                     )
                                 }
 
                                 //Seccion Actualizar ATTACHMENT READED
                                 attachments?.filter {
                                     it.status == Constants.MessageEventType.READ.status &&
-                                            it.type == Constants.MessageTypeByStatus.ATTACHMENT.type
+                                            it.type == Constants.MessageType.ATTACHMENT.type
                                 }?.map {
                                     it.id
                                 }?.let {
                                     syncManager.validateMessageType(
                                         it,
-                                        Constants.MessageStatus.READED.status
+                                        Constants.AttachmentStatus.READED.status
                                     )
                                 }
 
@@ -1454,5 +1456,9 @@ class SocketClientImp
 
         return attachment != null
 
+    }
+
+    override fun emitSocketClientConversation(listMessagesReceived: MessagesReqDTO) {
+        emitClientConversation(listMessagesReceived)
     }
 }

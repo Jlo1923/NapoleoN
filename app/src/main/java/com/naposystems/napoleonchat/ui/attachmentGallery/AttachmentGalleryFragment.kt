@@ -46,7 +46,7 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
     override lateinit var viewModelFactory: ViewModelFactory
 
     //TODO: Revisar este ViewModel
-    private val viewModel: AttachmentGalleryViewModel by viewModels {
+    private val attachmentGalleryViewModel: AttachmentGalleryViewModel by viewModels {
         viewModelFactory
     }
 
@@ -84,7 +84,6 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
 
     private fun setupAdapter() {
         adapter = AttachmentGalleryAdapter(this)
-
         binding.recyclerViewGalleryItems.adapter = adapter
     }
 

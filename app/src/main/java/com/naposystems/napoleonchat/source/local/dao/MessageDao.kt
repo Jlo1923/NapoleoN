@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -255,16 +256,17 @@ interface MessageDao {
     //TODO: Pasar el estado de fallido a una constante
     @Query(
         " DELETE FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " WHERE ${DBConstants.Message.COLUMN_STATUS} != 5 AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
+                " WHERE  ${DBConstants.Message.COLUMN_STATUS} != 5  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID})"
+                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) "
     )
     suspend fun deleteDuplicatesMessages()
 
-    @Query("UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-            "SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16)) " +
-            "WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5")
+    @Query(
+        "UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16))" +
+                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5"
+    )
     suspend fun addUUID()
 
     @Query("SELECT * FROM message WHERE id=:id")

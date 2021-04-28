@@ -113,7 +113,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                                 numberAttachments = 0,
                                 selfDestructionAt = messageAndAttachment.messageEntity.selfDestructionAt,
                                 totalSelfDestructionAt = messageAndAttachment.messageEntity.totalSelfDestructionAt,
-                                messageType = Constants.MessageType.MESSAGES_GROUP_DATE.type
+                                messageType = Constants.MessageTextType.GROUP_DATE.type
                             ),
                             attachmentEntityList = arrayListOf(),
                             quoteEntity = null,
@@ -282,7 +282,6 @@ class MessageLocalDataSourceImp @Inject constructor(
 
         listMessages.let {
             updateMessageStatus(it, Constants.MessageStatus.UNREAD.status)
-
         }
     }
 
@@ -423,6 +422,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.deleteMessageByType(contactId, type)
     }
 
+    //Función para limpiar la conversación de mensajes exitosos duplicados
     override suspend fun deleteDuplicatesMessages() {
         return messageDao.deleteDuplicatesMessages()
     }
