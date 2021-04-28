@@ -13,6 +13,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -55,6 +56,8 @@ class FriendShipActionSharedViewModel
             try {
                 val response = repository.acceptFriendshipRequest(friendShipRequest)
 
+                val uuidToSend = UUID.randomUUID().toString()
+
                 if (response.isSuccessful) {
                     repository.addContact(friendShipRequest)
                     _friendshipRequestAcceptedSuccessfully.value = true
@@ -67,7 +70,8 @@ class FriendShipActionSharedViewModel
                         body = body,
                         numberAttachments = 0,
                         destroy = Constants.SelfDestructTime.EVERY_SEVEN_DAY.time,
-                        messageType = Constants.MessageTextType.NEW_CONTACT.type
+                        messageType = Constants.MessageTextType.NEW_CONTACT.type,
+                        uuidSender = uuidToSend
                     )
 
                     val responseMessage = repository.sendNewContactMessage(messageReqDTO)
@@ -80,7 +84,7 @@ class FriendShipActionSharedViewModel
                         val message = MessageEntity(
                             id = 0,
                             webId = "",
-                            uuid = null,
+                            uuid = uuidToSend,
                             body = body,
                             quoted = "",
                             contactId = friendShipRequest.contact.id,

@@ -493,7 +493,7 @@ class ConversationViewModel @Inject constructor(
                         numberAttachments = 1,
                         destroy = selfAutoDestruction,
                         messageType = Constants.MessageTextType.NORMAL.type,
-                        uuidSender = messageEntity.uuid
+                        uuidSender = messageEntity.uuid ?: UUID.randomUUID().toString()
                     )
 
                     val messageResponse = repository.sendMessage(messageReqDTO)
@@ -625,7 +625,7 @@ class ConversationViewModel @Inject constructor(
                     numberAttachments = 0,
                     destroy = selfDestructTime,
                     messageType = Constants.MessageTextType.NORMAL.type,
-                    uuidSender = messageEntity.uuid
+                    uuidSender = messageEntity.uuid ?: UUID.randomUUID().toString()
                 )
 
                 _stateMessage.value = StateMessage.Start(messageEntity.id)

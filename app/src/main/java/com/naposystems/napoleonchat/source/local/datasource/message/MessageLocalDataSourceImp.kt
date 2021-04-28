@@ -102,7 +102,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                             MessageEntity(
                                 id = -1,
                                 webId = "",
-                                uuid = null,
+                                uuid = UUID.randomUUID().toString(),
                                 body = dayMessage,
                                 quoted = "",
                                 contactId = messageAndAttachment.messageEntity.contactId,

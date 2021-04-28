@@ -11,5 +11,5 @@ data class MessageReqDTO(
     @Json(name = "number_attachments") val numberAttachments: Int,
     @Json(name = "destroy") val destroy: Int,
     @Json(name = "type_message") val messageType: Int,
-    @Json(name = "uuid_sender") val uuidSender: String? = null
+    @Json(name = "uuid_sender") val uuidSender: String
 )
