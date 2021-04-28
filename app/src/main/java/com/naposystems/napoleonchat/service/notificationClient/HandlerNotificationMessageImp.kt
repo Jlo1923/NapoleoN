@@ -67,6 +67,7 @@ class HandlerNotificationMessageImp
         if (socketClient.isConnected()) {
             processQueueMessagesNotifications()
         } else {
+            Timber.d("LLAMADA PASO 3: HANDLER MESSAGE")
             socketClient.connectSocket()
             listenConnectChannel()
         }

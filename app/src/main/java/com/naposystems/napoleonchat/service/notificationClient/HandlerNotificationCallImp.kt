@@ -12,9 +12,7 @@ class HandlerNotificationCallImp
 
     override fun handlerCall(callModel: CallModel) {
 
-        Timber.d("LLAMADA PASO 3: EN HANDLER CALL $callModel")
-
-        Timber.d("LLAMADA PASO 3: EN HANDLER webRTCClient $webRTCClient")
+        Timber.d("LLAMADA PASO 2: EN HANDLER CALL $callModel")
 
         webRTCClient.connectSocket(
             mustSubscribeToPresenceChannel = true,

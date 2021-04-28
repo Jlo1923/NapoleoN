@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificati
 import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -82,25 +83,35 @@ class ConversationCallActivity :
 
         AndroidInjection.inject(this)
 
+        Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
+
         NapoleonApplication.isShowingCallActivity = true
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
-        if (webRTCClient.isActiveCall.not())
-            webRTCClient.reInit()
-        else {
-            showTimer()
-            enableControls()
-        }
+        when (NapoleonApplication.statusCall) {
 
-        Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
+            StatusCallEnum.STATUS_NO_CALL -> {
+                Timber.d("LLAMADA PASO 1: reinicia valores")
+                webRTCClient.reInit()
+            }
+
+            StatusCallEnum.STATUS_CONNECTED_CALL -> {
+                Timber.d("LLAMADA PASO 1: volviendo de una llamada previamente conectada")
+                showTimer()
+                enableControls()
+            }
+
+            StatusCallEnum.STATUS_PROCESSING_CALL -> {
+                Timber.d("LLAMADA PASO 1: Procesando llamada")
+            }
+        }
 
         webRTCClient.setWebRTCClientListener(this)
 
         getExtras()
 
         if (callModel.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-            NapoleonApplication.isCurrentOnCall = true
             Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE SUSCRIBIENDOSE AL CANAL DE PRESENCIA")
             webRTCClient.subscribeToPresenceChannel()
         }
@@ -602,8 +613,6 @@ class ConversationCallActivity :
     override fun callEnded() {
         Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
         NapoleonApplication.isShowingCallActivity = false
-        NapoleonApplication.isActiveCall = false
-        NapoleonApplication.isCurrentOnCall = false
         finish()
     }
     //endregion

@@ -20,9 +20,7 @@ import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.service.socketClient.SocketClientImp
 import com.naposystems.napoleonchat.service.socketClient.SocketEventListener
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
-import com.naposystems.napoleonchat.utility.BluetoothStateManager
-import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.adapters.toJSONObject
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
@@ -83,7 +81,7 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
-            Timber.d("CountDown finish")
+            Timber.d("LLAMADA PASO: COUNTDOWN RING")
             if (isActiveCall.not()) {
                 disposeCall()
             }
@@ -106,7 +104,7 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
-            Timber.d("CountDown finish")
+            Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
             disposeCall()
         }
 
@@ -207,6 +205,7 @@ class WebRTCClientImp
     private lateinit var wakeLock: PowerManager.WakeLock
 
     init {
+        Timber.d("LLAMADA PASO: EN WEBRTCLIENT")
         reInit()
         subscribeToRXEvents()
         socketClient.setSocketEventListener(this)
@@ -214,6 +213,8 @@ class WebRTCClientImp
 
     override fun reInit() {
         try {
+
+            NapoleonApplication.statusCall = StatusCallEnum.STATUS_NO_CALL
 
             audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
@@ -240,7 +241,6 @@ class WebRTCClientImp
             callTime = 0
 
             isActiveCall = false
-            NapoleonApplication.isActiveCall = false
             isHideVideo = false
             contactCameraIsVisible = false
             isMicOn = true
@@ -377,8 +377,9 @@ class WebRTCClientImp
     }
 
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel) {
+        Timber.d("LLAMADA PASO 3: CONECTAR SOCKET $callModel")
         socketClient.connectSocket(
-            mustSubscribeToPresenceChannel = true,
+            mustSubscribeToPresenceChannel = mustSubscribeToPresenceChannel,
             callModel = callModel
         )
     }
@@ -1069,12 +1070,14 @@ class WebRTCClientImp
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
+            Timber.d("LLAMADA PASO: CCONTACT REJECT CALL")
             disposeCall()
         }
     }
 
     override fun contactCancelCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
+            Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
             disposeCall()
         }
     }
@@ -1160,7 +1163,7 @@ class WebRTCClientImp
 
         isActiveCall = true
 
-        NapoleonApplication.isActiveCall = true
+        NapoleonApplication.statusCall = StatusCallEnum.STATUS_CONNECTED_CALL
 
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
@@ -1203,7 +1206,7 @@ class WebRTCClientImp
 
     override fun contactHasHangup(channelName: String) {
         if (channelName == this.callModel.channelName) {
-            Timber.d("LLAMADA PASO: COLGAR LLAMADA DESDE ESCUCHADOR")
+            Timber.d("LLAMADA PASO: CCONTACT HAS HANGUP")
             disposeCall()
         }
     }
@@ -1223,6 +1226,9 @@ class WebRTCClientImp
     }
 
     override fun disposeCall(callModel: CallModel?) {
+
+        Timber.d("LLAMADA PASO: DISPOSE CALL")
+
         if (disposingCall.not()) {
 
             webRTCClientListener?.showFinishingTitle()
@@ -1234,6 +1240,7 @@ class WebRTCClientImp
             if (callModel != null)
                 auxModel = callModel
 
+            Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
             socketClient.disconnectSocket(auxModel.channelName)
         }
     }
@@ -1246,15 +1253,15 @@ class WebRTCClientImp
 
             RxBus.publish(RxEvent.CallEnd())
 
-            Timber.d("LLAMADA PASO: DISPOSE CALL")
-
-            Timber.d("LLAMADA PASO: END CALL TONE")
+            Timber.d("LLAMADA PASO: PROCESS DISPOSE CALL")
 
             handlerMediaPlayerNotification.stopRingtone()
 
-            if (NapoleonApplication.isCurrentOnCall) {
+            if (NapoleonApplication.statusCall.isConnectedCall()) {
                 handlerMediaPlayerNotification.playEndTone()
             }
+
+            NapoleonApplication.statusCall = StatusCallEnum.STATUS_NO_CALL
 
             countDownEndCallBusy.cancel()
 
@@ -1273,8 +1280,6 @@ class WebRTCClientImp
 
             isActiveCall = false
 
-            NapoleonApplication.isCurrentOnCall = false
-
             Timber.d("LLAMADA PASO: CIERRA LA VISTA DE LLAMADA")
             webRTCClientListener?.callEnded()
 
@@ -1283,6 +1288,7 @@ class WebRTCClientImp
         } catch (e: java.lang.Exception) {
             Timber.e(e.localizedMessage)
         } finally {
+            Timber.d("LLAMADA PASO: RE INIT DESDE DISPOSECALL")
             reInit()
         }
 

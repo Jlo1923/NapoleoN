@@ -30,6 +30,7 @@ class WebRTCServiceRepositoryImp
     }
 
     override fun disposeCall(callModel: CallModel) {
+        Timber.d("LLAMADA PASO: WEBRTCSERVICE")
         webRTCClient.disposeCall(callModel)
     }
 }

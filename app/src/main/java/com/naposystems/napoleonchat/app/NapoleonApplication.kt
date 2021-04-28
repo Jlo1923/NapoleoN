@@ -18,7 +18,9 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.emojiManager.EmojiManager
+import com.naposystems.napoleonchat.utility.isNoCall
 import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import timber.log.Timber
@@ -31,9 +33,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
         var isVisible: Boolean = false
 
-        var isCurrentOnCall: Boolean = false
-
-        var isActiveCall: Boolean = false
+        var statusCall: StatusCallEnum = StatusCallEnum.STATUS_NO_CALL
 
         var isShowingCallActivity: Boolean = false
 
@@ -79,8 +79,6 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
         Timber.d("*NotificationTest: onStart")
 
-        isCurrentOnCall = false
-
         isVisible = true
 
     }
@@ -103,17 +101,18 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onStop(owner: LifecycleOwner) {
 
-        socketClient.disconnectSocket()
+        Timber.d("LLAMADA PASO 3: ONSTOP APPLICATION")
+        if (NapoleonApplication.statusCall.isNoCall())
+            socketClient.disconnectSocket()
 
         isVisible = false
 
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
-
-        socketClient.disconnectSocket()
-
-        isCurrentOnCall = false
+        Timber.d("LLAMADA PASO 3: ONDESTROY APPLICATION")
+        if (NapoleonApplication.statusCall.isNoCall())
+            socketClient.disconnectSocket()
 
         super.onDestroy(owner)
 

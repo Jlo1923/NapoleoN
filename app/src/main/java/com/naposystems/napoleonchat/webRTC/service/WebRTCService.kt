@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.service.notificationClient.NotificationClien
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
+import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import dagger.android.AndroidInjection
 import timber.log.Timber
@@ -136,7 +137,10 @@ class WebRTCService : Service() {
 
             showCallNotification(callModel)
 
-            if (NapoleonApplication.isVisible && NapoleonApplication.isShowingCallActivity.not()) {
+            if (NapoleonApplication.isVisible &&
+                NapoleonApplication.isShowingCallActivity.not() &&
+                NapoleonApplication.statusCall.isNoCall()
+            ) {
 
                 Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")
 
