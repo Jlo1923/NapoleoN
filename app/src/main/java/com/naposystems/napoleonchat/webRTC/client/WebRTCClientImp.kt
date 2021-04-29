@@ -77,7 +77,7 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.MINUTES.toMillis(30),
+        TimeUnit.SECONDS.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
@@ -90,7 +90,7 @@ class WebRTCClientImp
     }
 
     private var countDownEndCallBusy: CountDownTimer = object : CountDownTimer(
-        TimeUnit.SECONDS.toMillis(3),
+        TimeUnit.SECONDS.toMillis(2),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() = Unit
@@ -431,8 +431,8 @@ class WebRTCClientImp
 
                     override fun onIceCandidate(iceCandidate: IceCandidate) {
                         super.onIceCandidate(iceCandidate)
-                        Timber.d("LLAMADA PASO: onIceCandidate $iceCandidate")
-                        onIceCandidateReceived(iceCandidate)
+                        Timber.d("LLAMADA PASO: GENERACION ICECANDIDATE $iceCandidate")
+                        onIceCandidateGenerated(iceCandidate)
                     }
 
                     override fun onAddTrack(
@@ -619,7 +619,7 @@ class WebRTCClientImp
         )
     }
 
-    private fun onIceCandidateReceived(iceCandidate: IceCandidate) {
+    private fun onIceCandidateGenerated(iceCandidate: IceCandidate) {
         try {
             if (isActiveCall) {
                 socketClient.emitClientCall(
@@ -1030,8 +1030,10 @@ class WebRTCClientImp
     }
 
     override fun iceCandidateReceived(channelName: String, iceCandidate: IceCandidate) {
-        if (channelName == this.callModel.channelName)
+        if (channelName == this.callModel.channelName) {
+            Timber.d("LLAMADA PASO: AGREGO ICECANDIDATE $iceCandidate")
             peerConnection?.addIceCandidate(iceCandidate)
+        }
     }
 
     override fun offerReceived(
@@ -1052,18 +1054,22 @@ class WebRTCClientImp
         sessionDescription: SessionDescription
     ) {
         if (channelName == this.callModel.channelName) {
+
+            Timber.d("LLAMADA PASO: SETEO RESPUESTA")
+
             peerConnection?.setRemoteDescription(
                 CustomSdpObserver("Answer"),
                 sessionDescription
             )
 
             iceCandidatesCaller.forEach { iceCandidate ->
+                Timber.d("LLAMADA PASO: EMITO ICECANDIDATE")
                 socketClient.emitClientCall(
                     channel = callModel.channelName,
                     jsonObject = iceCandidate.toJSONObject()
                 )
             }
-
+            Timber.d("LLAMADA PASO: VACIO ICECANDIDATE")
             iceCandidatesCaller.clear()
 
         }
@@ -1075,10 +1081,11 @@ class WebRTCClientImp
 
     override fun contactRejectCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
+            syncManager.sendMissedCall(callModel)
+            syncManager.rejectCall(callModel.contactId, callModel.channelName)
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
-            Timber.d("LLAMADA PASO: CCONTACT REJECT CALL")
             disposeCall()
         }
     }
@@ -1214,13 +1221,12 @@ class WebRTCClientImp
 
     override fun contactHasHangup(channelName: String) {
         if (channelName == callModel.channelName) {
-            Timber.d("LLAMADA PASO: CCONTACT HAS HANGUP")
+            Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
             disposeCall()
         }
     }
 
     override fun hideNotification() {
-        webRTCClientListener?.onContactNotAnswer()
 
         val intent = Intent(context, WebRTCService::class.java)
 
@@ -1236,29 +1242,34 @@ class WebRTCClientImp
     override fun disposeCall(callModel: CallModel?) {
 
         Timber.d("LLAMADA PASO: DISPOSE CALL")
+        try {
+            if (disposingCall.not()) {
 
-        if (disposingCall.not()) {
+                webRTCClientListener?.showFinishingTitle()
 
-            webRTCClientListener?.showFinishingTitle()
+                disposingCall = true
 
-            disposingCall = true
+                var auxModel = this.callModel
 
-            var auxModel = this.callModel
+                if (callModel != null)
+                    auxModel = callModel
 
-            if (callModel != null)
-                auxModel = callModel
+                if (callModel?.isFromClosedApp == Constants.FromClosedApp.YES) {
+                    Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
+                    socketClient.disconnectSocket(auxModel.channelName)
+                } else {
+                    Timber.d("LLAMADA PASO 3: unsubscribe presence DISPOSE CALL")
+                    callModel?.channelName?.let { socketClient.unSubscribePresenceChannel(it) }
+                }
 
-            if (callModel?.isFromClosedApp == Constants.FromClosedApp.YES) {
-                Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
-                socketClient.disconnectSocket(auxModel.channelName)
-            } else {
-                Timber.d("LLAMADA PASO 3: unsubscribe presence DISPOSE CALL")
-                callModel?.channelName?.let { socketClient.unSubscribePresenceChannel(it) }
+                processDisposeCall()
+
             }
-
-            processDisposeCall()
-
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
         }
+
+
     }
 
     override fun processDisposeCall() {

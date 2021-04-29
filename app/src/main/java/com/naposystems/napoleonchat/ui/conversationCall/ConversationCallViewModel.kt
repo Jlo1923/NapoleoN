@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.GlobalScope
@@ -78,6 +79,22 @@ class ConversationCallViewModel
                 if (!response.isSuccessful) {
                     Timber.e(response.errorBody()?.toString())
                 }
+
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
+
+    override fun rejectCall(callModel: CallModel) {
+        GlobalScope.launch {
+            try {
+                val rejectCallReqDTO = RejectCallReqDTO(
+                    callModel.contactId,
+                    callModel.channelName
+                )
+
+                repository.rejectCall(rejectCallReqDTO)
 
             } catch (e: Exception) {
                 Timber.e(e)

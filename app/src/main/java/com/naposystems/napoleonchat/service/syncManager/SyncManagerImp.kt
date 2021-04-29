@@ -1,9 +1,11 @@
 package com.naposystems.napoleonchat.service.syncManager
 
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -23,6 +25,7 @@ import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
@@ -480,6 +483,33 @@ class SyncManagerImp @Inject constructor(
                     RxBus.publish(RxEvent.DeleteChannel(contact))
                     contactLocalDataSource.deleteContact(contact)
                 }
+            }
+        }
+    }
+
+
+    override fun sendMissedCall(callModel: CallModel) {
+        GlobalScope.launch {
+            try {
+
+                val messageReqDTO = MessageReqDTO(
+                    userDestination = callModel.contactId,
+                    quoted = "",
+                    body = "",
+                    numberAttachments = 0,
+                    destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
+                    messageType = if (callModel.isVideoCall) Constants.MessageTextType.MISSED_VIDEO_CALL.type else Constants.MessageTextType.MISSED_CALL.type,
+                    uuidSender = UUID.randomUUID().toString()
+                )
+
+                val messageResponse = napoleonApi.sendMessage(messageReqDTO)
+
+                if (!messageResponse.isSuccessful) {
+                    Timber.e(messageResponse.errorBody()?.toString())
+                }
+
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }

@@ -26,7 +26,7 @@ open class CustomPeerConnectionObserver : Observer {
     }
 
     override fun onIceCandidate(iceCandidate: IceCandidate) {
-        Timber.d("LLAMADA PASO: onIceCandidate() called with: iceCandidate = [$iceCandidate]")
+//        Timber.d("LLAMADA PASO: onIceCandidate() called with: iceCandidate = [$iceCandidate]")
     }
 
     override fun onIceCandidatesRemoved(iceCandidates: Array<IceCandidate?>) {

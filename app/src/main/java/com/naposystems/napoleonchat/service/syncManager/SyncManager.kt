@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.service.syncManager
 
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
@@ -28,6 +29,8 @@ interface SyncManager {
     fun getDeletedMessages()
 
     fun deleteContact(contactId: Int?)
+
+    fun sendMissedCall(callModel: CallModel)
 
     fun rejectCall(contactId: Int, channel: String)
 

@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallResDT
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import retrofit2.Response
 
 interface IContractConversationCall {
@@ -14,6 +15,7 @@ interface IContractConversationCall {
         fun getContact(contactId: Int)
         fun sendMissedCall(callModel: CallModel)
         fun cancelCall(callModel: CallModel)
+        fun rejectCall(callModel: CallModel)
     }
 
     interface Repository {
@@ -21,5 +23,6 @@ interface IContractConversationCall {
         suspend fun sendMissedCall(messageReqDTO: MessageReqDTO): Response<MessageResDTO>
         fun getUserDisplayFormat(): Int
         suspend fun cancelCall(cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>
+        suspend fun rejectCall(rejectCallReqDTO: RejectCallReqDTO)
     }
 }

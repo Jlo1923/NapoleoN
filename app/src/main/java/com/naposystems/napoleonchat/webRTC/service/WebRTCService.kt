@@ -91,20 +91,30 @@ class WebRTCService : Service() {
                 ACTION_DENY_CALL -> {
 
                     Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
-                    repository.rejectCall(callModel)
+
                     if (NapoleonApplication.isShowingCallActivity) {
                         RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
                     } else {
+//                        if (NapoleonApplication.statusCall.isNoCall() ||
+//                            NapoleonApplication.statusCall.isProcessingCall()
+//                        ) {
+//                            repository.sendMissedCall(callModel)
+//                        }
+//                        repository.rejectCall(callModel)
                         repository.disposeCall(callModel)
                     }
+
                     hideNotification()
                 }
 
                 ACTION_CALL_END -> {
                     Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
-                    hideNotification()
+
                     if (NapoleonApplication.isShowingCallActivity.not())
                         repository.disposeCall(callModel)
+
+                    hideNotification()
+
                 }
 
                 ACTION_FAILED_CALL_END -> {
@@ -112,11 +122,22 @@ class WebRTCService : Service() {
                 }
 
                 ACTION_HANG_UP -> {
+
                     Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
-                    RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
-                    hideNotification()
-                    if (NapoleonApplication.isShowingCallActivity.not())
+
+                    if (NapoleonApplication.isShowingCallActivity) {
+                        RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                    } else {
+//                        if (NapoleonApplication.statusCall.isNoCall() ||
+//                            NapoleonApplication.statusCall.isProcessingCall()
+//                        ) {
+//                            repository.sendMissedCall(callModel)
+//                        }
+//                        repository.cancelCall(callModel)
                         repository.disposeCall(callModel)
+                    }
+
+                    hideNotification()
                 }
 
                 ACTION_OPEN_CALL -> {
