@@ -77,7 +77,7 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.SECONDS.toMillis(30),
+        TimeUnit.MINUTES.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
@@ -376,11 +376,16 @@ class WebRTCClientImp
     }
 
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel) {
+
         Timber.d("LLAMADA PASO 3: CONECTAR SOCKET $callModel")
+
+        this.callModel = callModel
+
         socketClient.connectSocket(
             mustSubscribeToPresenceChannel = mustSubscribeToPresenceChannel,
             callModel = callModel
         )
+
     }
 
     private fun createPeerConnection() {
@@ -1064,6 +1069,10 @@ class WebRTCClientImp
         }
     }
 
+    override fun rejectCall(contactId: Int, channel: String) {
+        syncManager.rejectCall(contactId, channel)
+    }
+
     override fun contactRejectCall(channelName: String) {
         if (channelName == this.callModel.channelName) {
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
@@ -1204,7 +1213,7 @@ class WebRTCClientImp
     }
 
     override fun contactHasHangup(channelName: String) {
-        if (channelName == this.callModel.channelName) {
+        if (channelName == callModel.channelName) {
             Timber.d("LLAMADA PASO: CCONTACT HAS HANGUP")
             disposeCall()
         }
@@ -1239,8 +1248,16 @@ class WebRTCClientImp
             if (callModel != null)
                 auxModel = callModel
 
-            Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
-            socketClient.disconnectSocket(auxModel.channelName)
+            if (callModel?.isFromClosedApp == Constants.FromClosedApp.YES) {
+                Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
+                socketClient.disconnectSocket(auxModel.channelName)
+            } else {
+                Timber.d("LLAMADA PASO 3: unsubscribe presence DISPOSE CALL")
+                callModel?.channelName?.let { socketClient.unSubscribePresenceChannel(it) }
+            }
+
+            processDisposeCall()
+
         }
     }
 

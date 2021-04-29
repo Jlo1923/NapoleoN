@@ -82,4 +82,6 @@ interface WebRTCClient {
     fun hideNotification()
     fun disposeCall(callModel: CallModel? = null)
 
+    fun rejectCall(contactId: Int, channel: String)
+
 }

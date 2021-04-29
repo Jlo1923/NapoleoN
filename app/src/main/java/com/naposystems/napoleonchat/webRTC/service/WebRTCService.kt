@@ -140,7 +140,7 @@ class WebRTCService : Service() {
 
             if (NapoleonApplication.isVisible &&
                 NapoleonApplication.isShowingCallActivity.not() &&
-                (NapoleonApplication.statusCall.isNoCall() || NapoleonApplication.statusCall.isProcessingCall())
+                NapoleonApplication.statusCall.isNoCall()
             ) {
 
                 Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")

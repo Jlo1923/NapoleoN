@@ -37,7 +37,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.naposystems.napoleonchat.utility.isNoCall
@@ -116,6 +115,7 @@ class SocketClientImp
     override fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel?) {
 
         Timber.d("LLAMADA PASO 4: EN CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
+        Timber.d("LLAMADA PASO 4: EN CONNECT SOCKET callModel: $callModel")
 
         syncManager.setGetMessagesSocketListener(this)
 
@@ -131,6 +131,7 @@ class SocketClientImp
             ) {
 
                 Timber.d("LLAMADA PASO 4: CONNECT SOCKET mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
+                Timber.d("LLAMADA PASO 4: CONNECT SOCKET callModel: $callModel")
 
                 pusher.connect(object : ConnectionEventListener {
 
@@ -179,7 +180,11 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO 5: SUSCRIBIRSE AL CANAL DE LLAMADAS ${callModel.channelName}")
 
+        Timber.d("LLAMADA PASO 5: EXISTE CANAL ANTERIOR ${pusher.getPresenceChannel(callModel.channelName)}")
+
         if (pusher.getPresenceChannel(callModel.channelName) == null) {
+
+            Timber.d("LLAMADA PASO 5: CANAL PREVIO NO EXISTENTE")
 
             pusher.subscribePresence(
                 callModel.channelName,
@@ -241,9 +246,12 @@ class SocketClientImp
                     override fun userSubscribed(channelName: String?, user: User?) = Unit
 
                     override fun userUnsubscribed(channelName: String?, user: User?) = Unit
-                })
+                }
+            )
 
         } else {
+
+            Timber.d("LLAMADA PASO 5: CANAL PREVIO EXISTENTE")
 
             unSubscribePresenceChannel(channelName = callModel.channelName)
 
@@ -356,12 +364,6 @@ class SocketClientImp
             try {
 
                 Timber.d("LLAMADA PASO: PUSHER.DISCONNECT")
-
-                if (socketEventListener != null) {
-                    socketEventListener.processDisposeCall()
-                    Timber.d("LLAMADA PASO: AQUI FINALIZO LLAMADA")
-                }
-
                 pusher.disconnect()
 
             } catch (e: Exception) {
@@ -374,13 +376,17 @@ class SocketClientImp
     }
 
     override fun unSubscribePresenceChannel(channelName: String) {
+
+        Timber.e("LLAMADA PASO: INTENTANDO DESSUBSCRIBIR PRESENCIA $channelName")
+
         if (pusher.getPresenceChannel(channelName) != null) {
+
             Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
 
             try {
                 pusher.unsubscribe(channelName)
             } catch (e: Exception) {
-                Timber.e("LLAMADA PASO: INTENTANDO DESSUBSCRIBIR PRESENCIA")
+                Timber.e(e.localizedMessage)
             }
         }
     }
@@ -457,12 +463,18 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO: channel $channel eventType: $eventType")
 
-        if (pusher.getPresenceChannel(channel) != null)
-            pusher.getPresenceChannel(channel)
-                .trigger(
-                    Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
-                    eventType.toString()
-                )
+        if (pusher.getPresenceChannel(channel) != null) {
+            try {
+                pusher.getPresenceChannel(channel)
+                    .trigger(
+                        Constants.SocketEmitTriggers.CLIENT_CALL.trigger,
+                        eventType.toString()
+                    )
+            } catch (e: java.lang.Exception) {
+                Timber.e(e.localizedMessage)
+            }
+        }
+
     }
 
     override fun isConnected(): Boolean =

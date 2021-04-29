@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.ui.conversationCall
 
+import android.app.KeyguardManager
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
@@ -126,10 +128,23 @@ class ConversationCallActivity :
 
         webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(true)
+                setTurnScreenOn(true)
+                val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+                keyguardManager.requestDismissKeyguard(this, null)
+            } else {
+                this.window.addFlags(
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                            WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                )
+            }
+        } catch (e: Exception) {
+            Timber.e(e.localizedMessage)
         }
+
 
         with(window) {
             setFlags(
@@ -197,7 +212,7 @@ class ConversationCallActivity :
 
             Timber.d("startCallActivity, onBackPressed")
 
-            if (webRTCClient.callModel.isVideoCall) {
+            if (callModel.isVideoCall) {
                 webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
             }
 

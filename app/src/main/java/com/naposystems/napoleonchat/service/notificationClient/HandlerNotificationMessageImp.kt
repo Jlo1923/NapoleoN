@@ -54,7 +54,7 @@ class HandlerNotificationMessageImp
     ) {
         Timber.d("**Paso 1: Notificacion Recibida $dataFromNotification")
 
-        syncManager.setGetMessagesSocketListener(this)
+//        syncManager.setGetMessagesSocketListener(this)
 
         if (dataFromNotification.containsKey(MESSAGE_ID)) {
             if (!validateExistMessageId(dataFromNotification.getValue(MESSAGE_ID))) {
