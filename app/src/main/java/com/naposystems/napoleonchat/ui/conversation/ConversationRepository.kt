@@ -308,7 +308,6 @@ class ConversationRepository @Inject constructor(
     override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
         when (messageEntity.status) {
-//            Constants.MessageStatus.ERROR.status -> {
             Constants.MessageStatus.ERROR.status -> {
                 val selfDestructTime = sharedPreferencesManager.getInt(
                     Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
