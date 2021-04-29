@@ -1189,7 +1189,7 @@ class SocketClientImp
                                         val callModel = CallModel()
                                         callModel.channelName = presenceChannel
                                         val intent = Intent(context, WebRTCService::class.java)
-                                        intent.action = WebRTCService.ACTION_CALL_END
+                                        intent.action = WebRTCService.ACTION_DENY_CALL
                                         intent.putExtras(Bundle().apply {
                                             putSerializable(
                                                 Constants.CallKeys.CALL_MODEL,
@@ -1343,8 +1343,9 @@ class SocketClientImp
                                         when (jsonData.getString(TYPE)) {
 
                                             ICE_CANDIDATE -> {
-
-                                                Timber.d("LLAMADA PASO: RECEPCION DE ICECANDIDATE RECIBIDO")
+//
+//                                                Timber.d("LLAMADA PASO: RECEPCION DE ICECANDIDATE RECIBIDO")
+//                                                Timber.d("LLAMADA PASO: event.channelName. ${event.channelName}")
 
                                                 socketEventListener.iceCandidateReceived(
                                                     event.channelName,
@@ -1355,7 +1356,7 @@ class SocketClientImp
 
                                             OFFER -> {
 
-                                                Timber.d("LLAMADA PASO: OFERTA RECIBIDA")
+//                                                Timber.d("LLAMADA PASO: OFERTA RECIBIDA")
 
                                                 socketEventListener.offerReceived(
                                                     event.channelName,
@@ -1367,7 +1368,7 @@ class SocketClientImp
 
                                             ANSWER -> {
 
-                                                Timber.d("LLAMADA PASO: RESPUESTA RECIBIDA")
+//                                                Timber.d("LLAMADA PASO: RESPUESTA RECIBIDA")
 
                                                 socketEventListener.answerReceived(
                                                     event.channelName,

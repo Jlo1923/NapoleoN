@@ -246,6 +246,9 @@ interface NapoleonApi {
     @POST(REJECT_CALL)
     suspend fun rejectCall(@Body rejectCallReqDTO: RejectCallReqDTO): Response<Any>
 
+    @POST(CANCEL_CALL)
+    suspend fun cancelCall(@Body cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>
+
     @POST(LOG_OUT)
     suspend fun logout(): Response<LogoutResDTO>
 
@@ -255,8 +258,6 @@ interface NapoleonApi {
     @GET(CHECK_SUBSCRIPTION)
     suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
 
-    @POST(CANCEL_CALL)
-    suspend fun cancelCall(@Body cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO>
 
     @POST(READY_CALL)
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>

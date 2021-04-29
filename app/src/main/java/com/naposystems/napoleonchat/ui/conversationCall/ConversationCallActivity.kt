@@ -31,7 +31,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.audioManagerCompat.AudioManagerCompat
-import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
@@ -380,25 +379,30 @@ class ConversationCallActivity :
 
         Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${callModel.typeCall}")
 
-        if (NapoleonApplication.statusCall.isNoCall()) {
-            Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
-            when (callModel.typeCall) {
-                Constants.TypeCall.IS_OUTGOING_CALL -> {
-                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE ENVIA LLAMADA PERDIDA")
-                    viewModel.sendMissedCall(callModel)
-                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
-                    viewModel.cancelCall(callModel)
-                }
+        when (NapoleonApplication.statusCall) {
+            StatusCallEnum.STATUS_NO_CALL,
+            StatusCallEnum.STATUS_PROCESSING_CALL -> {
+                Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
+                when (callModel.typeCall) {
+                    Constants.TypeCall.IS_OUTGOING_CALL -> {
+                        Timber.d("LLAMADA PASO: LLAMADA COLGADA SE ENVIA LLAMADA PERDIDA")
+                        viewModel.sendMissedCall(callModel)
+                        Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
+                        viewModel.cancelCall(callModel)
+                    }
 
-                Constants.TypeCall.IS_INCOMING_CALL -> {
-                    Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
-                    viewModel.cancelCall(callModel)
+                    Constants.TypeCall.IS_INCOMING_CALL -> {
+                        Timber.d("LLAMADA PASO: LLAMADA COLGADA SE CONSUME CANCEL CALL")
+                        viewModel.rejectCall(callModel)
+                    }
                 }
             }
-        }
+            StatusCallEnum.STATUS_CONNECTED_CALL -> {
 
-        Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
-        webRTCClient.emitHangUp()
+                Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
+                webRTCClient.emitHangUp()
+            }
+        }
 
         webRTCClient.disposeCall()
 

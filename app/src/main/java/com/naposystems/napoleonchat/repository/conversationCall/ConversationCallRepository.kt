@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.repository.conversationCall
 
-import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallResDTO
@@ -11,6 +10,7 @@ import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCal
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -33,5 +33,9 @@ class ConversationCallRepository @Inject constructor(
 
     override suspend fun cancelCall(cancelCallReqDTO: CancelCallReqDTO): Response<CancelCallResDTO> {
         return napoleonApi.cancelCall(cancelCallReqDTO)
+    }
+
+    override suspend fun rejectCall(rejectCallReqDTO: RejectCallReqDTO) {
+        napoleonApi.rejectCall(rejectCallReqDTO)
     }
 }
