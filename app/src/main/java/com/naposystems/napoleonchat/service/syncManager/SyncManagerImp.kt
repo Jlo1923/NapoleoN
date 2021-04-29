@@ -209,22 +209,25 @@ class SyncManagerImp @Inject constructor(
 
                     response.body()?.messagesId.let {
                         it?.let {
-                            messageLocalDataSource.updateMessageStatus(
-                                it,
-                                Constants.MessageStatus.READED.status
-                            )
+                            if (it.isEmpty().not()) {
+                                messageLocalDataSource.updateMessageStatus(
+                                    it,
+                                    Constants.MessageStatus.READED.status
+                                )
+                            }
                         }
                     }
 
                     response.body()?.attachmentsId.let {
                         it?.let {
-                            attachmentLocalDataSource.updateAttachmentStatus(
-                                it,
-                                Constants.MessageStatus.READED.status
-                            )
+                            if (it.isEmpty().not()) {
+                                attachmentLocalDataSource.updateAttachmentStatus(
+                                    it,
+                                    Constants.MessageStatus.READED.status
+                                )
+                            }
                         }
                     }
-
                 }
             } catch (e: java.lang.Exception) {
                 Timber.e(e.localizedMessage)
@@ -440,13 +443,17 @@ class SyncManagerImp @Inject constructor(
 
     override fun updateAttachmentsStatus(attachmentsWebIds: List<String>, state: Int) {
         GlobalScope.launch(Dispatchers.IO) {
-            attachmentLocalDataSource.updateAttachmentStatus(
-                attachmentsWebIds,
-                state
-            )
-            messageLocalDataSource.updateMessageStatusBeforeAttachment(
-                attachmentsWebIds
-            )
+            if (attachmentsWebIds.isNotEmpty()) {
+                attachmentLocalDataSource.updateAttachmentStatus(
+                    attachmentsWebIds, state
+                )
+            }
+
+            if (attachmentsWebIds.isNotEmpty()) {
+                messageLocalDataSource.updateMessageStatusBeforeAttachment(
+                    attachmentsWebIds
+                )
+            }
         }
     }
 
@@ -523,7 +530,10 @@ class SyncManagerImp @Inject constructor(
 
             }
 
-            updateMessagesStatus(listWebId, state)
+            if (listWebId.isNotEmpty()) {
+                updateMessagesStatus(listWebId, state)
+            }
+
         }
     }
 
@@ -591,7 +601,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    private fun notifyMessagesReaded() {
+    override fun notifyMessagesReaded() {
 
         Timber.d("*notifyMessageRead: Socket")
 

@@ -19,11 +19,11 @@ class MultipleAttachmentFragmentAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return if (items[position].isVideo()) {
-            MultipleAttachmentPreviewVideoFragment(items[position]).apply {
+            MultipleAttachmentPreviewVideoFragment(items[position], position).apply {
                 this.setListener(activityParent as MultipleAttachmentPreviewListener)
             }
         } else {
-            MultipleAttachmentPreviewImageFragment(items[position]).apply {
+            MultipleAttachmentPreviewImageFragment(items[position], position).apply {
                 this.setListener(activityParent as MultipleAttachmentPreviewListener)
             }
         }
