@@ -66,9 +66,7 @@ fun List<NewMessageEventMessageRes>.toMessagesReqDTO(mustStatus: Constants.Statu
 
     messages.addAll(attachments)
 
-    return MessagesReqDTO(
-        messages
-    )
+    return MessagesReqDTO(messages)
 
 }
 

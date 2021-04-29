@@ -311,7 +311,11 @@ open class ConversationViewHolder constructor(
             quote?.visibility = View.GONE
         }
 
-        val firstAttachmentEntity: AttachmentEntity? = item.getFirstAttachment()
+        val firstAttachmentEntity = if (item.messageEntity.numberAttachments == 1) {
+            item.getFirstAttachment()
+        } else {
+            null
+        }
 
         firstAttachmentEntity?.let { attachment ->
             Timber.d("message.id: ${item.messageEntity.id}, attachment.id: ${attachment.id}, message.status ${item.messageEntity.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")

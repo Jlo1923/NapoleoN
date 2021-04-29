@@ -75,24 +75,16 @@ class PreviewMediaRepository @Inject constructor(
         contactId: Int
     ): Boolean {
         try {
-
             val messagesReqDTO = createObjectForApi(attachment, contactId)
             val response = napoleonApi.sendMessagesRead(messagesReqDTO)
-
-            //syncManager.notifyMessagesReaded()
-            return true
-
-//
-//            if (response.isSuccessful) {
-//                attachmentLocalDataSource.updateAttachmentStatus(
-//                    listOf(attachment.webId),
-//                    Constants.AttachmentStatus.READED.status
-//                )
-//
-//                syncManager.notifyMessagesReaded()
-//
-//                return true
-//            }
+            if (response.isSuccessful) {
+                attachmentLocalDataSource.updateAttachmentStatus(
+                    listOf(attachment.webId),
+                    Constants.AttachmentStatus.READED.status
+                )
+                return true
+            }
+            return false
         } catch (ex: Exception) {
             Timber.e(ex)
             return false

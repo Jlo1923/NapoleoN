@@ -762,11 +762,11 @@ class SocketClientImp
                 )
             attachmentLocalDataSource.insertAttachments(listAttachments)
 
-            val listMessagesToReceived = listOf(
-                newMessageEventMessageRes
-            ).toMessagesReqDTO(RECEIVED)
+            val listMessagesToReceived =
+                listOf(newMessageEventMessageRes).toMessagesReqDTO(RECEIVED)
 
-            //notifyMessageReceived(listMessagesToReceived)
+            syncManager.notifyMessageReceived(listMessagesToReceived)
+            emitClientConversation(listMessagesToReceived)
 
             //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
             // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá

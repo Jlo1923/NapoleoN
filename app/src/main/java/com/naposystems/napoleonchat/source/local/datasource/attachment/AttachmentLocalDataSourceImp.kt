@@ -17,9 +17,12 @@ class AttachmentLocalDataSourceImp @Inject constructor(
     private val context: Context
 ) : AttachmentLocalDataSource {
 
-
     override fun existAttachmentByWebId(webId: String): Boolean {
         return attachmentDao.existAttachmentByWebId(webId) != null
+    }
+
+    override fun existAttachmentById(id: String): Boolean {
+        return attachmentDao.existAttachmentById(id) != null
     }
 
     override suspend fun getAttachmentByWebId(

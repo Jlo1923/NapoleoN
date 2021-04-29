@@ -49,42 +49,41 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         theAttachment = attachmentEntity
         mIndex = index
         loadImage()
-        showUiByStatus()
+        handleAttachmentStatus()
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {
         this.listener = listener
     }
 
-    private fun showUiByStatus() = viewBinding.apply {
-        theAttachment?.let {
-            when (it.type) {
-                Constants.AttachmentType.IMAGE.type -> handleImageStatus()
-                Constants.AttachmentType.VIDEO.type -> handleVideoStatus()
-            }
-        }
-    }
+//    private fun showUiByStatus() = viewBinding.apply {
+//        theAttachment?.let {
+//            when (it.type) {
+//                Constants.AttachmentType.IMAGE.type -> handleAttachmentStatus()
+//                Constants.AttachmentType.VIDEO.type -> handleVideoStatus()
+//            }
+//        }
+//    }
 
-    private fun handleVideoStatus() {
+//    private fun handleVideoStatus() {
+//        theAttachment?.let {
+//            when (it.status) {
+//                SENDING.status -> uiModeProcessing()
+//                SENT.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
+//                ERROR.status -> uiModeError()
+//                NOT_DOWNLOADED.status -> launchDownload()
+//                else -> Unit
+//            }
+//        }
+//    }
+
+    private fun handleAttachmentStatus() {
         theAttachment?.let {
             when (it.status) {
-                SENDING.status -> uiModeProcessing()
-                SENT.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
+                SENDING.status, DOWNLOADING.status -> uiModeProcessing()
+                SENT.status, NOT_DOWNLOADED.status, DOWNLOAD_ERROR.status -> uiModeDone()
                 ERROR.status -> uiModeError()
-                NOT_DOWNLOADED.status -> launchDownload()
-                else -> Unit
-            }
-        }
-    }
-
-    private fun handleImageStatus() {
-        theAttachment?.let {
-            when (it.status) {
-                SENDING.status -> uiModeProcessing()
-                SENT.status, DOWNLOAD_COMPLETE.status,  NOT_DOWNLOADED.status,
-                DOWNLOAD_ERROR.status -> uiModeDone()
-                ERROR.status -> uiModeError()
-                RECEIVED.status -> uiReceived()
+                RECEIVED.status, DOWNLOAD_COMPLETE.status -> uiReceived()
                 READED.status -> uiReaded()
                 //NOT_DOWNLOADED.status -> launchDownload()
                 else -> Unit
