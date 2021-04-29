@@ -147,17 +147,19 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun validateMustAttachmentMarkAsReaded(position: Int) {
         viewModelScope.launch {
-            val attachment = listFiles[position].messageAndAttachment?.attachment
-            attachment?.let { attachment ->
-                val msgAttachment = listFiles[position].messageAndAttachment
-                msgAttachment?.let { itemMessage ->
-                    if (attachment.status != Constants.AttachmentStatus.READED.status
-                        && itemMessage.isMine == Constants.IsMine.NO.value
-                    ) {
-                        itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
-                            itemMessage.attachment,
-                            itemMessage.contactId
-                        )
+            if (listFiles.isNotEmpty()) {
+                val attachment = listFiles[position].messageAndAttachment?.attachment
+                attachment?.let { attachment ->
+                    val msgAttachment = listFiles[position].messageAndAttachment
+                    msgAttachment?.let { itemMessage ->
+                        if (attachment.status != Constants.AttachmentStatus.READED.status
+                            && itemMessage.isMine == Constants.IsMine.NO.value
+                        ) {
+                            itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
+                                itemMessage.attachment,
+                                itemMessage.contactId
+                            )
+                        }
                     }
                 }
             }
@@ -258,10 +260,12 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun removeFileFromListAndShowListInPager(selectedIndexToDelete: Int) {
-        val file = listFiles[selectedIndexToDelete]
-        listFilesForRemoveInCreate.add(file)
-        listFiles.remove(file)
-        showFilesAsPager()
+        if (selectedIndexToDelete < listFiles.size) {
+            val file = listFiles[selectedIndexToDelete]
+            listFilesForRemoveInCreate.add(file)
+            listFiles.remove(file)
+            showFilesAsPager()
+        }
     }
 
     private fun defineDefaultSelfDestructionTime() {
