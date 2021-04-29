@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
-import android.app.NotificationManager
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.app.NapoleonApplication
@@ -76,30 +75,19 @@ class NotificationClientImp
 
             Constants.NotificationType.INCOMING_CALL.type -> {
 
-                Timber.d("LLAMADA PASO 1: LLAMADA ENTRANTE EN NOTIFICACION")
+                Timber.d("LLAMADA PASO 1: APLICACION NO VISIBLE")
 
-                //TODO: Revisar aqui el estado de la vista y de la llamada
+                val callModel = dataFromNotification.toCallModel()
 
-                //if (!syncManager.getIsOnCallPref() && !Data.isShowingCallActivity) {
+                callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
 
                 if (NapoleonApplication.isVisible.not()) {
-
-                    Timber.d("LLAMADA PASO 2: APLICACION NO VISIBLE")
-
-                    val callModel = dataFromNotification.toCallModel()
-
-                    callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-
                     callModel.isFromClosedApp = Constants.FromClosedApp.YES
-
-                    handlerNotificationCall.handlerCall(callModel)
-
                 }
 
+                handlerNotificationCall.handlerCall(callModel)
+
             }
-
         }
-
     }
-
 }
