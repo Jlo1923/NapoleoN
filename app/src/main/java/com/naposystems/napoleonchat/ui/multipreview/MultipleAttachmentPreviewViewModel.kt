@@ -9,7 +9,6 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.ATTACHMENT_KEY
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.MESSAGE_KEY
-import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
@@ -42,6 +41,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private var isShowingOptions = true
     private var listFiles = mutableListOf<MultipleAttachmentFileItem>()
+    private var listFilesForRemoveInCreate = mutableListOf<MultipleAttachmentFileItem>()
     private var contactEntity: ContactEntity? = null
     private var modeOnlyView: Boolean = false
 
@@ -231,8 +231,12 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun showFilesAsPager() {
-        _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
-        validateMustShowTabs()
+        if (listFiles.isNotEmpty()) {
+            _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
+            validateMustShowTabs()
+        } else {
+            exitPreview()
+        }
     }
 
     private fun exitPreview() {
@@ -255,6 +259,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private fun removeFileFromListAndShowListInPager(selectedIndexToDelete: Int) {
         val file = listFiles[selectedIndexToDelete]
+        listFilesForRemoveInCreate.add(file)
         listFiles.remove(file)
         showFilesAsPager()
     }
@@ -360,6 +365,15 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             if (isDelete) {
                 removeFileFromListAndShowListInPager(position)
             }
+        }
+    }
+
+    fun validateExitInCreateMode() {
+        if (listFilesForRemoveInCreate.isEmpty()) {
+            actions.value = MultipleAttachmentPreviewAction.Exit
+        } else {
+            actions.value =
+                MultipleAttachmentPreviewAction.ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
         }
     }
 

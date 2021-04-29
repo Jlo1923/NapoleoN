@@ -28,6 +28,7 @@ class MultipleAttachmentViewModel @Inject constructor(
     private var cacheListFolders = emptyList<Item<*>>()
     private var selectedLists = mutableListOf<MultipleAttachmentFileItem>()
     private var currentFolder: MultipleAttachmentFolderItem? = null
+    private var filesToRemoveWhenBackFromPreview: List<String>? = null
 
     private val _state = MutableLiveData<MultipleAttachmentState>()
     val state: LiveData<MultipleAttachmentState>
@@ -64,13 +65,27 @@ class MultipleAttachmentViewModel @Inject constructor(
         }
     }
 
-    fun loadFilesFromFolder(folder: MultipleAttachmentFolderItem) {
+    fun loadFilesFromFolder(
+        folder: MultipleAttachmentFolderItem
+    ) {
         isShowingFiles = true
         currentFolder = folder
         viewModelScope.launch {
             try {
-                val mapIdsSelected = selectedLists.map { it.id to it.id }.toMap()
-                repository.getFilesByFolder(folder.parent, folder.folderName, mapIdsSelected)
+                val selectedListsId = selectedLists.map { it.id }.toMutableList()
+                filesToRemoveWhenBackFromPreview?.forEach {
+                    if (selectedListsId.contains(it)) {
+                        selectedListsId.remove(it)
+                    }
+                }
+                filesToRemoveWhenBackFromPreview = null
+
+                val mapIdsSelected = selectedListsId.map { it to it }.toMap()
+                repository.getFilesByFolder(
+                    folder.parent,
+                    folder.folderName,
+                    mapIdsSelected
+                )
                     .flowOn(Dispatchers.IO)
                     .collect { successFilesByFolder(it, folderName = folder.folderName) }
             } catch (exception: Exception) {
@@ -78,6 +93,11 @@ class MultipleAttachmentViewModel @Inject constructor(
             }
         }
     }
+
+    fun rePaintFilesWithSelectedsForRemove(listFilesRemoved: List<String>) {
+        filesToRemoveWhenBackFromPreview = listFilesRemoved
+    }
+
 
     private fun successFilesByFolder(
         it: MultipleAttachmentState,
@@ -141,5 +161,6 @@ class MultipleAttachmentViewModel @Inject constructor(
     fun continueToPreview() {
         actions.value = MultipleAttachmentAction.ContinueToPreview(selectedLists)
     }
+
 
 }

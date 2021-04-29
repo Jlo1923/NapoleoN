@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.multipreview.events
 
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 
 sealed class MultipleAttachmentPreviewAction {
 
@@ -30,6 +31,10 @@ sealed class MultipleAttachmentPreviewAction {
     class SendMessageToRemote(
         val messageEntity: MessageEntity,
         val attachments: List<AttachmentEntity?>
+    ) : MultipleAttachmentPreviewAction()
+
+    class ExitAndSendDeleteFiles(
+        val listFilesForRemoveInCreate: List<MultipleAttachmentFileItem>
     ) : MultipleAttachmentPreviewAction()
 
 }
