@@ -20,6 +20,8 @@ interface AttachmentLocalDataSource {
 
     fun existAttachmentByWebId(id: String): Boolean
 
+    fun existAttachmentById(id: String): Boolean
+
     suspend fun getAttachmentByWebId(webId: String): AttachmentEntity?
 
 }

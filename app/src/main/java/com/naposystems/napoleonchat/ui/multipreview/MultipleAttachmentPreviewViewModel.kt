@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.ATTACHMENT_KEY
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.MESSAGE_KEY
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
@@ -82,7 +83,6 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         if (filesWithoutUri.isEmpty()) {
             listFiles = files
             defineDefaultSelfDestructionTime()
-            showFilesAsPager()
         } else {
             createUriForFiles(filesWithoutUri)
         }
@@ -145,16 +145,18 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    fun validateMustMarkAsReaded(position: Int) {
+    fun validateMustAttachmentMarkAsReaded(position: Int) {
         viewModelScope.launch {
             val attachment = listFiles[position].messageAndAttachment?.attachment
             attachment?.let { attachment ->
                 val msgAttachment = listFiles[position].messageAndAttachment
-                msgAttachment?.let {
-                    if (attachment.status != Constants.AttachmentStatus.READED.status && it.isMine == Constants.IsMine.NO.value) {
-                        it.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
-                            it.attachment,
-                            it.contactId
+                msgAttachment?.let { itemMessage ->
+                    if (attachment.status != Constants.AttachmentStatus.READED.status
+                        && itemMessage.isMine == Constants.IsMine.NO.value
+                    ) {
+                        itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
+                            itemMessage.attachment,
+                            itemMessage.contactId
                         )
                     }
                 }
@@ -260,18 +262,13 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     private fun defineDefaultSelfDestructionTime() {
         contactEntity?.let {
             viewModelScope.launch {
-                val selfDestructionTime =
-                    repository.getSelfDestructTimeAsIntByContact(contactId = it.id)
-                listFiles.forEach {
-                    if (selfDestructionTime == -1) {
-                        it.selfDestruction = 7
-                    } else {
-                        it.selfDestruction = selfDestructionTime
-                    }
-                }
+                val selfDestructionTime = repository.getSelfDestructTime()
+                listFiles.forEach { it.selfDestruction = selfDestructionTime }
+                showFilesAsPager()
             }
         }
     }
+
 
     private fun setMessageWebIdToAttachments(
         attachments: List<AttachmentEntity?>,
@@ -353,6 +350,15 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    fun deleteAttachmentByDestructionTime(webId: String, position: Int) {
+        viewModelScope.launch {
+            val isDelete = repository.deleteAttachmentLocally(webId)
+            if (isDelete) {
+                removeFileFromListAndShowListInPager(position)
             }
         }
     }

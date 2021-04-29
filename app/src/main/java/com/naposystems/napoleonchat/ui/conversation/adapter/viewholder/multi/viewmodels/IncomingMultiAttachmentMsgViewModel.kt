@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.*
-import com.google.android.exoplayer2.offline.DownloadService
 import com.naposystems.napoleonchat.service.download.DownloadAttachmentsService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -37,8 +36,19 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
         }
     }
 
-    override fun retryDownloadAllFiles() {
-        Log.i("JkDev", "retryDownloadAllFiles")
+    override fun retryDownloadAllFiles(
+        attachmentsFilter: List<AttachmentEntity>,
+        context: Context
+    ) {
+        val intent = Intent(context, DownloadAttachmentsService::class.java).apply {
+            putExtras(Bundle().apply {
+                putParcelableArrayList(
+                    MultipleUploadService.ATTACHMENT_KEY,
+                    ArrayList(attachmentsFilter)
+                )
+            })
+        }
+        context.startService(intent)
     }
 
     override fun cancelDownload(attachmentEntity: AttachmentEntity) {
@@ -54,7 +64,7 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
                 )
             })
         }
-        context.startService(intent)
+        //context.startService(intent)
     }
 
 

@@ -45,17 +45,21 @@ class DownloadServiceRepository @Inject constructor(
                     }
                 } else {
                     Timber.e("Response failure")
-                    launchEventError(attachment)
+                    publishEventError(attachment)
                 }
             } catch (e: Exception) {
                 updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
-                launchEventError(attachment)
+                publishEventError(attachment)
             }
         }
     }
 
     override fun updateAttachment(attachmentEntity: AttachmentEntity) =
         attachmentLocalDataSource.updateAttachment(attachmentEntity)
+
+    override fun cancelDownload() {
+        uploadJob?.let { if (it.isActive) it.cancel() }
+    }
 
     private fun saveFileLocally(
         attachment: AttachmentEntity,
@@ -95,34 +99,20 @@ class DownloadServiceRepository @Inject constructor(
             updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
             if (BuildConfig.ENCRYPT_API && attachment.type != GIF_NN.type) {
                 saveEncryptedFile(attachment)
+            } else {
+                publishEventTryNext()
             }
-            publishEventTryNext()
+
         } catch (e: CancellationException) {
             updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
-            launchEventError(attachment)
+            publishEventError(attachment)
         } catch (e: IOException) {
-            launchEventError(attachment)
+            publishEventError(attachment)
             Timber.d("Failed to save the file!")
         } finally {
             inputStream?.close()
             outputStream?.close()
         }
-    }
-
-    private fun publishEventProgress(
-        attachment: AttachmentEntity,
-        finalPercentage: Long
-    ) {
-        RxBus.publish(
-            RxEvent.MultiDownloadProgress(
-                attachment,
-                finalPercentage.toFloat()
-            )
-        )
-    }
-
-    private fun publishEventTryNext() {
-        RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
     }
 
     private fun updateAttachmentStatus(
@@ -132,14 +122,9 @@ class DownloadServiceRepository @Inject constructor(
         updateAttachment(attachment)
     }
 
-    override fun cancelDownload() {
-        uploadJob?.let {
-            if (it.isActive) it.cancel()
-        }
-    }
-
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
+        publishEventTryNext()
     }
 
     private fun getFolderByAttachmentType(
@@ -154,14 +139,15 @@ class DownloadServiceRepository @Inject constructor(
         else -> IMAGES.folder
     }
 
-    private fun launchEventError(attachment: AttachmentEntity) {
-        RxBus.publish(
-            RxEvent.MultiDownloadError(
-                attachment,
-                "File not downloaded",
-                null
-            )
-        )
-    }
+    private fun publishEventProgress(
+        attachment: AttachmentEntity,
+        finalPercentage: Long
+    ) = RxBus.publish(RxEvent.MultiDownloadProgress(attachment, finalPercentage.toFloat()))
+
+    private fun publishEventTryNext() = RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
+
+    private fun publishEventError(attachment: AttachmentEntity) = RxBus.publish(
+        RxEvent.MultiDownloadError(attachment, "File not downloaded", null)
+    )
 
 }

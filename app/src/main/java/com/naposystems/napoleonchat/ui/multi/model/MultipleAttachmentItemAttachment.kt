@@ -13,7 +13,8 @@ data class MultipleAttachmentItemAttachment(
     val webId: String,
     val extension: String = "",
     val type: String,
-    var body: String
+    var body: String,
+    var totalSelfDestructionAt: Long
 ) : Parcelable {
     fun toAttachmentEntity(): AttachmentEntity = AttachmentEntity(
         id = 0,

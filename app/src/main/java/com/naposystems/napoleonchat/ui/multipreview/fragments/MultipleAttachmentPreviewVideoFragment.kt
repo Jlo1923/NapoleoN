@@ -19,7 +19,8 @@ import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.show
 
 class MultipleAttachmentPreviewVideoFragment(
-    val file: MultipleAttachmentFileItem
+    val file: MultipleAttachmentFileItem,
+    position: Int
 ) : Fragment(),
     ViewPreviewVideoControllerListener {
 
