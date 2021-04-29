@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.previewMedia
 
 import android.content.Context
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -20,7 +21,8 @@ class PreviewMediaRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageLocalDataSource,
-    private val attachmentLocalDataSource: AttachmentLocalDataSource
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
+    private val syncManager: SyncManager
 ) :
     IContractPreviewMedia.Repository {
 
@@ -73,19 +75,8 @@ class PreviewMediaRepository @Inject constructor(
         contactId: Int
     ): Boolean {
         try {
-            val messagesReqDTO = MessagesReqDTO(
-                messages = listOf(
-                    MessageDTO(
-                        id = attachment.webId,
-                        status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageType.ATTACHMENT.type,
-                        user = contactId
-                    )
-                )
-            )
-
+            val messagesReqDTO = createObjectForApi(attachment, contactId)
             val response = napoleonApi.sendMessagesRead(messagesReqDTO)
-
             if (response.isSuccessful) {
                 attachmentLocalDataSource.updateAttachmentStatus(
                     listOf(attachment.webId),
@@ -99,4 +90,18 @@ class PreviewMediaRepository @Inject constructor(
             return false
         }
     }
+
+    private fun createObjectForApi(
+        attachment: MultipleAttachmentItemAttachment,
+        contactId: Int
+    ) = MessagesReqDTO(
+        messages = listOf(
+            MessageDTO(
+                id = attachment.webId,
+                status = Constants.StatusMustBe.READED.status,
+                type = Constants.MessageType.ATTACHMENT.type,
+                user = contactId
+            )
+        )
+    )
 }

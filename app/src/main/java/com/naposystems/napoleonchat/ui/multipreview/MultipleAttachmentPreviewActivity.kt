@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPreviewBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemAttachment
 import com.naposystems.napoleonchat.ui.multipreview.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
@@ -113,6 +114,13 @@ class MultipleAttachmentPreviewActivity
 
     override fun markAttachmentAsRead(fileItem: MultipleAttachmentFileItem) {
         viewModel.markAttachmentVideoAsRead(fileItem)
+    }
+
+    override fun deleteAttachmentByDestructionTime(
+        attachmentEntity: MultipleAttachmentItemAttachment,
+        position: Int
+    ) {
+        viewModel.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
     }
 
     private fun onChangeSelfDestruction() {
@@ -368,8 +376,10 @@ class MultipleAttachmentPreviewActivity
 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    viewModel.loadSelfDestructionTimeByIndex(position)
-                    viewModel.validateMustMarkAsReaded(position)
+                    viewModel.apply {
+                        loadSelfDestructionTimeByIndex(position)
+                        validateMustAttachmentMarkAsReaded(position)
+                    }
                     viewBinding.apply { viewPreviewBottom.showTextByPosition(position) }
                 }
 

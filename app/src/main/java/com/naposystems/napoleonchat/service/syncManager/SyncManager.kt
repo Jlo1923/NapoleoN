@@ -12,6 +12,8 @@ interface SyncManager {
 
     fun notifyMessageReceived(messageId: MessagesReqDTO)
 
+    fun notifyMessagesReaded()
+
     fun getUserId(): Int
 
     fun getMyMessages(contactId: Int?)

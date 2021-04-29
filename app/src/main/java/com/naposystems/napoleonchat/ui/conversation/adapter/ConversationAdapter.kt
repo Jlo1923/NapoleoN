@@ -289,7 +289,7 @@ class ConversationAdapter(
                      * Con un solo attachment
                      * Con varios Attachments
                      */
-                    when (conversation.attachmentEntityList.size) {
+                    when (conversation.messageEntity.numberAttachments) {
                         0 -> getItemTypeForNoAttachments(conversation)
                         1 -> getItemTypeForOneAttachment(conversation)
                         else -> getItemForTwoOrMoreAttachments(conversation)
