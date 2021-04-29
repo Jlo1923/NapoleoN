@@ -17,6 +17,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgOneFileView
+            android:id="@+id/view_one_file"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/textView_count_files"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgTwoFilesView
             android:id="@+id/view_two_files"
             android:layout_width="0dp"

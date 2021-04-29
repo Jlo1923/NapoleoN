@@ -45,6 +45,7 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class MultipleAttachmentPreviewActivity
     : AppCompatActivity(),
@@ -266,7 +267,27 @@ class MultipleAttachmentPreviewActivity
             is SelectItemInTabLayout -> removeElementPager(action.indexItem)
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
             is SendMessageToRemote -> sendMessageToRemote(action)
+            is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
         }
+    }
+
+    private fun exitPreviewAndSendDeleteFiles(
+        listFilesForRemoveInCreate: List<MultipleAttachmentFileItem>
+    ) {
+        val intentResult = Intent()
+        intentResult.putStringArrayListExtra(
+            MULTI_EXTRA_FILES,
+            ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
+        )
+
+        intentResult.putExtras(Bundle().apply {
+            this.putStringArrayList(
+                MULTI_EXTRA_FILES,
+                ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
+            )
+        })
+        setResult(RESULT_CANCELED, intentResult)
+        finish()
     }
 
     private fun showBottomDialogForRemove(textsForDialog: MultipleAttachmentRemoveItem) {
@@ -387,7 +408,7 @@ class MultipleAttachmentPreviewActivity
 
 
     private fun defineListeners() = viewBinding.apply {
-        imageClose.setOnClickListener { finish() }
+        imageClose.setOnClickListener { viewModel.validateExitInCreateMode() }
         viewAttachmentOptions.defineListener(this@MultipleAttachmentPreviewActivity)
         viewPreviewBottom.setOnClickListenerButton {
             viewModel.saveMessageAndAttachments(viewPreviewBottom.getTextInEdit())

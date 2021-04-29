@@ -115,7 +115,18 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
             when (resultCode) {
                 RESULT_OK -> finish()
-                RESULT_CANCELED -> Unit
+                RESULT_CANCELED -> handleResultCanceled(data)
+            }
+        }
+    }
+
+    private fun handleResultCanceled(data: Intent?) {
+        data?.let {
+            if (it.hasExtra(MULTI_EXTRA_FILES)) {
+                val listFilesRemoved = it.getStringArrayListExtra(
+                    MULTI_EXTRA_FILES
+                )
+                listFilesRemoved?.let { viewModel.rePaintFilesWithSelectedsForRemove(it.toList()) }
             }
         }
     }

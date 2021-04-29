@@ -67,6 +67,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintAttachments() {
         msgAndAttachment.attachmentEntityList.apply {
             when (this.size) {
+                1 -> showOneItem(this)
                 2 -> showTwoItems(this)
                 3 -> showThreeElements(this)
                 4 -> showFourItems(this)
@@ -133,6 +134,13 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
         textViewCountFiles.text = "${data.first} / ${data.second}"
+    }
+
+    private fun showOneItem(listElements: List<AttachmentEntity>) = binding.apply {
+        currentAttachments = listElements
+        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
+        showViews(viewOneFile)
+        viewOneFile.bindAttachments(listElements)
     }
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
