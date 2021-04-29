@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.repository.base
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import timber.log.Timber
 import javax.inject.Inject
 
 class BaseRepositoryImp @Inject constructor(
@@ -23,6 +24,7 @@ class BaseRepositoryImp @Inject constructor(
     }
 
     override fun connectSocket() {
+        Timber.d("LLAMADA PASO 3: BASE REPOSITORY")
         socketClient.connectSocket()
     }
 }

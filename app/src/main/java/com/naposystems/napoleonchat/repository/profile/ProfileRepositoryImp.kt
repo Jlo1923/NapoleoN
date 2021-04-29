@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSo
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileRepositoryImp
@@ -29,6 +30,7 @@ class ProfileRepositoryImp
     }
 
     override fun disconnectSocket() {
+        Timber.d("LLAMADA PASO 3: ONPROFILE")
         socketClient.disconnectSocket()
     }
 }

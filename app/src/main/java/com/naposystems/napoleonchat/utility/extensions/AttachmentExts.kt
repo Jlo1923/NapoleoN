@@ -102,7 +102,7 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     numberAttachments = numberAttachments,
     destroy = 7,
     messageType = Constants.MessageTextType.NORMAL.type,
-    uuidSender = uuid
+    uuidSender = uuid ?: UUID.randomUUID().toString()
 )
 
 private fun MultipleAttachmentFileItem.getExtensionByType() =
