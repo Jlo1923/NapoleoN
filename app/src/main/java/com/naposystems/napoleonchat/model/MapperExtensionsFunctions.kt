@@ -118,6 +118,9 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Con
         )
     }.toMutableList()
 
+    /**
+     * Se envian ademas los tipos attachments
+     */
     val attachments = filter {
         it.attachmentEntityList.isNotEmpty()
     }.flatMap { messageAndAttachmentRelation ->
@@ -137,10 +140,7 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Con
 
     messages.addAll(attachments)
 
-    return MessagesReqDTO(
-        messages
-    )
-
+    return MessagesReqDTO(messages)
 }
 
 fun List<MessageAttachmentRelation>.toMessageResDto(mustStatus: Constants.StatusMustBe): List<MessageDTO> {

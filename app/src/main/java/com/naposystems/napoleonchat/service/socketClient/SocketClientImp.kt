@@ -36,6 +36,7 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
 import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -899,24 +900,23 @@ class SocketClientImp
 
                             dataDataEvent?.data?.let { messagesResDTO ->
 
-                                syncManager.updateMessagesStatus(
-                                    messagesResDTO.extractIdsMessages(),
-                                    Constants.MessageStatus.UNREAD.status
-                                )
+                                val listIdMsgs = messagesResDTO.extractIdsMessages()
+                                if (listIdMsgs.isEmpty().not()) {
+                                    syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+                                }
 
                                 val idsAttachments = messagesResDTO.extractIdsAttachments()
 
                                 if (idsAttachments.isNotEmpty()) {
-
                                     val ids = idsAttachments.filter {
                                         syncManager.existAttachmentById(it)
                                     }
-
-                                    syncManager.updateAttachmentsStatus(
-                                        ids,
-                                        Constants.AttachmentStatus.RECEIVED.status
-                                    )
-
+                                    if (ids.isNotEmpty()) {
+                                        syncManager.updateAttachmentsStatus(
+                                            ids,
+                                            Constants.AttachmentStatus.RECEIVED.status
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -936,6 +936,7 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
+                        
                         Timber.d("NotifyMessageReaded: ${event?.data}")
 
                         event?.data?.let {
@@ -946,12 +947,27 @@ class SocketClientImp
 
                             dataEvent?.let { messagesReadedDTO ->
 
-                                syncManager.updateMessagesStatus(
-                                    messagesReadedDTO.data.messages.map { it.id },
-                                    Constants.MessageStatus.READED.status
-                                )
+                                val listIdMsgs = messagesReadedDTO.data.extractIdsMessages()
+                                if (listIdMsgs.isEmpty().not()) {
+                                    syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+                                }
+
+                                val idsAttachments = messagesReadedDTO.data.extractIdsAttachments()
+
+                                if (idsAttachments.isNotEmpty()) {
+                                    val ids = idsAttachments.filter {
+                                        syncManager.existAttachmentById(it)
+                                    }
+                                    if (ids.isNotEmpty()) {
+                                        syncManager.updateAttachmentsStatus(
+                                            ids,
+                                            Constants.AttachmentStatus.READED.status
+                                        )
+                                    }
+                                }
                             }
                         }
+
                         syncManager.verifyMessagesRead()
                     }
 
@@ -1012,10 +1028,12 @@ class SocketClientImp
                                 }?.map {
                                     it.id
                                 }?.let {
-                                    syncManager.updateMessagesStatus(
-                                        it,
-                                        Constants.MessageStatus.UNREAD.status
-                                    )
+                                    if (it.isNotEmpty()) {
+                                        syncManager.updateMessagesStatus(
+                                            it,
+                                            UNREAD.status
+                                        )
+                                    }
                                 }
 
                                 //Seccion Actualizar MESSAGE READED
@@ -1025,10 +1043,12 @@ class SocketClientImp
                                 }?.map {
                                     it.id
                                 }?.let {
-                                    syncManager.updateMessagesStatus(
-                                        it,
-                                        Constants.MessageStatus.READED.status
-                                    )
+                                    if (it.isNotEmpty()) {
+                                        syncManager.updateMessagesStatus(
+                                            it,
+                                            Constants.MessageStatus.READED.status
+                                        )
+                                    }
                                 }
 
                                 //filtra los ATTACHMENTS

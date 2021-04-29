@@ -9,7 +9,7 @@ interface IContractIncomingMultiAttachmentMsg {
 
         fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>)
 
-        fun retryDownloadAllFiles()
+        fun retryDownloadAllFiles(attachmentsFilter: List<AttachmentEntity>, context: Context)
 
         fun cancelDownload(attachmentEntity: AttachmentEntity)
 

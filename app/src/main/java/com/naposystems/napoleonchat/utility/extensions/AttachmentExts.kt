@@ -122,7 +122,8 @@ fun getMultipleAttachmentFileItemFromAttachmentAndMsg(
         webId = attachmentEntity.webId,
         extension = attachmentEntity.extension,
         body = attachmentEntity.body,
-        type = attachmentEntity.type
+        type = attachmentEntity.type,
+        totalSelfDestructionAt = attachmentEntity.totalSelfDestructionAt.toLong()
     )
     val message = MultipleAttachmentItemMessage(
         attachment = attachment,

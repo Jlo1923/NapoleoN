@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.Transformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ItemViewMultiAttachmentMsgItemBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
@@ -80,27 +81,46 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         theAttachment?.let {
             when (it.status) {
                 SENDING.status -> uiModeProcessing()
-                SENT.status, DOWNLOAD_COMPLETE.status, READED.status, NOT_DOWNLOADED.status,
+                SENT.status, DOWNLOAD_COMPLETE.status,  NOT_DOWNLOADED.status,
                 DOWNLOAD_ERROR.status -> uiModeDone()
                 ERROR.status -> uiModeError()
+                RECEIVED.status -> uiReceived()
+                READED.status -> uiReaded()
                 //NOT_DOWNLOADED.status -> launchDownload()
                 else -> Unit
             }
         }
     }
 
+    private fun uiReceived() {
+        viewBinding.apply {
+            showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
+            hideViews(progressBar, imageRetry)
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
+        }
+    }
+
+    private fun uiReaded() {
+        viewBinding.apply {
+            showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
+            hideViews(progressBar, imageRetry)
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+        }
+    }
+
     private fun uiModeError() = viewBinding.apply {
         showViews(imageRetry)
-        hideViews(progressBar, imageViewAttachment, imageViewIconShow)
+        hideViews(progressBar, imageViewAttachment, imageViewIconShow, imageViewStatus)
     }
 
     private fun uiModeDone() = viewBinding.apply {
-        showViews(imageViewAttachment, imageViewIconShow)
+        showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
         hideViews(progressBar, imageRetry)
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
     }
 
     private fun uiModeProcessing() = viewBinding.apply {
-        hideViews(imageViewAttachment, imageViewIconShow, imageRetry)
+        hideViews(imageViewAttachment, imageViewIconShow, imageRetry, imageViewStatus)
         showViews(progressBar)
     }
 
