@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import timber.log.Timber
@@ -12,19 +11,15 @@ class HandlerNotificationCallImp
     private val webRTCClient: WebRTCClient,
 ) : HandlerNotificationCall {
 
-    override fun handlerCall(callModel: CallModel) {
+    override fun handlerCall() {
 
-        Timber.d("LLAMADA PASO 2: EN HANDLER CALL $callModel")
+        Timber.d("LLAMADA PASO 2: EN HANDLER CALL")
         if (NapoleonApplication.statusCall.isNoCall()) {
-            webRTCClient.connectSocket(
-                mustSubscribeToPresenceChannel = true,
-                callModel = callModel
-            )
+            webRTCClient.connectSocket()
         } else {
-            webRTCClient.rejectCall(
-                contactId = callModel.contactId,
-                channel = callModel.channelName
-            )
+            NapoleonApplication.callModel?.let {
+                webRTCClient.rejectCall()
+            }
         }
     }
 

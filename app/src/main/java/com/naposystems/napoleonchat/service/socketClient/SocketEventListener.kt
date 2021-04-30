@@ -1,34 +1,33 @@
 package com.naposystems.napoleonchat.service.socketClient
 
-import com.naposystems.napoleonchat.model.CallModel
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
 interface SocketEventListener {
 
-    fun itsSubscribedToPresenceChannelIncomingCall(callModel: CallModel)
-    fun itsSubscribedToPresenceChannelOutgoingCall(callModel: CallModel)
+    fun itsSubscribedToPresenceChannelIncomingCall()
+    fun itsSubscribedToPresenceChannelOutgoingCall()
 
     //region Conection
-    fun iceCandidateReceived(channelName: String, iceCandidate: IceCandidate)
-    fun offerReceived(channelName: String, sessionDescription: SessionDescription)
-    fun answerReceived(channelName: String, sessionDescription: SessionDescription)
+    fun iceCandidateReceived(iceCandidate: IceCandidate)
+    fun offerReceived(sessionDescription: SessionDescription)
+    fun answerReceived(sessionDescription: SessionDescription)
     //endregion
 
     //region Handler Call
-    fun contactRejectCall(channelName: String)
-    fun contactCancelCall(channelName: String)
+    fun contactRejectCall()
+    fun contactCancelCall()
     //endregion
 
     //Contact change to video call
-    fun contactWantChangeToVideoCall(channelName: String)
-    fun contactAcceptChangeToVideoCall(channelName: String)
-    fun contactCancelChangeToVideoCall(channelName: String)
-    fun contactCantChangeToVideoCall(channelName: String)
+    fun contactWantChangeToVideoCall()
+    fun contactAcceptChangeToVideoCall()
+    fun contactCancelChangeToVideoCall()
+    fun contactCantChangeToVideoCall()
 
-    fun toggleContactCamera(channelName: String, isVisible: Boolean)
+    fun toggleContactCamera(isVisible: Boolean)
 
-    fun contactHasHangup(channelName: String)
+    fun contactHasHangup()
     //endregion
 
     fun processDisposeCall()

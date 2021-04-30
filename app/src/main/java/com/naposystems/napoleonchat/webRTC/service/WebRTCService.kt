@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotification
@@ -13,9 +12,9 @@ import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificati
 import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.isNoCall
-import com.naposystems.napoleonchat.utility.isProcessingCall
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import dagger.android.AndroidInjection
 import timber.log.Timber
@@ -58,21 +57,15 @@ class WebRTCService : Service() {
 
         Timber.d("LLAMADA PASO 1: INICIANDO SERVICIO")
 
-        var callModel = CallModel(
-            channelName = "",
-            contactId = 0,
-            isVideoCall = false,
-            typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
-            offer = ""
-        )
+//        var callModel = CallModel()
 
-        intent.extras?.let { bundle ->
-            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
-                callModel =
-                    bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
-                Timber.d("LLAMADA OBTENIENDO EXTRAS: STARTWEBRTCSERVICE callModel $callModel")
-            }
-        }
+//        intent.extras?.let { bundle ->
+//            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
+//                callModel =
+//                    bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
+//                Timber.d("LLAMADA OBTENIENDO EXTRAS: STARTWEBRTCSERVICE")
+//            }
+//        }
 
         intent.action?.let { action ->
 
@@ -84,8 +77,7 @@ class WebRTCService : Service() {
                 ACTION_ANSWER_CALL -> {
                     Timber.d("LLAMADA PASO: CONTESTANDO LLAMADA")
                     startConversationCallActivity(
-                        action = ACTION_ANSWER_CALL,
-                        callModel = callModel
+                        action = ACTION_ANSWER_CALL
                     )
                 }
                 ACTION_DENY_CALL -> {
@@ -93,15 +85,9 @@ class WebRTCService : Service() {
                     Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
 
                     if (NapoleonApplication.isShowingCallActivity) {
-                        RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                        RxBus.publish(RxEvent.HangupByNotification())
                     } else {
-//                        if (NapoleonApplication.statusCall.isNoCall() ||
-//                            NapoleonApplication.statusCall.isProcessingCall()
-//                        ) {
-//                            repository.sendMissedCall(callModel)
-//                        }
-//                        repository.rejectCall(callModel)
-                        repository.disposeCall(callModel)
+                        repository.disposeCall(TypeEndCallEnum.TYPE_REJECT)
                     }
 
                     hideNotification()
@@ -110,8 +96,11 @@ class WebRTCService : Service() {
                 ACTION_CALL_END -> {
                     Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
 
-                    if (NapoleonApplication.isShowingCallActivity.not())
-                        repository.disposeCall(callModel)
+                    if (NapoleonApplication.isShowingCallActivity) {
+                        RxBus.publish(RxEvent.HangupByNotification())
+                    } else {
+                        repository.disposeCall(TypeEndCallEnum.TYPE_CANCEL)
+                    }
 
                     hideNotification()
 
@@ -126,15 +115,9 @@ class WebRTCService : Service() {
                     Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
 
                     if (NapoleonApplication.isShowingCallActivity) {
-                        RxBus.publish(RxEvent.HangupByNotification(callModel.channelName))
+                        RxBus.publish(RxEvent.HangupByNotification())
                     } else {
-//                        if (NapoleonApplication.statusCall.isNoCall() ||
-//                            NapoleonApplication.statusCall.isProcessingCall()
-//                        ) {
-//                            repository.sendMissedCall(callModel)
-//                        }
-//                        repository.cancelCall(callModel)
-                        repository.disposeCall(callModel)
+                        repository.disposeCall()
                     }
 
                     hideNotification()
@@ -142,7 +125,7 @@ class WebRTCService : Service() {
 
                 ACTION_OPEN_CALL -> {
                     Timber.d("LLAMADA PASO: ABRIENDO LLAMADA EN SERVICIO")
-                    startConversationCallActivity(callModel = callModel)
+                    startConversationCallActivity()
                 }
 
                 ACTION_HIDE_NOTIFICATION -> {
@@ -157,7 +140,7 @@ class WebRTCService : Service() {
 
             Timber.d("LLAMADA PASO 2: RUN")
 
-            showCallNotification(callModel)
+            showCallNotification()
 
             if (NapoleonApplication.isVisible &&
                 NapoleonApplication.isShowingCallActivity.not() &&
@@ -166,37 +149,41 @@ class WebRTCService : Service() {
 
                 Timber.d("LLAMADA PASO 3: MOSTRAR ACTIVITY CALL")
 
-                startConversationCallActivity(callModel = callModel)
+                startConversationCallActivity()
             }
         }
         return START_NOT_STICKY
     }
 
-    private fun showCallNotification(callModel: CallModel) {
+    private fun showCallNotification() {
 
-        Timber.d("LLAMADA PASO: MOSTRANDO NOTIFICACION $callModel")
+        Timber.d("LLAMADA PASO: MOSTRANDO NOTIFICACION")
 
-        if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
+        NapoleonApplication.callModel?.let { callModel ->
 
-            callModel.typeCall = if (callModel.offer != "") Constants.TypeCall.IS_INCOMING_CALL
-            else Constants.TypeCall.IS_OUTGOING_CALL
+            if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
-            val notification = handlerNotification.createNotificationCallBuilder(callModel)
+                callModel.typeCall = if (callModel.offer != "")
+                    Constants.TypeCall.IS_INCOMING_CALL
+                else
+                    Constants.TypeCall.IS_OUTGOING_CALL
 
-            startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)
+                val notification = handlerNotification.createNotificationCallBuilder()
 
+                startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)
+            }
         }
+
     }
 
-    private fun startConversationCallActivity(action: String = "", callModel: CallModel) {
+    private fun startConversationCallActivity(action: String = "") {
 
-        Timber.d("LLAMADA PASO: INICIANDO CONVERSATION: ACTION: $action, CALLMODEL: $callModel")
+        Timber.d("LLAMADA PASO: INICIANDO CONVERSATION: ACTION: $action")
 
         if (this.hasMicAndCameraPermission()) {
 
             val intent = Intent(this, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, callModel)
                     putBoolean(
                         ConversationCallActivity.ACTION_ANSWER_CALL,
                         action == ACTION_ANSWER_CALL

@@ -1,12 +1,10 @@
 package com.naposystems.napoleonchat.webRTC.client
 
 import android.widget.TextView
-import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import org.webrtc.SurfaceViewRenderer
 
 interface WebRTCClient {
-
-    var callModel: CallModel
 
     var renegotiateCall: Boolean
 
@@ -24,15 +22,15 @@ interface WebRTCClient {
 
     fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
 
-    fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
+    fun connectSocket()
 
     fun subscribeToPresenceChannel()
 
-    fun setOffer(offer: String?)
+    fun setOffer()
 
     fun createAnswer()
 
-    fun startWebRTCService(callModel: CallModel)
+    fun startWebRTCService()
 
     //Change to video Call
     fun changeToVideoCall()
@@ -80,8 +78,8 @@ interface WebRTCClient {
     //Hang Up
     fun emitHangUp()
     fun hideNotification()
-    fun disposeCall(callModel: CallModel? = null)
+    fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
 
-    fun rejectCall(contactId: Int, channel: String)
+    fun rejectCall()
 
 }

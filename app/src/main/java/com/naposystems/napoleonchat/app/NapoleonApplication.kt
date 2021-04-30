@@ -16,6 +16,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.StatusCallEnum
@@ -37,9 +38,11 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
         var isShowingCallActivity: Boolean = false
 
+        var callModel: CallModel? =  null
+
         var currentConversationContactId: Int = 0
 
-        var currentCallContactId: Int = 0
+//        var currentCallContactId: Int = 0
 
     }
 

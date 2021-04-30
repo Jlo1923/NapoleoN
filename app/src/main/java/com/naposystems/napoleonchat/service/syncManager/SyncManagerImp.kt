@@ -1,11 +1,9 @@
 package com.naposystems.napoleonchat.service.syncManager
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
 import com.naposystems.napoleonchat.model.toMessagesReqDTOFromRelation
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -21,6 +19,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.QuoteEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallContactReqDTO
@@ -494,43 +493,48 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-
-    override fun sendMissedCall(callModel: CallModel) {
+    override fun sendMissedCall() {
+        //TODO: Revisar tiempo de autodestruccion de este mensaje
         GlobalScope.launch {
             try {
-
-                val messageReqDTO = MessageReqDTO(
-                    userDestination = callModel.contactId,
-                    quoted = "",
-                    body = "",
-                    numberAttachments = 0,
-                    destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
-                    messageType = if (callModel.isVideoCall) Constants.MessageTextType.MISSED_VIDEO_CALL.type else Constants.MessageTextType.MISSED_CALL.type,
-                    uuidSender = UUID.randomUUID().toString()
-                )
-
-                val messageResponse = napoleonApi.sendMessage(messageReqDTO)
-
-                if (!messageResponse.isSuccessful) {
-                    Timber.e(messageResponse.errorBody()?.toString())
+                NapoleonApplication.callModel?.let { callModel ->
+                    val messageReqDTO = MessageReqDTO(
+                        userDestination = callModel.contactId,
+                        quoted = "",
+                        body = "",
+                        numberAttachments = 0,
+                        destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
+                        messageType = if (callModel.isVideoCall) Constants.MessageTextType.MISSED_VIDEO_CALL.type else Constants.MessageTextType.MISSED_CALL.type,
+                        uuidSender = UUID.randomUUID().toString()
+                    )
+                    napoleonApi.sendMessage(messageReqDTO)
                 }
-
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
     }
 
-    override fun rejectCall(contactId: Int, channel: String) {
+    override fun rejectCall() {
         GlobalScope.launch {
-            val rejectCallReqDTO = RejectCallReqDTO(
-                contactId = contactId,
-                channel = channel
-            )
-            val response = napoleonApi.rejectCall(rejectCallReqDTO)
+            NapoleonApplication.callModel?.let { callModel ->
+                val rejectCallReqDTO = RejectCallReqDTO(
+                    contactId = callModel.contactId,
+                    channel = callModel.channelName
+                )
+                napoleonApi.rejectCall(rejectCallReqDTO)
+            }
+        }
+    }
 
-            if (response.isSuccessful) {
-                Timber.d("LLamada rechazada bb: ERROR AQUIIIII")
+    override fun cancelCall() {
+        GlobalScope.launch {
+            NapoleonApplication.callModel?.let { callModel ->
+                val cancelCallReqDTO = CancelCallReqDTO(
+                    contactId = callModel.contactId,
+                    channel = callModel.channelName
+                )
+                napoleonApi.cancelCall(cancelCallReqDTO)
             }
         }
     }
@@ -750,60 +754,17 @@ class SyncManagerImp @Inject constructor(
         return contactLocalDataSource.getContactById(contactId)
     }
 
-    override fun callContact(contact: Int, videoCall: Boolean, offer: String) {
-
+    override fun callContact() {
         Timber.d("LLAMADA PASO 11 OUTGOING: Consumiendo llamando contacto")
-
         GlobalScope.launch(Dispatchers.IO) {
-            val callContactReqDTO = CallContactReqDTO(
-                contactToCall = contact,
-                isVideoCall = videoCall,
-                offer = offer
-            )
-
-            napoleonApi.callContact(callContactReqDTO)
+            NapoleonApplication.callModel?.let { callModel ->
+                val callContactReqDTO = CallContactReqDTO(
+                    contactToCall = callModel.contactId,
+                    isVideoCall = callModel.isVideoCall,
+                    offer = callModel.offer
+                )
+                napoleonApi.callContact(callContactReqDTO)
+            }
         }
     }
-
-//
-//
-//    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {
-//        try {
-//            val messages = arrayListOf(
-//                ValidateMessage(
-//                    id = newMessageDataEventRes.id,
-//                    user = newMessageDataEventRes.userAddressee,
-//                    status = Constants.MessageEventType.UNREAD.status
-//                )
-//            )
-//
-//            socketService.emitClientConversation(messages)
-//
-//        } catch (e: Exception) {
-//            Timber.e(e)
-//        }
-//    }
-
-//    override fun notifyMessageReceived_NOTIF(messageId: String) {
-//        GlobalScope.launch {
-//            try {
-//                val messageReceivedReqDTO = MessageReceivedReqDTO(messageId)
-//                napoleonApi.notifyMessageReceived(messageReceivedReqDTO)
-//            } catch (e: Exception) {
-////                    Timber.e(e)
-//            }
-//        }
-//    }
-
-//    override fun getIsOnCallPref() = NapoleonApplication.isOnCall
-
-//    override fun getContactSilenced(contactId: Int, silenced: (Boolean?) -> Unit) {
-//        GlobalScope.launch {
-//            withContext(Dispatchers.IO) {
-//                silenced(contactLocalDataSource.getContactSilenced(contactId))
-//            }
-//        }
-//    }
-
-
 }

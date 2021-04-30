@@ -16,3 +16,8 @@ fun StatusCallEnum.isProcessingCall(): Boolean =
 
 fun StatusCallEnum.isConnectedCall(): Boolean =
     NapoleonApplication.statusCall == StatusCallEnum.STATUS_CONNECTED_CALL
+
+enum class TypeEndCallEnum{
+    TYPE_CANCEL,
+    TYPE_REJECT
+}

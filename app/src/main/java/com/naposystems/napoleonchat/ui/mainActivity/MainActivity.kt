@@ -197,7 +197,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     ).apply {
                         putExtras(Bundle().apply {
                             it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                            putSerializable(ConversationCallActivity.KEY_CALL_MODEL, it.callModel)
                         })
                     }
                     startActivity(intent)
@@ -331,14 +330,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Timber.d("startCallActivity MainActivity viewmodel.contact")
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putSerializable(
-                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-                                contactId = contact.id,
-                                channelName = viewModel.getCallChannel(),
-                                isVideoCall = viewModel.isVideoCall() ?: false,
-                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                            )
-                        )
+//                        putSerializable(
+//                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
+//                                contactId = contact.id,
+//                                channelName = viewModel.getCallChannel(),
+//                                isVideoCall = viewModel.isVideoCall() ?: false,
+//                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
+//                            )
+//                        )
                     })
                 }
                 startActivity(intent)
