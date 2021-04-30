@@ -34,7 +34,7 @@ node('master') {
         if (params.VersionName?.trim()) {
             versionName = "${params.VersionName}"
         }
-        version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'", returnStdout: true).trim()
+        version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | sed 's/versionName//g'", returnStdout: true).trim()
         versionCode = sh(script: "cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'", returnStdout: true).trim().toInteger()
         increasedVersion = versionCode + 1
         finalVersionName = "1.1.${increasedVersion}-${versionName}"
