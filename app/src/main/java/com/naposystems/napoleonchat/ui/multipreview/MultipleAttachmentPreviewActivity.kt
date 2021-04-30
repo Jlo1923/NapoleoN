@@ -55,6 +55,7 @@ class MultipleAttachmentPreviewActivity
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: MultipleAttachmentPreviewViewModel
 
     private lateinit var viewBinding: ActivityMultipleAttachmentPreviewBinding
@@ -254,8 +255,8 @@ class MultipleAttachmentPreviewActivity
 
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
         when (action) {
-            Exit -> exitPreview()
-            ExitToConversation -> exitPreview()
+            Exit -> exitToMultiFolders()
+            ExitToConversation -> exitToConversation()
             HideAttachmentOptions -> hideAnimAttachmentOptions()
             ShowAttachmentOptions -> showAnimAttachmentOptions()
             ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
@@ -276,13 +277,13 @@ class MultipleAttachmentPreviewActivity
     ) {
         val intentResult = Intent()
         intentResult.putStringArrayListExtra(
-            MULTI_EXTRA_FILES,
+            MULTI_EXTRA_FILES_DELETE,
             ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
         )
 
         intentResult.putExtras(Bundle().apply {
             this.putStringArrayList(
-                MULTI_EXTRA_FILES,
+                MULTI_EXTRA_FILES_DELETE,
                 ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
             )
         })
@@ -352,9 +353,15 @@ class MultipleAttachmentPreviewActivity
         viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
     }
 
-    private fun exitPreview() {
+    private fun exitToConversation() {
         val intentResult = Intent()
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    private fun exitToMultiFolders() {
+        val intentResult = Intent()
+        setResult(RESULT_CANCELED, intent)
         finish()
     }
 

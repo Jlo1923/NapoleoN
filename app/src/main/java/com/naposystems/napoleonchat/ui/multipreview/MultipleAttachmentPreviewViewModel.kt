@@ -17,8 +17,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
-import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.SelectItemInTabLayout
-import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
@@ -227,7 +226,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                     }
                 }
             } catch (exception: Exception) {
-                actions.value = MultipleAttachmentPreviewAction.Exit
+                actions.value = Exit
             }
         }
     }
@@ -242,7 +241,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private fun exitPreview() {
-        actions.value = MultipleAttachmentPreviewAction.Exit
+        actions.value = Exit
     }
 
     private fun isTheLastFile(): Boolean = listFiles.isEmpty()
@@ -271,8 +270,13 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     private fun defineDefaultSelfDestructionTime() {
         contactEntity?.let {
             viewModelScope.launch {
-                val selfDestructionTime = repository.getSelfDestructTime()
-                listFiles.forEach { it.selfDestruction = selfDestructionTime }
+                val selfDestructionTime = repository.getSelfDestructTimeAsIntByContact(it.id)
+                val selfDestructionTimeFinal = if (selfDestructionTime < 0) {
+                    repository.getSelfDestructTime()
+                } else {
+                    selfDestructionTime
+                }
+                listFiles.forEach { it.selfDestruction = selfDestructionTimeFinal }
                 showFilesAsPager()
             }
         }
@@ -374,10 +378,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun validateExitInCreateMode() {
         if (listFilesForRemoveInCreate.isEmpty()) {
-            actions.value = MultipleAttachmentPreviewAction.Exit
+            actions.value = Exit
         } else {
-            actions.value =
-                MultipleAttachmentPreviewAction.ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
+            actions.value = ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
         }
     }
 

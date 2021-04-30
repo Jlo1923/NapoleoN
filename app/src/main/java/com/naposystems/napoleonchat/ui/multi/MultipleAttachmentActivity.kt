@@ -22,6 +22,7 @@ import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES_DELETE
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
@@ -122,9 +123,9 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun handleResultCanceled(data: Intent?) {
         data?.let {
-            if (it.hasExtra(MULTI_EXTRA_FILES)) {
+            if (it.hasExtra(MULTI_EXTRA_FILES_DELETE)) {
                 val listFilesRemoved = it.getStringArrayListExtra(
-                    MULTI_EXTRA_FILES
+                    MULTI_EXTRA_FILES_DELETE
                 )
                 listFilesRemoved?.let { viewModel.rePaintFilesWithSelectedsForRemove(it.toList()) }
             }

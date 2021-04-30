@@ -73,20 +73,22 @@ class MultipleAttachmentViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val selectedListsId = selectedLists.map { it.id }.toMutableList()
-                filesToRemoveWhenBackFromPreview?.forEach {
-                    if (selectedListsId.contains(it)) {
-                        selectedListsId.remove(it)
-                    }
-                }
-                filesToRemoveWhenBackFromPreview = null
+//                filesToRemoveWhenBackFromPreview?.forEach { idToRemove ->
+//                    val indexDelete = selectedListsId.indexOf(idToRemove.toInt())
+//                    if (indexDelete != -1) {
+//                        selectedListsId.removeAt(indexDelete)
+//                        val fileToRemove = selectedLists.filter { it.id == idToRemove.toInt() }
+//                        selectedLists.removeAt(selectedLists.indexOf(fileToRemove))
+//                    }
+//                }
+//                filesToRemoveWhenBackFromPreview = null
 
                 val mapIdsSelected = selectedListsId.map { it to it }.toMap()
                 repository.getFilesByFolder(
                     folder.parent,
                     folder.folderName,
                     mapIdsSelected
-                )
-                    .flowOn(Dispatchers.IO)
+                ).flowOn(Dispatchers.IO)
                     .collect { successFilesByFolder(it, folderName = folder.folderName) }
             } catch (exception: Exception) {
                 _state.value = MultipleAttachmentState.Error
@@ -98,7 +100,6 @@ class MultipleAttachmentViewModel @Inject constructor(
         filesToRemoveWhenBackFromPreview = listFilesRemoved
     }
 
-
     private fun successFilesByFolder(
         it: MultipleAttachmentState,
         folderName: String
@@ -106,6 +107,7 @@ class MultipleAttachmentViewModel @Inject constructor(
         _state.value = it
         if (it is MultipleAttachmentState.SuccessFiles) {
             actions.value = ShowSelectFolderName(folderName)
+            showPreviewSelectedFiles()
         }
     }
 
