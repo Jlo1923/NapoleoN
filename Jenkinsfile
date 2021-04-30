@@ -69,7 +69,7 @@ node('master') {
             sh("sed -i 's/versionCode ${versionCode}/versionCode ${increasedVersion}/g' app/build.gradle")
             sh("sed -i 's/${version}/${finalVersionName}/g' app/build.gradle")
             sh("git add app/build.gradle")
-            sh("git commit -a -m \"Increasing version to ${increasedVersion}\"")
+            sh("git commit -a -m \"Increasing-version-to-${increasedVersion}\"")
             sh("git push")
         }
     }
