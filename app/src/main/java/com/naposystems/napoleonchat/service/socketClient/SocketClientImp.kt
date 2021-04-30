@@ -598,13 +598,10 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO 5: EN CONNECT SOCKET YA CONECTADO mustSubscribeToPresenceChannel: $mustSubscribeToPresenceChannel")
 
-        if (NapoleonApplication.isVisible)
-            subscribeChannels()
+        subscribeChannels()
 
         if (mustSubscribeToPresenceChannel) {
-
             Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
-
             callModel?.let { subscribeToPresenceChannel(it) }
         }
     }
@@ -941,7 +938,7 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
-                        
+
                         Timber.d("NotifyMessageReaded: ${event?.data}")
 
                         event?.data?.let {
