@@ -25,16 +25,19 @@ enum class Location {
 class SelfDestructTimeDialogFragment : DialogFragment() {
 
     private var contactId: Int = 0
+    private var selectedValue: Int? = null
 
     companion object {
 
         private const val CONTACT_ID: String = "CONTACT_ID"
         private const val LOCATION: String = "LOCATION"
+        private const val SELECTED_VALUE: String = "SELECTED_VALUE"
 
-        fun newInstance(contactId: Int, location: Location) =
+        fun newInstance(contactId: Int, location: Location, selectedValue: Int? = null) =
             SelfDestructTimeDialogFragment().apply {
                 arguments = Bundle().apply {
                     putInt(CONTACT_ID, contactId)
+                    selectedValue?.let { putInt(SELECTED_VALUE, it) }
                     putSerializable(LOCATION, location)
                 }
             }
@@ -67,6 +70,11 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
 
         arguments?.let {
             contactId = it.getInt(CONTACT_ID)
+            selectedValue = if (it.getInt(SELECTED_VALUE, -1) == -1) {
+                null
+            } else {
+                it.getInt(SELECTED_VALUE)
+            }
             val location = it.getSerializable(LOCATION) as Location
 
             binding.textViewInfo.text =
@@ -123,13 +131,17 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
         viewModel.getDestructTimeByContact.observe(viewLifecycleOwner, Observer { timeByContact ->
 
             viewModel.selfDestructTimeGlobal.value?.let { selfDestructTimeGlobal ->
-                this.selfDestructTime = if (contactId == 0)
-                    selfDestructTimeGlobal
-                else {
-                    if (timeByContact < 0)
+                selectedValue?.let {
+                    this.selfDestructTime = it
+                } ?: kotlin.run {
+                    this.selfDestructTime = if (contactId == 0)
                         selfDestructTimeGlobal
-                    else
-                        timeByContact
+                    else {
+                        if (timeByContact < 0)
+                            selfDestructTimeGlobal
+                        else
+                            timeByContact
+                    }
                 }
                 when (this.selfDestructTime) {
                     Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time ->

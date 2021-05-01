@@ -23,6 +23,8 @@ interface IContractMultipleAttachment {
             mapIds: Map<Int, Int>
         ): Flow<MultipleAttachmentState>
 
+        fun getStringSetForDelete(): Set<String>
+
     }
 
     interface MediaStore {

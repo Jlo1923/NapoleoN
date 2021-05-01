@@ -127,7 +127,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
                 val listFilesRemoved = it.getStringArrayListExtra(
                     MULTI_EXTRA_FILES_DELETE
                 )
-                listFilesRemoved?.let { viewModel.rePaintFilesWithSelectedsForRemove(it.toList()) }
+                //listFilesRemoved?.let { viewModel.rePaintFilesWithSelectedsForRemove(it.toList()) }
             }
         }
     }

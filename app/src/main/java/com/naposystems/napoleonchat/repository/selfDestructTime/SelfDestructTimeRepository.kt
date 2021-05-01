@@ -97,4 +97,9 @@ class SelfDestructTimeRepository @Inject constructor(
         objectForDelete: DeleteMessagesReqDTO
     ): Response<DeleteMessagesResDTO> = napoleonApi.deleteMessagesForAll(objectForDelete)
 
+    override fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>) {
+        val map = toList.map { it.id.toString() }
+        sharedPreferencesManager.putStringSet("IDS_TO_DELETE", map.toSet())
+    }
+
 }
