@@ -44,5 +44,7 @@ interface IContractSelfDestructTime {
             objectForDelete: DeleteMessagesReqDTO
         ): Response<DeleteMessagesResDTO>
 
+        fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>)
+
     }
 }

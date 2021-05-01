@@ -37,4 +37,9 @@ sealed class MultipleAttachmentPreviewAction {
         val listFilesForRemoveInCreate: List<MultipleAttachmentFileItem>
     ) : MultipleAttachmentPreviewAction()
 
+    class OnChangeSelfDestruction(
+        val contactId: Int,
+        val iconSelfDestruction: Int
+    ) : MultipleAttachmentPreviewAction()
+
 }

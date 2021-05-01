@@ -380,7 +380,14 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         if (listFilesForRemoveInCreate.isEmpty()) {
             actions.value = Exit
         } else {
+            repository.saveDeleteFilesInCache(listFilesForRemoveInCreate.toList())
             actions.value = ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
+        }
+    }
+
+    fun onChangeSelfDestruction(iconSelfDestruction: Int) {
+        contactEntity?.let {
+            actions.value = OnChangeSelfDestruction(it.id, iconSelfDestruction)
         }
     }
 

@@ -8,8 +8,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences
 import javax.inject.Inject
 
-class SharedPreferencesManager
-@Inject constructor(
+class SharedPreferencesManager @Inject constructor(
     private val context: Context
 ) {
 
@@ -46,6 +45,23 @@ class SharedPreferencesManager
         return sharedPreferences.getString(
             preferenceName,
             defaultValue
+        )!!
+    }
+
+    fun putStringSet(preferenceName: String, data: Set<String>) {
+        with(sharedPreferences.edit()) {
+            putStringSet(
+                preferenceName,
+                data
+            )
+            commit()
+        }
+    }
+
+    fun getStringSetOrEmpty(preferenceName: String): Set<String> {
+        return sharedPreferences.getStringSet(
+            preferenceName,
+            emptySet()
         )!!
     }
 
@@ -158,6 +174,12 @@ class SharedPreferencesManager
     fun getStringSet(preferenceName: String): Set<String>? {
         val stringSet = sharedPreferences.getStringSet(preferenceName, emptyList<String>().toSet())
         return stringSet?.toSet()
+    }
+
+    fun removeSetdsToRemove() {
+        with(sharedPreferences.edit()) {
+            remove("IDS_TO_DELETE")
+        }
     }
 
 }

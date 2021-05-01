@@ -28,7 +28,6 @@ class MultipleAttachmentViewModel @Inject constructor(
     private var cacheListFolders = emptyList<Item<*>>()
     private var selectedLists = mutableListOf<MultipleAttachmentFileItem>()
     private var currentFolder: MultipleAttachmentFolderItem? = null
-    private var filesToRemoveWhenBackFromPreview: List<String>? = null
 
     private val _state = MutableLiveData<MultipleAttachmentState>()
     val state: LiveData<MultipleAttachmentState>
@@ -73,15 +72,14 @@ class MultipleAttachmentViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val selectedListsId = selectedLists.map { it.id }.toMutableList()
-//                filesToRemoveWhenBackFromPreview?.forEach { idToRemove ->
-//                    val indexDelete = selectedListsId.indexOf(idToRemove.toInt())
-//                    if (indexDelete != -1) {
-//                        selectedListsId.removeAt(indexDelete)
-//                        val fileToRemove = selectedLists.filter { it.id == idToRemove.toInt() }
-//                        selectedLists.removeAt(selectedLists.indexOf(fileToRemove))
-//                    }
-//                }
-//                filesToRemoveWhenBackFromPreview = null
+                val idsForDelete = repository.getStringSetForDelete().toList()
+                idsForDelete.forEach { idToRemove ->
+                    val indexDelete = selectedListsId.indexOf(idToRemove.toInt())
+                    if (indexDelete != -1) {
+                        selectedListsId.removeAt(indexDelete)
+                        selectedLists.removeIf { it.id == idToRemove.toInt() }
+                    }
+                }
 
                 val mapIdsSelected = selectedListsId.map { it to it }.toMap()
                 repository.getFilesByFolder(
@@ -94,10 +92,6 @@ class MultipleAttachmentViewModel @Inject constructor(
                 _state.value = MultipleAttachmentState.Error
             }
         }
-    }
-
-    fun rePaintFilesWithSelectedsForRemove(listFilesRemoved: List<String>) {
-        filesToRemoveWhenBackFromPreview = listFilesRemoved
     }
 
     private fun successFilesByFolder(
