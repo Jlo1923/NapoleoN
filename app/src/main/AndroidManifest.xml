@@ -55,7 +55,8 @@
 
         <service android:name=".service.uploadService.UploadService" />
 
-        <service android:name=".service.multiattachment.MultipleUploadService" />
+        <service android:name=".service.multiattachment.MultipleUploadService"
+            />
 
         <service android:name=".service.download.DownloadAttachmentsService" />
 

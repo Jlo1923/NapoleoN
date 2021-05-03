@@ -7,6 +7,7 @@ import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
+import com.naposystems.napoleonchat.service.multiattachment.notification.NotificationMultiUploadClientImpl
 import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
@@ -29,10 +30,9 @@ class MultipleUploadService : Service() {
     lateinit var repository: IContractMultipleUpload.Repository
 
     @Inject
-    lateinit var notificationUploadService: NotificationUploadClientImp
+    lateinit var notificationUploadService: NotificationMultiUploadClientImpl
 
     private lateinit var napoleonApplication: NapoleonApplication
-    private val notificationId = NotificationUploadClientImp.NOTIFICATION_UPLOADING_MULTI
     private val compositeDisposable = CompositeDisposable()
     lateinit var attachmentList: List<AttachmentEntity>
     lateinit var currentMessage: MessageEntity
@@ -60,8 +60,7 @@ class MultipleUploadService : Service() {
             Timber.d("onStartCommand action: $action")
             if (action == MultipleUploadService.ACTION_CANCEL_UPLOAD) {
                 repository.cancelUpload()
-                stopSelf()
-                stopForeground(true)
+                stopService()
             }
         }
 
@@ -72,9 +71,12 @@ class MultipleUploadService : Service() {
         attachmentList.firstOrNull() { it.status == SENDING.status }
 
     private fun showNotification() {
-        val notification = notificationUploadService.createUploadNotification(applicationContext)
-        Timber.d("notificationId: $notificationId")
-        startForeground(notificationId, notification)
+        currentMessage.let {
+            val notification =
+                notificationUploadService.createUploadNotification(applicationContext, it.id)
+            Timber.d("notificationId: ${it.id}")
+            startForeground(it.id, notification)
+        }
     }
 
     private fun subscribeRxEvents() {
@@ -129,13 +131,17 @@ class MultipleUploadService : Service() {
         stopService()
     }
 
-    private fun handleUploadProgress(it: RxEvent.MultiUploadProgress) =
+    private fun handleUploadProgress(it: RxEvent.MultiUploadProgress) {
         notificationUploadService.updateUploadNotificationProgress(
-            MultipleUploadService.PROGRESS_MAX,
-            it.progress.toInt()
+            PROGRESS_MAX, it.progress.toInt(), currentMessage.id
         )
+    }
 
     private fun stopService() {
+        compositeDisposable.dispose()
+        currentMessage.apply {
+            notificationUploadService.cancelNotification(this.id)
+        }
         stopSelf()
         stopForeground(true)
     }

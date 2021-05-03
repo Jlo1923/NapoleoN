@@ -81,7 +81,8 @@ class UploadService : Service(), IContractUploadService {
 
     private fun showNotification() {
         val notification = notificationUploadClient.createUploadNotification(
-            applicationContext
+            applicationContext,
+            0
         )
 
         Timber.d("notificationId: $notificationId")
@@ -111,7 +112,10 @@ class UploadService : Service(), IContractUploadService {
 
         val disposableUploadProgress = RxBus.listen(RxEvent.UploadProgress::class.java)
             .subscribe {
-                notificationUploadClient.updateUploadNotificationProgress(PROGRESS_MAX, it.progress.toInt())
+                notificationUploadClient.updateUploadNotificationProgress(
+                    PROGRESS_MAX,
+                    it.progress.toInt(), null
+                )
             }
 
         val disposableCompressProgress = RxBus.listen(RxEvent.CompressProgress::class.java)
