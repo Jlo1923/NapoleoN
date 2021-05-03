@@ -21,6 +21,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
 import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -29,6 +30,8 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -38,13 +41,11 @@ import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
 import com.naposystems.napoleonchat.utility.ItemAnimator
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.isConnectedCall
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
-import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
-import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
-import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
@@ -57,9 +58,6 @@ class HomeFragment : BaseFragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
-
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
@@ -171,7 +169,6 @@ class HomeFragment : BaseFragment() {
             Timber.d("startCallActivity returnCall HomeFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -479,7 +476,7 @@ class HomeFragment : BaseFragment() {
         showCaseManager?.setPaused(false)
         viewModel.getJsonNotification()
         showCase()
-        binding.textViewReturnCall.isVisible = webRTCClient.isActiveCall
+        binding.textViewReturnCall.isVisible = NapoleonApplication.statusCall.isConnectedCall()
 
         if (!isShowingVersionDialog && !BuildConfig.DEBUG) {
             Timber.d("*TestVersion: get remote")

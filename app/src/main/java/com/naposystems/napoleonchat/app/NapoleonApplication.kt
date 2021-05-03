@@ -16,6 +16,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.di.DaggerApplicationComponent
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.StatusCallEnum
@@ -29,6 +30,7 @@ import javax.inject.Inject
 class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     companion object {
+
         private const val USE_BUNDLED_EMOJI = true
 
         var isVisible: Boolean = false
@@ -37,9 +39,9 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
         var isShowingCallActivity: Boolean = false
 
-        var currentConversationContactId: Int = 0
+        var callModel: CallModel? = null
 
-        var currentCallContactId: Int = 0
+        var currentConversationContactId: Int = 0
 
     }
 
@@ -102,7 +104,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
     override fun onStop(owner: LifecycleOwner) {
 
         Timber.d("LLAMADA PASO 3: ONSTOP APPLICATION")
-        if (NapoleonApplication.statusCall.isNoCall())
+        if (statusCall.isNoCall())
             socketClient.disconnectSocket()
 
         isVisible = false
@@ -111,11 +113,10 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
     override fun onDestroy(owner: LifecycleOwner) {
         Timber.d("LLAMADA PASO 3: ONDESTROY APPLICATION")
-        if (NapoleonApplication.statusCall.isNoCall())
+        if (statusCall.isNoCall())
             socketClient.disconnectSocket()
 
         super.onDestroy(owner)
-
     }
 
     private fun configEmojiCompat() {
@@ -145,9 +146,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
                     }
                 })
         }
-
         EmojiCompat.init(config)
-
     }
 
 }

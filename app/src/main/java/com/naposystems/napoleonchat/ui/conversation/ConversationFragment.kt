@@ -65,15 +65,17 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
 import com.naposystems.napoleonchat.ui.dialog.deletionMesssages.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
@@ -84,7 +86,9 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
+import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.*
@@ -92,15 +96,10 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
-import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
-import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
-import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
-import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.custom_input_panel_widget.view.*
@@ -145,9 +144,6 @@ class ConversationFragment
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
-
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -411,7 +407,6 @@ class ConversationFragment
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -803,18 +798,16 @@ class ConversationFragment
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
                 Timber.d("startCallActivity contactCalledSuccessfully")
-                val intent = Intent(context, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        putSerializable(
-                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-                                contactId = args.contact.id,
-                                channelName = channel,
-                                isVideoCall = viewModel.isVideoCall(),
-                                typeCall = Constants.TypeCall.IS_OUTGOING_CALL
-                            )
-                        )
-                    })
-                }
+
+                NapoleonApplication.callModel = CallModel(
+                    contactId = args.contact.id,
+                    channelName = channel,
+                    isVideoCall = viewModel.isVideoCall(),
+                    typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
+                    mustSubscribeToPresenceChannel = true
+                )
+
+                val intent = Intent(context, ConversationCallActivity::class.java)
                 startActivity(intent)
                 (context as MainActivity).overridePendingTransition(
                     R.anim.slide_in_up,
@@ -1422,7 +1415,7 @@ class ConversationFragment
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall) {
+        with(NapoleonApplication.statusCall.isConnectedCall()) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this

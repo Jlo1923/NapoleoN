@@ -32,9 +32,11 @@ interface SyncManager {
 
     fun deleteContact(contactId: Int?)
 
-    fun sendMissedCall(callModel: CallModel)
+    fun sendMissedCall()
 
-    fun rejectCall(contactId: Int, channel: String)
+    fun rejectCall()
+
+    fun cancelCall()
 
     fun existMessageById(id: String): Boolean
 
@@ -44,10 +46,11 @@ interface SyncManager {
 
     suspend fun getRemoteContact()
 
-    fun callContact(contact: Int, videoCall: Boolean, offer: String)
+    fun callContact()
 
     fun existAttachmentById(it: String): Boolean
 
-
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
+
+    fun rejectSecondCallCall(contactId: Int, channelName: String)
 }

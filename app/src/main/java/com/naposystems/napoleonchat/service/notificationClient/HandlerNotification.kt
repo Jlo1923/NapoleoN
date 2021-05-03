@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.service.notificationClient
 
 import android.app.Notification
 import com.google.firebase.messaging.RemoteMessage
-import com.naposystems.napoleonchat.model.CallModel
 import java.util.*
 
 interface HandlerNotification {
@@ -13,10 +12,8 @@ interface HandlerNotification {
         notificationId: Int = Random().nextInt()
     )
 
-    fun createNotificationCallBuilder(
-        callModel: CallModel
-    ): Notification
+    fun createNotificationCallBuilder(): Notification
 
-    fun notificationCallInProgress(callModel: CallModel)
+    fun notificationCallInProgress()
 
 }
