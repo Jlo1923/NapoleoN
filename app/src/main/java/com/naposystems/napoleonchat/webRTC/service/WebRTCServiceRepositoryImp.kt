@@ -22,7 +22,7 @@ class WebRTCServiceRepositoryImp
 
     override fun rejectCall() {
         GlobalScope.launch {
-            NapoleonApplication.callInfoModel?.let { callModel ->
+            NapoleonApplication.callModel?.let { callModel ->
                 val rejectCallReqDTO = RejectCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -34,7 +34,7 @@ class WebRTCServiceRepositoryImp
 
     override fun cancelCall() {
         GlobalScope.launch {
-            NapoleonApplication.callInfoModel?.let { callModel ->
+            NapoleonApplication.callModel?.let { callModel ->
                 val cancelCallReqDTO = CancelCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -48,7 +48,7 @@ class WebRTCServiceRepositoryImp
         //TODO: Revisar tiempo de autodestruccion de este mensaje
         GlobalScope.launch {
             try {
-                NapoleonApplication.callInfoModel?.let { callModel ->
+                NapoleonApplication.callModel?.let { callModel ->
                     val messageReqDTO = MessageReqDTO(
                         userDestination = callModel.contactId,
                         quoted = "",

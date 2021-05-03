@@ -8,7 +8,7 @@ interface WebRTCClient {
 
     var renegotiateCall: Boolean
 
-    var isActiveCall: Boolean
+//    var isActiveCall: Boolean
 
     var isHideVideo: Boolean
 
@@ -20,7 +20,7 @@ interface WebRTCClient {
 
     fun reInit()
 
-    fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
+    fun setEventsFromWebRTCClientListener(evenstFromWebRTCClientListener: EvenstFromWebRTCClientListener)
 
     fun connectSocket()
 
@@ -81,5 +81,6 @@ interface WebRTCClient {
     fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
 
     fun rejectCall()
+    fun rejectSecondCall(contactId: Int, channelName: String)
 
 }

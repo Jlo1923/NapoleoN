@@ -50,6 +50,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
+import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
@@ -99,7 +100,6 @@ import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.custom_input_panel_widget.view.*
@@ -144,9 +144,6 @@ class ConversationFragment
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
-
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -801,19 +798,16 @@ class ConversationFragment
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
                 Timber.d("startCallActivity contactCalledSuccessfully")
+
+                NapoleonApplication.callModel = CallModel(
+                    contactId = args.contact.id,
+                    channelName = channel,
+                    isVideoCall = viewModel.isVideoCall(),
+                    typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
+                    mustSubscribeToPresenceChannel = true
+                )
+
                 val intent = Intent(context, ConversationCallActivity::class.java)
-//                val intent = Intent(context, ConversationCallActivity::class.java).apply {
-//                    putExtras(Bundle().apply {
-//                        putSerializable(
-//                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-//                                contactId = args.contact.id,
-//                                channelName = channel,
-//                                isVideoCall = viewModel.isVideoCall(),
-//                                typeCall = Constants.TypeCall.IS_OUTGOING_CALL
-//                            )
-//                        )
-//                    })
-//                }
                 startActivity(intent)
                 (context as MainActivity).overridePendingTransition(
                     R.anim.slide_in_up,
@@ -1421,7 +1415,7 @@ class ConversationFragment
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall) {
+        with(NapoleonApplication.statusCall.isConnectedCall()) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this

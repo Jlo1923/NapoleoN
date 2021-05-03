@@ -7,7 +7,7 @@ import org.json.JSONObject
 
 interface SocketClient {
 
-    fun setSocketEventListener(socketEventListener: SocketEventListener)
+    fun setEventsFromSocketClientListener(eventsFromSocketClientListener: EventsFromSocketClientListener)
 
     fun getStatusSocket(): ConnectionState
 

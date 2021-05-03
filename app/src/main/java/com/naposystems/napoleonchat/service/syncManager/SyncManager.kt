@@ -52,4 +52,5 @@ interface SyncManager {
 
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 
+    fun rejectSecondCallCall(contactId: Int, channelName: String)
 }

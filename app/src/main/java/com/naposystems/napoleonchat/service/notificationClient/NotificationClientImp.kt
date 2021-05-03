@@ -2,13 +2,11 @@ package com.naposystems.napoleonchat.service.notificationClient
 
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.toCallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import timber.log.Timber
 import javax.inject.Inject
 
 class NotificationClientImp
@@ -73,25 +71,7 @@ class NotificationClientImp
 
             Constants.NotificationType.INCOMING_CALL.type -> {
 
-                Timber.d("LLAMADA PASO 1: APLICACION NO VISIBLE")
-
-                NapoleonApplication.callInfoModel = dataFromNotification.toCallModel()
-
-                NapoleonApplication.callInfoModel?.let {
-                    it.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                }
-
-                NapoleonApplication.callInfoModel?.let {
-                    it.mustSubscribeToPresenceChannel = true
-                }
-
-                if (NapoleonApplication.isVisible.not()) {
-                    NapoleonApplication.callInfoModel?.let {
-                        it.isFromClosedApp = Constants.FromClosedApp.YES
-                    }
-                }
-
-                handlerNotificationCall.handlerCall()
+                handlerNotificationCall.handlerCall(dataFromNotification)
 
             }
         }

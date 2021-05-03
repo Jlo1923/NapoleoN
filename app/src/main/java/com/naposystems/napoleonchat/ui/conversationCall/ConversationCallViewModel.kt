@@ -45,7 +45,7 @@ class ConversationCallViewModel
     fun sendMissedCall() {
         viewModelScope.launch {
             try {
-                NapoleonApplication.callInfoModel?.let { callModel ->
+                NapoleonApplication.callModel?.let { callModel ->
                     val messageReqDTO = MessageReqDTO(
                         userDestination = callModel.contactId,
                         quoted = "",
@@ -66,7 +66,7 @@ class ConversationCallViewModel
     fun cancelCall() {
         GlobalScope.launch {
             try {
-                NapoleonApplication.callInfoModel?.let { callModel ->
+                NapoleonApplication.callModel?.let { callModel ->
                     val cancelCallReqDTO = CancelCallReqDTO(
                         callModel.contactId,
                         callModel.channelName
@@ -82,7 +82,7 @@ class ConversationCallViewModel
     fun rejectCall() {
         GlobalScope.launch {
             try {
-                NapoleonApplication.callInfoModel?.let { callModel ->
+                NapoleonApplication.callModel?.let { callModel ->
                     val rejectCallReqDTO = RejectCallReqDTO(
                         callModel.contactId,
                         callModel.channelName

@@ -2,12 +2,10 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.extractIdsAttachments
 import com.naposystems.napoleonchat.model.extractIdsMessages
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
@@ -75,10 +73,10 @@ class SocketClientImp
     private val moshi: Moshi by lazy { Moshi.Builder().build() }
     private var userId: Int = Constants.UserNotExist.USER_NO_EXIST.user
     private lateinit var privateGeneralChannelName: String
-    private lateinit var socketEventListener: SocketEventListener
+    private lateinit var eventsFromSocketClientListener: EventsFromSocketClientListener
 
     // TODO: move that tan pronto como sea posible
-    val queueNewMessageDataEventRes = LinkedList<NewMessageDataEventRes>()
+    private val queueNewMessageDataEventRes = LinkedList<NewMessageDataEventRes>()
 
     companion object {
         const val HANGUP_CALL = 2
@@ -95,8 +93,8 @@ class SocketClientImp
     }
 
     //region Conexion
-    override fun setSocketEventListener(socketEventListener: SocketEventListener) {
-        this.socketEventListener = socketEventListener
+    override fun setEventsFromSocketClientListener(eventsFromSocketClientListener: EventsFromSocketClientListener) {
+        this.eventsFromSocketClientListener = eventsFromSocketClientListener
     }
 
     override fun getStatusSocket(): ConnectionState {
@@ -175,7 +173,7 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO 5: SUSCRIBIRSE AL CANAL DE LLAMADAS")
 
-        NapoleonApplication.callInfoModel?.let { callModel ->
+        NapoleonApplication.callModel?.let { callModel ->
 
             if (pusher.getPresenceChannel(callModel.channelName) == null) {
 
@@ -206,6 +204,7 @@ class SocketClientImp
 //                            NapoleonApplication.statusCall = StatusCallEnum.STATUS_PROCESSING_CALL
 
                                 when (callModel.typeCall) {
+
                                     Constants.TypeCall.IS_INCOMING_CALL -> {
 
                                         Timber.d("LLAMADA PASO 2: Llamada entrante")
@@ -218,12 +217,13 @@ class SocketClientImp
 
                                             Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
 
-                                            socketEventListener.itsSubscribedToPresenceChannelIncomingCall()
+                                            eventsFromSocketClientListener.itsSubscribedToPresenceChannelIncomingCall()
                                         }
                                     }
+
                                     Constants.TypeCall.IS_OUTGOING_CALL -> {
                                         Timber.d("LLAMADA PASO 2: Llamada saliente")
-                                        socketEventListener.itsSubscribedToPresenceChannelOutgoingCall()
+                                        eventsFromSocketClientListener.itsSubscribedToPresenceChannelOutgoingCall()
                                     }
                                 }
                             }
@@ -261,7 +261,7 @@ class SocketClientImp
 
         try {
 
-            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
+            NapoleonApplication.callModel?.channelName?.let { channelName ->
 
                 Timber.e("UNSUBSCRIBE PRESENCE")
 
@@ -367,7 +367,7 @@ class SocketClientImp
 
         Timber.e("LLAMADA PASO: INTENTANDO DESSUBSCRIBIR PRESENCIA ")
 
-        NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
+        NapoleonApplication.callModel?.channelName?.let { channelName ->
 
             Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
 
@@ -437,7 +437,7 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO: eventType: $jsonObject")
         try {
-            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
+            NapoleonApplication.callModel?.channelName?.let { channelName ->
                 if (pusher.getPresenceChannel(channelName) != null)
                     pusher.getPresenceChannel(channelName)
                         .trigger(
@@ -454,7 +454,7 @@ class SocketClientImp
     override fun emitClientCall(eventType: Int) {
         Timber.d("LLAMADA PASO: eventType: $eventType")
         try {
-            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
+            NapoleonApplication.callModel?.channelName?.let { channelName ->
                 if (pusher.getPresenceChannel(channelName) != null)
                     pusher.getPresenceChannel(channelName)
                         .trigger(
@@ -586,7 +586,7 @@ class SocketClientImp
 
         subscribeChannels()
 
-        NapoleonApplication.callInfoModel?.let {
+        NapoleonApplication.callModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
                 Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
                 subscribeToPresenceChannel()
@@ -1169,22 +1169,19 @@ class SocketClientImp
 
                                     Timber.d("LLAMADA PASO: RECHAZAR LLAMADA")
 
-                                    if (NapoleonApplication.isShowingCallActivity) {
-                                        Timber.d("LLAMADA PASO: RECHAZAR LLAMADA ESTA MOSTRANDO LLAMADA")
-                                        socketEventListener.contactRejectCall()
-                                    } else {
-                                        Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
-                                        val callModel = CallModel()
-                                        callModel.channelName = presenceChannel
-                                        val intent = Intent(context, WebRTCService::class.java)
-                                        intent.action = WebRTCService.ACTION_DENY_CALL
-                                        intent.putExtras(Bundle().apply {
-                                            putSerializable(
-                                                Constants.CallKeys.CALL_MODEL,
-                                                callModel
-                                            )
-                                        })
-                                        context.startService(intent)
+                                    NapoleonApplication.callModel?.let { callModel ->
+                                        if (callModel.channelName == presenceChannel) {
+                                            if (NapoleonApplication.isShowingCallActivity) {
+                                                Timber.d("LLAMADA PASO: RECHAZAR LLAMADA ESTA MOSTRANDO LLAMADA")
+                                                eventsFromSocketClientListener.contactRejectCall()
+                                            } else {
+                                                Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
+                                                val intent =
+                                                    Intent(context, WebRTCService::class.java)
+                                                intent.action = WebRTCService.ACTION_DENY_CALL
+                                                context.startService(intent)
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1225,22 +1222,19 @@ class SocketClientImp
 
                                     Timber.d("LLAMADA PASO: CANCELAR LLAMADA")
 
-                                    if (NapoleonApplication.isShowingCallActivity) {
-                                        Timber.d("LLAMADA PASO: CANCELAR LLAMADA ESTA MOSTRANDO LLAMADA")
-                                        socketEventListener.contactCancelCall()
-                                    } else {
-                                        Timber.d("LLAMADA PASO: CANCELAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
-                                        val callModel = CallModel()
-                                        callModel.channelName = presenceChannel
-                                        val intent = Intent(context, WebRTCService::class.java)
-                                        intent.action = WebRTCService.ACTION_CALL_END
-                                        intent.putExtras(Bundle().apply {
-                                            putSerializable(
-                                                Constants.CallKeys.CALL_MODEL,
-                                                callModel
-                                            )
-                                        })
-                                        context.startService(intent)
+                                    NapoleonApplication.callModel?.let { callModel ->
+                                        if (callModel.channelName == presenceChannel) {
+                                            if (NapoleonApplication.isShowingCallActivity) {
+                                                Timber.d("LLAMADA PASO: RECHAZAR LLAMADA ESTA MOSTRANDO LLAMADA")
+                                                eventsFromSocketClientListener.contactCancelCall()
+                                            } else {
+                                                Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
+                                                val intent =
+                                                    Intent(context, WebRTCService::class.java)
+                                                intent.action = WebRTCService.ACTION_CALL_END
+                                                context.startService(intent)
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -1278,33 +1272,33 @@ class SocketClientImp
 
                                         CONTACT_WANT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_WANT_CHANGE_TO_VIDEO")
-                                            socketEventListener.contactWantChangeToVideoCall()
+                                            eventsFromSocketClientListener.contactWantChangeToVideoCall()
                                         }
                                         CONTACT_ACCEPT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_ACCEPT_CHANGE_TO_VIDEO")
-                                            socketEventListener.contactAcceptChangeToVideoCall()
+                                            eventsFromSocketClientListener.contactAcceptChangeToVideoCall()
                                         }
                                         CONTACT_CANCEL_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_CANCEL_CHANGE_TO_VIDEO")
-                                            socketEventListener.contactCancelChangeToVideoCall()
+                                            eventsFromSocketClientListener.contactCancelChangeToVideoCall()
                                         }
                                         CONTACT_CANT_CHANGE_TO_VIDEO -> {
                                             Timber.d("LLAMADA PASO: CONTACT_CANT_CHANGE_TO_VIDEO")
-                                            socketEventListener.contactCantChangeToVideoCall()
+                                            eventsFromSocketClientListener.contactCantChangeToVideoCall()
                                         }
                                         CONTACT_TURN_ON_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_ON_CAMERA")
-                                            socketEventListener.toggleContactCamera(isVisible = true)
+                                            eventsFromSocketClientListener.toggleContactCamera(isVisible = true)
                                         }
 
                                         CONTACT_TURN_OFF_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_OFF_CAMERA")
-                                            socketEventListener.toggleContactCamera(isVisible = false)
+                                            eventsFromSocketClientListener.toggleContactCamera(isVisible = false)
                                         }
 
                                         HANGUP_CALL -> {
                                             Timber.d("LLAMADA PASO: HANGUP_CALL")
-                                            socketEventListener.contactHasHangup()
+                                            eventsFromSocketClientListener.contactHasHangup()
                                         }
                                     }
 
@@ -1317,20 +1311,13 @@ class SocketClientImp
                                         when (jsonData.getString(TYPE)) {
 
                                             ICE_CANDIDATE -> {
-//
-//                                                Timber.d("LLAMADA PASO: RECEPCION DE ICECANDIDATE RECIBIDO")
-//                                                Timber.d("LLAMADA PASO: event.channelName. ${event.channelName}")
-
-                                                socketEventListener.iceCandidateReceived(jsonData.toIceCandidate()
+                                                eventsFromSocketClientListener.iceCandidateReceived(
+                                                    jsonData.toIceCandidate()
                                                 )
-
                                             }
 
                                             OFFER -> {
-
-//                                                Timber.d("LLAMADA PASO: OFERTA RECIBIDA")
-
-                                                socketEventListener.offerReceived(
+                                                eventsFromSocketClientListener.offerReceived(
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.OFFER
                                                     )
@@ -1338,10 +1325,7 @@ class SocketClientImp
                                             }
 
                                             ANSWER -> {
-
-//                                                Timber.d("LLAMADA PASO: RESPUESTA RECIBIDA")
-
-                                                socketEventListener.answerReceived(
+                                                eventsFromSocketClientListener.answerReceived(
                                                     jsonData.toSessionDescription(
                                                         SessionDescription.Type.ANSWER
                                                     )

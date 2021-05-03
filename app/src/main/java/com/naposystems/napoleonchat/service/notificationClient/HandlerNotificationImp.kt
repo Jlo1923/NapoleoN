@@ -176,7 +176,7 @@ class HandlerNotificationImp
 
         Timber.d("LLAMADA PASO: createNotificationCallBuilder")
 
-        val contact = NapoleonApplication.callInfoModel?.let { syncManager.getContact(it.contactId) }
+        val contact = NapoleonApplication.callModel?.let { syncManager.getContact(it.contactId) }
 
         val notificationBuilder = NotificationCompat.Builder(
             context,
@@ -185,7 +185,7 @@ class HandlerNotificationImp
             setSmallIcon(R.drawable.ic_call_black_24)
             setGroup(context.getString(R.string.calls_group_key))
             setContentTitle("@${contact?.getNickName()}")
-            setContentText(NapoleonApplication.callInfoModel?.let {
+            setContentText(NapoleonApplication.callModel?.let {
                 getTexNotification(
                     it.typeCall,
                     it.isVideoCall
@@ -194,7 +194,7 @@ class HandlerNotificationImp
             setCategory(NotificationCompat.CATEGORY_CALL)
             priority = NotificationCompat.PRIORITY_MAX
             setOngoing(true)
-            when (NapoleonApplication.callInfoModel?.typeCall) {
+            when (NapoleonApplication.callModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> {
                     addAction(
                         getServiceNotificationAction(
@@ -235,7 +235,7 @@ class HandlerNotificationImp
             setFullScreenIntent(pendingIntent, true)
         }
 
-        if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
+        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
             Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
             handlerMediaPlayerNotification.playRingtone()
         }

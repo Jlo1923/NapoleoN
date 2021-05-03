@@ -3,7 +3,7 @@ package com.naposystems.napoleonchat.service.socketClient
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
 
-interface SocketEventListener {
+interface EventsFromSocketClientListener {
 
     fun itsSubscribedToPresenceChannelIncomingCall()
     fun itsSubscribedToPresenceChannelOutgoingCall()
