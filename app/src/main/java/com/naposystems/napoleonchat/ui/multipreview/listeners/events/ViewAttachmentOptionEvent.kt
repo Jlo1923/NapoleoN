@@ -2,7 +2,9 @@ package com.naposystems.napoleonchat.ui.multipreview.listeners.events
 
 sealed class ViewAttachmentOptionEvent {
 
-    object OnChangeSelfDestruction : ViewAttachmentOptionEvent()
+    class OnChangeSelfDestruction(
+        val iconSelfDestruction: Int
+    ) : ViewAttachmentOptionEvent()
 
     object OnDelete : ViewAttachmentOptionEvent()
 

@@ -55,6 +55,7 @@ class MultipleAttachmentPreviewActivity
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: MultipleAttachmentPreviewViewModel
 
     private lateinit var viewBinding: ActivityMultipleAttachmentPreviewBinding
@@ -90,7 +91,9 @@ class MultipleAttachmentPreviewActivity
 
     override fun onViewAttachmentOptionEvent(event: ViewAttachmentOptionEvent) {
         when (event) {
-            ViewAttachmentOptionEvent.OnChangeSelfDestruction -> onChangeSelfDestruction()
+            is ViewAttachmentOptionEvent.OnChangeSelfDestruction -> viewModel.onChangeSelfDestruction(
+                event.iconSelfDestruction
+            )
             ViewAttachmentOptionEvent.OnDelete -> onDeleteItem()
         }
     }
@@ -124,10 +127,11 @@ class MultipleAttachmentPreviewActivity
         viewModel.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
     }
 
-    private fun onChangeSelfDestruction() {
+    private fun onChangeSelfDestruction(action: MultipleAttachmentPreviewAction.OnChangeSelfDestruction) {
         val dialog = SelfDestructTimeDialogFragment.newInstance(
-            0,
-            Location.CONVERSATION
+            action.contactId,
+            Location.CONVERSATION,
+            action.iconSelfDestruction
         )
         dialog.setListener(object :
             SelfDestructTimeDialogFragment.SelfDestructTimeListener {
@@ -254,8 +258,8 @@ class MultipleAttachmentPreviewActivity
 
     private fun handleActions(action: MultipleAttachmentPreviewAction) {
         when (action) {
-            Exit -> exitPreview()
-            ExitToConversation -> exitPreview()
+            Exit -> exitToMultiFolders()
+            ExitToConversation -> exitToConversation()
             HideAttachmentOptions -> hideAnimAttachmentOptions()
             ShowAttachmentOptions -> showAnimAttachmentOptions()
             ShowAttachmentOptionsWithoutAnim -> showAttachmentOptionsWithoutAnim()
@@ -268,6 +272,7 @@ class MultipleAttachmentPreviewActivity
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
             is SendMessageToRemote -> sendMessageToRemote(action)
             is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
+            is OnChangeSelfDestruction -> onChangeSelfDestruction(action)
         }
     }
 
@@ -276,13 +281,13 @@ class MultipleAttachmentPreviewActivity
     ) {
         val intentResult = Intent()
         intentResult.putStringArrayListExtra(
-            MULTI_EXTRA_FILES,
+            MULTI_EXTRA_FILES_DELETE,
             ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
         )
 
         intentResult.putExtras(Bundle().apply {
             this.putStringArrayList(
-                MULTI_EXTRA_FILES,
+                MULTI_EXTRA_FILES_DELETE,
                 ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
             )
         })
@@ -349,12 +354,21 @@ class MultipleAttachmentPreviewActivity
 
     private fun showSelfDestruction(selfDestruction: Int) {
         val iconSelfDestruction = getDrawableSelfDestruction(selfDestruction)
-        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
+        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(
+            iconSelfDestruction,
+            selfDestruction
+        )
     }
 
-    private fun exitPreview() {
+    private fun exitToConversation() {
         val intentResult = Intent()
-        setResult(RESULT_OK, intent);
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    private fun exitToMultiFolders() {
+        val intentResult = Intent()
+        setResult(RESULT_CANCELED, intent)
         finish()
     }
 
@@ -419,7 +433,7 @@ class MultipleAttachmentPreviewActivity
         val selectedFileToSee = viewBinding.viewPagerAttachments.currentItem
         viewModel.updateSelfDestructionForItemPosition(selectedFileToSee, selfDestructTimeSelected)
         val iconSelfDestruction = getDrawableSelfDestruction(selfDestructTimeSelected)
-        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction)
+        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction, selfDestructTimeSelected)
     }
 
     private fun hideAnimAttachmentOptions() = viewBinding.apply {
