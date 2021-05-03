@@ -17,7 +17,7 @@ class HandlerNotificationCallImp
         if (NapoleonApplication.statusCall.isNoCall()) {
             webRTCClient.connectSocket()
         } else {
-            NapoleonApplication.callModel?.let {
+            NapoleonApplication.callInfoModel?.let {
                 webRTCClient.rejectCall()
             }
         }

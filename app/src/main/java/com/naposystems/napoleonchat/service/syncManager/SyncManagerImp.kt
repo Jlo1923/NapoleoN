@@ -497,7 +497,7 @@ class SyncManagerImp @Inject constructor(
         //TODO: Revisar tiempo de autodestruccion de este mensaje
         GlobalScope.launch {
             try {
-                NapoleonApplication.callModel?.let { callModel ->
+                NapoleonApplication.callInfoModel?.let { callModel ->
                     val messageReqDTO = MessageReqDTO(
                         userDestination = callModel.contactId,
                         quoted = "",
@@ -517,7 +517,7 @@ class SyncManagerImp @Inject constructor(
 
     override fun rejectCall() {
         GlobalScope.launch {
-            NapoleonApplication.callModel?.let { callModel ->
+            NapoleonApplication.callInfoModel?.let { callModel ->
                 val rejectCallReqDTO = RejectCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -529,7 +529,7 @@ class SyncManagerImp @Inject constructor(
 
     override fun cancelCall() {
         GlobalScope.launch {
-            NapoleonApplication.callModel?.let { callModel ->
+            NapoleonApplication.callInfoModel?.let { callModel ->
                 val cancelCallReqDTO = CancelCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -757,7 +757,7 @@ class SyncManagerImp @Inject constructor(
     override fun callContact() {
         Timber.d("LLAMADA PASO 11 OUTGOING: Consumiendo llamando contacto")
         GlobalScope.launch(Dispatchers.IO) {
-            NapoleonApplication.callModel?.let { callModel ->
+            NapoleonApplication.callInfoModel?.let { callModel ->
                 val callContactReqDTO = CallContactReqDTO(
                     contactToCall = callModel.contactId,
                     isVideoCall = callModel.isVideoCall,

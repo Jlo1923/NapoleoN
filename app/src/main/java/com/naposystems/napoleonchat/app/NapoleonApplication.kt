@@ -38,7 +38,7 @@ class NapoleonApplication : DaggerApplication(), DefaultLifecycleObserver {
 
         var isShowingCallActivity: Boolean = false
 
-        var callModel: CallModel? =  null
+        var callInfoModel: CallModel? =  null
 
         var currentConversationContactId: Int = 0
 

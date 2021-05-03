@@ -175,7 +175,7 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO 5: SUSCRIBIRSE AL CANAL DE LLAMADAS")
 
-        NapoleonApplication.callModel?.let { callModel ->
+        NapoleonApplication.callInfoModel?.let { callModel ->
 
             if (pusher.getPresenceChannel(callModel.channelName) == null) {
 
@@ -261,7 +261,7 @@ class SocketClientImp
 
         try {
 
-            NapoleonApplication.callModel?.channelName?.let { channelName ->
+            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
 
                 Timber.e("UNSUBSCRIBE PRESENCE")
 
@@ -367,7 +367,7 @@ class SocketClientImp
 
         Timber.e("LLAMADA PASO: INTENTANDO DESSUBSCRIBIR PRESENCIA ")
 
-        NapoleonApplication.callModel?.channelName?.let { channelName ->
+        NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
 
             Timber.d("LLAMADA PASO: DESUSCRIBIR A CANAL CHANNELNAME $channelName")
 
@@ -437,7 +437,7 @@ class SocketClientImp
 
         Timber.d("LLAMADA PASO: eventType: $jsonObject")
         try {
-            NapoleonApplication.callModel?.channelName?.let { channelName ->
+            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
                 if (pusher.getPresenceChannel(channelName) != null)
                     pusher.getPresenceChannel(channelName)
                         .trigger(
@@ -454,7 +454,7 @@ class SocketClientImp
     override fun emitClientCall(eventType: Int) {
         Timber.d("LLAMADA PASO: eventType: $eventType")
         try {
-            NapoleonApplication.callModel?.channelName?.let { channelName ->
+            NapoleonApplication.callInfoModel?.channelName?.let { channelName ->
                 if (pusher.getPresenceChannel(channelName) != null)
                     pusher.getPresenceChannel(channelName)
                         .trigger(
@@ -586,7 +586,7 @@ class SocketClientImp
 
         subscribeChannels()
 
-        NapoleonApplication.callModel?.let {
+        NapoleonApplication.callInfoModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
                 Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
                 subscribeToPresenceChannel()

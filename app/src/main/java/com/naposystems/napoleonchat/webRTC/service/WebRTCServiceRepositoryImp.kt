@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.webRTC.service
 
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
@@ -23,7 +22,7 @@ class WebRTCServiceRepositoryImp
 
     override fun rejectCall() {
         GlobalScope.launch {
-            NapoleonApplication.callModel?.let { callModel ->
+            NapoleonApplication.callInfoModel?.let { callModel ->
                 val rejectCallReqDTO = RejectCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -35,7 +34,7 @@ class WebRTCServiceRepositoryImp
 
     override fun cancelCall() {
         GlobalScope.launch {
-            NapoleonApplication.callModel?.let { callModel ->
+            NapoleonApplication.callInfoModel?.let { callModel ->
                 val cancelCallReqDTO = CancelCallReqDTO(
                     contactId = callModel.contactId,
                     channel = callModel.channelName
@@ -49,7 +48,7 @@ class WebRTCServiceRepositoryImp
         //TODO: Revisar tiempo de autodestruccion de este mensaje
         GlobalScope.launch {
             try {
-                NapoleonApplication.callModel?.let { callModel ->
+                NapoleonApplication.callInfoModel?.let { callModel ->
                     val messageReqDTO = MessageReqDTO(
                         userDestination = callModel.contactId,
                         quoted = "",

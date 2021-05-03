@@ -13,7 +13,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.app.NapoleonApplication.Companion.callModel
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -177,7 +176,7 @@ class HandlerNotificationImp
 
         Timber.d("LLAMADA PASO: createNotificationCallBuilder")
 
-        val contact = NapoleonApplication.callModel?.let { syncManager.getContact(it.contactId) }
+        val contact = NapoleonApplication.callInfoModel?.let { syncManager.getContact(it.contactId) }
 
         val notificationBuilder = NotificationCompat.Builder(
             context,
@@ -186,7 +185,7 @@ class HandlerNotificationImp
             setSmallIcon(R.drawable.ic_call_black_24)
             setGroup(context.getString(R.string.calls_group_key))
             setContentTitle("@${contact?.getNickName()}")
-            setContentText(NapoleonApplication.callModel?.let {
+            setContentText(NapoleonApplication.callInfoModel?.let {
                 getTexNotification(
                     it.typeCall,
                     it.isVideoCall
@@ -195,7 +194,7 @@ class HandlerNotificationImp
             setCategory(NotificationCompat.CATEGORY_CALL)
             priority = NotificationCompat.PRIORITY_MAX
             setOngoing(true)
-            when (NapoleonApplication.callModel?.typeCall) {
+            when (NapoleonApplication.callInfoModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> {
                     addAction(
                         getServiceNotificationAction(
@@ -236,7 +235,7 @@ class HandlerNotificationImp
             setFullScreenIntent(pendingIntent, true)
         }
 
-        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
+        if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
             Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
             handlerMediaPlayerNotification.playRingtone()
         }

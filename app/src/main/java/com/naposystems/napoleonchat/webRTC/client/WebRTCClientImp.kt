@@ -316,7 +316,7 @@ class WebRTCClientImp
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     Timber.d("LLAMADA PASO: COLGANDO DESDE NOTIFICACION")
-                    NapoleonApplication.callModel?.let {
+                    NapoleonApplication.callInfoModel?.let {
                         webRTCClientListener?.hangUpFromNotification()
                     }
                 }
@@ -330,7 +330,7 @@ class WebRTCClientImp
         Timber.d("Headset plugged")
         stopProximitySensor()
         isHeadsetConnected = true
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
             if (isBluetoothAvailable.not()) {
                 audioManager.isSpeakerphoneOn = false
             }
@@ -346,7 +346,7 @@ class WebRTCClientImp
         isHeadsetConnected = false
         Timber.d("Headset unplugged")
 
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
             if (isBluetoothAvailable) {
                 audioManager.isSpeakerphoneOn = false
                 startProximitySensor()
@@ -413,7 +413,7 @@ class WebRTCClientImp
                     override fun onRenegotiationNeeded() {
                         super.onRenegotiationNeeded()
                         Timber.d("LLAMADA PASO: onRenegotiationNeeded renegotiateCall: $renegotiateCall isReturnCall: $isReturnCall")
-                        if ((renegotiateCall || isReturnCall) && NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+                        if ((renegotiateCall || isReturnCall) && NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
                             isReturnCall = false
                             renegotiateCall = false
                             Timber.d("LLAMADA PASO: onRenegotiationNeeded CREAR OFERTA")
@@ -438,7 +438,7 @@ class WebRTCClientImp
 
                         if (mediaStreams.isNotEmpty()) {
 
-                            if (NapoleonApplication.callModel?.isVideoCall == true) {
+                            if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
 
                                 Timber.d("LLAMADA PASO: onAddTrack NapoleonApplication.callModel?.isVideoCall")
 
@@ -526,7 +526,7 @@ class WebRTCClientImp
                 )
             )
 
-            if (NapoleonApplication.callModel?.isVideoCall == true)
+            if (NapoleonApplication.callInfoModel?.isVideoCall == true)
                 add(
                     MediaConstraints.KeyValuePair(
                         "OfferToReceiveVideo",
@@ -550,7 +550,7 @@ class WebRTCClientImp
                 if (isActiveCall.not()) {
                     Timber.d("LLAMADA PASO 10.1: Llamada no activa consume api")
 
-                    NapoleonApplication.callModel?.let {
+                    NapoleonApplication.callInfoModel?.let {
                         it.offer = sessionDescription.toJSONObject().toString()
                     }
 
@@ -559,7 +559,7 @@ class WebRTCClientImp
                 } else {
                     Timber.d("LLAMADA PASO 10.2: Emite llamar")
 
-                    NapoleonApplication.callModel?.channelName?.let {
+                    NapoleonApplication.callInfoModel?.channelName?.let {
                         socketClient.emitClientCall(
                             jsonObject = sessionDescription.toJSONObject()
                         )
@@ -571,7 +571,7 @@ class WebRTCClientImp
     }
 
     override fun subscribeToPresenceChannel() {
-        NapoleonApplication.callModel?.let {
+        NapoleonApplication.callInfoModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
                 Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
                 socketClient.subscribeToPresenceChannel()
@@ -583,7 +583,7 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO 4: SETEANDO oferta")
 
-        NapoleonApplication.callModel?.offer?.let {
+        NapoleonApplication.callInfoModel?.offer?.let {
             val jsonData = JSONObject(it)
 
             val sessionDescription = jsonData.toSessionDescription(
@@ -610,7 +610,7 @@ class WebRTCClientImp
                     )
                     Timber.d("LLAMADA PASO: Emitiendo respuesta")
 
-                    NapoleonApplication.callModel?.channelName?.let {
+                    NapoleonApplication.callInfoModel?.channelName?.let {
                         socketClient.emitClientCall(
                             jsonObject = sessionDescription.toJSONObject()
                         )
@@ -623,14 +623,14 @@ class WebRTCClientImp
     private fun onIceCandidateGenerated(iceCandidate: IceCandidate) {
         try {
             if (isActiveCall) {
-                NapoleonApplication.callModel?.channelName?.let {
+                NapoleonApplication.callInfoModel?.channelName?.let {
                     socketClient.emitClientCall(
                         jsonObject = iceCandidate.toJSONObject()
                     )
                 }
             } else {
-                if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                    NapoleonApplication.callModel?.channelName?.let {
+                if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+                    NapoleonApplication.callInfoModel?.channelName?.let {
                         socketClient.emitClientCall(
                             jsonObject = iceCandidate.toJSONObject()
                         )
@@ -793,7 +793,7 @@ class WebRTCClientImp
 
     override fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean) {
 
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
 
             isHideVideo = checked
 
@@ -801,7 +801,7 @@ class WebRTCClientImp
 
                 videoCapturerAndroid?.stopCapture()
 
-                NapoleonApplication.callModel?.channelName?.let {
+                NapoleonApplication.callInfoModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_OFF_CAMERA
                     )
@@ -814,7 +814,7 @@ class WebRTCClientImp
                 videoCapturerAndroid?.startCapture(640, 480, 30)
 
 
-                NapoleonApplication.callModel?.channelName?.let {
+                NapoleonApplication.callInfoModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_ON_CAMERA
                     )
@@ -861,7 +861,7 @@ class WebRTCClientImp
         if (isBluetoothAvailable || isHeadsetConnected) {
             audioManager.isSpeakerphoneOn = false
         } else {
-            audioManager.isSpeakerphoneOn = NapoleonApplication.callModel?.isVideoCall == true
+            audioManager.isSpeakerphoneOn = NapoleonApplication.callInfoModel?.isVideoCall == true
         }
 
         countDownRingCall.start()
@@ -913,7 +913,7 @@ class WebRTCClientImp
 
     //Bluetooth
     override fun handleBluetooth(isEnabled: Boolean) {
-        Timber.d("handleBluetooth: $isEnabled, ${NapoleonApplication.callModel?.isVideoCall}")
+        Timber.d("handleBluetooth: $isEnabled, ${NapoleonApplication.callInfoModel?.isVideoCall}")
         isBluetoothActive = isEnabled
 
         if (isEnabled) {
@@ -939,7 +939,7 @@ class WebRTCClientImp
                 else -> {
                     startProximitySensor()
                     audioManager.isSpeakerphoneOn =
-                        NapoleonApplication.callModel?.isVideoCall == true
+                        NapoleonApplication.callInfoModel?.isVideoCall == true
                 }
             }
         }
@@ -975,7 +975,7 @@ class WebRTCClientImp
     }
 
     override fun setItsReturnCall(itsReturnCall: Boolean) {
-        if (NapoleonApplication.callModel?.isVideoCall == true)
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true)
             this.isReturnCall = itsReturnCall
     }
 
@@ -994,12 +994,12 @@ class WebRTCClientImp
 //            stopProximitySensor()
         }
 
-        if (isBluetoothAvailable && NapoleonApplication.callModel?.isVideoCall == true && isBluetoothStopped) {
+        if (isBluetoothAvailable && NapoleonApplication.callInfoModel?.isVideoCall == true && isBluetoothStopped) {
             Timber.d("onBluetoothStateChanged 2do")
             audioManager.isSpeakerphoneOn = true
         }
 
-        if (isBluetoothAvailable && NapoleonApplication.callModel?.isVideoCall == false) {
+        if (isBluetoothAvailable && NapoleonApplication.callInfoModel?.isVideoCall == false) {
             stopProximitySensor()
         }
 
@@ -1016,7 +1016,7 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO 7: ya Suscrito")
 
-        NapoleonApplication.callModel?.channelName.let {
+        NapoleonApplication.callInfoModel?.channelName.let {
 
             Timber.d("LLAMADA PASO: Crea Offer")
 
@@ -1030,20 +1030,20 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: Inicia el servicio WebRTC desde itsSubscribedToPresenceChannelIncomingCall")
 
-        NapoleonApplication.callModel?.channelName.let {
+        NapoleonApplication.callInfoModel?.channelName.let {
             startWebRTCService()
         }
     }
 
     override fun iceCandidateReceived(iceCandidate: IceCandidate) {
-        NapoleonApplication.callModel?.channelName.let {
+        NapoleonApplication.callInfoModel?.channelName.let {
             Timber.d("LLAMADA PASO: AGREGO ICECANDIDATE $iceCandidate")
             peerConnection?.addIceCandidate(iceCandidate)
         }
     }
 
     override fun offerReceived(sessionDescription: SessionDescription) {
-        NapoleonApplication.callModel?.channelName.let {
+        NapoleonApplication.callInfoModel?.channelName.let {
             peerConnection?.setRemoteDescription(
                 CustomSdpObserver("Remote offer"),
                 sessionDescription
@@ -1053,7 +1053,7 @@ class WebRTCClientImp
     }
 
     override fun answerReceived(sessionDescription: SessionDescription) {
-        NapoleonApplication.callModel?.channelName?.let {
+        NapoleonApplication.callInfoModel?.channelName?.let {
             Timber.d("LLAMADA PASO: SETEO RESPUESTA")
 
             peerConnection?.setRemoteDescription(
@@ -1078,7 +1078,7 @@ class WebRTCClientImp
     }
 
     override fun contactRejectCall() {
-        NapoleonApplication.callModel?.channelName?.let {
+        NapoleonApplication.callInfoModel?.channelName?.let {
             syncManager.sendMissedCall()
             syncManager.rejectCall()
             webRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
@@ -1089,14 +1089,14 @@ class WebRTCClientImp
     }
 
     override fun contactCancelCall() {
-        NapoleonApplication.callModel?.let {
+        NapoleonApplication.callInfoModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
             disposeCall()
         }
     }
 
     override fun contactWantChangeToVideoCall() {
-        NapoleonApplication.callModel?.let { callModel ->
+        NapoleonApplication.callInfoModel?.let { callModel ->
             if (callModel.channelName != "" &&
                 NapoleonApplication.isShowingCallActivity
             )
@@ -1110,7 +1110,7 @@ class WebRTCClientImp
     }
 
     override fun changeToVideoCall() {
-        if (NapoleonApplication.callModel?.isVideoCall == false) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == false) {
             socketClient.emitClientCall(
                 SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
             )
@@ -1119,9 +1119,9 @@ class WebRTCClientImp
 
     override fun meAcceptChangeToVideoCall() {
 
-        NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+        NapoleonApplication.callInfoModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
 
-        NapoleonApplication.callModel?.isVideoCall = true
+        NapoleonApplication.callInfoModel?.isVideoCall = true
 
         socketClient.emitClientCall(
             SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
@@ -1138,10 +1138,10 @@ class WebRTCClientImp
     }
 
     override fun contactAcceptChangeToVideoCall() {
-        NapoleonApplication.callModel.let { callModel ->
+        NapoleonApplication.callInfoModel.let { callModel ->
             if (callModel?.channelName != "" && callModel?.isVideoCall == false) {
-                NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
-                NapoleonApplication.callModel?.isVideoCall = true
+                NapoleonApplication.callInfoModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+                NapoleonApplication.callInfoModel?.isVideoCall = true
                 renegotiateCall = true
                 webRTCClientListener?.contactAcceptChangeToVideoCall()
             }
@@ -1149,14 +1149,14 @@ class WebRTCClientImp
     }
 
     override fun contactCancelChangeToVideoCall() {
-        NapoleonApplication.callModel.let { callModel ->
+        NapoleonApplication.callInfoModel.let { callModel ->
             if (callModel?.channelName != "")
                 webRTCClientListener?.contactCancelChangeToVideoCall()
         }
     }
 
     override fun contactCantChangeToVideoCall() {
-        NapoleonApplication.callModel.let { callModel ->
+        NapoleonApplication.callInfoModel.let { callModel ->
             if (callModel?.channelName != "")
                 webRTCClientListener?.contactCantChangeToVideoCall()
 
@@ -1164,7 +1164,7 @@ class WebRTCClientImp
     }
 
     override fun toggleContactCamera(contactCameraIsVisible: Boolean) {
-        NapoleonApplication.callModel.let { callModel ->
+        NapoleonApplication.callInfoModel.let { callModel ->
             if (callModel?.channelName != "") {
                 this.contactCameraIsVisible = contactCameraIsVisible
                 webRTCClientListener?.toggleContactCamera(if (contactCameraIsVisible.not()) View.VISIBLE else View.INVISIBLE)
@@ -1198,16 +1198,16 @@ class WebRTCClientImp
 
         startProximitySensor()
 
-        if (NapoleonApplication.callModel?.isVideoCall == false && NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == false && NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
             audioManager.isSpeakerphoneOn = false
             webRTCClientListener?.toggleCheckedSpeaker(false)
         }
 
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
             renderRemoteVideo()
         }
 
-        if ((NapoleonApplication.callModel?.isVideoCall == false && isBluetoothActive) || isHeadsetConnected) {
+        if ((NapoleonApplication.callInfoModel?.isVideoCall == false && isBluetoothActive) || isHeadsetConnected) {
             stopProximitySensor()
         }
     }
@@ -1220,7 +1220,7 @@ class WebRTCClientImp
     }
 
     override fun contactHasHangup() {
-        NapoleonApplication.callModel.let { _ ->
+        NapoleonApplication.callInfoModel.let { _ ->
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
             disposeCall()
         }
@@ -1256,7 +1256,7 @@ class WebRTCClientImp
 
                 disposingCall = true
 
-                NapoleonApplication.callModel?.let { callModel ->
+                NapoleonApplication.callInfoModel?.let { callModel ->
                     if (callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
                         Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
                         socketClient.disconnectSocket()
@@ -1269,7 +1269,7 @@ class WebRTCClientImp
 
                 }
 
-                NapoleonApplication.callModel = null
+                NapoleonApplication.callInfoModel = null
 
                 processDisposeCall()
 

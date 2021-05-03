@@ -111,12 +111,12 @@ class ConversationCallActivity :
 
         getExtras()
 
-        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+        if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
             Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE SUSCRIBIENDOSE AL CANAL DE PRESENCIA")
             webRTCClient.subscribeToPresenceChannel()
         }
 
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
+        if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
 
             Timber.d("LLAMADA PASO: ES VIDEOLLAMADA INICIANDO LAS SUPERFICIES DE RENDERIZADO")
 
@@ -148,14 +148,14 @@ class ConversationCallActivity :
                 WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE
             )
-            if (NapoleonApplication.callModel?.isVideoCall == true) {
+            if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
                 addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             }
         }
 
         if (webRTCClient.isActiveCall.not()) {
 
-            when (NapoleonApplication.callModel?.typeCall) {
+            when (NapoleonApplication.callInfoModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> webRTCClient.playRingtone()
                 Constants.TypeCall.IS_OUTGOING_CALL -> webRTCClient.playRingBackTone()
             }
@@ -164,7 +164,7 @@ class ConversationCallActivity :
 
             Timber.d("LLAMADA PASO: : LLAMADA ACTIVA")
 
-            if (NapoleonApplication.callModel?.isVideoCall == true) {
+            if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
                 webRTCClient.renderRemoteVideo()
                 showRemoteVideo()
                 binding.localSurfaceRender.isVisible = webRTCClient.isHideVideo.not()
@@ -196,7 +196,7 @@ class ConversationCallActivity :
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        return if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && webRTCClient.isActiveCall.not()) {
+        return if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && webRTCClient.isActiveCall.not()) {
             webRTCClient.handleKeyDown(keyCode)
         } else {
             super.onKeyDown(keyCode, event)
@@ -209,7 +209,7 @@ class ConversationCallActivity :
 
             Timber.d("startCallActivity, onBackPressed")
 
-            if (NapoleonApplication.callModel?.isVideoCall == true) {
+            if (NapoleonApplication.callInfoModel?.isVideoCall == true) {
                 webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
             }
 
@@ -242,7 +242,7 @@ class ConversationCallActivity :
 
         if (intent.action == WebRTCService.ACTION_ANSWER_CALL &&
             webRTCClient.isActiveCall.not() &&
-            NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL
+            NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
             answerCall()
         }
@@ -255,17 +255,17 @@ class ConversationCallActivity :
             Timber.d("LLAMADA PASO: INTENTA OBTENER EXTRAS")
 
 
-            Timber.d("LLAMADA PASO 2: GETEXTRAS CALLMODEL: ${NapoleonApplication.callModel}")
+            Timber.d("LLAMADA PASO 2: GETEXTRAS CALLMODEL: ${NapoleonApplication.callInfoModel}")
 
-            NapoleonApplication.callModel?.contactId?.let { viewModel.getContact(it) }
+            NapoleonApplication.callInfoModel?.contactId?.let { viewModel.getContact(it) }
 
-            binding.typeCall = NapoleonApplication.callModel?.typeCall?.type
+            binding.typeCall = NapoleonApplication.callInfoModel?.typeCall?.type
 
-            binding.isVideoCall = NapoleonApplication.callModel?.isVideoCall
+            binding.isVideoCall = NapoleonApplication.callInfoModel?.isVideoCall
 
             intent.extras?.let { extras ->
 
-                if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+                if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
 
                     Timber.d("LLAMADA PASO: LLAMADA ENTRANTE SETEANDO OFERTA")
 
@@ -290,11 +290,11 @@ class ConversationCallActivity :
 
     private fun setUIListeners() {
 
-        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
+        if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL)
             binding.fabAnswer.visibility = View.GONE
 
         binding.fabAnswer.setOnClickListener {
-            if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+            if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
                 answerCall()
             }
         }
@@ -371,13 +371,13 @@ class ConversationCallActivity :
 
         binding.fabHangup.isEnabled = false
 
-        Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${NapoleonApplication.callModel?.typeCall}")
+        Timber.d("LLAMADA PASO: HANGUP PRESIONADO ${webRTCClient.isActiveCall} TypeCall: ${NapoleonApplication.callInfoModel?.typeCall}")
 
         when (NapoleonApplication.statusCall) {
             StatusCallEnum.STATUS_NO_CALL,
             StatusCallEnum.STATUS_PROCESSING_CALL -> {
                 Timber.d("LLAMADA PASO: SI LLAMADA NO ACTIVA CONSUME SENDMISSED Y CANCELCALL")
-                when (NapoleonApplication.callModel?.typeCall) {
+                when (NapoleonApplication.callInfoModel?.typeCall) {
                     Constants.TypeCall.IS_OUTGOING_CALL -> {
                         Timber.d("LLAMADA PASO: LLAMADA COLGADA SE ENVIA LLAMADA PERDIDA")
                         viewModel.sendMissedCall()
@@ -431,9 +431,9 @@ class ConversationCallActivity :
                 R.string.text_cancel,
                 clickPositiveButton = {
 
-                    NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
+                    NapoleonApplication.callInfoModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
 
-                    NapoleonApplication.callModel?.isVideoCall = true
+                    NapoleonApplication.callInfoModel?.isVideoCall = true
 
                     initSurfaceRenders()
 
@@ -450,9 +450,9 @@ class ConversationCallActivity :
 
     override fun contactAcceptChangeToVideoCall() {
 
-        NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
+        NapoleonApplication.callInfoModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
 
-        NapoleonApplication.callModel?.isVideoCall = true
+        NapoleonApplication.callInfoModel?.isVideoCall = true
 
         initSurfaceRenders()
     }
@@ -484,7 +484,7 @@ class ConversationCallActivity :
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
             binding.textViewCalling.text =
-                getString(if (NapoleonApplication.callModel?.isVideoCall == true) R.string.text_encrypting_videocall else R.string.text_encrypting_call)
+                getString(if (NapoleonApplication.callInfoModel?.isVideoCall == true) R.string.text_encrypting_videocall else R.string.text_encrypting_call)
         }
     }
 
@@ -514,7 +514,7 @@ class ConversationCallActivity :
 
     override fun showRemoteVideo() {
         runOnUiThread {
-            NapoleonApplication.callModel?.isVideoCall = true
+            NapoleonApplication.callInfoModel?.isVideoCall = true
             binding.isVideoCall = true
             if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
                 binding.viewSwitcher.showNext()
@@ -615,7 +615,7 @@ class ConversationCallActivity :
     }
 
     override fun onContactNotAnswer() {
-        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+        if (NapoleonApplication.callInfoModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
             Timber.d("LLAMADA PASO: CONTACTO NO CONTESTO Y SE CANCELA LLAMADA")
             viewModel.cancelCall()
             viewModel.sendMissedCall()
@@ -625,7 +625,7 @@ class ConversationCallActivity :
     override fun callEnded() {
         Timber.d("LLAMADA PASO: SETEA A FALSE LA VISTA DE LLAMADA")
         NapoleonApplication.isShowingCallActivity = false
-        NapoleonApplication.callModel = null
+        NapoleonApplication.callInfoModel = null
         finish()
     }
     //endregion

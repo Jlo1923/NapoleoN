@@ -75,18 +75,18 @@ class NotificationClientImp
 
                 Timber.d("LLAMADA PASO 1: APLICACION NO VISIBLE")
 
-                NapoleonApplication.callModel = dataFromNotification.toCallModel()
+                NapoleonApplication.callInfoModel = dataFromNotification.toCallModel()
 
-                NapoleonApplication.callModel?.let {
+                NapoleonApplication.callInfoModel?.let {
                     it.typeCall = Constants.TypeCall.IS_INCOMING_CALL
                 }
 
-                NapoleonApplication.callModel?.let {
+                NapoleonApplication.callInfoModel?.let {
                     it.mustSubscribeToPresenceChannel = true
                 }
 
                 if (NapoleonApplication.isVisible.not()) {
-                    NapoleonApplication.callModel?.let {
+                    NapoleonApplication.callInfoModel?.let {
                         it.isFromClosedApp = Constants.FromClosedApp.YES
                     }
                 }

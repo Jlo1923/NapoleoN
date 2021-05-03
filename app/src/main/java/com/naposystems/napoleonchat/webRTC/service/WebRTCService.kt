@@ -159,7 +159,7 @@ class WebRTCService : Service() {
 
         Timber.d("LLAMADA PASO: MOSTRANDO NOTIFICACION")
 
-        NapoleonApplication.callModel?.let { callModel ->
+        NapoleonApplication.callInfoModel?.let { callModel ->
 
             if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
