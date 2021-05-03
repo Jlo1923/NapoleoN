@@ -23,8 +23,8 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.In
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.giftnn.MyMessageGifNNViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.IncomingMessageImageViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.image.MyMessageImageViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IncomingMultiAttachmentMsgViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewHolder
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.IncomingMessageVideoViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.video.MyMessageVideoViewHolder
 import com.naposystems.napoleonchat.utility.Constants
@@ -282,7 +282,7 @@ class ConversationAdapter(
 
             return when (conversation.messageEntity.messageType) {
 
-                Constants.MessageType.MESSAGE.type -> {
+                Constants.MessageTextType.NORMAL.type -> {
                     /**
                      * Podemos tener distintos casos,
                      * sin Attachment
@@ -295,10 +295,10 @@ class ConversationAdapter(
                         else -> getItemForTwoOrMoreAttachments(conversation)
                     }
                 }
-                Constants.MessageType.MISSED_CALL.type,
-                Constants.MessageType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
-                Constants.MessageType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
-                Constants.MessageType.MESSAGES_GROUP_DATE.type -> TYPE_GROUP_DATE_MESSAGES
+                Constants.MessageTextType.MISSED_CALL.type,
+                Constants.MessageTextType.MISSED_VIDEO_CALL.type -> TYPE_MISSED_CALL
+                Constants.MessageTextType.NEW_CONTACT.type -> TYPE_SYSTEM_MESSAGE
+                Constants.MessageTextType.GROUP_DATE.type -> TYPE_GROUP_DATE_MESSAGES
                 else -> {
                     if (conversation.messageEntity.isMine == Constants.IsMine.YES.value) {
                         TYPE_MY_MESSAGE
@@ -378,6 +378,12 @@ class ConversationAdapter(
                 viewmodels.viewModelMultiAttachment,
                 listeners.listenerMultiAttachment
             )
+            TYPE_INCOMING_MULTI_ATTACHMENT -> IncomingMultiAttachmentMsgViewHolder.from(
+                parent,
+                viewmodels.viewModelIncomingMultiAttachment,
+                listeners.listenerMultiAttachment
+            )
+
             //TYPE_GROUP_DATE_MESSAGES -> GroupDateMessageViewHolder.from(parent)
             else -> MyMessageViewHolder.from(parent)
         }
@@ -425,7 +431,14 @@ class ConversationAdapter(
                 TYPE_GROUP_DATE_MESSAGES -> (holder as GroupDateMessageViewHolder)
                     .bind(item)
                 TYPE_MY_MULTI_ATTACHMENT ->
-                    (holder as MyMultiAttachmentMsgViewHolder)
+                    (holder as MyMultiAttachmentMsgViewHolder).bind(
+                        item,
+                        clickListener,
+                        isFirst,
+                        timeFormat
+                    )
+                TYPE_INCOMING_MULTI_ATTACHMENT ->
+                    (holder as IncomingMultiAttachmentMsgViewHolder)
                         .bind(item, clickListener, isFirst, timeFormat)
             }
         }

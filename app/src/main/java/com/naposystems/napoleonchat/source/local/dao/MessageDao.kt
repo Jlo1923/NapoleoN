@@ -3,8 +3,10 @@ package com.naposystems.napoleonchat.source.local.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.naposystems.napoleonchat.source.local.DBConstants
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -30,13 +32,15 @@ interface MessageDao {
     fun getMessagesAndAttachmentsDistinctUntilChanged(contactId: Int) =
         getMessagesAndAttachments(contactId).distinctUntilChanged()
 
+    //TODO:REVISAR CONSULTA
     @Query(
-        "SELECT *, COUNT(CASE WHEN status=3 " +
-                "AND ${DBConstants.Message.COLUMN_IS_MINE}=0 THEN 1 END) AS messagesUnReads " +
-                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+        "SELECT * FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE (${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} > strftime('%s','now') OR ${DBConstants.Message.COLUMN_TOTAL_SELF_DESTRUCTION_AT} >= 0) " +
-                "GROUP BY ${DBConstants.Message.COLUMN_CONTACT_ID} " +
-                "ORDER BY ${DBConstants.Message.COLUMN_ID} DESC"
+                "AND ${DBConstants.Message.COLUMN_ID} IN (SELECT MAX(${DBConstants.Message.COLUMN_ID}) " +
+                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                "GROUP BY ${DBConstants.Message.COLUMN_CONTACT_ID})" +
+                " ORDER BY ${DBConstants.Message.COLUMN_ID} DESC"
+
     )
     fun getMessagesForHome(): Flow<List<MessageAttachmentRelation>>
 
@@ -249,19 +253,38 @@ interface MessageDao {
     )
     suspend fun deleteMessageByType(contactId: Int, type: Int)
 
+    //TODO: Pasar el estado de fallido a una constante
     @Query(
         " DELETE FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " WHERE ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
+                " WHERE  ${DBConstants.Message.COLUMN_STATUS} != 5  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID})"
+                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) "
     )
     suspend fun deleteDuplicatesMessages()
 
-    @Query("UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16)) WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL")
+    @Query(
+        "UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16))" +
+                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5"
+    )
     suspend fun addUUID()
 
     @Query("SELECT * FROM message WHERE id=:id")
     suspend fun getMessageById(id: Int): MessageAttachmentRelation?
+
+    //TODO:REVISAR CONSULTA
+    @Query(
+        " SELECT COUNT(CASE WHEN status=3 then 1 end)" +
+                " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id"
+    )
+    suspend fun countUnreadByContactId(id: Int): Int
+
+    @Query(
+        "SELECT * " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_MESSAGE_ID} = :messageId"
+    )
+    fun getMessageByIdAsFlow(messageId: Int): Flow<List<AttachmentEntity>>
 
 }

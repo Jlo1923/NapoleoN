@@ -41,20 +41,28 @@ class MultipleAttachmentMediaStore @Inject constructor(
         )?.use { cursorFolders ->
             if (cursorFolders.moveToFirst()) {
                 //val folderIdColumnIndex = cursorFolders.getColumnIndexOrThrow(BUCKET_ID)
-                val folderNameColumnIndex =
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                        cursorFolders.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME)
-                    } else {
-                        -1
-                    }
-
-                val idColumnIndex = cursorFolders.getColumnIndexOrThrow(_ID)
-                val mediaTypeColumnIndex = cursorFolders.getColumnIndexOrThrow(MEDIA_TYPE)
 
                 do {
 
+                    val folderNameColumnIndex =
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            cursorFolders.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME)
+                        } else {
+                            -1
+                        }
+
+                    val idColumnIndex = cursorFolders.getColumnIndexOrThrow(_ID)
+                    val mediaTypeColumnIndex = cursorFolders.getColumnIndexOrThrow(MEDIA_TYPE)
+
                     val folderName = if (folderNameColumnIndex != -1) {
-                        cursorFolders.getString(folderNameColumnIndex)
+                        if (cursorFolders.getString(folderNameColumnIndex) == null) {
+                            val indexForData = cursorFolders.getColumnIndexOrThrow(DATA)
+                            val splitData = cursorFolders.getString(indexForData).split("/")
+                            val nameFromData = splitData[splitData.size - 2]
+                            nameFromData
+                        } else {
+                            cursorFolders.getString(folderNameColumnIndex)
+                        }
                     } else {
                         val indexForData = cursorFolders.getColumnIndexOrThrow(DATA)
                         val splitData = cursorFolders.getString(indexForData).split("/")
@@ -68,7 +76,9 @@ class MultipleAttachmentMediaStore @Inject constructor(
                     val fileId = cursorFolders.getInt(idColumnIndex)
                     val mediaType = cursorFolders.getInt(mediaTypeColumnIndex)
 
-                    val exist = galleryFolders.any { it.folderName == folderName }
+                    val exist = folderName?.let {
+                        galleryFolders.any { it.folderName == folderName }
+                    } ?: run { false }
                     if (!exist) {
                         //val quantity = getCount(folderId, selectionArgs, selectionArgs)
                         val quantity = 10
@@ -90,6 +100,7 @@ class MultipleAttachmentMediaStore @Inject constructor(
 
     override fun getFilesByFolder(
         folderParent: String,
+        folderName: String?,
         mapIds: Map<Int, Int>
     ): List<MultipleAttachmentFileItem> {
         val galleryFiles = mutableListOf<MultipleAttachmentFileItem>()
@@ -100,8 +111,17 @@ class MultipleAttachmentMediaStore @Inject constructor(
             projectionApiLvl24Files
         }
 
-        val whereCondition = whereForMediaStoreFiles
-        val selectionArgs = getSelectionArgsForFilesByFolderName(folderParent)
+        val whereCondition = folderName?.let {
+            whereForMediaStoreFilesWithName
+        } ?: run {
+            whereForMediaStoreFiles
+        }
+
+        val selectionArgs = folderName?.let {
+            getSelectionArgsForFilesByFolderName(it)
+        } ?: run {
+            getSelectionArgsForFilesByFolderParent(folderParent)
+        }
         val sorter = sortForFiles
 
         context.contentResolver.query(
@@ -110,11 +130,11 @@ class MultipleAttachmentMediaStore @Inject constructor(
         )?.use { newCursor ->
 
             if (newCursor.moveToFirst()) {
-                val idColumnIndex = newCursor.getColumnIndexOrThrow(_ID)
-                val mediaTypeColumnIndex = newCursor.getColumnIndexOrThrow(MEDIA_TYPE)
-                val mediaType = newCursor.getInt(mediaTypeColumnIndex)
-
                 do {
+                    val idColumnIndex = newCursor.getColumnIndexOrThrow(_ID)
+                    val mediaTypeColumnIndex = newCursor.getColumnIndexOrThrow(MEDIA_TYPE)
+                    val mediaType = newCursor.getInt(mediaTypeColumnIndex)
+
                     val fileId = newCursor.getInt(idColumnIndex)
                     val attachmentType = when (mediaType) {
                         MEDIA_TYPE_IMAGE -> Constants.AttachmentType.IMAGE.type

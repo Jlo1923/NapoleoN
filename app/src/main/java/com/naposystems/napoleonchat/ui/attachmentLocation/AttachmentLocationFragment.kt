@@ -58,8 +58,8 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.adapters.showToast
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -94,10 +94,10 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
 
     private val viewModel: AttachmentLocationViewModel by viewModels { viewModelFactory }
 
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
-    private val conversationShareViewModel: ConversationShareViewModel by activityViewModels()
+    private val conversationSharedViewModel: ConversationSharedViewModel by activityViewModels()
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private lateinit var binding: AttachmentLocationFragmentBinding
     private var googleMap: GoogleMap? = null
@@ -183,7 +183,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
             RxBus.listen(RxEvent.ContactBlockOrDelete::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { eventContact ->
-                    contactProfileShareViewModel.contact.value?.let { contact ->
+                    contactProfileSharedViewModel.contact.value?.let { contact ->
                         if (contact.id == eventContact.contactId) {
                             if (contact.stateNotification) {
                                 handlerNotificationChannel.deleteUserChannel(
@@ -558,7 +558,7 @@ class AttachmentLocationFragment : BaseFragment(), SearchView.OnSearchView,
                         duration = 0L
                     )
 
-                    with(conversationShareViewModel) {
+                    with(conversationSharedViewModel) {
 
                         var message = String.format(
                             Locale.getDefault(),

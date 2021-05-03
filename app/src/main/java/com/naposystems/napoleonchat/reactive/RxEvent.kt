@@ -18,9 +18,11 @@ class RxEvent {
     class NoInternetConnection
     class AccountAttack
     class HideOptionMenuRecoveryAccount
-//    data class ItsSubscribedToCallChannel(val channel: String, val contactId: Int, val isVideoCall: Boolean)
+
+    //    data class ItsSubscribedToCallChannel(val channel: String, val contactId: Int, val isVideoCall: Boolean)
     data class IncomingCall(val callModel: CallModel)
-//    data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
+
+    //    data class IceCandidateReceived(val channel: String, val iceCandidate: IceCandidate)
 //    data class OfferReceived(val channel: String, val sessionDescription: SessionDescription)
 //    data class AnswerReceived(val channel: String, val sessionDescription: SessionDescription)
 //    data class ContactHasHangup(val channel: String)
@@ -35,11 +37,13 @@ class RxEvent {
     data class HeadsetState(val state: Int)
     data class MessagesToEliminate(val id: List<MessageAttachmentRelation>)
     data class EnableButtonPlayAudio(val state: Boolean)
-//    data class ContactCancelCall(val channel: String)
+
+    //    data class ContactCancelCall(val channel: String)
     data class ContactBlockOrDelete(val contactId: Int)
     data class DeleteChannel(val contact: ContactEntity)
-    data class HangupByNotification(val channel: String)
-//    data class ContactCantChangeToVideoCall(val channel: String)
+    class HangupByNotification
+
+    //    data class ContactCantChangeToVideoCall(val channel: String)
     data class RejectCallByNotification(val channel: String)
     class CreateNotification
     class IncomingCallSystem
@@ -80,6 +84,23 @@ class RxEvent {
     )
 
     data class MultiUploadProgress(
+        val attachmentEntity: AttachmentEntity,
+        val progress: Float
+    )
+
+    data class MultiDownloadStart(val attachmentEntity: AttachmentEntity)
+
+    class MultiDownloadTryNextAttachment
+
+    data class MultiDownloadSuccess(val attachmentEntity: AttachmentEntity)
+
+    data class MultiDownloadError(
+        val attachmentEntity: AttachmentEntity,
+        val message: String,
+        val cause: Exception? = null
+    )
+
+    data class MultiDownloadProgress(
         val attachmentEntity: AttachmentEntity,
         val progress: Float
     )

@@ -57,6 +57,15 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageAndAttachmentRelation
     }
 
+    override suspend fun getMessageByIdAsLiveData(
+        id: Int,
+        decrypt: Boolean
+    ): LiveData<List<AttachmentEntity>> {
+        return messageDao.getMessageByIdAsFlow(id).map { attachments ->
+            attachments
+        }.asLiveData()
+    }
+
     override fun getMessages(contactId: Int) =
         messageDao.getMessagesAndAttachmentsDistinctUntilChanged(contactId)
             .map { listMessageRelations: List<MessageAttachmentRelation> ->
@@ -93,7 +102,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                             MessageEntity(
                                 id = -1,
                                 webId = "",
-                                uuid = null,
+                                uuid = UUID.randomUUID().toString(),
                                 body = dayMessage,
                                 quoted = "",
                                 contactId = messageAndAttachment.messageEntity.contactId,
@@ -104,7 +113,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                                 numberAttachments = 0,
                                 selfDestructionAt = messageAndAttachment.messageEntity.selfDestructionAt,
                                 totalSelfDestructionAt = messageAndAttachment.messageEntity.totalSelfDestructionAt,
-                                messageType = Constants.MessageType.MESSAGES_GROUP_DATE.type
+                                messageType = Constants.MessageTextType.GROUP_DATE.type
                             ),
                             attachmentEntityList = arrayListOf(),
                             quoteEntity = null,
@@ -273,7 +282,6 @@ class MessageLocalDataSourceImp @Inject constructor(
 
         listMessages.let {
             updateMessageStatus(it, Constants.MessageStatus.UNREAD.status)
-
         }
     }
 
@@ -335,10 +343,17 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     override fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>> {
+
         return messageDao.getMessagesForHome()
             .map { listMessageRelations: List<MessageAttachmentRelation> ->
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
+                        messageAndAttachmentRelation.messagesUnReads =
+                            messageAndAttachmentRelation.contact?.id?.let {
+                                messageDao.countUnreadByContactId(
+                                    it
+                                )
+                            }
                         with(messageAndAttachmentRelation.messageEntity) {
                             this.let {
                                 it.body = it.getBody(cryptoMessage)
@@ -387,6 +402,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                 if (messageAndAttachment.attachmentEntityList.isNotEmpty()) {
                     messageAndAttachment.attachmentEntityList.forEach { attachmentEntity: AttachmentEntity ->
                         attachmentEntity.deleteFile(context)
+                        attachmentDao.deletedAttachment(attachmentEntity.webId)
                     }
                 }
             }
@@ -406,6 +422,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.deleteMessageByType(contactId, type)
     }
 
+    //Función para limpiar la conversación de mensajes exitosos duplicados
     override suspend fun deleteDuplicatesMessages() {
         return messageDao.deleteDuplicatesMessages()
     }

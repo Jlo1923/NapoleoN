@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.source.local.entity
 
+import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.Nullable
 import androidx.room.Embedded
@@ -33,7 +34,7 @@ data class MessageAttachmentRelation(
     @Nullable
     var contact: ContactEntity?,
     @Nullable
-    val messagesUnReads: Int? = 0
+    var messagesUnReads: Int? = 0
 ) : Parcelable {
 
     fun getFirstAttachment(): AttachmentEntity? {

@@ -16,7 +16,8 @@ val projectionApiLvl29Folders = arrayOf(
     MediaStore.Files.FileColumns.WIDTH,
     MediaStore.Files.FileColumns.MIME_TYPE,
     MediaStore.Files.FileColumns.SIZE,
-    MediaStore.Files.FileColumns.PARENT
+    MediaStore.Files.FileColumns.PARENT,
+    MediaStore.Files.FileColumns.DATA,
 )
 
 val projectionApiLvl24Folders = arrayOf(
@@ -38,7 +39,10 @@ val projectionApiLvl29Files = arrayOf(
     MediaStore.Files.FileColumns.MEDIA_TYPE,
     MediaStore.Files.FileColumns.DATE_MODIFIED,
     MediaStore.Files.FileColumns.MIME_TYPE,
-    MediaStore.Files.FileColumns.SIZE
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.PARENT,
+    MediaStore.Files.FileColumns.DISPLAY_NAME,
+    MediaStore.Files.FileColumns.DURATION
 )
 
 val projectionApiLvl24Files = arrayOf(
@@ -54,7 +58,7 @@ val projectionApiLvl24Files = arrayOf(
 
 
 //WHERE
-val whereForMediaStore =
+const val whereForMediaStore =
     "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
             "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.SIZE} > 0 " +
             "AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
@@ -67,6 +71,13 @@ val whereForMediaStoreFiles =
             "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
             "AND ${MediaStore.Files.FileColumns.PARENT}=? AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
 
+//WHERE
+@RequiresApi(Build.VERSION_CODES.Q)
+val whereForMediaStoreFilesWithName =
+    "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) " +
+            "AND ${MediaStore.Files.FileColumns.MEDIA_TYPE} <> ? AND ${MediaStore.Files.FileColumns.MIME_TYPE} <> 'image/svg+xml' " +
+            "AND ${MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME}=? AND ${MediaStore.Files.FileColumns.SIZE} <= ${Constants.MAX_IMAGE_VIDEO_FILE_SIZE}"
+
 
 //WHERE ARGS
 val selectionArgsForMediaStore: Array<String> = arrayOf(
@@ -75,7 +86,15 @@ val selectionArgsForMediaStore: Array<String> = arrayOf(
     MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString()
 )
 
-fun getSelectionArgsForFilesByFolderName(folderParent: String): Array<String> =
+fun getSelectionArgsForFilesByFolderName(folderName: String): Array<String> =
+    arrayOf(
+        MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+        MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+        MediaStore.Files.FileColumns.MEDIA_TYPE_NONE.toString(),
+        folderName
+    )
+
+fun getSelectionArgsForFilesByFolderParent(folderParent: String): Array<String> =
     arrayOf(
         MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
         MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),

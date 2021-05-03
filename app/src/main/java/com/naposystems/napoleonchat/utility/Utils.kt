@@ -8,7 +8,6 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Rect
 import android.media.AudioAttributes
 import android.media.AudioManager
@@ -30,7 +29,6 @@ import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -40,7 +38,6 @@ import androidx.security.crypto.MasterKeys
 import com.google.android.material.snackbar.Snackbar
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
-import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
 import com.naposystems.napoleonchat.utility.Constants.SelfDestructTime.*
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import kotlinx.coroutines.Dispatchers
@@ -656,13 +653,17 @@ class Utils {
                 Toast.LENGTH_SHORT
             )
 
-            val view = vwToast.view
-            view!!.setBackgroundResource(R.drawable.bd_rounded_toast)
-
-            val tv = vwToast.view!!.findViewById<View>(android.R.id.message) as TextView
-            tv.gravity = Gravity.CENTER
-            tv.textSize = 14F
             vwToast.show()
+
+//            val view = vwToast.view
+//            view?.let {
+//                view!!.setBackgroundResource(R.drawable.bd_rounded_toast)
+//            }
+//
+//            val tv = vwToast.view!!.findViewById<View>(android.R.id.message) as TextView
+//            tv.gravity = Gravity.CENTER
+//            tv.textSize = 14F
+//            vwToast.show()
         }
 
         fun validateNickname(

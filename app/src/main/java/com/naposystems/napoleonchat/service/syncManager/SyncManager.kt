@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.service.syncManager
 
+import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
@@ -9,6 +11,8 @@ interface SyncManager {
     fun insertMessage(messageString: String)
 
     fun notifyMessageReceived(messageId: MessagesReqDTO)
+
+    fun notifyMessagesReaded()
 
     fun getUserId(): Int
 
@@ -28,7 +32,11 @@ interface SyncManager {
 
     fun deleteContact(contactId: Int?)
 
-    fun rejectCall(contactId: Int, channel: String)
+    fun sendMissedCall()
+
+    fun rejectCall()
+
+    fun cancelCall()
 
     fun existMessageById(id: String): Boolean
 
@@ -38,9 +46,11 @@ interface SyncManager {
 
     suspend fun getRemoteContact()
 
-    fun callContact(contact: Int, videoCall: Boolean, offer: String)
+    fun callContact()
 
     fun existAttachmentById(it: String): Boolean
 
+    fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 
+    fun rejectSecondCallCall(contactId: Int, channelName: String)
 }

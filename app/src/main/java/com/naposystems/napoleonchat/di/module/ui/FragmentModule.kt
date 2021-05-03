@@ -21,7 +21,7 @@ import com.naposystems.napoleonchat.ui.contacts.ContactsFragment
 import com.naposystems.napoleonchat.ui.conversation.ConversationFragment
 import com.naposystems.napoleonchat.ui.conversationCamera.ConversationCameraFragment
 import com.naposystems.napoleonchat.ui.customUserNotification.CustomUserNotificationFragment
-import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.deletionMesssages.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment
 import com.naposystems.napoleonchat.ui.help.HelpFragment
@@ -50,9 +50,10 @@ import com.naposystems.napoleonchat.ui.splash.SplashFragment
 import com.naposystems.napoleonchat.ui.status.StatusFragment
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionFragment
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogFragment
-import com.naposystems.napoleonchat.ui.timeFormat.TimeFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment
-import com.naposystems.napoleonchat.ui.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
+import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -217,5 +218,8 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeHelpFragment(): HelpFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributePermissionDialogFragment(): PermissionDialogFragment
 
 }

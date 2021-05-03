@@ -19,7 +19,8 @@ import com.naposystems.napoleonchat.ui.contactProfile.ContactProfileViewModel
 import com.naposystems.napoleonchat.ui.contactUs.ContactUsViewModel
 import com.naposystems.napoleonchat.ui.contacts.ContactsViewModel
 import com.naposystems.napoleonchat.ui.conversation.ConversationViewModel
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallViewModel
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinViewModel
@@ -28,13 +29,13 @@ import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewMo
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
+import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.ui.previewImage.PreviewImageViewModel
 import com.naposystems.napoleonchat.ui.previewMedia.PreviewMediaViewModel
-import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.profile.ProfileViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccount.RecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.RecoveryAccountQuestionsViewModel
@@ -52,17 +53,7 @@ import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.camera.CameraShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.gallery.GalleryShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -144,21 +135,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ColorSchemeViewModel::class)
     internal abstract fun bindColorSchemeViewModel(viewModel: ColorSchemeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(UserDisplayFormatShareViewModel::class)
-    internal abstract fun bindUserDisplayFormatShareViewModel(viewModel: UserDisplayFormatShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(TimeFormatShareViewModel::class)
-    internal abstract fun bindTimeFormatShareViewModel(viewModel: TimeFormatShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(UserProfileShareViewModel::class)
-    internal abstract fun bindUserProfileShareViewModel(viewModel: UserProfileShareViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -262,11 +238,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(ShareContactViewModel::class)
-    internal abstract fun bindShareContactViewModel(viewModel: ShareContactViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
     internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
 
@@ -274,31 +245,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(AttachmentAudioViewModel::class)
     internal abstract fun bindAttachmentAudioViewModel(viewModel: AttachmentAudioViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ConversationShareViewModel::class)
-    internal abstract fun bindConversationShareViewModel(viewModel: ConversationShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ContactProfileShareViewModel::class)
-    internal abstract fun bindContactProfileShareViewModel(viewModel: ContactProfileShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ContactRepositoryShareViewModel::class)
-    internal abstract fun bindContactRepositoryShareViewModel(viewModel: ContactRepositoryShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(GalleryShareViewModel::class)
-    internal abstract fun bindGalleryShareViewModel(viewModel: GalleryShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CameraShareViewModel::class)
-    internal abstract fun bindCameraShareViewModel(viewModel: CameraShareViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -352,16 +298,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(FriendShipActionShareViewModel::class)
-    internal abstract fun bindFriendShipActionShareViewModel(viewModel: FriendShipActionShareViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(DefaultPreferencesViewModel::class)
-    internal abstract fun bindDefaultPreferencesViewModel(viewModel: DefaultPreferencesViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(NotificationSettingViewModel::class)
     internal abstract fun bindNotificationSettingViewModel(viewModel: NotificationSettingViewModel): ViewModel
 
@@ -384,5 +320,12 @@ abstract class ViewModelModule {
     @ViewModelKey(MyMultiAttachmentMsgViewModel::class)
     internal abstract fun bindMyMultiAttachmentMsgViewModel(
         viewModel: MyMultiAttachmentMsgViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(IncomingMultiAttachmentMsgViewModel::class)
+    internal abstract fun bindIncomingMultiAttachmentMsgViewModel(
+        viewModel: IncomingMultiAttachmentMsgViewModel
     ): ViewModel
 }

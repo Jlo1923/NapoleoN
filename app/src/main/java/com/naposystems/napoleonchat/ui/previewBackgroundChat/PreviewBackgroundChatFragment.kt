@@ -51,8 +51,6 @@ class PreviewBackgroundChatFragment : BaseFragment() {
             false
         )
 
-
-
         binding.buttonAccept.setOnClickListener {
             context?.let { context ->
                 val fileUri = Utils.getFileUri(
@@ -99,12 +97,16 @@ class PreviewBackgroundChatFragment : BaseFragment() {
         viewModel.chatBackgroundUpdated.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Utils.showToast(
-                    requireContext(),
+                    binding.root.context,
                     getString(R.string.text_updated_successfully)
                 )
                 viewModel.resetChatBackground()
                 viewModel.resetChatBackgroundUpdated()
-                findNavController().popBackStack()
+                binding.apply {
+                    this.buttonAccept.postDelayed({
+                        findNavController().popBackStack()
+                    }, 500)
+                }
             } else if (it == false) {
                 Utils.showSimpleSnackbar(
                     binding.coordinator,
@@ -139,7 +141,8 @@ class PreviewBackgroundChatFragment : BaseFragment() {
     }
 
     private fun clearCache(context: Context) {
-        val path = File(context.cacheDir!!.absolutePath, Constants.CacheDirectories.CHAT_BACKGROUND.folder)
+        val path =
+            File(context.cacheDir!!.absolutePath, Constants.CacheDirectories.CHAT_BACKGROUND.folder)
         if (path.exists() && path.isDirectory) {
             for (child in path.listFiles()!!) {
                 if (child.name != fileName) {

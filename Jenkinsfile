@@ -34,7 +34,7 @@ node('master') {
         if (params.VersionName?.trim()) {
             versionName = "${params.VersionName}"
         }
-        version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionName//g'", returnStdout: true).trim()
+        version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | sed 's/versionName//g'", returnStdout: true).trim()
         versionCode = sh(script: "cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'", returnStdout: true).trim().toInteger()
         increasedVersion = versionCode + 1
         finalVersionName = "1.1.${increasedVersion}-${versionName}"
@@ -69,7 +69,7 @@ node('master') {
             sh("sed -i 's/versionCode ${versionCode}/versionCode ${increasedVersion}/g' app/build.gradle")
             sh("sed -i 's/${version}/${finalVersionName}/g' app/build.gradle")
             sh("git add app/build.gradle")
-            sh("git commit -a -m \"Increasing version to ${increasedVersion}\"")
+            sh("git commit -a -m \"Increasing-version-to-${increasedVersion}\"")
             sh("git push")
         }
     }

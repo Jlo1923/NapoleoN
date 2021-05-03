@@ -21,7 +21,7 @@ data class NewMessageDataEventRes(
 @JsonClass(generateAdapter = true)
 data class NewMessageEventMessageRes(
     @Json(name = "id") val id: String,
-    @Json(name = "uuid_sender") val webUuid: String?,
+    @Json(name = "uuid_sender") val webUuid: String,
     @Json(name = "body") val body: String,
     @Json(name = "quoted") val quoted: String,
     @Json(name = "user_receiver") val userDestination: Int,

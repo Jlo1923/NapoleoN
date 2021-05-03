@@ -7,7 +7,8 @@ import com.naposystems.napoleonchat.di.module.mediastore.MediaStoreModule
 import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
 import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
 import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
-import com.naposystems.napoleonchat.di.module.share.*
+import com.naposystems.napoleonchat.di.module.shared.SharedRepositoryModule
+import com.naposystems.napoleonchat.di.module.shared.SharedViewModelModule
 import com.naposystems.napoleonchat.di.module.sources.local.DaoModule
 import com.naposystems.napoleonchat.di.module.sources.local.LocalDataSourceModule
 import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
@@ -37,7 +38,7 @@ import javax.inject.Singleton
         SyncManagerModule::class,
         UtilsModule::class,
         NotificationServicemodule::class,
-        CallComponentsModule::class,
+//        CallComponentsModule::class,
 //        MoshiModule::class,
         //Sources Remote
         RetrofitModule::class,
@@ -62,11 +63,8 @@ import javax.inject.Singleton
         WorkManagerModule::class,
 
         //Shared
-        ContactProfileShareModule::class,
-        ContactRepositoryShareModule::class,
-        FriendShipActionShareModule::class,
-        ShareContactModule::class,
-        UserProfileShareModule::class,
+        SharedViewModelModule::class,
+        SharedRepositoryModule::class,
 
         //missnamed
         CreateAccountModule::class]
@@ -80,6 +78,7 @@ interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
         fun create(application: Application): Builder
 
         fun build(): ApplicationComponent
+
     }
 
 }

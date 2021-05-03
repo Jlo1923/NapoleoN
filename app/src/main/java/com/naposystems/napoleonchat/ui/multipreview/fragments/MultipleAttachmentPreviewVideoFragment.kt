@@ -19,7 +19,8 @@ import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.show
 
 class MultipleAttachmentPreviewVideoFragment(
-    val file: MultipleAttachmentFileItem
+    val file: MultipleAttachmentFileItem,
+    position: Int
 ) : Fragment(),
     ViewPreviewVideoControllerListener {
 
@@ -55,8 +56,13 @@ class MultipleAttachmentPreviewVideoFragment(
             ViewPreviewVideoEvent.AddFlagsKeepScreen -> addFlagsKeepScreen()
             ViewPreviewVideoEvent.PauseVideo -> uiInVideoPause()
             ViewPreviewVideoEvent.PlayingVideo -> uiInVideoPlaying()
-            ViewPreviewVideoEvent.RemoveFlagsKeepScreen -> removeFlagsKeepScreen()
+            ViewPreviewVideoEvent.VideoEnded -> uiInVideoInit()
         }
+    }
+
+    private fun uiInVideoInit() {
+        removeFlagsKeepScreen()
+        configVideoView()
     }
 
     override fun onPause() {
@@ -103,7 +109,10 @@ class MultipleAttachmentPreviewVideoFragment(
 
     private fun uiInVideoPause() = binding.root.postDelayed({
         hidePlayerOptions()
-        listener?.changeVisibilityOptions()
+        listener?.let {
+            it.changeVisibilityOptions()
+            it.markAttachmentAsRead(file)
+        }
     }, 100)
 
     private fun addFlagsKeepScreen() {

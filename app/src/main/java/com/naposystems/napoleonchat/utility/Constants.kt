@@ -171,8 +171,8 @@ object Constants {
     }
 
     enum class AddContactTitleType(val type: Int) {
-        TITLE_MY_CONTACTS(0),
-        TITLE_COINCIDENCES(1)
+        TITLE_MY_CONTACTS(1),
+        TITLE_COINCIDENCES(2)
     }
 
     enum class AllowDownloadAttachments constructor(val option: Int) {
@@ -199,7 +199,8 @@ object Constants {
         DOWNLOAD_ERROR(7),
         DOWNLOAD_CANCEL(8),
         UPLOAD_CANCEL(9),
-        READED(9),
+        RECEIVED(10),
+        READED(11),
     }
 
     enum class AttachmentType(val type: String) {
@@ -426,23 +427,25 @@ object Constants {
         ERROR(5)
     }
 
+    //Este estado es el usado en el Backend Para Recibido/Leido
+    //Difiere del Estado de Mensaje y del Adjunto en Local
     enum class StatusMustBe(val status: Int) {
         RECEIVED(1),
         READED(2)
     }
 
     //Enumerable que describe el tipo de mensaje de texto
-    enum class MessageType(val type: Int) {
-        MESSAGE(1),
+    enum class MessageTextType(val type: Int) {
+        NORMAL(1),
         MISSED_CALL(2),
         MISSED_VIDEO_CALL(3),
         NEW_CONTACT(4),
-        MESSAGES_GROUP_DATE(5)
+        GROUP_DATE(5)
     }
 
     //Enumerable que describe el tipo de mensaje recibido por el estado
-    enum class MessageTypeByStatus(val type: Int) {
-        MESSAGE(0),
+    enum class MessageType(val type: Int) {
+        TEXT(0),
         ATTACHMENT(1)
     }
 

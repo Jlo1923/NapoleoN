@@ -1,8 +1,10 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository
 
+import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.IContractMyMultiAttachmentMsg
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import javax.inject.Inject
 
 class MyMultiAttachmentMsgRepository @Inject constructor(
@@ -11,6 +13,10 @@ class MyMultiAttachmentMsgRepository @Inject constructor(
 
     override suspend fun getAttachmentsByMessage(messageId: Int): MessageAttachmentRelation? {
         return messageLocalDataSource.getMessageById(messageId, false)
+    }
+
+    override suspend fun getAttachmentsByMessageAsLiveData(messageId: Int): LiveData<List<AttachmentEntity>> {
+        return messageLocalDataSource.getMessageByIdAsLiveData(messageId, false)
     }
 
 }

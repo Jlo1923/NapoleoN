@@ -13,7 +13,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -23,6 +22,7 @@ import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNoti
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class HandlerNotificationImp
 @Inject constructor(
@@ -126,30 +126,35 @@ class HandlerNotificationImp
 
         Timber.d("**Paso 10.2 : Crear Pending Intent data: $dataFromNotification")
 
-        val notificationIntent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java)
 
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
 
         with(dataFromNotification) {
 
             if (this.isNotEmpty()) {
 
+
                 if (this.containsKey(Constants.NotificationKeys.CONTACT)) {
-                    notificationIntent.putExtra(
+                    intent.putExtra(
                         Constants.NotificationKeys.CONTACT,
                         this.getValue(Constants.NotificationKeys.CONTACT).toString()
                     )
                 }
 
                 if (this.containsKey(Constants.NotificationKeys.MESSAGE_ID)) {
-                    notificationIntent.putExtra(
+                    intent.putExtra(
                         Constants.NotificationKeys.MESSAGE_ID,
                         this.getValue(Constants.NotificationKeys.MESSAGE_ID).toString()
                     )
                 }
 
                 if (this.containsKey(Constants.NotificationKeys.ATTACKER_ID)) {
-                    notificationIntent.putExtra(
+                    intent.putExtra(
                         Constants.NotificationKeys.ATTACKER_ID,
                         this.getValue(Constants.NotificationKeys.ATTACKER_ID).toString()
                     )
@@ -162,16 +167,16 @@ class HandlerNotificationImp
         return PendingIntent.getActivity(
             context,
             0,
-            notificationIntent,
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT
         )
     }
 
-    override fun createNotificationCallBuilder(callModel: CallModel): Notification {
+    override fun createNotificationCallBuilder(): Notification {
 
-        Timber.d("LLAMADA PASO: createNotificationCallBuilder $callModel")
+        Timber.d("LLAMADA PASO: createNotificationCallBuilder")
 
-        val contact = syncManager.getContact(callModel.contactId)
+        val contact = NapoleonApplication.callModel?.let { syncManager.getContact(it.contactId) }
 
         val notificationBuilder = NotificationCompat.Builder(
             context,
@@ -180,66 +185,79 @@ class HandlerNotificationImp
             setSmallIcon(R.drawable.ic_call_black_24)
             setGroup(context.getString(R.string.calls_group_key))
             setContentTitle("@${contact?.getNickName()}")
-            setContentText(getTexNotification(callModel.typeCall, callModel.isVideoCall))
+            setContentText(NapoleonApplication.callModel?.let {
+                getTexNotification(
+                    it.typeCall,
+                    it.isVideoCall
+                )
+            })
             setCategory(NotificationCompat.CATEGORY_CALL)
+            priority = NotificationCompat.PRIORITY_MAX
             setOngoing(true)
-            if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
-                addAction(
-                    getServiceNotificationAction(
-                        WebRTCService.ACTION_DENY_CALL,
-                        R.drawable.ic_close_black_24,
-                        R.string.text_reject,
-                        callModel
+            when (NapoleonApplication.callModel?.typeCall) {
+                Constants.TypeCall.IS_INCOMING_CALL -> {
+                    addAction(
+                        getServiceNotificationAction(
+                            WebRTCService.ACTION_DENY_CALL,
+                            R.drawable.ic_close_black_24,
+                            R.string.text_reject
+                        )
                     )
-                )
-                addAction(
-                    getServiceNotificationAction(
-                        WebRTCService.ACTION_ANSWER_CALL,
-                        R.drawable.ic_call_black_24,
-                        R.string.text_answer_call,
-                        callModel
+                    addAction(
+                        getServiceNotificationAction(
+                            WebRTCService.ACTION_ANSWER_CALL,
+                            R.drawable.ic_call_black_24,
+                            R.string.text_answer_call
+                        )
                     )
-                )
-            } else {
-                addAction(
-                    getServiceNotificationAction(
-                        WebRTCService.ACTION_HANG_UP,
-                        R.drawable.ic_close_black_24,
-                        R.string.text_hang_up_call,
-                        callModel
+                }
+                Constants.TypeCall.IS_OUTGOING_CALL -> {
+                    addAction(
+                        getServiceNotificationAction(
+                            WebRTCService.ACTION_HANG_UP,
+                            R.drawable.ic_close_black_24,
+                            R.string.text_hang_up_call
+                        )
                     )
-                )
+                }
             }
-
         }
 
-        if (callModel.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
+        val intent = Intent(context, WebRTCService::class.java).apply {
+            this.action = WebRTCService.ACTION_OPEN_CALL
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
 
-            val intent = Intent(context, ConversationCallActivity::class.java).apply {
-                putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, callModel)
-                })
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
+        val pendingIntent =
+            PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            val pendingIntent = PendingIntent.getActivity(
-                context, 0, intent, PendingIntent.FLAG_ONE_SHOT
-            )
+        notificationBuilder.apply {
+            setFullScreenIntent(pendingIntent, true)
+        }
 
-            if (Build.VERSION.SDK_INT >= 29 && NapoleonApplication.isVisible.not()) {
-                notificationBuilder.apply {
-                    setFullScreenIntent(pendingIntent, true)
-                    priority = NotificationCompat.PRIORITY_MAX
-                }
-                Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
-                handlerMediaPlayerNotification.playRingtone()
-            }
+        if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
+            Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
+            handlerMediaPlayerNotification.playRingtone()
         }
 
         return notificationBuilder.build()
     }
 
-    override fun notificationCallInProgress(callModel: CallModel) {
+    override fun notificationCallInProgress() {
+
+        val intent = Intent(context, ConversationCallActivity::class.java).apply {
+            putExtras(Bundle().apply {
+                putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
+            })
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
 
         val notificationBuilder = NotificationCompat.Builder(
             context,
@@ -250,12 +268,15 @@ class HandlerNotificationImp
             setUsesChronometer(true)
             setContentTitle(context.getString(R.string.text_call_in_progress))
             setOngoing(true)
+            if (Build.VERSION.SDK_INT >= 29) {
+                setFullScreenIntent(pendingIntent, true)
+                priority = NotificationCompat.PRIORITY_MAX
+            }
             addAction(
                 getServiceNotificationAction(
                     WebRTCService.ACTION_HANG_UP,
                     R.drawable.ic_close_black_24,
-                    R.string.text_hang_up_call,
-                    callModel
+                    R.string.text_hang_up_call
                 )
             )
         }
@@ -269,19 +290,16 @@ class HandlerNotificationImp
     private fun getServiceNotificationAction(
         action: String,
         iconResId: Int,
-        titleResId: Int,
-        callModel: CallModel
+        titleResId: Int
     ): NotificationCompat.Action {
 
         val intent = Intent(context, WebRTCService::class.java).apply {
             this.action = action
-            putExtras(Bundle().apply {
-                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
-            })
         }
 
         val pendingIntent =
             PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         return NotificationCompat.Action(
             iconResId,
             context.getString(titleResId),

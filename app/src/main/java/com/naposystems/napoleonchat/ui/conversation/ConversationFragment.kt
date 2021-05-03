@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.ActionBar
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
@@ -52,6 +53,7 @@ import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -63,14 +65,17 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationListeners
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
-import com.naposystems.napoleonchat.ui.deletionDialog.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.deletionMesssages.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
@@ -83,24 +88,21 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewMode
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
+import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
-import com.naposystems.napoleonchat.utility.extras.MULTI_SELECTED
+import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
-import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ShareContactViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.timeFormat.TimeFormatShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userDisplayFormat.UserDisplayFormatShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
-import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.custom_input_panel_widget.view.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import timber.log.Timber
@@ -116,7 +118,8 @@ class ConversationFragment
     : BaseFragment(),
     ConversationAdapter.ClickListener,
     InputPanelWidget.Listener,
-    MultiAttachmentMsgListener {
+    MultiAttachmentMsgListener,
+    NapoleonKeyboard.InputTextMainListener {
 
     companion object {
         const val RC_DOCUMENT = 2511
@@ -135,16 +138,12 @@ class ConversationFragment
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
-
     @Inject
     lateinit var mediaPlayerManager: MediaPlayerManager
 
     //TODO:Subscription
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
-
-    @Inject
-    lateinit var webRTCClient: WebRTCClient
 
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
@@ -153,18 +152,18 @@ class ConversationFragment
         viewModelFactory
     }
 
-    private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val sharedViewModel: ConversationSharedViewModel by activityViewModels()
 
-    private val userDisplayFormatShareViewModel: UserDisplayFormatShareViewModel by activityViewModels {
+    private val userDisplayFormatDialogViewModel: UserDisplayFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
-    private val shareContactViewModel: ShareContactViewModel by viewModels {
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels {
         viewModelFactory
     }
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
-    private val timeFormatShareViewModel: TimeFormatShareViewModel by activityViewModels {
+    private val timeFormatShareViewModel: TimeFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
 
@@ -173,6 +172,7 @@ class ConversationFragment
     }
 
     private val myMultiAttachmentMsgViewModel: MyMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
+    private val incomingMultiAttachmentMsgViewModel: IncomingMultiAttachmentMsgViewModel by viewModels { viewModelFactory }
 
     private val documentsMimeTypeAllowed = arrayOf(
         Constants.MimeType.PDF.type,
@@ -278,7 +278,7 @@ class ConversationFragment
             if (viewHolder.adapterPosition >= 0) {
                 conversationAdapter.getMessageAndAttachment(viewHolder.adapterPosition)
                     ?.let { messageAndAttachment ->
-                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageType.MESSAGE.type &&
+                        if (messageAndAttachment.messageEntity.messageType == Constants.MessageTextType.NORMAL.type &&
                             (messageAndAttachment.messageEntity.status == Constants.MessageStatus.UNREAD.status ||
                                     messageAndAttachment.messageEntity.status == Constants.MessageStatus.READED.status ||
                                     messageAndAttachment.messageEntity.status == Constants.MessageStatus.SENT.status ||
@@ -355,9 +355,10 @@ class ConversationFragment
 
         emojiKeyboard = NapoleonKeyboard(
             binding.coordinator,
-            binding.inputPanel.getEditText()
+            binding.inputPanel.getEditText(),
+            this
         )
-
+        binding.inputPanel.getEditText().isCursorVisible = true
         binding.lifecycleOwner = this
 
         binding.contact = args.contact
@@ -382,7 +383,7 @@ class ConversationFragment
 
         binding.buttonCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-            this.verifyCameraAndMicPermission {
+            this.verifyCameraAndMicPermissionForCall {
                 viewModel.setIsVideoCall(false)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false
@@ -393,7 +394,7 @@ class ConversationFragment
 
         binding.buttonVideoCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
-            this.verifyCameraAndMicPermission {
+            this.verifyCameraAndMicPermissionForCall {
                 viewModel.setIsVideoCall(true)
                 viewModel.callContact()
                 binding.buttonCall.isEnabled = false
@@ -406,7 +407,6 @@ class ConversationFragment
             Timber.d("startCallActivity returnCall ConversationFragment")
             val intent = Intent(context, ConversationCallActivity::class.java).apply {
                 putExtras(Bundle().apply {
-                    putSerializable(ConversationCallActivity.KEY_CALL_MODEL, webRTCClient.callModel)
                     putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
                 })
             }
@@ -647,9 +647,9 @@ class ConversationFragment
 
         subscribeRxEvents()
 
-        shareViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
+        sharedViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
             if (it == true) {
-                shareViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
+                sharedViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
                     viewModel.saveMessageWithAudioAttachment(
                         mediaStoreAudio,
                         obtainTimeSelfDestruct(),
@@ -659,39 +659,39 @@ class ConversationFragment
             }
         })
 
-        shareViewModel.attachmentEntitySelected.observe(requireActivity(), Observer { attachment ->
+        sharedViewModel.attachmentEntitySelected.observe(requireActivity(), Observer { attachment ->
             if (attachment != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
                     ItemMessage(
-                        messageString = shareViewModel.getMessage() ?: "",
+                        messageString = sharedViewModel.getMessage() ?: "",
                         attachment = attachment,
                         numberAttachments = 1,
                         selfDestructTime = obtainTimeSelfDestruct(),
-                        quote = shareViewModel.getQuoteWebId() ?: ""
+                        quote = sharedViewModel.getQuoteWebId() ?: ""
                     )
                 )
             }
         })
 
-        shareViewModel.listAttachments.observe(requireActivity(), Observer { attachments ->
+        sharedViewModel.listAttachments.observe(requireActivity(), Observer { attachments ->
             attachments?.forEach {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 viewModel.saveMessageAndAttachment(
                     ItemMessage(
-                        shareViewModel.getMessage() ?: "",
+                        sharedViewModel.getMessage() ?: "",
                         it,
                         1,
                         obtainTimeSelfDestruct(),
-                        shareViewModel.getQuoteWebId() ?: ""
+                        sharedViewModel.getQuoteWebId() ?: ""
                     )
                 )
             }
         })
 
-        shareViewModel.emojiSelected.observe(requireActivity(), Observer { emoji ->
+        sharedViewModel.emojiSelected.observe(requireActivity(), Observer { emoji ->
             if (emoji != null) {
                 binding.inputPanel.getEditText().text?.append(
                     EmojiCompat.get().process(String(emoji.code, 0, emoji.code.size))
@@ -699,21 +699,21 @@ class ConversationFragment
             }
         })
 
-        shareViewModel.gifSelected.observe(requireActivity(), Observer { gifAttachment ->
+        sharedViewModel.gifSelected.observe(requireActivity(), Observer { gifAttachment ->
             try {
                 if (gifAttachment != null) {
                     val quote = binding.inputPanel.getQuote()
-                    shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                    sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                     this.findNavController().navigate(
                         ConversationFragmentDirections.actionConversationFragmentToAttachmentPreviewFragment(
                             gifAttachment,
                             0,
-                            shareViewModel.getQuoteWebId() ?: "",
+                            sharedViewModel.getQuoteWebId() ?: "",
                             message = binding.inputPanel.getEditText().text.toString(),
                             contactId = args.contact.id
                         )
                     )
-                    shareViewModel.resetGifSelected()
+                    sharedViewModel.resetGifSelected()
                 }
             } catch (e: Exception) {
                 Timber.e(e)
@@ -758,7 +758,7 @@ class ConversationFragment
 
         cleanSelectionMessages()
 
-        contactProfileShareViewModel.getLocalContact(args.contact.id)
+        contactProfileSharedViewModel.getLocalContact(args.contact.id)
 
         viewModel.setContact(args.contact)
 
@@ -798,18 +798,16 @@ class ConversationFragment
         viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
                 Timber.d("startCallActivity contactCalledSuccessfully")
-                val intent = Intent(context, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-                        putSerializable(
-                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-                                contactId = args.contact.id,
-                                channelName = channel,
-                                isVideoCall = viewModel.isVideoCall(),
-                                typeCall = Constants.TypeCall.IS_OUTGOING_CALL
-                            )
-                        )
-                    })
-                }
+
+                NapoleonApplication.callModel = CallModel(
+                    contactId = args.contact.id,
+                    channelName = channel,
+                    isVideoCall = viewModel.isVideoCall(),
+                    typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
+                    mustSubscribeToPresenceChannel = true
+                )
+
+                val intent = Intent(context, ConversationCallActivity::class.java)
                 startActivity(intent)
                 (context as MainActivity).overridePendingTransition(
                     R.anim.slide_in_up,
@@ -885,7 +883,7 @@ class ConversationFragment
         viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
-                shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+                sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 val attachment = it.toAttachmentEntityDocument()
 
                 viewModel.saveMessageAndAttachment(
@@ -893,7 +891,7 @@ class ConversationFragment
                         attachment = attachment,
                         numberAttachments = 1,
                         selfDestructTime = obtainTimeSelfDestruct(),
-                        quote = shareViewModel.getQuoteWebId() ?: ""
+                        quote = sharedViewModel.getQuoteWebId() ?: ""
                     )
                 )
                 viewModel.resetDocumentCopied()
@@ -933,7 +931,7 @@ class ConversationFragment
             }
         }
 
-        shareContactViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
+        contactSharedViewModel.conversationDeleted.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 findNavController().popBackStack(R.id.homeFragment, false)
             }
@@ -1012,7 +1010,7 @@ class ConversationFragment
     private fun saveAndSendRecordAudio() {
         recordFile?.let { file ->
             val quote = binding.inputPanel.getQuote()
-            shareViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
+            sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
 
             val attachment = AttachmentEntity(
                 id = 0,
@@ -1038,7 +1036,7 @@ class ConversationFragment
                     attachment = attachment,
                     numberAttachments = 1,
                     selfDestructTime = obtainTimeSelfDestruct(),
-                    quote = shareViewModel.getQuoteWebId() ?: ""
+                    quote = sharedViewModel.getQuoteWebId() ?: ""
                 )
             )
         }
@@ -1064,7 +1062,7 @@ class ConversationFragment
     }
 
     private fun observeContactProfile() {
-        contactProfileShareViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
+        contactProfileSharedViewModel.contact.observe(viewLifecycleOwner, Observer { contact ->
             if (contact != null) {
                 actionBarCustomView.contact = contact
                 setTextSilenceOfMenu(contact)
@@ -1083,7 +1081,7 @@ class ConversationFragment
                         enterConversation = true
                     }
                 }
-
+                //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
                 viewModel.sendTextMessagesRead()
             } else conversationAdapter.submitList(conversationList)
@@ -1269,7 +1267,7 @@ class ConversationFragment
                 }.toList().count()
 
                 val quantitySystemMessage = listMessageAndAttachment.filter {
-                    it.messageEntity.messageType == Constants.MessageType.NEW_CONTACT.type
+                    it.messageEntity.messageType == Constants.MessageTextType.NEW_CONTACT.type
                 }.toList().count()
 
                 actionMode.hideCopyButton = false
@@ -1342,7 +1340,7 @@ class ConversationFragment
             onOptionsItemSelected(scheduleMenuItem)
         }
 
-        contactProfileShareViewModel.contact.value?.let { contact ->
+        contactProfileSharedViewModel.contact.value?.let { contact ->
             setTextSilenceOfMenu(contact)
         }
 
@@ -1417,7 +1415,7 @@ class ConversationFragment
         Timber.d("onResume")
         setConversationBackground()
 
-        with(webRTCClient.isActiveCall) {
+        with(NapoleonApplication.statusCall.isConnectedCall()) {
             binding.textViewReturnCall.isVisible = this
             binding.buttonCall.isEnabled = !this
             binding.buttonVideoCall.isEnabled = !this
@@ -1477,7 +1475,7 @@ class ConversationFragment
                 blockContact()
             }
             R.id.menu_item_mute_conversation -> {
-                contactProfileShareViewModel.contact.value?.let { contact ->
+                contactProfileSharedViewModel.contact.value?.let { contact ->
                     if (contact.silenced)
                         disableSilence()
                     else
@@ -1562,13 +1560,13 @@ class ConversationFragment
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.sendBlockedContact(args.contact)
+            contactSharedViewModel.sendBlockedContact(args.contact)
             findNavController().popBackStack(R.id.homeFragment, false)
         }
     }
 
     private fun silenceConversation() {
-        contactProfileShareViewModel.contact.value?.let { contact ->
+        contactProfileSharedViewModel.contact.value?.let { contact ->
             val dialog = MuteConversationDialogFragment.newInstance(
                 args.contact.id, contact.silenced
             )
@@ -1582,8 +1580,8 @@ class ConversationFragment
     }
 
     private fun disableSilence() {
-        contactProfileShareViewModel.contact.value?.let { contact ->
-            shareContactViewModel.muteConversation(args.contact.id, contact.silenced)
+        contactProfileSharedViewModel.contact.value?.let { contact ->
+            contactSharedViewModel.muteConversation(args.contact.id, contact.silenced)
         }
     }
 
@@ -1594,7 +1592,7 @@ class ConversationFragment
             true,
             childFragmentManager
         ) {
-            shareContactViewModel.deleteConversation(args.contact.id)
+            contactSharedViewModel.deleteConversation(args.contact.id)
         }
     }
 
@@ -1667,7 +1665,7 @@ class ConversationFragment
         actionBarCustomView.contact = args.contact
 
         actionBarCustomView.userDisplayFormat =
-            userDisplayFormatShareViewModel.getUserDisplayFormat()
+            userDisplayFormatDialogViewModel.getUserDisplayFormat()
 
         actionBarCustomView.containerBack.setOnClickListener {
             findNavController().popBackStack()
@@ -1769,7 +1767,8 @@ class ConversationFragment
     private fun setupAdapter() {
 
         val viewModels = ConversationViewModelsForViewHolders(
-            myMultiAttachmentMsgViewModel
+            myMultiAttachmentMsgViewModel,
+            incomingMultiAttachmentMsgViewModel
         )
 
         val listeners = ConversationListeners(
@@ -1890,13 +1889,12 @@ class ConversationFragment
         messageAndAttachmentRelation: MessageAttachmentRelation
     ) {
         val icon = resources.getDrawable(R.drawable.ic_quote_new, null)
-
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
             recyclerView.setOnTouchListener { _, event ->
-                swipeBack = event?.action == MotionEvent.ACTION_CANCEL ||
-                        event?.action == MotionEvent.ACTION_UP
+                swipeBack = event?.action == MotionEvent.ACTION_UP
                 if (swipeBack && dX > recyclerView.width / maxPositionSwipe) {
                     binding.inputPanel.resetImage()
+
                     if (messageAndAttachmentRelation.messageEntity.status != Constants.MessageStatus.ERROR.status) {
                         binding.inputPanel.openQuote(messageAndAttachmentRelation)
                     }
@@ -1946,7 +1944,7 @@ class ConversationFragment
         if (binding.inputPanel.getEditText().text.toString().count() <= 0) {
             binding.inputPanel.cancelRecording()
         }
-        NapoleonApplication.currentConversationContactId =  Constants.UserNotExist.USER_NO_EXIST.user
+        NapoleonApplication.currentConversationContactId = Constants.UserNotExist.USER_NO_EXIST.user
         stopRecording()
         showCase?.setPaused(true)
         showCase?.dismiss()
@@ -2283,7 +2281,6 @@ class ConversationFragment
                 setSeventhView(actionViewSchedule!!)
                 showFromSeventh()
             }
-
             showShowCase = true
         }
     }
@@ -2295,22 +2292,37 @@ class ConversationFragment
     }
 
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
-        val files = action.listElements.map {
-            MultipleAttachmentFileItem(
-                id = it.id,
-                attachmentType = it.type,
-                contentUri = Uri.parse(it.thumbnailUri),
-                isSelected = false
-            )
-        }
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
-            //putParcelable(MULTI_EXTRA_CONTACT, contact)
-            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(files))
+            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
+            action.message?.let { putString(MESSAGE_TEXT, it) }
+            putBoolean(MODE_ONLY_VIEW, true)
         })
         startActivity(intent)
     }
+
+    //NapoleonInputTextMainListener
+    override fun isShowInputTextMain(value: Boolean) {
+        binding.inputPanel.viewSwitcher.isVisible = value
+    }
+
+    override fun updateIconEmoji(showEmoji: Boolean) {
+        val image = if (showEmoji) {
+            R.drawable.ic_insert_emoticon_black
+        } else {
+            R.drawable.ic_insert_emoticon_black
+        }
+        binding.inputPanel.getImageButtonEmoji()
+            .setImageDrawable(ContextCompat.getDrawable(requireContext(), image))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        emojiKeyboard?.updateKeyboardStateClosed()
+    }
+
 
     //endregion
 }

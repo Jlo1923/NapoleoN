@@ -13,8 +13,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
-class PreviewMediaViewModel @Inject constructor(private val repository: IContractPreviewMedia.Repository) :
-    ViewModel(), IContractPreviewMedia.ViewModel {
+class PreviewMediaViewModel @Inject constructor(
+    private val repository: IContractPreviewMedia.Repository
+) : ViewModel(), IContractPreviewMedia.ViewModel {
 
     private val _tempFile = MutableLiveData<File>()
     val tempFile: LiveData<File>

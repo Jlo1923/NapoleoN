@@ -19,6 +19,7 @@ class ViewAttachmentOptions @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
 
+    private var currentIconSelfDestruction: Int = -1
     private var listener: ViewAttachmentOptionsListener? = null
     private val groupieAdapter = GroupieAdapter()
 
@@ -31,8 +32,24 @@ class ViewAttachmentOptions @JvmOverloads constructor(
 
     init {
         configureRecycler()
-        configureElements()
+        configureElementsForCreate()
         defineListenerItemOption()
+    }
+
+    fun configureElementsForCreate() {
+        val listElements = mutableListOf<AttachmentOptionItemView>()
+        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
+        val elementDelete = AttachmentOptionItemView(item = DELETE)
+        listElements.add(elementDelete)
+        listElements.add(elementAutoDestruction)
+        groupieAdapter.update(listElements)
+    }
+
+    fun configureElementsForView() {
+        val listElements = mutableListOf<AttachmentOptionItemView>()
+        val elementDelete = AttachmentOptionItemView(item = DELETE)
+        listElements.add(elementDelete)
+        groupieAdapter.update(listElements)
     }
 
     fun defineListener(listener: ViewAttachmentOptionsListener) {
@@ -47,15 +64,6 @@ class ViewAttachmentOptions @JvmOverloads constructor(
         }
     }
 
-    private fun configureElements() {
-        val listElements = mutableListOf<AttachmentOptionItemView>()
-        val elementAutoDestruction = AttachmentOptionItemView(item = AUTO_DESTRUCTION)
-        val elementDelete = AttachmentOptionItemView(item = DELETE)
-        listElements.add(elementDelete)
-        listElements.add(elementAutoDestruction)
-        groupieAdapter.update(listElements)
-    }
-
     private fun defineListenerItemOption() = groupieAdapter.setOnItemClickListener { item, _ ->
         when (item) {
             is AttachmentOptionItemView -> handleAttachmentOptionClick(item.item)
@@ -64,7 +72,11 @@ class ViewAttachmentOptions @JvmOverloads constructor(
 
     private fun handleAttachmentOptionClick(item: AttachmentOptionItem) {
         when (item) {
-            AUTO_DESTRUCTION -> launchEvent(ViewAttachmentOptionEvent.OnChangeSelfDestruction)
+            AUTO_DESTRUCTION -> launchEvent(
+                ViewAttachmentOptionEvent.OnChangeSelfDestruction(
+                    currentIconSelfDestruction
+                )
+            )
             CAN_RESEND -> TODO()
             CAN_DOWNLOAD -> TODO()
             DELETE -> launchEvent(ViewAttachmentOptionEvent.OnDelete)
@@ -74,9 +86,14 @@ class ViewAttachmentOptions @JvmOverloads constructor(
     private fun launchEvent(event: ViewAttachmentOptionEvent) =
         listener?.onViewAttachmentOptionEvent(event)
 
-    fun changeDrawableSelfDestructionOption(iconSelfDestruction: Int) {
+    fun changeDrawableSelfDestructionOption(
+        iconSelfDestruction: Int,
+        selfDestructTimeSelected: Int
+    ) {
+        currentIconSelfDestruction = selfDestructTimeSelected
         val itemView = groupieAdapter.getItem(1) as AttachmentOptionItemView
         itemView.changeDrawableIcon(iconSelfDestruction)
     }
+
 
 }

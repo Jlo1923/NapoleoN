@@ -1,13 +1,15 @@
 package com.naposystems.napoleonchat.utility.extensions
 
-import android.os.Message
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemAttachment
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemMessage
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import java.io.File
@@ -38,7 +40,7 @@ fun ItemMessage.getMessageEntityForCreate(): MessageEntity {
         isMine = Constants.IsMine.YES.value,
         status = Constants.MessageStatus.SENDING.status,
         numberAttachments = numberAttachments,
-        messageType = Constants.MessageType.MESSAGE.type,
+        messageType = Constants.MessageTextType.NORMAL.type,
         selfDestructionAt = selfDestructTime
     )
 }
@@ -74,7 +76,10 @@ fun File.toAttachmentEntityDocument(): AttachmentEntity =
         extension = extension
     )
 
-fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(file: File): AttachmentEntity =
+fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(
+    file: File,
+    selfDestruction: Int
+): AttachmentEntity =
     AttachmentEntity(
         id = 0,
         messageId = 0,
@@ -86,7 +91,7 @@ fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(file: File): Attachmen
         origin = Constants.AttachmentOrigin.GALLERY.origin,
         thumbnailUri = "",
         status = Constants.AttachmentStatus.SENDING.status,
-        duration = 0L,
+        selfDestructionAt = selfDestruction,
         extension = this.getExtensionByType()
     )
 
@@ -95,9 +100,9 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     quoted = "",
     body = getBody(cryptoMessage),
     numberAttachments = numberAttachments,
-    destroy = selfDestructionAt,
-    messageType = Constants.MessageType.MESSAGE.type,
-    uuidSender = uuid
+    destroy = 7,
+    messageType = Constants.MessageTextType.NORMAL.type,
+    uuidSender = uuid ?: UUID.randomUUID().toString()
 )
 
 private fun MultipleAttachmentFileItem.getExtensionByType() =
@@ -106,3 +111,33 @@ private fun MultipleAttachmentFileItem.getExtensionByType() =
     } else {
         "jpg"
     }
+
+fun getMultipleAttachmentFileItemFromAttachmentAndMsg(
+    attachmentEntity: AttachmentEntity,
+    msgAndAttachment: MessageAttachmentRelation
+): MultipleAttachmentFileItem {
+    val attachment = MultipleAttachmentItemAttachment(
+        fileName = attachmentEntity.fileName,
+        status = attachmentEntity.status,
+        webId = attachmentEntity.webId,
+        extension = attachmentEntity.extension,
+        body = attachmentEntity.body,
+        type = attachmentEntity.type,
+        totalSelfDestructionAt = attachmentEntity.totalSelfDestructionAt.toLong()
+    )
+    val message = MultipleAttachmentItemMessage(
+        attachment = attachment,
+        isMine = if (msgAndAttachment.isMine()) 1 else 0,
+        webId = msgAndAttachment.messageEntity.webId,
+        contactId = msgAndAttachment.messageEntity.contactId
+    )
+
+    return MultipleAttachmentFileItem(
+        id = attachmentEntity.id,
+        attachmentType = attachmentEntity.type,
+        contentUri = null,
+        isSelected = false,
+        selfDestruction = 0,
+        messageAndAttachment = message
+    )
+}

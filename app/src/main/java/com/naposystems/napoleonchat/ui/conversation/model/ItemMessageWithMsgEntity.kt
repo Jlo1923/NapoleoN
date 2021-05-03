@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.utility.Constants
+import java.util.*
 
 data class ItemMessageWithMsgEntity(
     val messageEntity: MessageEntity,
@@ -22,8 +23,8 @@ data class ItemMessageWithMsgEntity(
         body = messageEntity.getBody(cryptoMessage),
         numberAttachments = numberAttachments,
         destroy = selfDestructTime,
-        messageType = Constants.MessageType.MESSAGE.type,
-        uuidSender = messageEntity.uuid
+        messageType = Constants.MessageTextType.NORMAL.type,
+        uuidSender = messageEntity.uuid ?: UUID.randomUUID().toString()
     )
 
 }

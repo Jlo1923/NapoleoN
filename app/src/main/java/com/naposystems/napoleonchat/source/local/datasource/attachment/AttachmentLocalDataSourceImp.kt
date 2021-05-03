@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.source.local.datasource.attachment
 
+import android.content.Context
 import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
@@ -12,12 +13,16 @@ import javax.inject.Inject
 class AttachmentLocalDataSourceImp @Inject constructor(
     private val attachmentDao: AttachmentDao,
     private val contactDao: ContactDao,
-    private val messageDao: MessageDao
+    private val messageDao: MessageDao,
+    private val context: Context
 ) : AttachmentLocalDataSource {
 
+    override fun existAttachmentByWebId(webId: String): Boolean {
+        return attachmentDao.existAttachmentByWebId(webId) != null
+    }
 
-    override fun existAttachment(id: String): Boolean {
-        return attachmentDao.existAttachment(id) != null
+    override fun existAttachmentById(id: String): Boolean {
+        return attachmentDao.existAttachmentById(id) != null
     }
 
     override suspend fun getAttachmentByWebId(
@@ -117,5 +122,15 @@ class AttachmentLocalDataSourceImp @Inject constructor(
             }
         }
 
+    }
+
+    override suspend fun deletedAttachments(attachmentsWebIds: List<String>) {
+        attachmentsWebIds.forEach { webId ->
+            attachmentDao.getAttachmentByWebId(webId)?.let { attachmentEntity ->
+                attachmentEntity.deleteFile(context)
+                attachmentDao.deletedAttachment(webId)
+            }
+        }
+        //TODO: JuankDev12 Aqui debes borrar el mensajes cuando todos los adjuntos de multiadjuntos debes eliminar el mensaje tambn
     }
 }

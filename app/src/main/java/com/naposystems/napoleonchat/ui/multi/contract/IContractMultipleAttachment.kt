@@ -7,27 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface IContractMultipleAttachment {
 
-    interface ViewModel {
-
-        /**
-         * Get the folders to show the user
-         */
-        fun getFolders()
-
-        /**
-         * Load files from folder, by the folder id
-         *
-         * @param folder the folder identifier
-         *
-         */
-        fun loadFilesFromFolder(folder: MultipleAttachmentFolderItem)
-
-        fun addFileToList(item: MultipleAttachmentFileItem)
-
-        fun removeFileToList(item: MultipleAttachmentFileItem)
-
-    }
-
     interface Repository {
 
         /**
@@ -40,8 +19,11 @@ interface IContractMultipleAttachment {
          */
         fun getFilesByFolder(
             folderParent: String,
+            folderName: String? = null,
             mapIds: Map<Int, Int>
         ): Flow<MultipleAttachmentState>
+
+        fun getStringSetForDelete(): Set<String>
 
     }
 
@@ -56,6 +38,7 @@ interface IContractMultipleAttachment {
 
         fun getFilesByFolder(
             folderParent: String,
+            folderName: String? = null,
             mapIds: Map<Int, Int>
         ): List<MultipleAttachmentFileItem>
 

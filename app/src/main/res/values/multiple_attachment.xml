@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="multi_title_exit">Multiples adjuntos</string>
+    <string name="multi_title_exit_explain">¿Está seguro que desea cerrar la galería?</string>
     <string name="multi_title_remove_file">Eliminar archivo</string>
 
     <string name="multi_msg_cannot_share_more_ten">No se pueden compartir más de 10 archivos multimedia.</string>
@@ -8,6 +10,8 @@
 
     <string name="multi_button_accept">Aceptar</string>
     <string name="multi_button_cancel">Cancelar</string>
+    <string name="multi_button_remove_for_me">Eliminar para mí</string>
+    <string name="multi_button_remove_for_all">Eliminar para todos</string>
     <string name="multi_button_delete_for_me">Eliminar para mí</string>
     <string name="multi_button_delete_for_all">Eliminar para todos</string>
 

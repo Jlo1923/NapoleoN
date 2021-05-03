@@ -1,14 +1,14 @@
 package com.naposystems.napoleonchat.webRTC.client
 
 import android.widget.TextView
-import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import org.webrtc.SurfaceViewRenderer
 
 interface WebRTCClient {
 
-    var callModel: CallModel
+    var renegotiateCall: Boolean
 
-    var isActiveCall: Boolean
+//    var isActiveCall: Boolean
 
     var isHideVideo: Boolean
 
@@ -18,23 +18,24 @@ interface WebRTCClient {
 
     var isBluetoothActive: Boolean
 
-    fun setWebRTCClientListener(webRTCClientListener: WebRTCClientListener)
+    fun reInit()
 
-    fun connectSocket(mustSubscribeToPresenceChannel: Boolean, callModel: CallModel)
+    fun setEventsFromWebRTCClientListener(evenstFromWebRTCClientListener: EvenstFromWebRTCClientListener)
+
+    fun connectSocket()
 
     fun subscribeToPresenceChannel()
-    fun unSubscribePresenceChannel()
 
-    fun setOffer(offer: String?)
+    fun setOffer()
 
     fun createAnswer()
 
-    fun startWebRTCService(callModel: CallModel)
+    fun startWebRTCService()
 
     //Change to video Call
     fun changeToVideoCall()
-    fun acceptChangeToVideoCall()
-    fun cancelChangeToVideoCall()
+    fun meAcceptChangeToVideoCall()
+    fun meCancelChangeToVideoCall()
 
     //Video
     fun initSurfaceRenders()
@@ -44,7 +45,7 @@ interface WebRTCClient {
     fun renderRemoteVideo()
 
     //Camera
-    fun hideVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
+    fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
     fun switchCamera()
 
     //Ringtone
@@ -76,6 +77,10 @@ interface WebRTCClient {
 
     //Hang Up
     fun emitHangUp()
-    fun disposeCall()
+    fun hideNotification()
+    fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
+
+    fun rejectCall()
+    fun rejectSecondCall(contactId: Int, channelName: String)
 
 }

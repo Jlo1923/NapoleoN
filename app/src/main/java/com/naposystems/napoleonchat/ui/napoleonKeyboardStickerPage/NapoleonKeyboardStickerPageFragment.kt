@@ -15,14 +15,14 @@ import com.naposystems.napoleonchat.model.napoleonEmoji.NapoleonEmojiRemoteConfi
 import com.naposystems.napoleonchat.ui.napoleonKeyboardSticker.NapoleonKeyboardStickerFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboardStickerPage.adapter.NapoleonKeyboardStickerPageAdapter
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import java.io.File
 
 class NapoleonKeyboardStickerPageFragment : Fragment() {
 
     private var napoleonEmojiRemoteConfig: NapoleonEmojiRemoteConfig? = null
     private lateinit var binding: NapoleonKeyboardStickerPageFragmentBinding
-    private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val sharedViewModel: ConversationSharedViewModel by activityViewModels()
 
     private lateinit var mFirebaseStorage: FirebaseStorage
     private var mListener: NapoleonKeyboardStickerFragment.NapoleonKeyboardStickerListener? = null
@@ -83,7 +83,7 @@ class NapoleonKeyboardStickerPageFragment : Fragment() {
                                 duration = 0L
                             )
 
-                            with(shareViewModel) {
+                            with(sharedViewModel) {
                                 setMessage("")
                                 setAttachmentSelected(attachment)
                                 resetAttachmentSelected()

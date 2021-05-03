@@ -18,8 +18,8 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ChangeFakeParamsDialogFragmentBinding
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import com.naposystems.napoleonchat.utility.FieldsValidator
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileShareViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.userProfile.UserProfileSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import java.util.*
@@ -51,10 +51,10 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
     private val viewModel: ChangeParamsDialogViewModel by viewModels {
         viewModelFactory
     }
-    private val userProfileShareViewModel: UserProfileShareViewModel by viewModels {
+    private val userProfileSharedViewModel: UserProfileSharedViewModel by viewModels {
         viewModelFactory
     }
-    private val contactProfileShareViewModel: ContactProfileShareViewModel by activityViewModels {
+    private val contactProfileSharedViewModel: ContactProfileSharedViewModel by activityViewModels {
         viewModelFactory
     }
     private lateinit var binding: ChangeFakeParamsDialogFragmentBinding
@@ -114,7 +114,7 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
             )
         }
 
-        userProfileShareViewModel.getUser()
+        userProfileSharedViewModel.getUser()
 
         viewModel.responseEditFake.observe(viewLifecycleOwner, Observer {
             if (it) {
@@ -130,7 +130,7 @@ class ChangeFakeParamsDialogFragment : DialogFragment() {
 
     private fun observers() {
         activity?.let { activity ->
-            contactProfileShareViewModel.contact.observe(activity, Observer { contact ->
+            contactProfileSharedViewModel.contact.observe(activity, Observer { contact ->
                 if (contact != null) {
                     binding.editTextDisplay.setText(contact.getNickName())
                 }

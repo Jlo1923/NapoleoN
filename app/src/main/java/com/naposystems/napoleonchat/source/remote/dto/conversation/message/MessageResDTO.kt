@@ -15,7 +15,7 @@ MessageResDTO(
     @Json(name = "id")
     val id: String,
     @Json(name = "uuid_sender")
-    val webUuid: String?,
+    val webUuid: String,
     @Json(name = "body")
     val body: String,
     @Json(name = "quoted")

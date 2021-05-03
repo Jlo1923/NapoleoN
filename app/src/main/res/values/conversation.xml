@@ -11,6 +11,7 @@
     <string name="text_delete_contact">Delete contact</string>
     <string name="text_explanation_camera_to_attachment_picture">To send a photo, allow NapoleoN to access your camera.</string>
     <string name="text_explanation_to_send_audio_attachment">To send an audio, allow NapoleoN to access your multimedia content.</string>
+    <string name="text_explanation_to_make_call">To make a call, allow NapoleoN to access your camera and mic.</string>
     <string name="text_delete_messages">Delete messages?</string>
     <string name="text_delete_message_for_me">Delete for me</string>
     <string name="text_delete_message_for_all">Delete for all</string>
@@ -50,6 +51,8 @@
     <string name="text_call_not_internet_connection">Was achieved not make the call. Check your internet connection and try again.</string>
     <string name="text_encrypting_videocall">Encrypting video call</string>
     <string name="text_encrypting_call">Encrypting call</string>
+    <string name="text_reconnecting_call">Reconnecting</string>
+    <string name="text_finishing_call">Ending Call</string>
     <plurals name="text_self_destruct_time_days">
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>

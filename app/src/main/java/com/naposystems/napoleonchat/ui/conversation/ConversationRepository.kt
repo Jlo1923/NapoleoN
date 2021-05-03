@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
 import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -303,6 +304,7 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.insertListMessage(messageEntityList)
     }
 
+    //actualizar tiempo de autodestrucción para los mensajes fallidos y enviados no leídos 
     override fun updateMessage(messageEntity: MessageEntity) {
         Timber.d("updateMessage")
         when (messageEntity.status) {
@@ -365,7 +367,7 @@ class ConversationRepository @Inject constructor(
             val messagesRead = listIds.map {
                 MessageDTO(
                     id = it,
-                    type = Constants.MessageTypeByStatus.MESSAGE.type,
+                    type = Constants.MessageType.TEXT.type,
                     user = contactId,
                     status = Constants.StatusMustBe.READED.status
                 )
@@ -434,7 +436,7 @@ class ConversationRepository @Inject constructor(
         }.map {
             MessageDTO(
                 user = contactId,
-                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                type = Constants.MessageType.TEXT.type,
                 status = Constants.StatusMustBe.READED.status,
                 id = it
             )
@@ -589,7 +591,6 @@ class ConversationRepository @Inject constructor(
         return errorList
     }
 
-
     override suspend fun downloadAttachment(
         messageAndAttachmentRelation: MessageAttachmentRelation,
         itemPosition: Int
@@ -637,14 +638,12 @@ class ConversationRepository @Inject constructor(
                         }
 
                         val path = File(context.cacheDir!!, folder)
-                        if (!path.exists())
+
+                        if (!path.exists()) {
                             path.mkdirs()
+                        }
 
-                        val file = File(
-                            path,
-                            fileName
-                        )
-
+                        val file = File(path, fileName)
                         attachment.fileName = fileName
                         updateAttachment(attachment)
 
@@ -810,7 +809,7 @@ class ConversationRepository @Inject constructor(
                     MessageDTO(
                         id = messageAndAttachmentRelation.messageEntity.webId,
                         status = Constants.StatusMustBe.READED.status,
-                        type = Constants.MessageTypeByStatus.MESSAGE.type,
+                        type = Constants.MessageType.TEXT.type,
                         user = messageAndAttachmentRelation.messageEntity.contactId
                     )
                 )
@@ -851,7 +850,7 @@ class ConversationRepository @Inject constructor(
                             MessageDTO(
                                 id = messageAttachmentRelation.messageEntity.webId,
                                 status = Constants.StatusMustBe.READED.status,
-                                type = Constants.MessageTypeByStatus.MESSAGE.type,
+                                type = Constants.MessageType.TEXT.type,
                                 user = messageAttachmentRelation.messageEntity.contactId
                             )
                         )

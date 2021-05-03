@@ -4,20 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.app.NapoleonApplication
+import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.cancelCall.CancelCallReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class ConversationCallViewModel
 @Inject constructor(
-    private val repository: IContractConversationCall.Repository
-) : ViewModel(), IContractConversationCall.ViewModel {
+    private val repository: ConversationCallRepository
+) : ViewModel() {
 
     private val _contact = MutableLiveData<ContactEntity>()
     val contact: LiveData<ContactEntity>
@@ -33,51 +36,59 @@ class ConversationCallViewModel
 
     //region Implementation IContractConversationCall.ViewModel
 
-    override fun getContact(contactId: Int) {
+    fun getContact(contactId: Int) {
         viewModelScope.launch {
             _contact.value = repository.getContactById(contactId)
         }
     }
 
-    override fun sendMissedCall(callModel: CallModel) {
+    fun sendMissedCall() {
         viewModelScope.launch {
             try {
-
-                val messageReqDTO = MessageReqDTO(
-                    userDestination = callModel.contactId,
-                    quoted = "",
-                    body = "",
-                    numberAttachments = 0,
-                    destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
-                    messageType = if (callModel.isVideoCall) Constants.MessageType.MISSED_VIDEO_CALL.type
-                    else Constants.MessageType.MISSED_CALL.type
-                )
-
-                val messageResponse = repository.sendMissedCall(messageReqDTO)
-
-                if (!messageResponse.isSuccessful) {
-                    Timber.e(messageResponse.errorBody()?.toString())
+                NapoleonApplication.callModel?.let { callModel ->
+                    val messageReqDTO = MessageReqDTO(
+                        userDestination = callModel.contactId,
+                        quoted = "",
+                        body = "",
+                        numberAttachments = 0,
+                        destroy = Constants.SelfDestructTime.EVERY_ONE_DAY.time,
+                        messageType = if (callModel.isVideoCall) Constants.MessageTextType.MISSED_VIDEO_CALL.type else Constants.MessageTextType.MISSED_CALL.type,
+                        uuidSender = UUID.randomUUID().toString()
+                    )
+                    repository.sendMissedCall(messageReqDTO)
                 }
-
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
     }
 
-    override fun cancelCall(callModel: CallModel) {
+    fun cancelCall() {
         GlobalScope.launch {
             try {
-                val cancelCallReqDTO = CancelCallReqDTO(
-                    callModel.contactId,
-                    callModel.channelName
-                )
-                val response = repository.cancelCall(cancelCallReqDTO)
-
-                if (!response.isSuccessful) {
-                    Timber.e(response.errorBody()?.toString())
+                NapoleonApplication.callModel?.let { callModel ->
+                    val cancelCallReqDTO = CancelCallReqDTO(
+                        callModel.contactId,
+                        callModel.channelName
+                    )
+                    repository.cancelCall(cancelCallReqDTO)
                 }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
 
+    fun rejectCall() {
+        GlobalScope.launch {
+            try {
+                NapoleonApplication.callModel?.let { callModel ->
+                    val rejectCallReqDTO = RejectCallReqDTO(
+                        callModel.contactId,
+                        callModel.channelName
+                    )
+                    repository.rejectCall(rejectCallReqDTO)
+                }
             } catch (e: Exception) {
                 Timber.e(e)
             }

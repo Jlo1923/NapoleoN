@@ -39,7 +39,6 @@ import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
@@ -54,7 +53,7 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.extensions.*
-import com.naposystems.napoleonchat.utility.sharedViewModels.contactRepository.ContactRepositoryShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNotificationChannel
 import dagger.android.AndroidInjection
@@ -86,9 +85,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private lateinit var viewModel: MainActivityViewModel
 
-    private val contactRepositoryShareViewModel: ContactRepositoryShareViewModel by viewModels {
-        viewModelFactory
-    }
+    private val contactSharedViewModel: ContactSharedViewModel by viewModels { viewModelFactory }
 
     private var accountStatus: Int = 0
 
@@ -200,7 +197,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     ).apply {
                         putExtras(Bundle().apply {
                             it.callModel.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                            putSerializable(ConversationCallActivity.KEY_CALL_MODEL, it.callModel)
                         })
                     }
                     startActivity(intent)
@@ -213,7 +209,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             RxBus.listen(RxEvent.FriendshipRequestAccepted::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    contactRepositoryShareViewModel.getContacts(
+                    contactSharedViewModel.getContacts(
                         Constants.FriendShipState.ACTIVE.state,
                         Constants.LocationGetContact.OTHER.location
                     )
@@ -334,14 +330,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Timber.d("startCallActivity MainActivity viewmodel.contact")
                 val intent = Intent(this, ConversationCallActivity::class.java).apply {
                     putExtras(Bundle().apply {
-                        putSerializable(
-                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-                                contactId = contact.id,
-                                channelName = viewModel.getCallChannel(),
-                                isVideoCall = viewModel.isVideoCall() ?: false,
-                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
-                            )
-                        )
+//                        putSerializable(
+//                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
+//                                contactId = contact.id,
+//                                channelName = viewModel.getCallChannel(),
+//                                isVideoCall = viewModel.isVideoCall() ?: false,
+//                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
+//                            )
+//                        )
                     })
                 }
                 startActivity(intent)
@@ -646,13 +642,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onPause() {
         super.onPause()
         viewModel.setLockTimeApp()
-//        viewModel.disconnectSocket()
+        viewModel.disconnectSocket()
     }
 
     override fun onDestroy() {
         disposable.clear()
-        NapoleonApplication.isCurrentOnCall = false
-//        viewModel.disconnectSocket()
+        viewModel.disconnectSocket()
         super.onDestroy()
     }
 

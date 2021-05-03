@@ -1,29 +1,7 @@
 package com.naposystems.napoleonchat.repository.base
 
-import com.naposystems.napoleonchat.ui.baseFragment.IContractBase
-import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.service.socketClient.SocketClient
-import javax.inject.Inject
-
-class BaseRepository @Inject constructor(
-    private val sharedPreferencesManager: SharedPreferencesManager,
-    private val socketClient: SocketClient
-) : IContractBase.Repository {
-
-    override suspend fun outputControl(state: Int) {
-        sharedPreferencesManager.putInt(
-            Constants.SharedPreferences.PREF_OUTPUT_CONTROL, state
-        )
-    }
-
-    override suspend fun getOutputControl(): Int {
-        return sharedPreferencesManager.getInt(
-            Constants.SharedPreferences.PREF_OUTPUT_CONTROL
-        )
-    }
-
-    override fun connectSocket() {
-        socketClient.connectSocket()
-    }
+interface BaseRepository {
+    suspend fun outputControl(state: Int)
+    suspend fun getOutputControl(): Int
+    fun connectSocket()
 }

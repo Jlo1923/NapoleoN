@@ -34,6 +34,7 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
 
     interface NapoleonKeyboardViewListener {
         fun onPageChange(page: Int)
+        fun showInputTextMain(value: Boolean)
     }
 
     init {
@@ -116,25 +117,44 @@ class NapoleonKeyboardView constructor(context: Context) : ConstraintLayout(cont
         }
 
         binding.imageViewGif.setOnClickListener {
+
             imageViewOptionClickListener(binding.imageViewGif, GIF_PAGE)
         }
     }
 
+    fun changeCurrentItemToEmoji() {
+        imageViewOptionClickListener(binding.imageViewEmoji, EMOJI_PAGE)
+    }
+
     private fun imageViewOptionClickListener(imageView: ImageView, pageSelected: Int) {
+        validateInputTextMain(pageSelected)
         if (actualPageSelected != pageSelected) {
 
             mListener?.onPageChange(pageSelected)
 
             when (actualPageSelected) {
                 EMOJI_PAGE -> changeTintToActionBarItemBackground(binding.imageViewEmoji)
-                NAPOLEON_STICKER_PAGE -> changeTintToActionBarItemBackground(binding.imageViewSticker)
-                GIF_PAGE -> changeTintToActionBarItemBackground(binding.imageViewGif)
+
+                NAPOLEON_STICKER_PAGE ->
+                    changeTintToActionBarItemBackground(binding.imageViewSticker)
+                GIF_PAGE ->
+                    changeTintToActionBarItemBackground(binding.imageViewGif)
+
             }
 
             binding.viewPagerEmojiKeyboard.setCurrentItem(pageSelected, true)
             changeTintToColorPrimary(imageView)
 
             actualPageSelected = pageSelected
+        }
+    }
+
+    private fun validateInputTextMain(pageSelected: Int) {
+        when (pageSelected) {
+            GIF_PAGE ->
+                mListener?.showInputTextMain(false)
+            else ->
+                mListener?.showInputTextMain(true)
         }
     }
 

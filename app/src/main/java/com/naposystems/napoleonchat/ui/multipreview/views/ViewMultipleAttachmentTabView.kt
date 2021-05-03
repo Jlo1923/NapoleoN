@@ -24,13 +24,26 @@ class ViewMultipleAttachmentTabView @JvmOverloads constructor(
     }
 
     private fun loadImage(file: MultipleAttachmentFileItem) {
-        try {
-            binding.apply {
-                Glide.with(root.context).load(file.contentUri)
-                    .into(imageFolderThumbnail)
-            }
-        } catch (exception: Exception) {
 
+        if (file.messageAndAttachment == null) {
+            try {
+                binding.apply {
+                    Glide.with(root.context).load(file.contentUri)
+                        .into(imageFolderThumbnail)
+                }
+            } catch (exception: Exception) {
+
+            }
+        } else {
+            try {
+                binding.apply {
+                    Glide.with(root.context)
+                        .load(file.messageAndAttachment.attachment.body)
+                        .into(imageFolderThumbnail)
+                }
+            } catch (exception: Exception) {
+
+            }
         }
     }
 

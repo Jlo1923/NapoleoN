@@ -311,7 +311,11 @@ open class ConversationViewHolder constructor(
             quote?.visibility = View.GONE
         }
 
-        val firstAttachmentEntity: AttachmentEntity? = item.getFirstAttachment()
+        val firstAttachmentEntity = if (item.messageEntity.numberAttachments == 1) {
+            item.getFirstAttachment()
+        } else {
+            null
+        }
 
         firstAttachmentEntity?.let { attachment ->
             Timber.d("message.id: ${item.messageEntity.id}, attachment.id: ${attachment.id}, message.status ${item.messageEntity.status}, attachment.status ${attachment.status}, job: ${this.downloadJob}")
@@ -476,6 +480,7 @@ open class ConversationViewHolder constructor(
             Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
             Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
             Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
+            Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time -> R.string.text_every_twenty_four_hours
             else -> -1
         }
         if (stringId != -1) {

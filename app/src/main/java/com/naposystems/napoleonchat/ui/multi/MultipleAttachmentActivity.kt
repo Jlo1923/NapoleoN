@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.contacts.showToast
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
+import com.naposystems.napoleonchat.ui.multi.fragments.MultipleAttachmentExitBottomSheetDialogFragment
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
@@ -21,11 +22,14 @@ import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
 import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
+import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES_DELETE
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import dagger.android.AndroidInjection
 import javax.inject.Inject
+
+const val MULTI_ATTACHMENT_PREVIEW_INTENT = 1000
 
 class MultipleAttachmentActivity : AppCompatActivity() {
 
@@ -44,10 +48,10 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
+        viewBinding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
+
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentViewModel::class.java)
-
-        viewBinding = ActivityMultipleAttachmentBinding.inflate(layoutInflater)
 
         intent.extras?.let {
             if (it.containsKey(MULTI_EXTRA_CONTACT)) {
@@ -68,11 +72,6 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         bindViewModel()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        finish()
-    }
-
     override fun onBackPressed() = viewModel.handleBackAction()
 
     private fun bindViewModel() {
@@ -85,11 +84,22 @@ class MultipleAttachmentActivity : AppCompatActivity() {
             MultipleAttachmentAction.BackToFolderList -> showFoldersAgain()
             MultipleAttachmentAction.Exit -> finish()
             MultipleAttachmentAction.HideListSelectedFiles -> hidePreviewList()
+            MultipleAttachmentAction.ShowDialogConfirmExit -> showConfirmDialogExit()
             MultipleAttachmentAction.ShowHasMaxFilesAttached -> showMaxFilesAttached()
             is MultipleAttachmentAction.ContinueToPreview -> continueToPreview(action.listElements)
             is MultipleAttachmentAction.ShowSelectFolderName -> showFolderName(action.folderName)
             is MultipleAttachmentAction.ShowPreviewSelectedFiles -> showPreviewList(action.listElements)
         }
+    }
+
+    private fun showConfirmDialogExit() {
+        val dialogForDelete = MultipleAttachmentExitBottomSheetDialogFragment {
+            finish()
+        }
+        dialogForDelete.show(
+            supportFragmentManager,
+            "MultipleAttachmentExitBottomSheetDialogFragment"
+        )
     }
 
     private fun continueToPreview(listElements: List<MultipleAttachmentFileItem>) {
@@ -98,7 +108,28 @@ class MultipleAttachmentActivity : AppCompatActivity() {
             putParcelable(MULTI_EXTRA_CONTACT, contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
         })
-        startActivity(intent)
+        startActivityForResult(intent, MULTI_ATTACHMENT_PREVIEW_INTENT)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
+            when (resultCode) {
+                RESULT_OK -> finish()
+                RESULT_CANCELED -> handleResultCanceled(data)
+            }
+        }
+    }
+
+    private fun handleResultCanceled(data: Intent?) {
+        data?.let {
+            if (it.hasExtra(MULTI_EXTRA_FILES_DELETE)) {
+                val listFilesRemoved = it.getStringArrayListExtra(
+                    MULTI_EXTRA_FILES_DELETE
+                )
+                //listFilesRemoved?.let { viewModel.rePaintFilesWithSelectedsForRemove(it.toList()) }
+            }
+        }
     }
 
     private fun showMaxFilesAttached() {
@@ -180,7 +211,10 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         groupieAdapter.updateAsync(listElements) { showFoldersList() }
 
     private fun showFiles(listElements: List<Item<*>>) =
-        groupieAdapterFiles.updateAsync(listElements) { showFilesList() }
+        groupieAdapterFiles.updateAsync(listElements) {
+            showFilesList()
+            showButtonTopAsBack()
+        }
 
     private fun showFolderName(folderName: String) = viewBinding.textExplain.apply {
         text = folderName
@@ -190,6 +224,15 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     private fun showFoldersAgain() {
         showFoldersList()
         showFolderName("")
+        showButtonTopAsClose()
+    }
+
+    private fun showButtonTopAsClose() = viewBinding.apply {
+        imageBack.setImageDrawable(root.context.getDrawable(R.drawable.ic_close_black_24))
+    }
+
+    private fun showButtonTopAsBack() = viewBinding.apply {
+        imageBack.setImageDrawable(root.context.getDrawable(R.drawable.ic_keyboard_arrow_left_black))
     }
 
     private fun showFoldersList() = viewBinding.apply {

@@ -4,6 +4,7 @@ import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachmen
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -11,7 +12,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MultipleAttachmentRepository @Inject constructor(
-    private val mediaStore: IContractMultipleAttachment.MediaStore
+    private val mediaStore: IContractMultipleAttachment.MediaStore,
+    private val sharedPreferencesManager: SharedPreferencesManager,
 ) : IContractMultipleAttachment.Repository {
 
     override fun getFolders(): Flow<MultipleAttachmentState> = flow {
@@ -29,18 +31,25 @@ class MultipleAttachmentRepository @Inject constructor(
 
     override fun getFilesByFolder(
         folderParent: String,
+        folderName: String?,
         mapIds: Map<Int, Int>
     ): Flow<MultipleAttachmentState> = flow {
         withContext(Dispatchers.IO) {
             try {
                 emit(MultipleAttachmentState.Loading)
-                val files = mediaStore.getFilesByFolder(folderParent, mapIds)
+                val files = mediaStore.getFilesByFolder(folderParent, folderName, mapIds)
                 val items = files.map { MultipleAttachmentFileItemView(it) }
                 emit(MultipleAttachmentState.SuccessFiles(items))
             } catch (exception: Exception) {
                 emit(MultipleAttachmentState.Error)
             }
         }
+    }
+
+    override fun getStringSetForDelete(): Set<String> {
+        val setToReturn = sharedPreferencesManager.getStringSetOrEmpty("IDS_TO_DELETE")
+        sharedPreferencesManager.removeSetdsToRemove()
+        return setToReturn
     }
 
 }

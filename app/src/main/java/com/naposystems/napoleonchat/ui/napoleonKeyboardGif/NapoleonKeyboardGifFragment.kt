@@ -22,7 +22,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.DownloadFileResult
 import com.naposystems.napoleonchat.utility.adapters.showToast
-import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationShareViewModel
+import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
@@ -40,7 +40,7 @@ class NapoleonKeyboardGifFragment : Fragment() {
     private lateinit var binding: NapoleonKeyboardGifFragmentBinding
     private var mListener: NapoleonKeyboardGifListener? = null
     private val viewModel: NapoleonKeyboardGifViewModel by viewModels { viewModelFactory }
-    private val shareViewModel: ConversationShareViewModel by activityViewModels()
+    private val sharedViewModel: ConversationSharedViewModel by activityViewModels()
 
     interface NapoleonKeyboardGifListener {
         fun onSearchFocused()
@@ -107,7 +107,7 @@ class NapoleonKeyboardGifFragment : Fragment() {
                         duration = 0L
                     )
 
-                    shareViewModel.setGifSelected(attachment)
+                    sharedViewModel.setGifSelected(attachment)
                     mListener?.onGifSelected()
                 }
                 is DownloadFileResult.Progress -> {
@@ -137,8 +137,12 @@ class NapoleonKeyboardGifFragment : Fragment() {
         binding.giphySearchBar.hideKeyboardOnSearch = true
 
         giphyEditText?.let { editText ->
+
+            editText.isCursorVisible = false
+
             editText.setOnFocusChangeListener { _, hasFocus ->
                 if (hasFocus) {
+                    editText.isCursorVisible = true
                     editText.requestFocus()
                     mListener?.onSearchFocused()
                 }

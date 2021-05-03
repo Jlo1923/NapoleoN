@@ -73,7 +73,7 @@
                     app:contact="@{contact}" />
 
                 <org.webrtc.SurfaceViewRenderer
-                    android:id="@+id/surface_render"
+                    android:id="@+id/local_surface_render"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -163,20 +163,6 @@
                 app:layout_constraintTop_toBottomOf="@id/textView_nickname"
                 tools:text="@tools:sample/full_names" />
 
-            <TextView
-                android:id="@+id/textView_call_duration"
-                style="@style/CallDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/small_margin"
-                android:elevation="2dp"
-                android:singleLine="true"
-                android:text="00:00"
-                android:textAlignment="center"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView_name" />
         </LinearLayout>
 
         <View
@@ -189,6 +175,21 @@
 
             app:layout_constraintTop_toBottomOf="@id/container_top" />
 
+
+        <TextView
+            android:id="@+id/textView_call_duration"
+            style="@style/CallDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:elevation="4dp"
+            android:singleLine="true"
+            android:text="00:00"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_top_separator" />
 
         <TextView
             android:id="@+id/textView_calling"
@@ -271,15 +272,15 @@
                 android:foreground="?attr/selectableItemBackground"
                 android:visibility="@{isVideoCall ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_mute_video"
+                app:layout_constraintEnd_toStartOf="@+id/image_button_toggle_video"
                 app:layout_constraintStart_toEndOf="@+id/imageButton_bluetooth"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_video_cam_white" />
 
             <com.naposystems.napoleonchat.ui.custom.AccessibleToggleButton
-                android:id="@+id/imageButton_mute_video"
+                android:id="@+id/image_button_toggle_video"
                 style="@style/ConversationCallButton"
-                android:background="@drawable/conversation_call_button_mute_video"
+                android:background="@drawable/conversation_call_button_toggle_video"
                 android:checked="false"
                 android:visibility="@{isVideoCall ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -296,7 +297,7 @@
                 android:checked="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageButton_mute_video"
+                app:layout_constraintStart_toEndOf="@+id/image_button_toggle_video"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:checked="false" />
 
@@ -324,7 +325,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/green"
-            android:visibility="@{typeCall == Constants.TypeCall.IS_INCOMING_CALL.type ? View.VISIBLE : View.GONE}"
+            android:visibility="visible"
             app:borderWidth="0dp"
             app:layout_constraintBottom_toBottomOf="@id/fab_hangup"
             app:layout_constraintEnd_toEndOf="parent"
