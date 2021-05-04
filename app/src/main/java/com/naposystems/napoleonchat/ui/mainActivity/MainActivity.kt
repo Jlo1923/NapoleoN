@@ -24,6 +24,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -109,17 +110,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         AndroidInjection.inject(this)
 
 //        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//
-//        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-//            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
-//            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
-//            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
-//            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
-//            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
-//            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
-//            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
-//            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
-//        }
+
+        when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
+            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
+            Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
+            Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
+            Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
+            Constants.ThemesApplication.CAMOUFLAGE.theme -> setTheme(R.style.AppThemeCamouflage)
+            Constants.ThemesApplication.PURPLE_BLUEBONNETS.theme -> setTheme(R.style.AppThemePurpleBluebonnets)
+            Constants.ThemesApplication.PINK_DREAM.theme -> setTheme(R.style.AppThemePinkDream)
+            Constants.ThemesApplication.CLEAR_SKY.theme -> setTheme(R.style.AppThemeClearSky)
+        }
 
         super.onCreate(savedInstanceState)
 
