@@ -34,6 +34,8 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
+import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
 import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
@@ -739,6 +741,7 @@ class SocketClientImp
         }
     }
 
+    @Synchronized
     private suspend fun getMessageIdAndSaveAttachmentLocally(
         newMessageDataEventRes: NewMessageDataEventRes,
         idMessage: Int
@@ -777,6 +780,7 @@ class SocketClientImp
         }
     }
 
+    @Synchronized
     private suspend fun insertNewMessageAndAttachmentLocally(
         newMessageDataEventRes: NewMessageDataEventRes
     ) {
@@ -888,40 +892,70 @@ class SocketClientImp
 
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
+
                 object : PrivateChannelEventListener {
                     override fun onEvent(event: PusherEvent?) {
-
                         Timber.d("NotifyMessagesReceived: ${event?.data}")
-
                         event?.data?.let { messagesReceivedResDto ->
-
-                            val jsonAdapter: JsonAdapter<MessagesReceivedRESDTO> =
-                                moshi.adapter(MessagesReceivedRESDTO::class.java)
-
-                            val dataDataEvent = jsonAdapter.fromJson(messagesReceivedResDto)
-
-                            dataDataEvent?.data?.let { messagesResDTO ->
-
-                                val listIdMsgs = messagesResDTO.extractIdsMessages()
-                                if (listIdMsgs.isEmpty().not()) {
-                                    syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
-                                }
-
-                                val idsAttachments = messagesResDTO.extractIdsAttachments()
-
-                                if (idsAttachments.isNotEmpty()) {
-                                    val ids = idsAttachments.filter {
-                                        syncManager.existAttachmentById(it)
-                                    }
-                                    if (ids.isNotEmpty()) {
-                                        syncManager.updateAttachmentsStatus(
-                                            ids,
-                                            Constants.AttachmentStatus.RECEIVED.status
-                                        )
-                                    }
-                                }
-                            }
+                            handleEventMessageReceivedData(messagesReceivedResDto)
                         }
+                    }
+
+                    override fun onAuthenticationFailure(
+                        message: String?,
+                        e: java.lang.Exception?
+                    ) = Unit
+
+                    override fun onSubscriptionSucceeded(
+                        channelName: String?
+                    ) = Unit
+
+                })
+    }
+
+    private fun handleEventMessageReceivedData(messagesReceivedResDto: String) {
+
+        val jsonAdapter: JsonAdapter<MessagesReceivedRESDTO> =
+            moshi.adapter(MessagesReceivedRESDTO::class.java)
+        val dataDataEvent = jsonAdapter.fromJson(messagesReceivedResDto)
+
+        dataDataEvent?.data?.let { messagesResDTO ->
+
+            val listIdMsgs = messagesResDTO.extractIdsMessages()
+            if (listIdMsgs.isEmpty().not()) {
+                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+            }
+
+            val idsAttachments = messagesResDTO.extractIdsAttachments()
+            if (idsAttachments.isNotEmpty()) {
+                val ids = idsAttachments.filter { syncManager.existAttachmentById(it) }
+                if (ids.isNotEmpty()) {
+                    syncManager.updateAttachmentsStatus(ids, AttachmentStatus.RECEIVED.status)
+                }
+            }
+
+            /**
+             * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
+             * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
+             */
+            if (idsAttachments.isNotEmpty()) {
+                syncManager.tryMarkMessageParentAsReceived(idsAttachments)
+            }
+        }
+    }
+
+    private fun listenNotifyMessagesRead() {
+        pusher.getPrivateChannel(privateGeneralChannelName)
+            .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
+
+                object : PrivateChannelEventListener {
+
+                    override fun onEvent(event: PusherEvent?) {
+                        Timber.d("NotifyMessageReaded: ${event?.data}")
+                        event?.data?.let {
+                            handleEventMessagesReadData(it)
+                        }
+                        syncManager.verifyMessagesRead()
                     }
 
                     override fun onAuthenticationFailure(
@@ -933,53 +967,36 @@ class SocketClientImp
                 })
     }
 
-    private fun listenNotifyMessagesRead() {
-        pusher.getPrivateChannel(privateGeneralChannelName)
-            .bind(Constants.SocketListenEvents.NOTIFY_MESSAGE_READED.event,
-                object : PrivateChannelEventListener {
-                    override fun onEvent(event: PusherEvent?) {
+    private fun handleEventMessagesReadData(it: String) {
 
-                        Timber.d("NotifyMessageReaded: ${event?.data}")
+        val jsonAdapter: JsonAdapter<MessagesReadedRESDTO> =
+            moshi.adapter(MessagesReadedRESDTO::class.java)
+        val dataEvent = jsonAdapter.fromJson(it)
 
-                        event?.data?.let {
-                            val jsonAdapter: JsonAdapter<MessagesReadedRESDTO> =
-                                moshi.adapter(MessagesReadedRESDTO::class.java)
+        dataEvent?.let { messagesReadedDTO ->
 
-                            val dataEvent = jsonAdapter.fromJson(it)
+            val listIdMsgs = messagesReadedDTO.data.extractIdsMessages()
+            if (listIdMsgs.isEmpty().not()) {
+                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+            }
 
-                            dataEvent?.let { messagesReadedDTO ->
+            val idsAttachments = messagesReadedDTO.data.extractIdsAttachments()
+            if (idsAttachments.isNotEmpty()) {
+                val ids = idsAttachments.filter { syncManager.existAttachmentById(it) }
+                if (ids.isNotEmpty()) {
+                    syncManager.updateAttachmentsStatus(ids, READED.status)
+                }
+            }
 
-                                val listIdMsgs = messagesReadedDTO.data.extractIdsMessages()
-                                if (listIdMsgs.isEmpty().not()) {
-                                    syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
-                                }
+            /**
+             * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
+             * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
+             */
+            if (idsAttachments.isNotEmpty()) {
+                syncManager.tryMarkMessageParentAsRead(idsAttachments)
+            }
 
-                                val idsAttachments = messagesReadedDTO.data.extractIdsAttachments()
-
-                                if (idsAttachments.isNotEmpty()) {
-                                    val ids = idsAttachments.filter {
-                                        syncManager.existAttachmentById(it)
-                                    }
-                                    if (ids.isNotEmpty()) {
-                                        syncManager.updateAttachmentsStatus(
-                                            ids,
-                                            Constants.AttachmentStatus.READED.status
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        syncManager.verifyMessagesRead()
-                    }
-
-                    override fun onAuthenticationFailure(
-                        message: String?,
-                        e: java.lang.Exception?
-                    ) = Unit
-
-                    override fun onSubscriptionSucceeded(channelName: String?) = Unit
-                })
+        }
     }
 
     private fun listenSendMessagesDestroy() {
@@ -1069,7 +1086,7 @@ class SocketClientImp
                                 }?.let {
                                     syncManager.updateAttachmentsStatus(
                                         it,
-                                        Constants.AttachmentStatus.RECEIVED.status
+                                        AttachmentStatus.RECEIVED.status
                                     )
                                 }
 
@@ -1082,7 +1099,7 @@ class SocketClientImp
                                 }?.let {
                                     syncManager.validateMessageType(
                                         it,
-                                        Constants.AttachmentStatus.READED.status
+                                        READED.status
                                     )
                                 }
 

@@ -71,7 +71,9 @@ interface MessageLocalDataSource {
     suspend fun deleteMessageByType(contactId: Int, type: Int)
 
     suspend fun deleteDuplicatesMessages()
+
     suspend fun addUUID()
+
     suspend fun updateMessageStatusBeforeAttachment(attachmentsWebIds: List<String>)
 
 

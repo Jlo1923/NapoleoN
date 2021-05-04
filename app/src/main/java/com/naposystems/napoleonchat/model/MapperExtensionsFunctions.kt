@@ -103,7 +103,9 @@ fun List<MessageResDTO>.toMessagesReqDTOFrom(mustStatus: Constants.StatusMustBe)
 
 }
 
-fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Constants.StatusMustBe): MessagesReqDTO {
+fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(
+    statusReceived: Constants.StatusMustBe
+): MessagesReqDTO {
 
     val messages = filter {
         it.attachmentEntityList.isEmpty()
@@ -112,7 +114,7 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Con
             id = it.messageEntity.webId,
             type = Constants.MessageType.TEXT.type,
             user = it.messageEntity.contactId,
-            status = mustStatus.status
+            status = statusReceived.status
         )
     }.toMutableList()
 
@@ -130,7 +132,7 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(mustStatus: Con
                 id = attachmentEntity.webId,
                 type = Constants.MessageType.ATTACHMENT.type,
                 user = contactId,
-                status = mustStatus.status
+                status = statusReceived.status
             )
         }
 

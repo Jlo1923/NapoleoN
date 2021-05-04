@@ -35,9 +35,5 @@ interface IContractMyMultiAttachmentMsg {
 
         suspend fun getAttachmentsByMessageAsLiveData(messageId: Int): LiveData<List<AttachmentEntity>>
 
-        fun notifyMessageWitStatus(listMessagesReceived: MessagesReqDTO)
-
-        suspend fun notifyMessageRead(listMessagesReceived: MessagesReqDTO)
-
     }
 }

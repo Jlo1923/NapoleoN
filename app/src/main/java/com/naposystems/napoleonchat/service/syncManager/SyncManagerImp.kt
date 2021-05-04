@@ -765,6 +765,50 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    override fun tryMarkMessageParentAsReceived(idsAttachments: List<String>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            idsAttachments.forEach {
+                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(it)
+                theAttach?.let {
+                    val theMsg = messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
+                    theMsg?.let {
+                        val filter = it.attachmentEntityList.filter {
+                            it.status == Constants.AttachmentStatus.RECEIVED.status
+                        }
+                        if (filter.size == it.attachmentEntityList.size) {
+                            updateMessagesStatus(
+                                listOf(it.messageEntity.webId),
+                                Constants.MessageStatus.UNREAD.status
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    override fun tryMarkMessageParentAsRead(idsAttachments: List<String>) {
+        GlobalScope.launch(Dispatchers.IO) {
+            idsAttachments.forEach {
+                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(it)
+                theAttach?.let {
+                    val theMsg = messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
+                    theMsg?.let {
+                        val filter = it.attachmentEntityList.filter {
+                            it.status == Constants.AttachmentStatus.READED.status
+                        }
+                        if (filter.size == it.attachmentEntityList.size) {
+                            updateMessagesStatus(
+                                listOf(it.messageEntity.webId),
+                                Constants.AttachmentStatus.READED.status
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 //
 //
 //    private fun validateMessageEvent(newMessageDataEventRes: NewMessageEventMessageRes) {

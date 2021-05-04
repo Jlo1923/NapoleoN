@@ -117,13 +117,14 @@ class MultipleUploadRepository @Inject constructor(
     private fun handleCompressStart() = Timber.d("*Test: tmessages VideoCompressResult.Start")
 
     private suspend fun handleCompressSuccess(it: VideoCompressResult.Success, job: Job) {
-        try{
+        try {
             Timber.d("*Test: tmessages VideoCompressResult.Success")
 
             currentAttachment.apply {
                 if (it.srcFile.isFile && it.srcFile.exists() && !isCompressed && type == AttachmentType.VIDEO.type)
                     it.srcFile.delete()
-                fileName = if (type == AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
+                fileName =
+                    if (type == AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
                 isCompressed = true
                 updateAttachment(this)
             }
@@ -133,7 +134,7 @@ class MultipleUploadRepository @Inject constructor(
                 val requestBodyMessageId = createPartFromString(messageWebId)
                 val requestBodyType = createPartFromString(type)
                 val requestBodyDuration = createPartFromString(duration.toString())
-                val requestBodyDestroy = createPartFromString(this.duration.toString())
+                val requestBodyDestroy = createPartFromString(this.selfDestructionAt.toString())
 
                 val requestBodyFilePart = createPartFromFile(
                     this, job,
@@ -157,7 +158,7 @@ class MultipleUploadRepository @Inject constructor(
                     handleResponseFailure()
                 }
             }
-        }catch (exception: Exception){
+        } catch (exception: Exception) {
             Timber.d("Ops error ")
         }
     }

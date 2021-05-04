@@ -72,26 +72,4 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
         //context.startService(intent)
     }
 
-    fun notifyMessageReceived(messageEntity: MessageAttachmentRelation) {
-        val dto = MessageDTO(
-            id = messageEntity.messageEntity.webId,
-            type = Constants.MessageType.TEXT.type,
-            user = messageEntity.messageEntity.contactId,
-            status = Constants.StatusMustBe.RECEIVED.status
-        )
-        repository.notifyMessageWitStatus(MessagesReqDTO(listOf(dto)))
-    }
-
-    fun notifyMessageRead(messageEntity: MessageAttachmentRelation) {
-        viewModelScope.launch {
-            val dto = MessageDTO(
-                id = messageEntity.messageEntity.webId,
-                type = Constants.MessageType.TEXT.type,
-                user = messageEntity.messageEntity.contactId,
-                status = Constants.StatusMustBe.READED.status
-            )
-            repository.notifyMessageRead(MessagesReqDTO(listOf(dto)))
-        }
-    }
-
 }

@@ -24,12 +24,4 @@ class MyMultiAttachmentMsgRepository @Inject constructor(
         return messageLocalDataSource.getMessageByIdAsLiveData(messageId, false)
     }
 
-    override fun notifyMessageWitStatus(listMessagesReceived: MessagesReqDTO) {
-        syncManager.notifyMessagesReaded()
-    }
-
-    override suspend fun notifyMessageRead(listMessagesReceived: MessagesReqDTO) {
-        napoleonApi.sendMessagesRead(listMessagesReceived)
-    }
-
 }

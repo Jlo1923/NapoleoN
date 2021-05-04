@@ -48,6 +48,9 @@ interface SyncManager {
 
     fun existAttachmentById(it: String): Boolean
 
-
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
+
+    fun tryMarkMessageParentAsReceived(idsAttachments: List<String>)
+
+    fun tryMarkMessageParentAsRead(idsAttachments: List<String>)
 }
