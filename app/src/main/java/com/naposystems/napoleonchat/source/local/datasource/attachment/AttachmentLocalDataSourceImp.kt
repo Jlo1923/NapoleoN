@@ -1,12 +1,14 @@
 package com.naposystems.napoleonchat.source.local.datasource.attachment
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
+import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -29,6 +31,12 @@ class AttachmentLocalDataSourceImp @Inject constructor(
         webId: String
     ): AttachmentEntity? {
         return attachmentDao.getAttachmentByWebId(webId)
+    }
+
+    override fun getAttachmentByWebIdLiveData(
+        webId: String
+    ): LiveData<AttachmentEntity?> {
+        return attachmentDao.getAttachmentByWebIdLiveData(webId)
     }
 
     override fun insertAttachment(attachmentEntity: AttachmentEntity): Long {

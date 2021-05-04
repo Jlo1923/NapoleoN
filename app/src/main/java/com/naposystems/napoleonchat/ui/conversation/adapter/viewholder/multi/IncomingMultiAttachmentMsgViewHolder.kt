@@ -62,6 +62,16 @@ class IncomingMultiAttachmentMsgViewHolder(
         configListenersViews()
         bindViewModel()
         paintAttachments()
+        tryDownloadAttachments()
+    }
+
+    private fun tryDownloadAttachments() {
+        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
+            it.status != Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status &&
+                    it.status != Constants.AttachmentStatus.RECEIVED.status &&
+                    it.status != Constants.AttachmentStatus.READED.status
+        }
+        viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
     }
 
     private fun paintAttachments() {

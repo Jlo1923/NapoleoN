@@ -81,6 +81,8 @@ import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotification
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.repository.profile.ProfileRepository
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentItemPreview
+import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewItemRepository
 import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
 import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
 import com.naposystems.napoleonchat.ui.register.enterCode.IContractEnterCode
@@ -263,5 +265,9 @@ abstract class RepositoryModule {
         repository: DownloadServiceRepository
     ): IContractDownloadService.Repository
 
+    @Binds
+    abstract fun provideMultipleAttachmentPreviewItemRepository(
+        repository: MultipleAttachmentPreviewItemRepository
+    ): IContractMultipleAttachmentItemPreview.Repository
 
 }

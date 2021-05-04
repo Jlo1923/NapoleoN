@@ -932,15 +932,17 @@ class SocketClientImp
                 if (ids.isNotEmpty()) {
                     syncManager.updateAttachmentsStatus(ids, AttachmentStatus.RECEIVED.status)
                 }
+
+                /**
+                 * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
+                 * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
+                 */
+                if (ids.isNotEmpty()) {
+                    syncManager.tryMarkMessageParentAsReceived(ids)
+                }
             }
 
-            /**
-             * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
-             * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
-             */
-            if (idsAttachments.isNotEmpty()) {
-                syncManager.tryMarkMessageParentAsReceived(idsAttachments)
-            }
+
         }
     }
 
@@ -986,14 +988,14 @@ class SocketClientImp
                 if (ids.isNotEmpty()) {
                     syncManager.updateAttachmentsStatus(ids, READED.status)
                 }
-            }
 
-            /**
-             * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
-             * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
-             */
-            if (idsAttachments.isNotEmpty()) {
-                syncManager.tryMarkMessageParentAsRead(idsAttachments)
+                /**
+                 * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
+                 * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
+                 */
+                if (ids.isNotEmpty()) {
+                    syncManager.tryMarkMessageParentAsRead(ids)
+                }
             }
 
         }

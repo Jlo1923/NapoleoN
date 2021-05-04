@@ -729,6 +729,10 @@ class ConversationFragment
 
     override fun onStart() {
         super.onStart()
+        validateMustGoToPreviewAttachmentsFromOutside()
+    }
+
+    private fun validateMustGoToPreviewAttachmentsFromOutside() {
         val uris = viewModel.getPendingUris()
         if (uris.isEmpty().not()) {
             viewModel.removePendingUris()
@@ -2298,6 +2302,9 @@ class ConversationFragment
         }
     }
 
+    /**
+     * Este metodo es el punto de entrada para ver los attachments de un item de conversacion
+     */
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
