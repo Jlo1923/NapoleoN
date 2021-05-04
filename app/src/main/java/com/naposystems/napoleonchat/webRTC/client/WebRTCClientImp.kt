@@ -74,7 +74,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            disposeCall()
+            disposeCall(TypeEndCallEnum.TYPE_CANCEL)
 
         }
 
