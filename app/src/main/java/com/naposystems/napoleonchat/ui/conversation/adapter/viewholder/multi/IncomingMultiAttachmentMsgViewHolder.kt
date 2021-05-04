@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.lis
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.*
 import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
@@ -66,7 +67,9 @@ class IncomingMultiAttachmentMsgViewHolder(
 
     private fun tryDownloadAttachments() {
         val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
-            it.status != Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+            it.status != Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status &&
+                    it.status != Constants.AttachmentStatus.RECEIVED.status &&
+                    it.status != Constants.AttachmentStatus.READED.status
         }
         viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
     }
@@ -83,7 +86,6 @@ class IncomingMultiAttachmentMsgViewHolder(
             }
         }
     }
-
 
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         when (action) {

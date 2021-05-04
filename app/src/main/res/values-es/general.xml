@@ -82,5 +82,6 @@
     <string name="text_reject">Rechazar</string>
     <string name="text_count_messages">Mensajes</string>
     <string name="text_sending_file">Enviando archivo</string>
+    <string name="text_sending_file_multiple">Enviando multiples archivos</string>
     <string name="text_activated">activado</string>
 </resources>

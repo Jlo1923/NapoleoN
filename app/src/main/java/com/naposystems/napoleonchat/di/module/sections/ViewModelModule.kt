@@ -29,7 +29,8 @@ import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewMo
 import com.naposystems.napoleonchat.ui.logout.LogoutDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
-import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
@@ -53,7 +54,6 @@ import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
 import com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeViewModel
-import com.naposystems.napoleonchat.utility.sharedViewModels.defaulPreferences.DefaultPreferencesSharedViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -327,5 +327,12 @@ abstract class ViewModelModule {
     @ViewModelKey(IncomingMultiAttachmentMsgViewModel::class)
     internal abstract fun bindIncomingMultiAttachmentMsgViewModel(
         viewModel: IncomingMultiAttachmentMsgViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentPreviewItemViewModel::class)
+    internal abstract fun bindMultipleAttachmentPreviewItemViewModel(
+        viewModel: MultipleAttachmentPreviewItemViewModel
     ): ViewModel
 }

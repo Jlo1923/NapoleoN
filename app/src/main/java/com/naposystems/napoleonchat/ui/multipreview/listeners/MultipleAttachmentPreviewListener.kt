@@ -12,7 +12,7 @@ interface MultipleAttachmentPreviewListener {
     fun markAttachmentAsRead(attachmentEntity: MultipleAttachmentFileItem)
 
     fun deleteAttachmentByDestructionTime(
-        attachmentEntity: MultipleAttachmentItemAttachment,
+        attachmentWebId: String,
         position: Int
     )
 

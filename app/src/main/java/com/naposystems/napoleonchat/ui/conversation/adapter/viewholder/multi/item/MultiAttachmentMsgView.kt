@@ -56,27 +56,6 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         this.listener = listener
     }
 
-//    private fun showUiByStatus() = viewBinding.apply {
-//        theAttachment?.let {
-//            when (it.type) {
-//                Constants.AttachmentType.IMAGE.type -> handleAttachmentStatus()
-//                Constants.AttachmentType.VIDEO.type -> handleVideoStatus()
-//            }
-//        }
-//    }
-
-//    private fun handleVideoStatus() {
-//        theAttachment?.let {
-//            when (it.status) {
-//                SENDING.status -> uiModeProcessing()
-//                SENT.status, DOWNLOAD_COMPLETE.status, READED.status -> uiModeDone()
-//                ERROR.status -> uiModeError()
-//                NOT_DOWNLOADED.status -> launchDownload()
-//                else -> Unit
-//            }
-//        }
-//    }
-
     private fun handleAttachmentStatus() {
         theAttachment?.let {
             when (it.status) {

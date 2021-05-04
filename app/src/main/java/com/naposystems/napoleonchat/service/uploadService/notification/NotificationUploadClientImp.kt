@@ -18,22 +18,24 @@ class NotificationUploadClientImp
     }
 
     override fun createUploadNotification(
-        context: Context
+        context: Context,
+        id: Int
     ): Notification {
+        val text = context.getString(R.string.text_sending_file) + """ ${id} """
         val notificationBuilder = NotificationCompat.Builder(
             context,
             context.getString(R.string.alerts_channel_id)
         )
             .setSmallIcon(R.drawable.ic_file_upload_black)
             .setContentTitle(context.getString(R.string.text_sending_file))
-            .setContentText(context.getString(R.string.text_sending_file))
+            .setContentText(text)
             .setProgress(0, 0, true)
             .setOngoing(true)
 
         return notificationBuilder.build()
     }
 
-    override fun updateUploadNotificationProgress(max: Int, progress: Int) {
+    override fun updateUploadNotificationProgress(max: Int, progress: Int, id: Int?) {
         val notificationBuilder = NotificationCompat.Builder(
             context,
             context.getString(R.string.alerts_channel_id)
@@ -48,7 +50,12 @@ class NotificationUploadClientImp
 
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(NOTIFICATION_UPLOADING_MULTI, notification)
+        id?.let {
+            mNotificationManager.notify(it, notification)
+        } ?: kotlin.run {
+            mNotificationManager.notify(NOTIFICATION_UPLOADING, notification)
+        }
+
     }
 
 }

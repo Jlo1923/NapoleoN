@@ -2,6 +2,8 @@ package com.naposystems.napoleonchat.di.module.general
 
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClientImp
+import com.naposystems.napoleonchat.service.multiattachment.notification.NotificationMultiUploadClient
+import com.naposystems.napoleonchat.service.multiattachment.notification.NotificationMultiUploadClientImpl
 import com.naposystems.napoleonchat.service.notificationClient.*
 import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClient
 import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
@@ -32,7 +34,15 @@ abstract class NotificationServicemodule {
 
     @Binds
     @Singleton
-    abstract fun bindNotificationUploadClient(notificationUploadClient: NotificationUploadClientImp): NotificationUploadClient
+    abstract fun bindNotificationUploadClient(
+        notificationUploadClient: NotificationUploadClientImp
+    ): NotificationUploadClient
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationMultiUploadClient(
+        notificationUploadClient: NotificationMultiUploadClientImpl
+    ): NotificationMultiUploadClient
 
     @Binds
     @Singleton
