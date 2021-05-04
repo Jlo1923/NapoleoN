@@ -528,8 +528,6 @@ class SocketClientImp
                             listenBLockOrDeleteFriendship()
 
                             //Metodos de Llamadas
-//                            listenIncomingCall()
-
                             listenRejectedCall()
 
                             listenCancelCall()

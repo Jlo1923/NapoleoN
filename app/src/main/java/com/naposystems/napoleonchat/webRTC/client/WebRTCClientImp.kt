@@ -74,6 +74,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
+            syncManager.sendMissedCall()
             disposeCall(TypeEndCallEnum.TYPE_CANCEL)
 
         }
@@ -1081,7 +1082,6 @@ class WebRTCClientImp
     override fun contactRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
             syncManager.sendMissedCall()
-            syncManager.rejectCall()
             evenstFromWebRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
