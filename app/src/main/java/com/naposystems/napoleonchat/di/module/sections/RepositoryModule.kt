@@ -13,7 +13,7 @@ import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
 import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
-import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
+import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepositoryImp
 import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
 import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepository
@@ -64,7 +64,7 @@ import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
-import com.naposystems.napoleonchat.ui.conversationCall.IContractConversationCall
+import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.repository.home.HomeRepository
@@ -155,7 +155,7 @@ abstract class RepositoryModule {
     abstract fun bindContactUsRepository(repository: ContactUsRepository): IContractContactUs.Repository
 
     @Binds
-    abstract fun bindConversationCallRepository(repository: ConversationCallRepository): IContractConversationCall.Repository
+    abstract fun bindConversationCallRepository(repository: ConversationCallRepositoryImp): ConversationCallRepository
 
     @Binds
     abstract fun bindConversationRepository(repository: ConversationRepository): IContractConversation.Repository

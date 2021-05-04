@@ -49,7 +49,7 @@ interface MessageLocalDataSource {
 
     suspend fun getMessagesSelected(contactId: Int): LiveData<List<MessageAttachmentRelation>>
 
-    suspend fun deletedMessages(listWebIdMessages: List<String>)
+    suspend fun deleteMessagesByWebId(listWebIdMessages: List<String>)
 
     suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
 
@@ -62,13 +62,13 @@ interface MessageLocalDataSource {
 
     suspend fun getMissedCallsByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
 
-    suspend fun deleteMessages(contactId: Int)
+    suspend fun deleteMessagesByContactId(contactId: Int)
 
     suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int)
 
-    fun verifyMessagesToDelete()
+    fun deleteMessagesByTotalSelfDestructionAt()
 
-    suspend fun deleteMessageByType(contactId: Int, type: Int)
+    suspend fun deleteMessageByContactIdAndType(contactId: Int, type: Int)
 
     suspend fun deleteDuplicatesMessages()
 

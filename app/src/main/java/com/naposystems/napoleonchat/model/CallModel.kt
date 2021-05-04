@@ -7,7 +7,8 @@ data class CallModel(
     var contactId: Int = 0,
     var channelName: String = "",
     var isVideoCall: Boolean = false,
-    val offer: String = "",
+    var offer: String = "",
     var typeCall: Constants.TypeCall = Constants.TypeCall.IS_OUTGOING_CALL,
-    var isFromClosedApp: Constants.FromClosedApp = Constants.FromClosedApp.NO
+    var isFromClosedApp: Constants.FromClosedApp = Constants.FromClosedApp.NO,
+    var mustSubscribeToPresenceChannel: Boolean = false
 ) : Serializable

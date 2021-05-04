@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.service.socketClient
 
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.pusher.client.connection.ConnectionState
@@ -8,27 +7,27 @@ import org.json.JSONObject
 
 interface SocketClient {
 
-    fun setSocketEventListener(socketEventListener: SocketEventListener)
+    fun setEventsFromSocketClientListener(eventsFromSocketClientListener: EventsFromSocketClientListener)
 
     fun getStatusSocket(): ConnectionState
 
     fun getStatusGlobalChannel(): Boolean
 
-    fun connectSocket(mustSubscribeToPresenceChannel: Boolean = false, callModel: CallModel? = null)
+    fun connectSocket()
 
-    fun subscribeToPresenceChannel(callModel: CallModel)
+    fun subscribeToPresenceChannel()
 
-    fun disconnectSocket(channelPresenceName: String = "")
+    fun disconnectSocket()
 
-    fun unSubscribePresenceChannel(channelName: String)
+    fun unSubscribePresenceChannel()
 
     fun emitClientConversation(messages: List<ValidateMessage>)
 
     fun emitClientConversation(messages: MessagesReqDTO)
 
-    fun emitClientCall(channel: String, jsonObject: JSONObject)
+    fun emitClientCall(jsonObject: JSONObject)
 
-    fun emitClientCall(channel: String, eventType: Int)
+    fun emitClientCall(eventType: Int)
 
     fun isConnected(): Boolean
 

@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.webRTC.client
 
-interface WebRTCClientListener {
+interface EvenstFromWebRTCClientListener {
 
     //Turn ON/OFF Camera
     fun toggleContactCamera(visibility: Int)
