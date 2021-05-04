@@ -43,6 +43,7 @@ class ConversationCallViewModel
     }
 
     fun sendMissedCall() {
+        //TODO: Revisar tiempo de autodestruccion de este mensaje
         viewModelScope.launch {
             try {
                 NapoleonApplication.callModel?.let { callModel ->

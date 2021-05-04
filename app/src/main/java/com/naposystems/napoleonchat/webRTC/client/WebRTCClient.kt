@@ -8,8 +8,6 @@ interface WebRTCClient {
 
     var renegotiateCall: Boolean
 
-//    var isActiveCall: Boolean
-
     var isHideVideo: Boolean
 
     var contactCameraIsVisible: Boolean
