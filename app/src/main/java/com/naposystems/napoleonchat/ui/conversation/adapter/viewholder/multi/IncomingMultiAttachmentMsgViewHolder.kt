@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.lis
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.*
 import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
@@ -62,13 +63,36 @@ class IncomingMultiAttachmentMsgViewHolder(
         bindViewModel()
         paintAttachments()
         tryDownloadAttachments()
+        tryMarkMessageAsRead()
     }
 
     private fun tryDownloadAttachments() {
         val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
-            it.status != Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status
+            it.status == Constants.AttachmentStatus.NOT_DOWNLOADED.status ||
+                    it.status == Constants.AttachmentStatus.DOWNLOAD_ERROR.status ||
+                    it.status == Constants.AttachmentStatus.DOWNLOAD_CANCEL.status
         }
-        viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
+        if (attachmentsFilter.isNotEmpty()) {
+            viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
+        } else {
+            if (msgAndAttachment.messageEntity.status != UNREAD.status &&
+                msgAndAttachment.messageEntity.status != READED.status &&
+                msgAndAttachment.messageEntity.status != ERROR.status
+            ) {
+                viewModel.notifyMessageReceived(msgAndAttachment)
+            }
+        }
+    }
+
+    private fun tryMarkMessageAsRead() {
+        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
+            it.status == Constants.AttachmentStatus.READED.status
+        }
+        if (attachmentsFilter.size == msgAndAttachment.attachmentEntityList.size) {
+            if (msgAndAttachment.messageEntity.status == UNREAD.status) {
+                viewModel.notifyMessageRead(msgAndAttachment)
+            }
+        }
     }
 
     private fun paintAttachments() {
@@ -83,7 +107,6 @@ class IncomingMultiAttachmentMsgViewHolder(
             }
         }
     }
-
 
     override fun onMsgItemFileAction(action: MultiAttachmentMsgItemAction) {
         when (action) {

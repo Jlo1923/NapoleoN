@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
@@ -100,6 +101,14 @@ class SelfDestructTimeRepository @Inject constructor(
     override fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>) {
         val map = toList.map { it.id.toString() }
         sharedPreferencesManager.putStringSet("IDS_TO_DELETE", map.toSet())
+    }
+
+    override fun updateAttachments(attachmentsWithWebId: List<AttachmentEntity?>) {
+        attachmentsWithWebId.forEach {
+            it?.let {
+                attachmentLocalDataSource.updateAttachment(it)
+            }
+        }
     }
 
 }

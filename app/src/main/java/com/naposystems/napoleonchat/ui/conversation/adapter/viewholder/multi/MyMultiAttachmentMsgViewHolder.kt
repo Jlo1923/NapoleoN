@@ -1,9 +1,11 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 
+import android.app.ActivityManager
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -17,11 +19,13 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+
 
 class MyMultiAttachmentMsgViewHolder(
     private val binding: ConversationItemMyMessageMultiBinding,
@@ -62,6 +66,21 @@ class MyMultiAttachmentMsgViewHolder(
         configListenersViews()
         bindViewModel()
         paintAttachments()
+        tryUploadAttachments()
+    }
+
+    private fun tryUploadAttachments() {
+        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
+            it.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
+                    it.status == Constants.AttachmentStatus.ERROR.status
+        }
+        if (attachmentsFilter.isNotEmpty()) {
+            viewModel.retryUploadAllFiles(
+                attachmentsFilter,
+                binding.root.context,
+                msgAndAttachment.messageEntity
+            )
+        }
     }
 
     private fun paintAttachments() {

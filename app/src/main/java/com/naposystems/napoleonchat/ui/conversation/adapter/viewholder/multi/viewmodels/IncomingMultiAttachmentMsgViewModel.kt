@@ -8,11 +8,16 @@ import androidx.lifecycle.*
 import com.naposystems.napoleonchat.service.download.DownloadAttachmentsService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractIncomingMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class IncomingMultiAttachmentMsgViewModel @Inject constructor(
@@ -67,5 +72,26 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
         //context.startService(intent)
     }
 
+    fun notifyMessageReceived(messageEntity: MessageAttachmentRelation) {
+        val dto = MessageDTO(
+            id = messageEntity.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = messageEntity.messageEntity.contactId,
+            status = Constants.StatusMustBe.RECEIVED.status
+        )
+        repository.notifyMessageWitStatus(MessagesReqDTO(listOf(dto)))
+    }
+
+    fun notifyMessageRead(messageEntity: MessageAttachmentRelation) {
+        viewModelScope.launch {
+            val dto = MessageDTO(
+                id = messageEntity.messageEntity.webId,
+                type = Constants.MessageType.TEXT.type,
+                user = messageEntity.messageEntity.contactId,
+                status = Constants.StatusMustBe.READED.status
+            )
+            repository.notifyMessageRead(MessagesReqDTO(listOf(dto)))
+        }
+    }
 
 }

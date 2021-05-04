@@ -68,7 +68,7 @@ class RxEvent {
 
     data class MultiUploadStart(val attachmentEntity: AttachmentEntity)
 
-    class MultiUploadTryNextAttachment()
+    class MultiUploadTryNextAttachment
 
     data class MultiUploadSuccess(val attachmentEntity: AttachmentEntity)
 

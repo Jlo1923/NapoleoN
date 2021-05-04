@@ -8,9 +8,9 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMultipleUpload
 import com.naposystems.napoleonchat.service.multiattachment.notification.NotificationMultiUploadClientImpl
-import com.naposystems.napoleonchat.service.uploadService.notification.NotificationUploadClientImp
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.SENDING
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
@@ -34,8 +34,8 @@ class MultipleUploadService : Service() {
 
     private lateinit var napoleonApplication: NapoleonApplication
     private val compositeDisposable = CompositeDisposable()
-    lateinit var attachmentList: List<AttachmentEntity>
-    lateinit var currentMessage: MessageEntity
+    var attachmentList: MutableList<Pair<MessageEntity?, AttachmentEntity>> = mutableListOf()
+    lateinit var currentMessagePairData: Pair<MessageEntity?, AttachmentEntity>
 
     override fun onCreate() {
         super.onCreate()
@@ -49,9 +49,10 @@ class MultipleUploadService : Service() {
 
         intent.extras?.let { bundle ->
             val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
-            message?.let { currentMessage = it }
-            attachmentList =
+            val attachments =
                 bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
+            val forList = attachments.map { Pair(message, it) }.toList()
+            attachmentList.addAll(forList)
         }
 
         handleTryNextAttachment()
@@ -67,11 +68,16 @@ class MultipleUploadService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() { it.status == SENDING.status }
+    private fun getNextAttachment(): Pair<MessageEntity?, AttachmentEntity>? {
+        return attachmentList.firstOrNull() {
+            it.second.status == SENDING.status ||
+                    it.second.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
+                    it.second.status == Constants.AttachmentStatus.ERROR.status
+        }
+    }
 
-    private fun showNotification() {
-        currentMessage.let {
+    private fun showNotification(pair: Pair<MessageEntity?, AttachmentEntity>) {
+        pair.first?.let {
             val notification =
                 notificationUploadService.createUploadNotification(applicationContext, it.id)
             Timber.d("notificationId: ${it.id}")
@@ -117,13 +123,12 @@ class MultipleUploadService : Service() {
     }
 
     private fun handleTryNextAttachment() {
-        currentMessage.let { msg ->
-            val nextAttachment = getNextAttachment()
-            nextAttachment?.let {
-                repository.uploadAttachment(it, msg)
-                showNotification()
-            } ?: run { handleUploadSuccess() }
-        }
+        val nextAttachment = getNextAttachment()
+        nextAttachment?.let { pair ->
+            currentMessagePairData = pair
+            pair.first?.let { repository.uploadAttachment(pair.second, it) }
+            showNotification(pair)
+        } ?: run { handleUploadSuccess() }
     }
 
     private fun handleUploadError() {
@@ -131,19 +136,26 @@ class MultipleUploadService : Service() {
         stopService()
     }
 
-    private fun handleUploadProgress(it: RxEvent.MultiUploadProgress) {
-        notificationUploadService.updateUploadNotificationProgress(
-            PROGRESS_MAX, it.progress.toInt(), currentMessage.id
-        )
+    private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) {
+        currentMessagePairData.first?.let {
+            notificationUploadService.updateUploadNotificationProgress(
+                PROGRESS_MAX, event.progress.toInt(), it.id
+            )
+        }
     }
 
     private fun stopService() {
-        compositeDisposable.dispose()
-        currentMessage.apply {
-            notificationUploadService.cancelNotification(this.id)
+        currentMessagePairData.first?.let {
+            notificationUploadService.cancelNotification(it.id)
         }
         stopSelf()
         stopForeground(true)
+        compositeDisposable.dispose()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

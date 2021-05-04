@@ -10,7 +10,7 @@ interface IContractDownloadService {
          * Allows you to tell the system to create the notification to inform the user
          * of the download status
          */
-        fun showNotification()
+        fun showNotification(attachmentEntity: AttachmentEntity)
 
         /**
          * Allows you to subscribe to the different events that a download can generate

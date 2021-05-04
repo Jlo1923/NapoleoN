@@ -178,6 +178,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                 val messageResponse = repositoryMessages.sendMessage(messageEntity)
                 val attachmentsWithWebId =
                     setMessageWebIdToAttachments(attachments, messageResponse)
+                repository.updateAttachments(attachmentsWithWebId)
                 messageResponse?.let { pairData ->
                     pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
                 }
@@ -288,7 +289,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         messageResponse: Pair<MessageEntity?, String>?
     ): List<AttachmentEntity?> {
         attachments.forEach { attachment ->
-            attachment?.let { it.messageWebId = messageResponse?.second ?: "" }
+            attachment?.let {
+                it.messageWebId = messageResponse?.second ?: ""
+            }
         }
         return attachments
     }

@@ -13,7 +13,8 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
+            storeFile file("pepito.jks")
+            //storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'
@@ -22,12 +23,13 @@ android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
     defaultConfig {
+
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 69
+        versionCode 71
 
-        versionName "1.1.64 QA"
+        versionName "2.0.71"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true

@@ -117,50 +117,54 @@ class MultipleUploadRepository @Inject constructor(
     private fun handleCompressStart() = Timber.d("*Test: tmessages VideoCompressResult.Start")
 
     private suspend fun handleCompressSuccess(it: VideoCompressResult.Success, job: Job) {
-        Timber.d("*Test: tmessages VideoCompressResult.Success")
+        try{
+            Timber.d("*Test: tmessages VideoCompressResult.Success")
 
-        currentAttachment.apply {
-            if (it.srcFile.isFile && it.srcFile.exists() && !isCompressed && type == AttachmentType.VIDEO.type)
-                it.srcFile.delete()
-            fileName = if (type == AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
-            isCompressed = true
-            updateAttachment(this)
-        }
-
-        currentAttachment.apply {
-
-            val requestBodyMessageId = createPartFromString(messageWebId)
-            val requestBodyType = createPartFromString(type)
-            val requestBodyDuration = createPartFromString(duration.toString())
-            val requestBodyDestroy = createPartFromString(this.duration.toString())
-
-            val requestBodyFilePart = createPartFromFile(
-                this, job,
-                progress = { progress ->
-                    publishEventProgress(progress)
-                    Timber.d("UploadResult.Progress($progress})")
-                }
-            )
-
-            val response = napoleonApi.sendMessageAttachment(
-                messageId = requestBodyMessageId,
-                attachmentType = requestBodyType,
-                duration = requestBodyDuration,
-                destroy = requestBodyDestroy,
-                file = requestBodyFilePart
-            )
-
-            if (response.isSuccessful) {
-                handleResponseSuccessful(response)
-            } else {
-                handleResponseFailure()
+            currentAttachment.apply {
+                if (it.srcFile.isFile && it.srcFile.exists() && !isCompressed && type == AttachmentType.VIDEO.type)
+                    it.srcFile.delete()
+                fileName = if (type == AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
+                isCompressed = true
+                updateAttachment(this)
             }
+
+            currentAttachment.apply {
+
+                val requestBodyMessageId = createPartFromString(messageWebId)
+                val requestBodyType = createPartFromString(type)
+                val requestBodyDuration = createPartFromString(duration.toString())
+                val requestBodyDestroy = createPartFromString(this.duration.toString())
+
+                val requestBodyFilePart = createPartFromFile(
+                    this, job,
+                    progress = { progress ->
+                        //publishEventProgress(progress)
+                        Timber.d("UploadResult.Progress($progress})")
+                    }
+                )
+
+                val response = napoleonApi.sendMessageAttachment(
+                    messageId = requestBodyMessageId,
+                    attachmentType = requestBodyType,
+                    duration = requestBodyDuration,
+                    destroy = requestBodyDestroy,
+                    file = requestBodyFilePart
+                )
+
+                if (response.isSuccessful) {
+                    handleResponseSuccessful(response)
+                } else {
+                    handleResponseFailure()
+                }
+            }
+        }catch (exception: Exception){
+            Timber.d("Ops error ")
         }
     }
 
     private fun handleCompressProgress(it: VideoCompressResult.Progress) {
         Timber.d("VideoCompressResult.Progress ${it.progress}")
-        currentAttachment.publishEventProgress(it.progress)
+        //currentAttachment.publishEventProgress(it.progress)
     }
 
     private fun handleCompressFailure() {
