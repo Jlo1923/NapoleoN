@@ -76,7 +76,7 @@ class ValidateNicknameFragment : DaggerFragment() {
                 this.findNavController()
                     .navigate(
                         ValidateNicknameFragmentDirections
-                            .actionRegisterFragmentToAccessPinFragment(
+                            .actionValidateNicknameFragmentToAccessPinFragment(
                                 viewModel.nickName.value!!.toLowerCase(Locale.getDefault()),
                                 viewModel.displayName.value!!.trim().replace("\\s+".toRegex(), " "),
                                 false

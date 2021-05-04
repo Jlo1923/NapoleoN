@@ -9,4 +9,6 @@ interface UserProfileSharedRepository {
     suspend fun getUser(): LiveData<UserEntity>
     suspend fun updateUserInfo(updateUserInfoReqDTO: Any): Response<UpdateUserInfoResDTO>
     suspend fun updateUserLocal(userEntity: UserEntity)
+    fun getUnprocessableEntityError(response: Response<UpdateUserInfoResDTO>): ArrayList<String>
+    fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String>
 }

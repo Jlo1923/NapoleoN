@@ -11,7 +11,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class UserProfileSharedViewModel @Inject constructor(
-    private val repository: UserProfileSharedRepositoryImp
+    private val repository: UserProfileSharedRepository
 ) : ViewModel() {
 
     private val _userUpdated = MutableLiveData<Boolean>()

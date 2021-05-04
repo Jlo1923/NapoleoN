@@ -5,7 +5,6 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -33,7 +32,11 @@ class EnterCodeFragment :
     lateinit var viewModelFactory: ViewModelFactory
 
     private val viewModel: EnterCodeViewModel by viewModels { viewModelFactory }
-    private lateinit var binding: EnterCodeFragmentBinding
+
+    private var _binding: EnterCodeFragmentBinding? = null
+
+    private val binding get() = _binding!!
+
     private lateinit var snackbarUtils: SnackbarUtils
     private var attemptsForEnterCode: Int = 0
     private var attemptsForNewCode: Int = 0
@@ -44,9 +47,9 @@ class EnterCodeFragment :
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(
-            layoutInflater, R.layout.enter_code_fragment, container, false
-        )
+
+        //Bindeo del fragmento
+        _binding = EnterCodeFragmentBinding.inflate(inflater, container, false)
 
         binding.enterCodeWidget.setListener(this)
         binding.numericKeyboard.setListener(this)
@@ -63,13 +66,18 @@ class EnterCodeFragment :
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         viewModel.isValidCode.observe(viewLifecycleOwner, Observer { success ->
             if (success) {
                 findNavController().navigate(
-                    EnterCodeFragmentDirections.actionEnterCodeFragmentToRegisterFragment()
+                    EnterCodeFragmentDirections.actionEnterCodeFragmentToValidateNicknameFragment()
                 )
             }
         })

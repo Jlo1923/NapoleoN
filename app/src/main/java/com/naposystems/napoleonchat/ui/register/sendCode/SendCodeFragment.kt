@@ -1,13 +1,10 @@
 package com.naposystems.napoleonchat.ui.register.sendCode
 
-import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -19,7 +16,6 @@ import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -33,7 +29,12 @@ class SendCodeFragment : DaggerFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: SendCodeViewModel by viewModels { viewModelFactory }
-    private lateinit var binding: SendCodeFragmentBinding
+
+    private var _binding: SendCodeFragmentBinding? = null
+
+    private val binding get() = _binding!!
+
+
     private lateinit var snackbarUtils: SnackbarUtils
     private var timeForNewCode = 0L
     private var timeForEnterCode = 0L
@@ -43,16 +44,16 @@ class SendCodeFragment : DaggerFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(
-            layoutInflater, R.layout.send_code_fragment, container, false
-        )
+
+        //Bindeo del fragmento
+        _binding = SendCodeFragmentBinding.inflate(inflater, container, false)
 
         setupCallbackFirebase()
 
         binding.viewModel = viewModel
 
-        binding.buttonSendCode.setOnClickListener {
-            if(binding.viewSwitcher.nextView.id == binding.progressBar.id) {
+        binding.buttonRequestCode.setOnClickListener {
+            if (binding.viewSwitcher.nextView.id == binding.progressBar.id) {
                 binding.viewSwitcher.showNext()
             }
             viewModel.requestCode()
@@ -71,11 +72,16 @@ class SendCodeFragment : DaggerFragment() {
             if (it.isNotEmpty()) {
                 binding.viewSwitcher.showNext()
                 snackbarUtils = SnackbarUtils(binding.coordinator, it)
-                snackbarUtils.showSnackbar{}
+                snackbarUtils.showSnackbar {}
             }
         })
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -94,7 +100,7 @@ class SendCodeFragment : DaggerFragment() {
 
         viewModel.successToken.observe(viewLifecycleOwner, Observer {
             it?.let {
-                if(binding.viewSwitcher.nextView.id == binding.containerButtonSendCode.id) {
+                if (binding.viewSwitcher.nextView.id == binding.containerButtonSendCode.id) {
                     binding.viewSwitcher.showNext()
                 }
             }
@@ -120,10 +126,10 @@ class SendCodeFragment : DaggerFragment() {
     private fun validateTypeCode() {
         var timeForWait = 0L
         if (viewModel.getAttemptsEnterCode() != 0 && timeForEnterCode > System.currentTimeMillis()) {
-            binding.buttonSendCode.isEnabled = false
+            binding.buttonRequestCode.isEnabled = false
             timeForWait = timeForEnterCode
         } else if (viewModel.getAttemptsNewCode() != 0 && timeForNewCode > System.currentTimeMillis()) {
-            binding.buttonSendCode.isEnabled = false
+            binding.buttonRequestCode.isEnabled = false
             timeForWait = timeForNewCode
         }
         setTimeForWait(timeForWait - System.currentTimeMillis())
@@ -135,13 +141,15 @@ class SendCodeFragment : DaggerFragment() {
             override fun onFinish() {
                 binding.textViewTimeForNewCode.visibility = View.GONE
                 if (viewModel.getAttemptsEnterCode() == MAX_ATTEMPTS &&
-                    System.currentTimeMillis() > timeForEnterCode) {
+                    System.currentTimeMillis() > timeForEnterCode
+                ) {
                     viewModel.resetAttemptsEnterCode()
-                }else if (viewModel.getAttemptsNewCode() == MAX_ATTEMPTS &&
-                    System.currentTimeMillis() > timeForNewCode){
+                } else if (viewModel.getAttemptsNewCode() == MAX_ATTEMPTS &&
+                    System.currentTimeMillis() > timeForNewCode
+                ) {
                     viewModel.resetAttemptsNewCode()
                 }
-                binding.buttonSendCode.isEnabled = true
+                binding.buttonRequestCode.isEnabled = true
             }
 
             override fun onTick(millisUntilFinished: Long) {

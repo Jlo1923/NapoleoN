@@ -10,8 +10,10 @@ import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class LanguageSelectionViewModel @Inject constructor(private val repository: LanguageSelectionRepository) :
-    ViewModel(), IContractLanguageSelection.ViewModel {
+class LanguageSelectionViewModel
+@Inject constructor(
+    private val repository: LanguageSelectionRepository
+) : ViewModel(), IContractLanguageSelection.ViewModel {
 
     val languagesList = getLanguages()
 

@@ -3,16 +3,15 @@ package com.naposystems.napoleonchat.repository.accessPin
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.Crypto
 import com.naposystems.napoleonchat.source.local.datasource.user.UserLocalDataSourceImp
-import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountUnprocessableEntityDTO
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.ui.register.accessPin.IContractAccessPin
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountUnprocessableEntityDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.WebServiceUtils
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.Moshi
 import retrofit2.Response
 import timber.log.Timber
@@ -21,12 +20,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class CreateAccountRepository @Inject constructor(
+class AccessPinRepositoryImp @Inject constructor(
     private val userLocalDataSourceImp: UserLocalDataSourceImp,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
-) :
-    IContractAccessPin.Repository {
+) : AccessPinRepository {
 
     private val moshi by lazy {
         Moshi.Builder().build()

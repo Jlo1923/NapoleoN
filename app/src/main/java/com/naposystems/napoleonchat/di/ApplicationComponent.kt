@@ -4,7 +4,6 @@ import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.di.module.general.*
 import com.naposystems.napoleonchat.di.module.mediastore.MediaStoreModule
-import com.naposystems.napoleonchat.di.module.missnamed.CreateAccountModule
 import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
 import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
 import com.naposystems.napoleonchat.di.module.shared.SharedRepositoryModule
@@ -64,10 +63,8 @@ import javax.inject.Singleton
 
         //Shared
         SharedViewModelModule::class,
-        SharedRepositoryModule::class,
-
-        //missnamed
-        CreateAccountModule::class]
+        SharedRepositoryModule::class
+    ]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
 

@@ -10,8 +10,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepository) :
-    ViewModel(), IContractSendCode.ViewModel {
+class SendCodeViewModel
+@Inject constructor(
+    private val repository: SendCodeRepository
+) : ViewModel() {
 
     private val _codeSuccess = MutableLiveData<Boolean>()
     val codeSuccess: LiveData<Boolean>
@@ -33,14 +35,14 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
     val successToken: LiveData<Boolean>
         get() = _successToken
 
-    override fun resetCode() {
+    fun resetCode() {
         _successToken.value = null
         _codeSuccess.value = null
         _webServiceError.value = emptyList()
     }
 
     //region Implementation IContractSendCode.ViewModel
-    override fun requestCode() {
+    fun requestCode() {
         viewModelScope.launch {
             try {
                 val response = repository.requestCode()
@@ -51,7 +53,8 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
                 } else {
                     when (response.code()) {
                         Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
-                            _webServiceError.value = repository.getUnprocessableEntityError(response)
+                            _webServiceError.value =
+                                repository.getUnprocessableEntityError(response)
                             _codeSuccess.value = false
                         }
                         else -> {
@@ -68,31 +71,31 @@ class SendCodeViewModel @Inject constructor(private val repository: SendCodeRepo
         }
     }
 
-    override fun getTimeForNewCode() {
+    fun getTimeForNewCode() {
         _timeForNewCode.value = repository.getTimeForNewCode()
     }
 
-    override fun getTimeForEnterCode() {
+    fun getTimeForEnterCode() {
         _timeForEnterCode.value = repository.getTimeForEnterCode()
     }
 
-    override fun getAttemptsNewCode(): Int {
+    fun getAttemptsNewCode(): Int {
         return repository.getAttemptsNewCode()
     }
 
-    override fun getAttemptsEnterCode(): Int {
+    fun getAttemptsEnterCode(): Int {
         return repository.getAttemptsEnterCode()
     }
 
-    override fun resetAttemptsEnterCode() {
+    fun resetAttemptsEnterCode() {
         repository.resetAttemptsEnterCode()
     }
 
-    override fun resetAttemptsNewCode() {
+    fun resetAttemptsNewCode() {
         repository.resetAttemptsNewCode()
     }
 
-    override fun setFirebaseId(newToken: String) {
+    fun setFirebaseId(newToken: String) {
         viewModelScope.launch {
             repository.setFirebaseId(newToken)
             _successToken.value = true

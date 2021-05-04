@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class UserDisplayFormatDialogViewModel
 @Inject constructor(
-    private val repository: UserDisplayFormatDialogRepositoryImp
+    private val repository: UserDisplayFormatDialogRepository
 ) : ViewModel() {
 
     private val _userDisplayFormat = MutableLiveData<Int>()

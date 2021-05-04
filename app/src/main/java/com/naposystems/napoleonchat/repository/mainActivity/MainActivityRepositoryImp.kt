@@ -85,7 +85,7 @@ class MainActivityRepositoryImp @Inject constructor(
 
     }
 
-    fun addUriListToCache(listOf: List<Uri>) {
+    override fun addUriListToCache(listOf: List<Uri>) {
         sharedPreferencesManager.puStringSet("test", listOf)
     }
 

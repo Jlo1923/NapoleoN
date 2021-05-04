@@ -8,8 +8,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class LogoutDialogViewModel @Inject constructor(private val repository: IContractLogout.Repository) :
-    ViewModel(), IContractLogout.ViewModel {
+class LogoutDialogViewModel
+@Inject constructor(
+    private val repository: IContractLogout.Repository
+) : ViewModel(), IContractLogout.ViewModel {
 
     private val _logoutStatus = MutableLiveData<Int>()
     val logoutStatus: LiveData<Int>
