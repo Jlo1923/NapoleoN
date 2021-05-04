@@ -51,7 +51,7 @@ class ContactSharedRepositoryImp
 
                 if (contactsToDelete.isNotEmpty() && location == Constants.LocationGetContact.OTHER.location) {
                     contactsToDelete.forEach { contact ->
-                        messageLocalDataSource.deleteMessageByType(
+                        messageLocalDataSource.deleteMessageByContactIdAndType(
                             contact.id,
                             Constants.MessageTextType.NEW_CONTACT.type
                         )
@@ -101,7 +101,7 @@ class ContactSharedRepositoryImp
     }
 
     override suspend fun deleteConversation(contactId: Int) {
-        messageLocalDataSource.deleteMessages(contactId)
+        messageLocalDataSource.deleteMessagesByContactId(contactId)
     }
 
     override suspend fun muteConversation(

@@ -796,7 +796,7 @@ class ConversationRepository @Inject constructor(
     }
 
     override fun verifyMessagesToDelete() {
-        messageLocalDataSource.verifyMessagesToDelete()
+        messageLocalDataSource.deleteMessagesByTotalSelfDestructionAt()
     }
 
     override suspend fun setMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {

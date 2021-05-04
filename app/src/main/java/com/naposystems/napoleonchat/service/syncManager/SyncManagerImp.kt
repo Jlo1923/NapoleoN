@@ -465,7 +465,7 @@ class SyncManagerImp @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.messagesId.let {
                     it?.let {
-                        messageLocalDataSource.deletedMessages(
+                        messageLocalDataSource.deleteMessagesByWebId(
                             it
                         )
                     }
@@ -599,7 +599,7 @@ class SyncManagerImp @Inject constructor(
                 if (contactsToDelete.isNotEmpty()) {
 
                     contactsToDelete.forEach { contact ->
-                        messageLocalDataSource.deleteMessageByType(
+                        messageLocalDataSource.deleteMessageByContactIdAndType(
                             contact.id,
                             Constants.MessageTextType.NEW_CONTACT.type
                         )
@@ -742,7 +742,7 @@ class SyncManagerImp @Inject constructor(
                 if (contactsToDelete.isNotEmpty()) {
 
                     contactsToDelete.forEach { contact ->
-                        messageLocalDataSource.deleteMessageByType(
+                        messageLocalDataSource.deleteMessageByContactIdAndType(
                             contact.id,
                             Constants.MessageTextType.NEW_CONTACT.type
                         )

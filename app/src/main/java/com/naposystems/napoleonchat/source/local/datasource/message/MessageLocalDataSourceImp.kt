@@ -154,7 +154,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         contactId: Int,
         status: Int
     ): List<MessageAttachmentRelation> {
-        return messageDao.getLocalMessagesByStatus(contactId, status)
+        return messageDao.getMessagesByStatus(contactId, status)
     }
 
     override suspend fun insertMessage(messageEntity: MessageEntity): Long {
@@ -172,9 +172,6 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     override fun updateMessage(messageEntity: MessageEntity) {
-        /*if (BuildConfig.ENCRYPT_API) {
-            message.encryptBody(cryptoMessage)
-        }*/
         messageDao.updateMessage(messageEntity)
     }
 
@@ -234,13 +231,6 @@ class MessageLocalDataSourceImp @Inject constructor(
 
     override suspend fun copyMessagesSelected(contactId: Int): List<String> {
         val messages = messageDao.copyMessagesSelected(contactId)
-        val returnMessages = arrayListOf<String>()
-
-//        if (BuildConfig.ENCRYPT_API) {
-//        messages.forEach {
-//            returnMessages.add(cryptoMessage.decryptMessageBody(it))
-//        }
-//        }
 
         return messages
     }
@@ -380,7 +370,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.getMissedCallsByStatus(contactId, status)
     }
 
-    override suspend fun deleteMessages(contactId: Int) {
+    override suspend fun deleteMessagesByContactId(contactId: Int) {
         messageDao.getMessagesByContact(contactId)
             .forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
                 if (messageAndAttachmentRelation.attachmentEntityList.isNotEmpty()) {
@@ -389,14 +379,14 @@ class MessageLocalDataSourceImp @Inject constructor(
                     }
                 }
             }
-        messageDao.deleteMessages(contactId)
+        messageDao.deleteMessagesByContactId(contactId)
     }
 
     override suspend fun setSelfDestructTimeByMessages(selfDestructTime: Int, contactId: Int) {
         messageDao.setSelfDestructTimeByMessages(selfDestructTime, contactId)
     }
 
-    override suspend fun deletedMessages(listWebIdMessages: List<String>) {
+    override suspend fun deleteMessagesByWebId(listWebIdMessages: List<String>) {
         listWebIdMessages.forEach { webId ->
             messageDao.getMessageByWebId(webId)?.let { messageAndAttachment ->
                 if (messageAndAttachment.attachmentEntityList.isNotEmpty()) {
@@ -406,7 +396,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                     }
                 }
             }
-            messageDao.deletedMessages(webId)
+            messageDao.deleteMessagesByWebId(webId)
         }
     }
 
@@ -414,12 +404,12 @@ class MessageLocalDataSourceImp @Inject constructor(
         return messageDao.getContactIdByWebId(listWebId[0])
     }
 
-    override fun verifyMessagesToDelete() {
-        messageDao.verifyMessagesToDelete()
+    override fun deleteMessagesByTotalSelfDestructionAt() {
+        messageDao.deleteMessagesByTotalSelfDestructionAt()
     }
 
-    override suspend fun deleteMessageByType(contactId: Int, type: Int) {
-        return messageDao.deleteMessageByType(contactId, type)
+    override suspend fun deleteMessageByContactIdAndType(contactId: Int, type: Int) {
+        return messageDao.deleteMessageByContactIdAndType(contactId, type)
     }
 
     //Función para limpiar la conversación de mensajes exitosos duplicados
