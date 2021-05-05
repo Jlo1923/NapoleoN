@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_incoming_message"
     style="@style/ContainerMessage"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">

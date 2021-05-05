@@ -2147,10 +2147,10 @@ class ConversationFragment
         conversationAdapterOnClickEvent(item)
     }
 
-    override fun onLongClick(item: MessageEntity) {
+    override fun onLongClick(messageEntity: MessageEntity) {
         if (actionMode.mode == null) {
             actionMode.startActionMode(view, R.menu.menu_selection_message)
-            updateStateSelectionMessage(item)
+            updateStateSelectionMessage(messageEntity)
         }
     }
 

@@ -35,12 +35,9 @@ class MessageLocalDataSourceImp @Inject constructor(
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.messageEntity) {
-                this?.let {
-                    it.body = it.getBody(cryptoMessage)
-                }
+                this?.let {it.body = it.getBody(cryptoMessage)}
             }
         }
-
         return messageAndAttachment
     }
 

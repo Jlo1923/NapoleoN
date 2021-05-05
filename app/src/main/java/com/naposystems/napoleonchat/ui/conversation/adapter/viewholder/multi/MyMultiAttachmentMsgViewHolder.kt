@@ -37,6 +37,15 @@ class MyMultiAttachmentMsgViewHolder(
     private lateinit var msgAndAttachment: MessageAttachmentRelation
     lateinit var currentAttachments: List<AttachmentEntity>
 
+    init {
+        super.parentContainerMessage = binding.containerIncomingMessage
+//        super.progressBar = binding.progressBar
+//        super.progressBarIndeterminate = binding.progressBarIndeterminate
+//        super.imageButtonState = binding.imageButtonState
+//        super.textViewCountDown = binding.textViewCountDown
+//        super.quote = binding.quote
+    }
+
     companion object {
         fun from(
             parent: ViewGroup,

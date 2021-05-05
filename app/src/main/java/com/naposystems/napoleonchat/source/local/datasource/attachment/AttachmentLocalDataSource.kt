@@ -28,4 +28,6 @@ interface AttachmentLocalDataSource {
 
     fun getAttachmentByWebIdLiveData(webId: String): LiveData<AttachmentEntity?>
 
+    fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
+
 }

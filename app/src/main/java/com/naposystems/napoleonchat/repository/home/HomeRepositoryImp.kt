@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.home
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
@@ -26,7 +27,8 @@ class HomeRepositoryImp @Inject constructor(
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
-    private val quoteLocalDataSource: QuoteLocalDataSource
+    private val quoteLocalDataSource: QuoteLocalDataSource,
+    private val context: Context
 ) :
     HomeRepository {
 
@@ -198,8 +200,41 @@ class HomeRepositoryImp @Inject constructor(
         return messageLocalDataSource.getMessagesForHome()
     }
 
-    override fun verifyMessagesToDelete() {
+    override suspend fun verifyMessagesToDelete() {
+
         messageLocalDataSource.deleteMessagesByTotalSelfDestructionAt()
+
+        /**
+         * Debemos eliminar los attachments cuyo tiempo de autodestruction ya venció, si se elimina
+         * debemos eliminar su archivo en cache
+         * si todos los attachments son eliminados, debemos eliminar el mensaje
+         */
+        val attachments = attachmentLocalDataSource.getAttachmentsSelfDestructionExpired()
+
+        // Tomamos los ids de los mensajes padres
+        val hashMap: HashMap<String, String> = HashMap()
+        attachments.forEach {
+            if (hashMap.containsKey(it.messageWebId).not()) {
+                hashMap[it.messageWebId] = it.messageWebId
+            }
+        }
+
+        // eliminamos los attachments
+        attachments.forEach { it.deleteFile(context) }
+        attachmentLocalDataSource.deletedAttachments(attachments.map { it.webId })
+
+        /*
+        vamos a consultar los mensajes por medio de los webid que obtuvimos, si su cantidad de
+        attachments es 0, debemos eliminarlo
+         */
+        for ((key, value) in hashMap) {
+            val message = messageLocalDataSource.getMessageByWebId(key, false)
+            message?.let {
+                if (it.attachmentEntityList.isEmpty()) {
+                    messageLocalDataSource.deleteMessagesByWebId(listOf(key))
+                }
+            }
+        }
     }
 
     override fun getDialogSubscription(): Int {

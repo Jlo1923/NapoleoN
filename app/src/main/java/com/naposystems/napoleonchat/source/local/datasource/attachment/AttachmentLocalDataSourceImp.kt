@@ -39,6 +39,10 @@ class AttachmentLocalDataSourceImp @Inject constructor(
         return attachmentDao.getAttachmentByWebIdLiveData(webId)
     }
 
+    override fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity> {
+        return attachmentDao.getAttachmentsSelfDestructionExpired()
+    }
+
     override fun insertAttachment(attachmentEntity: AttachmentEntity): Long {
         return attachmentDao.insertAttachment(attachmentEntity)
     }
@@ -133,12 +137,28 @@ class AttachmentLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun deletedAttachments(attachmentsWebIds: List<String>) {
+
+        var messageWebId = ""
+
         attachmentsWebIds.forEach { webId ->
             attachmentDao.getAttachmentByWebId(webId)?.let { attachmentEntity ->
+                messageWebId = attachmentEntity.messageWebId
                 attachmentEntity.deleteFile(context)
                 attachmentDao.deletedAttachment(webId)
             }
         }
-        //TODO: JuankDev12 Aqui debes borrar el mensajes cuando todos los adjuntos de multiadjuntos debes eliminar el mensaje tambn
+
+        /**
+         * Al eliminar los attachments, debemos validar si el mensaje se queda sin attachments
+         * de ser asi, eliminamos el mensaje
+         */
+        val messageParent = messageDao.getMessageByWebId(messageWebId)
+        messageParent?.let {
+            if (it.attachmentEntityList.isEmpty() && it.messageEntity.numberAttachments > 0) {
+                messageDao.deleteMessagesByWebId(it.messageEntity.webId)
+            }
+        }
+
     }
+
 }

@@ -155,7 +155,9 @@ class HomeViewModel
     }
 
     fun verifyMessagesToDelete() {
-        repository.verifyMessagesToDelete()
+        viewModelScope.launch {
+            repository.verifyMessagesToDelete()
+        }
     }
 
     fun getDialogSubscription(): Int {
