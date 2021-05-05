@@ -77,7 +77,7 @@ class EnterCodeFragment :
         viewModel.isValidCode.observe(viewLifecycleOwner, Observer { success ->
             if (success) {
                 findNavController().navigate(
-                    EnterCodeFragmentDirections.actionEnterCodeFragmentToValidateNicknameFragment()
+                    R.id.action_enterCodeFragment_to_validateNicknameFragment
                 )
             }
         })

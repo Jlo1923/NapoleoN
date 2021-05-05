@@ -4,16 +4,18 @@ import android.app.Application
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.di.module.general.*
 import com.naposystems.napoleonchat.di.module.mediastore.MediaStoreModule
-import com.naposystems.napoleonchat.di.module.sections.RepositoryModule
-import com.naposystems.napoleonchat.di.module.sections.ViewModelModule
-import com.naposystems.napoleonchat.di.module.shared.SharedRepositoryModule
-import com.naposystems.napoleonchat.di.module.shared.SharedViewModelModule
+import com.naposystems.napoleonchat.di.module.repository.DialogRepositoryModule
+import com.naposystems.napoleonchat.di.module.repository.RepositoryModule
+import com.naposystems.napoleonchat.di.module.repository.SharedRepositoryModule
 import com.naposystems.napoleonchat.di.module.sources.local.DaoModule
 import com.naposystems.napoleonchat.di.module.sources.local.LocalDataSourceModule
 import com.naposystems.napoleonchat.di.module.sources.local.RoomModule
 import com.naposystems.napoleonchat.di.module.sources.remote.RetrofitModule
 import com.naposystems.napoleonchat.di.module.ui.ActivityModule
 import com.naposystems.napoleonchat.di.module.ui.FragmentModule
+import com.naposystems.napoleonchat.di.module.viewModel.DialogViewModelModule
+import com.naposystems.napoleonchat.di.module.viewModel.SharedViewModelModule
+import com.naposystems.napoleonchat.di.module.viewModel.ViewModelModule
 import com.naposystems.napoleonchat.di.module.workmanager.WorkManagerModule
 import dagger.BindsInstance
 import dagger.Component
@@ -37,8 +39,7 @@ import javax.inject.Singleton
         SyncManagerModule::class,
         UtilsModule::class,
         NotificationServicemodule::class,
-//        CallComponentsModule::class,
-//        MoshiModule::class,
+
         //Sources Remote
         RetrofitModule::class,
 
@@ -51,9 +52,15 @@ import javax.inject.Singleton
         ActivityModule::class,
         FragmentModule::class,
 
-        //Sections
+        //ViewModel
         ViewModelModule::class,
+        DialogViewModelModule::class,
+        SharedViewModelModule::class,
+
+        //Repository
         RepositoryModule::class,
+        DialogRepositoryModule::class,
+        SharedRepositoryModule::class,
 
         // MediaStore
         MediaStoreModule::class,
@@ -61,9 +68,6 @@ import javax.inject.Singleton
         // WorkManager
         WorkManagerModule::class,
 
-        //Shared
-        SharedViewModelModule::class,
-        SharedRepositoryModule::class
     ]
 )
 interface ApplicationComponent : AndroidInjector<NapoleonApplication> {
