@@ -101,6 +101,7 @@ interface AttachmentDao {
         "SELECT * " +
                 "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
                 "WHERE ${DBConstants.Attachment.COLUMN_SELF_DESTRUCTION_AT} <> 0 " +
+                "AND ${DBConstants.Attachment.COLUMN_STATUS} = 11 " +
                 "AND ${DBConstants.Attachment.COLUMN_TOTAL_SELF_DESTRUCTION_AT} < strftime('%s','now')"
     )
     fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>

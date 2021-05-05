@@ -143,4 +143,8 @@ class MainActivityViewModel
     fun addUriListToCache(listOf: List<Uri>) {
         repository.addUriListToCache(listOf)
     }
+
+    fun removeUriListCache() {
+        repository.removeUriListCache()
+    }
 }
