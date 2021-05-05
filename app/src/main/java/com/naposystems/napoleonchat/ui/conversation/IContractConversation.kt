@@ -127,6 +127,10 @@ interface IContractConversation {
         suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
         suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(contactId: Int)
+
+        /**
+         * Elimina los mensajes seleccionados en la conversacion
+         */
         suspend fun deleteMessagesSelected(
             contactId: Int,
             listMessageRelations: List<MessageAttachmentRelation>

@@ -16,4 +16,6 @@ interface MainActivityRepository {
     suspend fun getContactById(contactId: Int): ContactEntity?
     fun getRecoveryQuestionsPref(): Int
     fun disconnectSocket()
+
+    fun removeUriListCache()
 }

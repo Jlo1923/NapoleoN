@@ -73,7 +73,7 @@ class MultipleAttachmentPreviewImageFragment(
         theAttachment?.let {
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
-                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived()
+                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
                 Constants.AttachmentStatus.READED.status -> onModeReaded(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
                 else -> hideStatus()
@@ -96,12 +96,13 @@ class MultipleAttachmentPreviewImageFragment(
         }
     }
 
-    private fun onModeReceived() {
+    private fun onModeReceived(attachmentEntity: AttachmentEntity) {
         binding.apply {
             imageViewStatus.show()
             frameStatus.show()
             imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
         }
+        configTimer(attachmentEntity)
     }
 
     private fun onModeReaded(attachmentEntity: AttachmentEntity) {
@@ -117,29 +118,39 @@ class MultipleAttachmentPreviewImageFragment(
 
         countDownTimer?.cancel()
         val endTime = attachmentEntity.totalSelfDestructionAt
-        if (endTime > 0) {
-            val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-            val remainingTime = endTime - currentTime
+        when {
+            endTime > 0 -> showTimer(endTime, attachmentEntity)
+            endTime == 0 -> showDestructionTime(attachmentEntity)
+            else -> binding.textTimeAutodestruction.hide()
+        }
+    }
 
-            countDownTimer = object : CountDownTimer(
-                TimeUnit.SECONDS.toMillis(endTime.toLong()) - System.currentTimeMillis(),
-                1
-            ) {
-                override fun onFinish() {
-                    listener?.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
-                }
+    private fun showDestructionTime(attachmentEntity: AttachmentEntity) {
+        val timeToShow = Utils.convertItemOfTimeInSeconds(attachmentEntity.selfDestructionAt)*1000
+        val text = Utils.getTimeWithDays(timeToShow.toLong(), showHours = true)
+        binding.textTimeAutodestruction.show()
+        binding.textTimeAutodestruction.text = text
+    }
 
-                override fun onTick(millisUntilFinished: Long) {
-                    val text = Utils.getTimeWithDays(millisUntilFinished, showHours = true)
-                    binding.textTimeAutodestruction.text = text
-                }
+    private fun showTimer(endTime: Int, attachmentEntity: AttachmentEntity) {
+        val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+        val remainingTime = endTime - currentTime
+
+        countDownTimer = object : CountDownTimer(
+            TimeUnit.SECONDS.toMillis(endTime.toLong()) - System.currentTimeMillis(),
+            1
+        ) {
+            override fun onFinish() {
+                listener?.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
             }
 
-            binding.textTimeAutodestruction.show()
-            countDownTimer?.start()
-        } else {
-            binding.textTimeAutodestruction.hide()
+            override fun onTick(millisUntilFinished: Long) {
+                val text = Utils.getTimeWithDays(millisUntilFinished, showHours = true)
+                binding.textTimeAutodestruction.text = text
+            }
         }
+        binding.textTimeAutodestruction.show()
+        countDownTimer?.start()
 
     }
 

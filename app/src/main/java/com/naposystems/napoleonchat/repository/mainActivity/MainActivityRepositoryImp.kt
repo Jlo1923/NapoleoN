@@ -82,7 +82,6 @@ class MainActivityRepositoryImp @Inject constructor(
 
     override fun disconnectSocket() {
 //            socketClient.disconnectSocket()
-
     }
 
     fun addUriListToCache(listOf: List<Uri>) {
@@ -94,5 +93,9 @@ class MainActivityRepositoryImp @Inject constructor(
         val listString = urisString?.toList()
         val listUris = listString?.map { Uri.parse(it) }
         return listUris ?: emptyList()
+    }
+
+    override fun removeUriListCache() {
+        sharedPreferencesManager.removeSetIdsToRemove()
     }
 }

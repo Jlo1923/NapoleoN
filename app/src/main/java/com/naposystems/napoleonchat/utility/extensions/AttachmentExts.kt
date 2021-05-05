@@ -141,3 +141,11 @@ fun getMultipleAttachmentFileItemFromAttachmentAndMsg(
         messageAndAttachment = message
     )
 }
+
+fun String.forMimeTypeNapoleon(): String {
+    return when {
+        this.startsWith("image") -> Constants.AttachmentType.IMAGE.type
+        this.startsWith("video") -> Constants.AttachmentType.VIDEO.type
+        else -> ""
+    }
+}

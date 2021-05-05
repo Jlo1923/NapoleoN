@@ -1,16 +1,14 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 
-import android.app.ActivityManager
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.LifecycleOwner
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.bindMessageDateSend
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
@@ -20,10 +18,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.lis
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
-import com.naposystems.napoleonchat.utility.extensions.hide
-import com.naposystems.napoleonchat.utility.extensions.hideViews
-import com.naposystems.napoleonchat.utility.extensions.showViews
+import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
 
@@ -36,6 +31,15 @@ class MyMultiAttachmentMsgViewHolder(
 
     private lateinit var msgAndAttachment: MessageAttachmentRelation
     lateinit var currentAttachments: List<AttachmentEntity>
+
+    init {
+        super.parentContainerMessage = binding.containerIncomingMessage
+//        super.progressBar = binding.progressBar
+//        super.progressBarIndeterminate = binding.progressBarIndeterminate
+//        super.imageButtonState = binding.imageButtonState
+//        super.textViewCountDown = binding.textViewCountDown
+//        super.quote = binding.quote
+    }
 
     companion object {
         fun from(
@@ -66,7 +70,24 @@ class MyMultiAttachmentMsgViewHolder(
         configListenersViews()
         bindViewModel()
         paintAttachments()
+        paintUploadFiles()
         tryUploadAttachments()
+        paintMoreData(timeFormat)
+    }
+
+    private fun paintMoreData(timeFormat: Int?) {
+        binding.apply {
+            textViewMsg.text = msgAndAttachment.messageEntity.body
+            textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
+            timeFormat?.let {
+                bindMessageDateSend(
+                    textViewMsgDate,
+                    msgAndAttachment.messageEntity.createdAt,
+                    it
+                )
+            }
+
+        }
     }
 
     private fun tryUploadAttachments() {
@@ -93,6 +114,16 @@ class MyMultiAttachmentMsgViewHolder(
                 5 -> showFiveItems(this)
                 else -> showFiveItems(this)
             }
+        }
+    }
+
+    private fun paintUploadFiles() = msgAndAttachment.attachmentEntityList.apply {
+        val countSent = this.filter { it.isSent() || it.isReceived() || it.isReaded() }
+        if (countSent.size == this.size) {
+            binding.textViewCountFiles.hide()
+        } else {
+            val data = Pair(countSent.size, this.size)
+            showQuantity(data)
         }
     }
 
@@ -152,6 +183,7 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
+        textViewCountFiles.show()
         textViewCountFiles.text = "${data.first} / ${data.second}"
     }
 

@@ -523,6 +523,11 @@ class ConversationRepository @Inject constructor(
         contactId: Int,
         listMessageRelations: List<MessageAttachmentRelation>
     ) {
+
+        /**
+         * Esta porcion de codigo se usa para la eliminacion de mensajes que contengan un attachment
+         * de tipo audio, con el Rxevent se encargan de pausar el sonido, revisar
+         */
         listMessageRelations.filter { messageAndAttachment ->
             messageAndAttachment.attachmentEntityList.count() > 0 &&
                     messageAndAttachment.attachmentEntityList[0].type == Constants.AttachmentType.AUDIO.type
@@ -531,6 +536,7 @@ class ConversationRepository @Inject constructor(
                 RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
             }
         }
+
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessageRelations)
     }
 

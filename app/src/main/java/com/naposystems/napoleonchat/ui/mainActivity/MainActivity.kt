@@ -695,8 +695,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         intent.apply {
             if (isTypeAnyOrVideoOrImage()) {
                 val urisList = getUriListFromExtra()
-                viewModel.addUriListToCache(urisList)
-                navToEnterPin()
+                if (urisList.size >= 10) {
+                    viewModel.removeUriListCache()
+                    Utils.showToast(
+                        binding.root.context,
+                        getString(R.string.multi_max_files_from_outside)
+                    )
+                    finish()
+                } else {
+                    viewModel.addUriListToCache(urisList)
+                    navToEnterPin()
+                }
             }
         }
     }

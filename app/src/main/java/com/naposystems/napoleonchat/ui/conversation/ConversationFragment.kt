@@ -87,9 +87,11 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFr
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.forMimeTypeNapoleon
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -730,24 +732,35 @@ class ConversationFragment
     private fun validateMustGoToPreviewAttachmentsFromOutside() {
         val uris = viewModel.getPendingUris()
         if (uris.isEmpty().not()) {
-            viewModel.removePendingUris()
-            val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
-            val listElements = uris.map {
-                val mimeType = binding.root.context.contentResolver.getType(it)
-                MultipleAttachmentFileItem(
-                    id = 0,
-                    attachmentType = mimeType ?: "",
-                    contentUri = it,
-                    isSelected = false,
-                    selfDestruction = 0
-                )
+            if (uris.size <= 10) {
+                handleIntentExtrasDataForMultiple(uris)
+            } else {
+                viewModel.removePendingUris()
+                showToast(binding.root.context, getString(R.string.multi_max_files_from_outside))
+                activity?.finish()
             }
-            intent.putExtras(Bundle().apply {
-                putParcelable(MULTI_EXTRA_CONTACT, args.contact)
-                putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
-            })
-            startActivity(intent)
         }
+    }
+
+    private fun handleIntentExtrasDataForMultiple(uris: List<Uri>) {
+        viewModel.removePendingUris()
+        val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
+        val listElements = uris.map {
+            val mimeType = binding.root.context.contentResolver.getType(it)
+            val mimeTypeForNapo = mimeType?.forMimeTypeNapoleon() ?: ""
+            MultipleAttachmentFileItem(
+                id = 0,
+                attachmentType = mimeTypeForNapo,
+                contentUri = it,
+                isSelected = false,
+                selfDestruction = 0
+            )
+        }
+        intent.putExtras(Bundle().apply {
+            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
+        })
+        startActivity(intent)
     }
 
     @InternalCoroutinesApi
@@ -2147,10 +2160,10 @@ class ConversationFragment
         conversationAdapterOnClickEvent(item)
     }
 
-    override fun onLongClick(item: MessageEntity) {
+    override fun onLongClick(messageEntity: MessageEntity) {
         if (actionMode.mode == null) {
             actionMode.startActionMode(view, R.menu.menu_selection_message)
-            updateStateSelectionMessage(item)
+            updateStateSelectionMessage(messageEntity)
         }
     }
 
@@ -2333,3 +2346,5 @@ class ConversationFragment
 
     //endregion
 }
+
+

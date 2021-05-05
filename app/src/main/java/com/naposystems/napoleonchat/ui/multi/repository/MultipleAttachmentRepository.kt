@@ -48,7 +48,7 @@ class MultipleAttachmentRepository @Inject constructor(
 
     override fun getStringSetForDelete(): Set<String> {
         val setToReturn = sharedPreferencesManager.getStringSetOrEmpty("IDS_TO_DELETE")
-        sharedPreferencesManager.removeSetdsToRemove()
+        sharedPreferencesManager.removeSetIdsToRemove()
         return setToReturn
     }
 

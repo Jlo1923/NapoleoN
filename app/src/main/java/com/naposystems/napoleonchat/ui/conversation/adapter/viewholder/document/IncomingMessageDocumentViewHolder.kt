@@ -8,8 +8,9 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
-class IncomingMessageDocumentViewHolder constructor(private val binding: ConversationItemIncomingMessageWithDocumentBinding) :
-    ConversationViewHolder(binding.root, binding.root.context) {
+class IncomingMessageDocumentViewHolder constructor(
+    private val binding: ConversationItemIncomingMessageWithDocumentBinding
+) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.parentContainerMessage = binding.containerIncomingMessage
