@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class FriendShipActionSharedViewModel
 @Inject constructor(
-    private val repository: FriendShipActionSharedRepositoryImp,
+    private val repository: FriendShipActionSharedRepository,
     private val context: Context
 ) : ViewModel() {
 

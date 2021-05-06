@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.mainActivity
 
+import android.net.Uri
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 
@@ -16,4 +17,5 @@ interface MainActivityRepository {
     suspend fun getContactById(contactId: Int): ContactEntity?
     fun getRecoveryQuestionsPref(): Int
     fun disconnectSocket()
+    fun addUriListToCache(listOf: List<Uri>)
 }

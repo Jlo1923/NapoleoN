@@ -19,8 +19,8 @@
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
         <action
-            android:id="@+id/action_splashFragment_to_registerFragment"
-            app:destination="@id/registerFragment"
+            android:id="@+id/action_splashFragment_to_validateNicknameFragment"
+            app:destination="@id/validateNicknameFragment"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popUpTo="@+id/nav_graph"
@@ -71,12 +71,12 @@
     </fragment>
 
     <fragment
-        android:id="@+id/registerFragment"
+        android:id="@+id/validateNicknameFragment"
         android:name="com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknameFragment"
         android:label="@string/text_create_account"
         tools:layout="@layout/validate_nickname_fragment">
         <action
-            android:id="@+id/action_registerFragment_to_accessPinFragment"
+            android:id="@+id/action_validateNicknameFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -102,8 +102,8 @@
         android:label="@string/text_insert_code"
         tools:layout="@layout/enter_code_fragment">
         <action
-            android:id="@+id/action_enterCodeFragment_to_registerFragment"
-            app:destination="@id/registerFragment"
+            android:id="@+id/action_enterCodeFragment_to_validateNicknameFragment"
+            app:destination="@id/validateNicknameFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -353,7 +353,7 @@
         android:label="@string/text_color_scheme" />
     <dialog
         android:id="@+id/userDisplayFormatDialogFragment"
-        android:name="com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogFragment"
+        android:name="com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogFragment"
         android:label="user_display_format_dialog_fragment"
         tools:layout="@layout/user_display_format_dialog_fragment" />
     <fragment
@@ -520,7 +520,7 @@
     </fragment>
     <fragment
         android:id="@+id/activateBiometricsFragment"
-        android:name="com.naposystems.napoleonchat.ui.activateBiometrics.ActivateBiometricsDialogFragment"
+        android:name="com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogFragment"
         android:label="@string/text_unlock_options"
         tools:layout="@layout/activate_biometrics_dialog_fragment" />
     <fragment

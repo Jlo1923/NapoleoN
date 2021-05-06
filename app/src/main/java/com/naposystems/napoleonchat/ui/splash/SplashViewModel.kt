@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.splash.SplashRepository
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    private val repository: IContractSplash.Repository
-) : ViewModel(), IContractSplash.ViewModel {
+    private val repository: SplashRepository
+) : ViewModel() {
 
     private val _navigateToLanding = MutableLiveData<Boolean>()
     val navigateToLanding: LiveData<Boolean>
@@ -52,59 +53,64 @@ class SplashViewModel @Inject constructor(
         _navigateToLanding.value = null
     }
 
-    override fun getUser() {
+    fun getUser() {
         viewModelScope.launch {
             _user.value = repository.getUser()
         }
     }
 
-    override fun getTimeRequestAccessPin() {
+    fun getTimeRequestAccessPin() {
         viewModelScope.launch {
             _timeAccessPin.value = repository.getTimeRequestAccessPin()
         }
     }
 
-    override fun getLockTime() {
+    fun getLockTime() {
         viewModelScope.launch {
             _lockTimeApp.value = repository.getLockTime()
         }
     }
 
-    override fun getLockStatus() {
+    fun getLockStatus() {
         viewModelScope.launch {
             _lockStatus.value = repository.getLockStatus()
         }
     }
 
-    override fun getLockType() {
+    fun getLockType() {
         viewModelScope.launch {
             _typeLock.value = repository.getLockType()
         }
     }
 
-    override fun getUnlockTimeApp() {
+    fun getUnlockTimeApp() {
         viewModelScope.launch {
             _unlockTimeApp.value = repository.getUnlockTimeApp()
         }
     }
 
-    override fun getAccountStatus() {
+    fun getAccountStatus() {
         viewModelScope.launch {
             _accountStatus.value = repository.getAccountStatus()
         }
     }
 
 
-
-    override fun setDefaultLanguage(language: String) {
+    fun setDefaultLanguage(language: String) {
         viewModelScope.launch {
             repository.setDefaultLanguage(language)
         }
     }
 
-    override fun setDefaultBiometricsOption(biometricOption: Int) {
+    fun setDefaultBiometricsOption(biometricOption: Int) {
         viewModelScope.launch {
             repository.setDefaultBiometricsOption(biometricOption)
+        }
+    }
+
+    fun clearData() {
+        viewModelScope.launch {
+            repository.clearData()
         }
     }
 }

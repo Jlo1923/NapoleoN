@@ -87,7 +87,7 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/button_send_code"
+                            android:id="@+id/button_request_code"
                             style="@style/AppPrimaryButton"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

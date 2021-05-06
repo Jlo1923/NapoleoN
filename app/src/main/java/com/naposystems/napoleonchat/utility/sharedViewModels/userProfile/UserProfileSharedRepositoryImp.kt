@@ -39,13 +39,13 @@ class UserProfileSharedRepositoryImp @Inject constructor(
         userLocalDataSourceImp.updateUser(userEntity)
     }
 
-    fun getUnprocessableEntityError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
+    override fun getUnprocessableEntityError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(UpdateUserInfoUnprocessableEntityDTO::class.java)
         val enterCodeError = adapter.fromJson(response.errorBody()!!.string())
         return WebServiceUtils.getUnprocessableEntityErrors(enterCodeError!!)
     }
 
-    fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
+    override fun getDefaultError(response: Response<UpdateUserInfoResDTO>): ArrayList<String> {
         val adapter = moshi.adapter(UpdateUserInfoErrorDTO::class.java)
         val updateUserInfoError = adapter.fromJson(response.errorBody()!!.string())
         return arrayListOf(updateUserInfoError!!.error)

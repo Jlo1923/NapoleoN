@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.biometric.BiometricManager
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -23,9 +22,14 @@ class SplashFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     private val viewModel: SplashViewModel by viewModels { viewModelFactory }
-    private val viewModelDefaultPreferencesShared: DefaultPreferencesSharedViewModel by viewModels { viewModelFactory }
-    private lateinit var binding: SplashFragmentBinding
+
+    private val defaultPreferencesSharedViewModel: DefaultPreferencesSharedViewModel by viewModels { viewModelFactory }
+
+    private var _binding: SplashFragmentBinding? = null
+
+    private val binding get() = _binding!!
 
     //region Variables Access Pin
     private var lockStatus: Int = 0
@@ -40,9 +44,15 @@ class SplashFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.splash_fragment, container, false)
+        //Bindeo del fragmento
+        _binding = SplashFragmentBinding.inflate(inflater, container, false)
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -54,7 +64,6 @@ class SplashFragment : DaggerFragment() {
         viewModel.getUnlockTimeApp()
         viewModel.getLockStatus()
         viewModel.getAccountStatus()
-
 
         viewModel.timeAccessPin.observe(viewLifecycleOwner, Observer {
             timeAccessPin = it
@@ -84,6 +93,8 @@ class SplashFragment : DaggerFragment() {
             when (accountStatus) {
                 Constants.AccountStatus.NO_ACCOUNT.id -> {
 
+                    viewModel.clearData()
+
                     Timber.d("AccountStatus ToLanding")
 
                     binding.viewWhite.visibility = View.GONE
@@ -92,15 +103,24 @@ class SplashFragment : DaggerFragment() {
                     )
                     viewModel.doneNavigateToLanding()
                 }
+
                 Constants.AccountStatus.CODE_VALIDATED.id -> {
 
                     Timber.d("AccountStatus ToRegister")
 
                     findNavController().navigate(
-                        R.id.action_splashFragment_to_registerFragment
+                        R.id.action_splashFragment_to_validateNicknameFragment
                     )
                     viewModel.doneNavigateToLanding()
                 }
+
+                Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
+
+                    Timber.d("lockTypeApp ACCOUNT_RECOVERED")
+
+                    viewModel.getUser()
+                }
+                
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
                     Timber.d("AccountStatus Created")
@@ -129,12 +149,6 @@ class SplashFragment : DaggerFragment() {
                         }
                     }
                 }
-                Constants.AccountStatus.ACCOUNT_RECOVERED.id -> {
-
-                    Timber.d("lockTypeApp ACCOUNT_RECOVERED")
-
-                    viewModel.getUser()
-                }
             }
         })
 
@@ -150,7 +164,7 @@ class SplashFragment : DaggerFragment() {
         })
 
         //region Set DefaultPreferences
-        viewModelDefaultPreferencesShared.setDefaultPreferences()
+        defaultPreferencesSharedViewModel.setDefaultPreferences()
         viewModel.setDefaultLanguage(LocaleHelper.getLanguagePreference(requireContext()))
         setDefaultBiometricsOption()
         //endregion

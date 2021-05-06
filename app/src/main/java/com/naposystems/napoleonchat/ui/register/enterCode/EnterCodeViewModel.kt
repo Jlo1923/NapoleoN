@@ -10,8 +10,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRepository) :
-    ViewModel(), IContractEnterCode.ViewModel {
+class EnterCodeViewModel
+@Inject constructor(
+    private val repository: EnterCodeRepository
+) : ViewModel() {
 
     private val _attemptsEnterCode = MutableLiveData<Int>()
     val attemptsEnterCode: LiveData<Int>
@@ -38,7 +40,7 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
         get() = _responseErrors
 
     //region Implementation IContractEnterCode.ViewModel
-    override fun sendCode(code: String) {
+    fun sendCode(code: String) {
         viewModelScope.launch {
             try {
                 val response = repository.sendCodeToWs(code)
@@ -72,7 +74,7 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
         }
     }
 
-    override fun codeForwarding() {
+    fun codeForwarding() {
         viewModelScope.launch {
             try {
                 val response = repository.codeForwarding()
@@ -85,7 +87,8 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
                 } else {
                     when (response.code()) {
                         Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> {
-                            _responseErrors.value = repository.getUnprocessableEntityErrorSendCode(response)
+                            _responseErrors.value =
+                                repository.getUnprocessableEntityErrorSendCode(response)
                             _forwardedCode.value = false
                         }
                         else -> {
@@ -102,39 +105,39 @@ class EnterCodeViewModel @Inject constructor(private val repository: EnterCodeRe
         }
     }
 
-    override fun getAttemptsForRetryCode() {
+    fun getAttemptsForRetryCode() {
         _attemptsEnterCode.value = repository.getAttemptsForRetryCode()
     }
 
-    override fun getAttemptsForNewCode() {
+    fun getAttemptsForNewCode() {
         _attemptsForNewCode.value = repository.getAttemptsForNewCode()
     }
 
-    override fun getNumAttemptsForNewCode(): Int {
+    fun getNumAttemptsForNewCode(): Int {
         return repository.getAttemptsForNewCode()
     }
 
-    override fun getTimeForNewCode(): Long {
+    fun getTimeForNewCode(): Long {
         return repository.getTimeForNewCode()
     }
 
-    override fun setTimeForRetryCode(timeWait: Int): Long {
+    fun setTimeForRetryCode(timeWait: Int): Long {
         val time = System.currentTimeMillis() + timeWait
         repository.setTimeForRetryCode(time)
         return time
     }
 
-    override fun setTimeForNewCode(timeWait: Int): Long {
+    fun setTimeForNewCode(timeWait: Int): Long {
         val time = System.currentTimeMillis() + timeWait
         repository.setTimeForNewCode(time)
         return time
     }
 
-    override fun resetAttemptsEnterCode() {
+    fun resetAttemptsEnterCode() {
         repository.resetAttemptsEnterCode()
     }
 
-    override fun resetAttemptsNewCode() {
+    fun resetAttemptsNewCode() {
         repository.resetAttemptsNewCode()
     }
 

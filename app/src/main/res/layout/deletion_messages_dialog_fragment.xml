@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
         android:orientation="vertical"
-        tools:context=".ui.dialog.deletionMesssages.DeletionMessagesDialogFragment">
+        tools:context=".dialog.deletionMesssages.DeletionMessagesDialogFragment">
 
         <View
             android:id="@+id/view_indicator"

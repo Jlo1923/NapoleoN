@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SelfDestructTimeViewModel @Inject constructor(private val repository: IContractSelfDestructTime.Repository) :
-    ViewModel(), IContractSelfDestructTime.ViewModel {
+class SelfDestructTimeViewModel
+@Inject constructor(
+    private val repository: IContractSelfDestructTime.Repository
+) : ViewModel(), IContractSelfDestructTime.ViewModel {
 
     lateinit var getDestructTimeByContact: LiveData<Int>
     var selfDestructTimeByContact: Int? = -1

@@ -6,10 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepositoryImp
+import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
-import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.repository.accessPin.CreateAccountRepository
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -17,9 +17,8 @@ import javax.inject.Inject
 
 class AccessPinViewModel @Inject constructor(
     private val context: Context,
-    private val repository: CreateAccountRepository
-) :
-    ViewModel(), IContractAccessPin.ViewModel {
+    private val repository: AccessPinRepositoryImp
+) : ViewModel() {
 
     val accessPin = MutableLiveData<String>()
 
@@ -62,26 +61,26 @@ class AccessPinViewModel @Inject constructor(
         _openHomeFragment.value = null
     }
 
-    override fun getFirebaseId(): String {
+    fun getFirebaseId(): String {
         return repository.getFirebaseId()
     }
 
-    override fun getLanguage(): String {
+    fun getLanguage(): String {
         return repository.getLanguage()
     }
 
-    override fun createdUserPref() {
+    fun createdUserPref() {
         repository.createdUserPref()
     }
 
-    override fun setFreeTrialPref(subscription: Boolean) {
+    fun setFreeTrialPref(subscription: Boolean) {
         viewModelScope.launch {
             repository.setFreeTrialPref(subscription)
         }
     }
 
     //region Implementation IContractAccessPin.ViewModel
-    override fun createAccount(createAccountReqDTO: CreateAccountReqDTO) {
+    fun createAccount(createAccountReqDTO: CreateAccountReqDTO) {
         viewModelScope.launch {
             try {
                 val response = repository.createAccount(createAccountReqDTO)
@@ -98,7 +97,8 @@ class AccessPinViewModel @Inject constructor(
 
                 } else {
                     when (response.code()) {
-                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value = repository.getUnprocessableEntityError(response)
+                        Constants.CodeHttp.UNPROCESSABLE_ENTITY.code -> _webServiceError.value =
+                            repository.getUnprocessableEntityError(response)
                         else -> _webServiceError.value = repository.getError(response)
                     }
                 }
@@ -110,7 +110,7 @@ class AccessPinViewModel @Inject constructor(
         }
     }
 
-    override fun createUser(userEntity: UserEntity) {
+    fun createUser(userEntity: UserEntity) {
         viewModelScope.launch {
             try {
                 repository.createUser(userEntity)
@@ -123,7 +123,7 @@ class AccessPinViewModel @Inject constructor(
         }
     }
 
-    override fun updateAccessPin(newAccessPin: String, firebaseId: String) {
+    fun updateAccessPin(newAccessPin: String, firebaseId: String) {
         viewModelScope.launch {
             try {
                 repository.updateAccessPin(newAccessPin, firebaseId)

@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.AccessPinFragmentBinding
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
+import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
@@ -33,10 +34,11 @@ class AccessPinFragment : DaggerFragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    private val viewModel: AccessPinViewModel by viewModels { viewModelFactory }
+
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
-    private lateinit var viewModel: AccessPinViewModel
     private val viewModelDefaultPreferencesShared: DefaultPreferencesSharedViewModel by viewModels { viewModelFactory }
 
     @Inject
@@ -63,8 +65,6 @@ class AccessPinFragment : DaggerFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(AccessPinViewModel::class.java)
 
         binding = DataBindingUtil.inflate(
             inflater,

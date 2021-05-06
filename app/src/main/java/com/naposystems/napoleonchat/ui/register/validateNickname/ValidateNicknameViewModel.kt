@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
-import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.utility.Constants
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ValidateNicknameViewModel
 @Inject constructor(
     private val repository: ValidateNicknameRepository
-) : ViewModel(), IContractValidateNickname.ViewModel {
+) : ViewModel() {
 
     val nickName = MutableLiveData<String>()
     val displayName = MutableLiveData<String>()
@@ -50,7 +50,7 @@ class ValidateNicknameViewModel
     }
 
     //region Implementation IContractCreateAccount.ViewModel
-    override fun validateNickname(validateNicknameReqDTO: ValidateNicknameReqDTO) {
+    fun validateNickname(validateNicknameReqDTO: ValidateNicknameReqDTO) {
         viewModelScope.launch {
             try {
                 val response = repository.validateNickname(validateNicknameReqDTO)
@@ -85,7 +85,7 @@ class ValidateNicknameViewModel
         }
     }
 
-    override fun setNoValidNickname() {
+    fun setNoValidNickname() {
         _itsNicknameValid.value = true
     }
 

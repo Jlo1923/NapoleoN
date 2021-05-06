@@ -4,18 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.status.UserStatusReqDTO
+import com.naposystems.napoleonchat.repository.status.StatusRepository
 import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.repository.status.StatusRepository
+import com.naposystems.napoleonchat.source.remote.dto.status.UserStatusReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class StatusViewModel @Inject constructor(private val repository: StatusRepository) :
-    ViewModel(),
-    IContractStatus.ViewModel {
+class StatusViewModel
+@Inject constructor(
+    private val repository: StatusRepository
+) : ViewModel() {
 
     val user = MutableLiveData<UserEntity>()
 
@@ -42,7 +43,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
     }
 
     //region Implementation IContractStatus.ViewModel
-    override fun getStatus() {
+    fun getStatus() {
         viewModelScope.launch {
             try {
                 _statusEntity = repository.getStatus()
@@ -53,7 +54,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         }
     }
 
-    override fun updateStatus(textStatus: String) {
+    fun updateStatus(textStatus: String) {
         viewModelScope.launch {
             try {
                 user.value?.let { user ->
@@ -81,7 +82,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         }
     }
 
-    override fun insertStatus(listStatusEntities: List<StatusEntity>) {
+    fun insertStatus(listStatusEntities: List<StatusEntity>) {
         viewModelScope.launch {
             repository.insertNewStatus(listStatusEntities)
         }
@@ -114,7 +115,7 @@ class StatusViewModel @Inject constructor(private val repository: StatusReposito
         userEntity.status = textStatus
     }
 
-    override fun deleteStatus(statusEntity: StatusEntity) {
+    fun deleteStatus(statusEntity: StatusEntity) {
         viewModelScope.launch {
             repository.deleteStatus(statusEntity)
         }
