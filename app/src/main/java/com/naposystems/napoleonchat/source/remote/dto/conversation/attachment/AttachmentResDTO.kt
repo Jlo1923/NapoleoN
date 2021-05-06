@@ -14,7 +14,8 @@ data class AttachmentResDTO(
     @Json(name = "height") val height: Int,
     @Json(name = "ext") val extension: String,
     @Json(name = "id") val id: String,
-    @Json(name = "duration") val duration: Long
+    @Json(name = "duration") val duration: Long,
+    @Json(name = "destroy") val destroy: String
 ) {
     companion object {
 
@@ -36,6 +37,7 @@ data class AttachmentResDTO(
                     origin = Constants.AttachmentOrigin.DOWNLOADED.origin,
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.NOT_DOWNLOADED.status,
+                    selfDestructionAt = attachmentDTO.destroy.toInt(),
                     extension = attachmentDTO.extension,
                     duration = attachmentDTO.duration
                 )

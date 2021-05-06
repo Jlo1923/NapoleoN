@@ -164,6 +164,7 @@ fun AttachmentEntity.toAttachmentResDTO(): AttachmentResDTO {
         extension = this.extension,
         id = this.webId,
         duration = this.duration,
+        destroy = this.selfDestructionAt.toString()
     )
 }
 

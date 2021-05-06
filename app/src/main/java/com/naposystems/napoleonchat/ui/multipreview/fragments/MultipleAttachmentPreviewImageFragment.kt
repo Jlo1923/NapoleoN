@@ -109,7 +109,11 @@ class MultipleAttachmentPreviewImageFragment(
         binding.apply {
             imageViewStatus.show()
             frameStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+            if (file.messageAndAttachment?.isMine == 1) { // is Mine
+                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
+            } else {
+                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+            }
         }
         configTimer(attachmentEntity)
     }
@@ -126,7 +130,7 @@ class MultipleAttachmentPreviewImageFragment(
     }
 
     private fun showDestructionTime(attachmentEntity: AttachmentEntity) {
-        val timeToShow = Utils.convertItemOfTimeInSeconds(attachmentEntity.selfDestructionAt)*1000
+        val timeToShow = Utils.convertItemOfTimeInSeconds(attachmentEntity.selfDestructionAt) * 1000
         val text = Utils.getTimeWithDays(timeToShow.toLong(), showHours = true)
         binding.textTimeAutodestruction.show()
         binding.textTimeAutodestruction.text = text

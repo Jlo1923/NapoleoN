@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.service.syncManager
 
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
@@ -24,7 +23,11 @@ interface SyncManager {
 
     fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
 
-    fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
+    fun updateMessagesStatus(
+        messagesWebIds: List<String>,
+        state: Int,
+        selfDestructionAt: Int? = null
+    )
 
     fun updateAttachmentsStatus(attachmentsWebIds: List<String>, status: Int)
 

@@ -51,7 +51,10 @@ interface MessageLocalDataSource {
 
     suspend fun deleteMessagesByWebId(listWebIdMessages: List<String>)
 
-    suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int)
+    suspend fun updateMessageStatus(
+        messagesWebIds: List<String>,
+        status: Int
+    )
 
     fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>>
 
