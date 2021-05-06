@@ -116,7 +116,7 @@ class HomeRepositoryImp @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.messagesId.let {
                     it?.let {
-                        messageLocalDataSource.deletedMessages(it)
+                        messageLocalDataSource.deleteMessagesByWebId(it)
                     }
                 }
 
@@ -199,7 +199,7 @@ class HomeRepositoryImp @Inject constructor(
     }
 
     override fun verifyMessagesToDelete() {
-        messageLocalDataSource.verifyMessagesToDelete()
+        messageLocalDataSource.deleteMessagesByTotalSelfDestructionAt()
     }
 
     override fun getDialogSubscription(): Int {

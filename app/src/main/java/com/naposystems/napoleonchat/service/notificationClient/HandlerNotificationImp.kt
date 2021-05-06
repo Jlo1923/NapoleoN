@@ -138,7 +138,6 @@ class HandlerNotificationImp
 
             if (this.isNotEmpty()) {
 
-
                 if (this.containsKey(Constants.NotificationKeys.CONTACT)) {
                     intent.putExtra(
                         Constants.NotificationKeys.CONTACT,

@@ -852,7 +852,7 @@ class SocketClientImp
                 if (contactsToDelete.isNotEmpty()) {
 
                     contactsToDelete.forEach { contact ->
-                        messageLocalDataSource.deleteMessageByType(
+                        messageLocalDataSource.deleteMessageByContactIdAndType(
                             contact.id,
                             Constants.MessageTextType.NEW_CONTACT.type
                         )
