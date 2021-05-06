@@ -911,7 +911,10 @@ class SocketClientImp
 
             val listIdMsgs = messagesResDTO.extractIdsMessages()
             if (listIdMsgs.isEmpty().not()) {
-                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+                syncManager.updateMessagesStatus(
+                    listIdMsgs,
+                    UNREAD.status
+                )
             }
 
             val idsAttachments = messagesResDTO.extractIdsAttachments()
@@ -967,7 +970,10 @@ class SocketClientImp
 
             val listIdMsgs = messagesReadedDTO.data.extractIdsMessages()
             if (listIdMsgs.isEmpty().not()) {
-                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+                syncManager.updateMessagesStatus(
+                    listIdMsgs,
+                    UNREAD.status
+                )
             }
 
             val idsAttachments = messagesReadedDTO.data.extractIdsAttachments()
@@ -1304,12 +1310,16 @@ class SocketClientImp
                                         }
                                         CONTACT_TURN_ON_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_ON_CAMERA")
-                                            eventsFromSocketClientListener.toggleContactCamera(isVisible = true)
+                                            eventsFromSocketClientListener.toggleContactCamera(
+                                                isVisible = true
+                                            )
                                         }
 
                                         CONTACT_TURN_OFF_CAMERA -> {
                                             Timber.d("LLAMADA PASO: CONTACT_TURN_OFF_CAMERA")
-                                            eventsFromSocketClientListener.toggleContactCamera(isVisible = false)
+                                            eventsFromSocketClientListener.toggleContactCamera(
+                                                isVisible = false
+                                            )
                                         }
 
                                         HANGUP_CALL -> {

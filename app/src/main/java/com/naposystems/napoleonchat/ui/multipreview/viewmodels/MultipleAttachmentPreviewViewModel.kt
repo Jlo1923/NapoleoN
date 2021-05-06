@@ -78,7 +78,17 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             listFiles = files
             defineDefaultSelfDestructionTime()
         } else {
-            createUriForFiles(filesWithoutUri)
+            val firstFile = files.first()
+            firstFile.messageAndAttachment?.let {
+//                if (it.isMine == 0) {
+//                    createUriForFiles(filesWithoutUri)
+//                }else{
+//                    listFiles = filesWithoutUri.toMutableList()
+//                    defineDefaultSelfDestructionTime()
+//                    showFilesAsPager()
+//                }
+                createUriForFiles(filesWithoutUri)
+            }
         }
     }
 

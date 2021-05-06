@@ -35,7 +35,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         val messageAndAttachment = messageDao.getMessageByWebId(webId)
         if (BuildConfig.ENCRYPT_API && decrypt) {
             with(messageAndAttachment?.messageEntity) {
-                this?.let {it.body = it.getBody(cryptoMessage)}
+                this?.let { it.body = it.getBody(cryptoMessage) }
             }
         }
         return messageAndAttachment
@@ -272,7 +272,11 @@ class MessageLocalDataSourceImp @Inject constructor(
         }
     }
 
-    override suspend fun updateMessageStatus(messagesWebIds: List<String>, status: Int) {
+    override suspend fun updateMessageStatus(
+        messagesWebIds: List<String>,
+        status: Int,
+        selfDestructionTimeManual: Int?
+    ) {
         messagesWebIds.forEach { messageWebId ->
             val message = getMessageByWebId(messageWebId, false)
 

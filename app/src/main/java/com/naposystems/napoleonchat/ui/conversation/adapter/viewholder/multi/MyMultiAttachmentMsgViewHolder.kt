@@ -191,35 +191,36 @@ class MyMultiAttachmentMsgViewHolder(
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewOneFile)
-        viewOneFile.bindAttachments(listElements)
+
+        viewOneFile.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewTwoFiles)
-        viewTwoFiles.bindAttachments(listElements)
+        viewTwoFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles)
         showViews(viewThreeFiles)
-        viewThreeFiles.bindAttachments(listElements)
+        viewThreeFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles)
         showViews(viewFourFiles)
-        viewFourFiles.bindAttachments(listElements)
+        viewFourFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles)
         showViews(viewFiveFiles)
-        viewFiveFiles.bindAttachments(listElements)
+        viewFiveFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
 }

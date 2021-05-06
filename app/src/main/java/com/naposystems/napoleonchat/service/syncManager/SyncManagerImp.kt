@@ -434,11 +434,16 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun updateMessagesStatus(messagesWebIds: List<String>, state: Int) {
+    override fun updateMessagesStatus(
+        messagesWebIds: List<String>,
+        state: Int,
+        selfDestructionAt: Int?
+    ) {
         GlobalScope.launch(Dispatchers.IO) {
             messageLocalDataSource.updateMessageStatus(
                 messagesWebIds,
-                state
+                state,
+                selfDestructionAt
             )
         }
     }
@@ -780,18 +785,20 @@ class SyncManagerImp @Inject constructor(
 
     override fun tryMarkMessageParentAsReceived(idsAttachments: List<String>) {
         GlobalScope.launch(Dispatchers.IO) {
-            idsAttachments.forEach {
-                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(it)
-                theAttach?.let {
-                    val theMsg = messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
-                    theMsg?.let {
-                        val filter = it.attachmentEntityList.filter {
+            idsAttachments.forEach { idAttachmentString ->
+                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(idAttachmentString)
+                theAttach?.let { attachment ->
+                    val theMsg =
+                        messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
+                    theMsg?.let { msgAndRelation ->
+                        val filter = msgAndRelation.attachmentEntityList.filter {
                             it.status == Constants.AttachmentStatus.RECEIVED.status
                         }
-                        if (filter.size == it.attachmentEntityList.size) {
+                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
                             updateMessagesStatus(
-                                listOf(it.messageEntity.webId),
-                                Constants.MessageStatus.UNREAD.status
+                                listOf(msgAndRelation.messageEntity.webId),
+                                Constants.MessageStatus.UNREAD.status,
+                                attachment.selfDestructionAt
                             )
                         }
                     }

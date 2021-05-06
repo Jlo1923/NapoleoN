@@ -29,7 +29,9 @@ class PreviewMediaRepository @Inject constructor(
     override suspend fun createTempFile(attachmentEntity: AttachmentEntity): File? {
         val fileName = when (attachmentEntity.status) {
             Constants.AttachmentStatus.SENT.status,
-            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> {
+            Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status,
+            Constants.AttachmentStatus.RECEIVED.status,
+            Constants.AttachmentStatus.READED.status -> {
                 "${attachmentEntity.webId}.${attachmentEntity.extension}"
             }
             else -> attachmentEntity.fileName

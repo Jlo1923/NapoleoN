@@ -100,7 +100,7 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     quoted = "",
     body = getBody(cryptoMessage),
     numberAttachments = numberAttachments,
-    destroy = 7,
+    destroy = selfDestructionAt,
     messageType = Constants.MessageTextType.NORMAL.type,
     uuidSender = uuid ?: UUID.randomUUID().toString()
 )
