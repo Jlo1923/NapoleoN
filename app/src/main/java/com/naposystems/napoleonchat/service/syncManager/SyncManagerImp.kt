@@ -440,11 +440,7 @@ class SyncManagerImp @Inject constructor(
         selfDestructionAt: Int?
     ) {
         GlobalScope.launch(Dispatchers.IO) {
-            messageLocalDataSource.updateMessageStatus(
-                messagesWebIds,
-                state,
-                selfDestructionAt
-            )
+            messageLocalDataSource.updateMessageStatus(messagesWebIds, state)
         }
     }
 

@@ -53,8 +53,7 @@ interface MessageLocalDataSource {
 
     suspend fun updateMessageStatus(
         messagesWebIds: List<String>,
-        status: Int,
-        selfDestructionTimeManual: Int? = null
+        status: Int
     )
 
     fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>>

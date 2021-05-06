@@ -274,8 +274,7 @@ class MessageLocalDataSourceImp @Inject constructor(
 
     override suspend fun updateMessageStatus(
         messagesWebIds: List<String>,
-        status: Int,
-        selfDestructionTimeManual: Int?
+        status: Int
     ) {
         messagesWebIds.forEach { messageWebId ->
             val message = getMessageByWebId(messageWebId, false)
