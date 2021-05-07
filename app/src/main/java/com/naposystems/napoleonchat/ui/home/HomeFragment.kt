@@ -186,7 +186,6 @@ class HomeFragment : BaseFragment() {
                     homeViewModel.getFriendshipRequestHome()
                 }
 
-
         val disposableCancelOrRejectFriendshipRequest =
             RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -206,7 +205,6 @@ class HomeFragment : BaseFragment() {
         disposable.add(disposableContactHasHangup)
 
         binding.textViewStatus.isSelected = true
-
 
         /*if (showCase?.getStateShowCaseSixth() == true &&
             viewModel.getDialogSubscription() == Constants.ShowDialogSubscription.YES.option

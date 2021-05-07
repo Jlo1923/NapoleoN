@@ -212,8 +212,8 @@ class SyncManagerImp @Inject constructor(
                 val response = napoleonApi.verifyMessagesRead()
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        handleDataMessages(it)
-                        handleDataAttachments(it)
+                        handleDataAttachmentsRead(it)
+                        handleDataMessagesRead(it)
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -222,7 +222,8 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    private suspend fun handleDataAttachments(it: MessageAndAttachmentResDTO) {
+    @Synchronized
+    private suspend fun handleDataAttachmentsRead(it: MessageAndAttachmentResDTO) {
         if (it.attachmentsId.isEmpty().not()) {
             attachmentLocalDataSource.updateAttachmentStatus(
                 it.attachmentsId, READED.status
@@ -230,25 +231,24 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    private suspend fun handleDataMessages(data: MessageAndAttachmentResDTO) {
+    @Synchronized
+    private suspend fun handleDataMessagesRead(data: MessageAndAttachmentResDTO) {
         if (data.messagesId.isNotEmpty()) {
-            messageLocalDataSource.updateMessageStatus(
-                data.messagesId, READED.status
-            )
-        }
-
-        /**
-         * debemos validar los attachments del mensaje padre, como lo vamos a marcar como leidos
-         * tomamos todos los attachments y los marcamos
-         */
-        data.messagesId.forEach {
-            val message = messageLocalDataSource.getMessageByWebId(it, false)
-            message?.attachmentEntityList?.forEach {
-                attachmentLocalDataSource.updateAttachmentStatus(
-                    it.webId,
-                    Constants.AttachmentStatus.READED.status
-                )
+            /**
+             * debemos validar los attachments del mensaje padre, como lo vamos a marcar como leidos
+             * tomamos todos los attachments y los marcamos
+             */
+            data.messagesId.forEach {
+                val message = messageLocalDataSource.getMessageByWebId(it, false)
+                val webIds = message?.attachmentEntityList?.map { it.webId }
+                webIds?.let {
+                    attachmentLocalDataSource.updateAttachmentStatus(
+                        it,
+                        Constants.AttachmentStatus.READED.status
+                    )
+                }
             }
+            messageLocalDataSource.updateMessageStatus(data.messagesId, READED.status)
         }
     }
 
