@@ -695,7 +695,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         intent.apply {
             if (isTypeAnyOrVideoOrImage()) {
                 val urisList = getUriListFromExtra()
-                if (urisList.size >= 10) {
+                if (urisList.size > 10) {
                     viewModel.removeUriListCache()
                     Utils.showToast(
                         binding.root.context,
