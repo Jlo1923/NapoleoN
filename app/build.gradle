@@ -26,9 +26,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 76
+        versionCode 77
 
-        versionName "2.0.76"
+        versionName "1.1.77-fix-testing-qa"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
