@@ -25,8 +25,7 @@ interface SyncManager {
 
     fun updateMessagesStatus(
         messagesWebIds: List<String>,
-        state: Int,
-        selfDestructionAt: Int? = null
+        state: Int
     )
 
     fun updateAttachmentsStatus(attachmentsWebIds: List<String>, status: Int)

@@ -48,4 +48,8 @@ interface HomeRepository {
 
     suspend fun addUUID()
 
+    fun verifyMessagesReceived()
+    
+    fun verifyMessagesRead()
+
 }

@@ -73,7 +73,6 @@ class HandlerNotificationMessageImp
         }
     }
 
-
     private fun validateExistMessageId(messageId: String): Boolean {
         var exist = false
         loop@ for (item in queueDataNotifications) {

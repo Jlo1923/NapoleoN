@@ -186,4 +186,12 @@ class HomeViewModel
             }
         }
     }
+
+    fun verifyMessagesReceived() {
+        repository.verifyMessagesReceived()
+    }
+
+    fun verifyMessagesRead() {
+        repository.verifyMessagesRead()
+    }
 }

@@ -128,6 +128,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                                 itemMessage.contactId
                             )
                         }
+                        repository.tryMarkMessageParentAsRead(attachment.webId)
                     }
                 }
             }

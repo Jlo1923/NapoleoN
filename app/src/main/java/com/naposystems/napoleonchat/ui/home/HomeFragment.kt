@@ -62,7 +62,7 @@ class HomeFragment : BaseFragment() {
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
-    private val viewModel: HomeViewModel by viewModels { viewModelFactory }
+    private val homeViewModel: HomeViewModel by viewModels { viewModelFactory }
 
     //TODO:Subscription
     /*@Inject
@@ -128,7 +128,11 @@ class HomeFragment : BaseFragment() {
         setHasOptionsMenu(true)
 
         //TODO: Verificar los mensajes no se estan borrando
-        viewModel.verifyMessagesToDelete()
+        homeViewModel.verifyMessagesToDelete()
+
+        homeViewModel.verifyMessagesReceived()
+
+        homeViewModel.verifyMessagesRead()
 
         //TODO:Subscription
 //        billingClientLifecycle.queryPurchases()
@@ -179,7 +183,7 @@ class HomeFragment : BaseFragment() {
             RxBus.listen(RxEvent.NewFriendshipRequest::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    viewModel.getFriendshipRequestHome()
+                    homeViewModel.getFriendshipRequestHome()
                 }
 
 
@@ -187,7 +191,7 @@ class HomeFragment : BaseFragment() {
             RxBus.listen(RxEvent.CancelOrRejectFriendshipRequestEvent::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    viewModel.getFriendshipRequestHome()
+                    homeViewModel.getFriendshipRequestHome()
                 }
 
         val disposableContactHasHangup = RxBus.listen(RxEvent.CallEnd::class.java)
@@ -242,17 +246,17 @@ class HomeFragment : BaseFragment() {
 
         timeFormatShareViewModel.getTimeFormat()
 
-        viewModel.resetDuplicates()
+        homeViewModel.resetDuplicates()
 
-        viewModel.getConversation()
+        homeViewModel.getConversation()
 
-        viewModel.getUserLiveData()
+        homeViewModel.getUserLiveData()
 
-        viewModel.getMessages()
+        homeViewModel.getMessages()
 
-        viewModel.getDeletedMessages()
+        homeViewModel.getDeletedMessages()
 
-        viewModel.getFriendshipRequestHome()
+        homeViewModel.getFriendshipRequestHome()
 
         observeFriendshipRequestPutSuccessfully()
 
@@ -318,7 +322,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun observeContact() {
-        viewModel.contact.observe(viewLifecycleOwner, Observer {
+        homeViewModel.contact.observe(viewLifecycleOwner, Observer {
             it?.let { contact ->
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
@@ -328,12 +332,12 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun observeJsonCleaned() {
-        viewModel.jsonCleaned.observe(viewLifecycleOwner, Observer { json ->
+        homeViewModel.jsonCleaned.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
                 val jsonNotification = JSONObject(json)
                 when (jsonNotification.getInt(Constants.NotificationKeys.TYPE_NOTIFICATION)) {
                     Constants.NotificationType.ENCRYPTED_MESSAGE.type -> {
-                        viewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
+                        homeViewModel.getContact(jsonNotification.getInt(Constants.NotificationKeys.CONTACT))
                     }
                     Constants.NotificationType.NEW_FRIENDSHIP_REQUEST.type -> {
                         goToAddContactFragment()
@@ -349,21 +353,21 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun observeJsonNotification() {
-        viewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
+        homeViewModel.jsonNotification.observe(viewLifecycleOwner, Observer { json ->
             if (!json.isNullOrEmpty()) {
-                viewModel.cleanJsonNotification(json)
+                homeViewModel.cleanJsonNotification(json)
             }
         })
     }
 
     private fun observeUser() {
-        viewModel.userEntity.observe(viewLifecycleOwner, Observer {
+        homeViewModel.userEntity.observe(viewLifecycleOwner, Observer {
             binding.textViewStatus.text = it.status
         })
     }
 
     private fun observeFriendshipRequestReceived() {
-        viewModel.friendShipRequestReceived.observe(viewLifecycleOwner, Observer {
+        homeViewModel.friendShipRequestReceived.observe(viewLifecycleOwner, Observer {
             it?.let {
                 friendShipRequestReceivedAdapter.submitList(it)
                 binding.containerFriendRequestReceived.isVisible = it.isNotEmpty()
@@ -374,7 +378,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun observeQuantityFriendshipRequest() {
-        viewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
+        homeViewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
             if (it != -1) setupBadge(it)
         })
     }
@@ -413,7 +417,7 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun onDetach() {
-        viewModel.cleanVariables()
+        homeViewModel.cleanVariables()
         super.onDetach()
     }
 
@@ -422,7 +426,7 @@ class HomeFragment : BaseFragment() {
         showCaseManager?.dismiss()
         isShowingShowCase = false
         shareFriendShipViewModel.clearMessageError()
-        viewModel.cleanVariables()
+        homeViewModel.cleanVariables()
         if (::popup.isInitialized) {
             popup.dismiss()
         }
@@ -474,7 +478,7 @@ class HomeFragment : BaseFragment() {
         }
 
         showCaseManager?.setPaused(false)
-        viewModel.getJsonNotification()
+        homeViewModel.getJsonNotification()
         showCase()
         binding.textViewReturnCall.isVisible = NapoleonApplication.statusCall.isConnectedCall()
 
@@ -577,7 +581,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun goToStatus() {
-        viewModel.userEntity.value?.let { user ->
+        homeViewModel.userEntity.value?.let { user ->
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToStatusFragment(user)
             )
@@ -655,13 +659,13 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun observeConversations() {
-        viewModel.conversations?.observe(viewLifecycleOwner, Observer {
+        homeViewModel.conversations?.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 conversationAdapter.submitList(it)
                 conversationAdapter.notifyDataSetChanged()
                 existConversation = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
-                viewModel.resetConversations()
+                homeViewModel.resetConversations()
             }
         })
     }
@@ -671,7 +675,7 @@ class HomeFragment : BaseFragment() {
             viewLifecycleOwner,
             Observer {
                 if (it == true) {
-                    viewModel.getFriendshipRequestHome()
+                    homeViewModel.getFriendshipRequestHome()
                 }
             })
     }
@@ -698,7 +702,7 @@ class HomeFragment : BaseFragment() {
             viewLifecycleOwner,
             Observer {
                 if (it == true) {
-                    viewModel.getFriendshipRequestHome()
+                    homeViewModel.getFriendshipRequestHome()
                 }
             })
     }
