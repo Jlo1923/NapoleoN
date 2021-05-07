@@ -911,10 +911,7 @@ class SocketClientImp
 
             val listIdMsgs = messagesResDTO.extractIdsMessages()
             if (listIdMsgs.isEmpty().not()) {
-                syncManager.updateMessagesStatus(
-                    listIdMsgs,
-                    UNREAD.status
-                )
+                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
             }
 
             val idsAttachments = messagesResDTO.extractIdsAttachments()
@@ -932,8 +929,6 @@ class SocketClientImp
                     syncManager.tryMarkMessageParentAsReceived(ids)
                 }
             }
-
-
         }
     }
 

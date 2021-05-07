@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.repository.home
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -28,6 +29,7 @@ class HomeRepositoryImp @Inject constructor(
     private val contactLocalDataSource: ContactLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
+    private val syncManager: SyncManager,
     private val context: Context
 ) :
     HomeRepository {
@@ -254,5 +256,13 @@ class HomeRepositoryImp @Inject constructor(
 
     override suspend fun addUUID() {
         messageLocalDataSource.addUUID()
+    }
+
+    override fun verifyMessagesReceived() {
+        syncManager.notifyMessagesReaded()
+    }
+
+    override fun verifyMessagesRead() {
+        syncManager.verifyMessagesRead()
     }
 }

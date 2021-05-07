@@ -26,12 +26,14 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.call.CallCont
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageAndAttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageDataEventRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
@@ -72,7 +74,9 @@ class SyncManagerImp @Inject constructor(
 
     }
 
-    override fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener) {
+    override fun setGetMessagesSocketListener(
+        getMessagesSocketListener: GetMessagesSocketListener
+    ) {
         this.getMessagesSocketListener = getMessagesSocketListener
     }
 
@@ -206,34 +210,45 @@ class SyncManagerImp @Inject constructor(
         GlobalScope.launch {
             try {
                 val response = napoleonApi.verifyMessagesRead()
-
                 if (response.isSuccessful) {
-
-                    response.body()?.messagesId.let {
-                        it?.let {
-                            if (it.isEmpty().not()) {
-                                messageLocalDataSource.updateMessageStatus(
-                                    it,
-                                    Constants.MessageStatus.READED.status
-                                )
-                            }
-                        }
-                    }
-
-                    response.body()?.attachmentsId.let {
-                        it?.let {
-                            if (it.isEmpty().not()) {
-                                attachmentLocalDataSource.updateAttachmentStatus(
-                                    it,
-                                    Constants.MessageStatus.READED.status
-                                )
-                            }
-                        }
+                    response.body()?.let {
+                        handleDataAttachmentsRead(it)
+                        handleDataMessagesRead(it)
                     }
                 }
             } catch (e: java.lang.Exception) {
                 Timber.e(e.localizedMessage)
             }
+        }
+    }
+
+    @Synchronized
+    private suspend fun handleDataAttachmentsRead(it: MessageAndAttachmentResDTO) {
+        if (it.attachmentsId.isEmpty().not()) {
+            attachmentLocalDataSource.updateAttachmentStatus(
+                it.attachmentsId, READED.status
+            )
+        }
+    }
+
+    @Synchronized
+    private suspend fun handleDataMessagesRead(data: MessageAndAttachmentResDTO) {
+        if (data.messagesId.isNotEmpty()) {
+            /**
+             * debemos validar los attachments del mensaje padre, como lo vamos a marcar como leidos
+             * tomamos todos los attachments y los marcamos
+             */
+            data.messagesId.forEach {
+                val message = messageLocalDataSource.getMessageByWebId(it, false)
+                val webIds = message?.attachmentEntityList?.map { it.webId }
+                webIds?.let {
+                    attachmentLocalDataSource.updateAttachmentStatus(
+                        it,
+                        Constants.AttachmentStatus.READED.status
+                    )
+                }
+            }
+            messageLocalDataSource.updateMessageStatus(data.messagesId, READED.status)
         }
     }
 
@@ -436,8 +451,7 @@ class SyncManagerImp @Inject constructor(
 
     override fun updateMessagesStatus(
         messagesWebIds: List<String>,
-        state: Int,
-        selfDestructionAt: Int?
+        state: Int
     ) {
         GlobalScope.launch(Dispatchers.IO) {
             messageLocalDataSource.updateMessageStatus(messagesWebIds, state)
@@ -700,7 +714,7 @@ class SyncManagerImp @Inject constructor(
                     if (response.isSuccessful) {
                         messageLocalDataSource.updateMessageStatus(
                             messagesReqDTO.messages.map { it.id },
-                            Constants.MessageStatus.READED.status
+                            READED.status
                         )
                     }
                 } catch (ex: Exception) {
@@ -787,15 +801,22 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter {
-                            it.status == Constants.AttachmentStatus.RECEIVED.status
-                        }
+                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReceived() }
                         if (filter.size == msgAndRelation.attachmentEntityList.size) {
                             updateMessagesStatus(
                                 listOf(msgAndRelation.messageEntity.webId),
-                                Constants.MessageStatus.UNREAD.status,
-                                attachment.selfDestructionAt
+                                Constants.MessageStatus.UNREAD.status
                             )
+
+                            val messageDTO = MessageDTO(
+                                id = msgAndRelation.messageEntity.webId,
+                                type = Constants.MessageType.TEXT.type,
+                                user = msgAndRelation.messageEntity.contactId,
+                                status = StatusMustBe.RECEIVED.status
+                            )
+                            val list = MessagesReqDTO(listOf(messageDTO))
+                            napoleonApi.notifyMessageReceived(list)
+
                         }
                     }
                 }
@@ -805,19 +826,27 @@ class SyncManagerImp @Inject constructor(
 
     override fun tryMarkMessageParentAsRead(idsAttachments: List<String>) {
         GlobalScope.launch(Dispatchers.IO) {
-            idsAttachments.forEach {
-                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(it)
-                theAttach?.let {
-                    val theMsg = messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
-                    theMsg?.let {
-                        val filter = it.attachmentEntityList.filter {
-                            it.status == Constants.AttachmentStatus.READED.status
-                        }
-                        if (filter.size == it.attachmentEntityList.size) {
+            idsAttachments.forEach { idAttachmentString ->
+                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(idAttachmentString)
+                theAttach?.let { attachment ->
+                    val theMsg =
+                        messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
+                    theMsg?.let { msgAndRelation ->
+                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReaded() }
+                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
                             updateMessagesStatus(
-                                listOf(it.messageEntity.webId),
+                                listOf(msgAndRelation.messageEntity.webId),
                                 Constants.AttachmentStatus.READED.status
                             )
+
+                            val messageDTO = MessageDTO(
+                                id = msgAndRelation.messageEntity.webId,
+                                type = Constants.MessageType.TEXT.type,
+                                user = msgAndRelation.messageEntity.contactId,
+                                status = StatusMustBe.READED.status
+                            )
+                            val list = MessagesReqDTO(listOf(messageDTO))
+                            napoleonApi.sendMessagesRead(list)
                         }
                     }
                 }

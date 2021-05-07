@@ -154,10 +154,8 @@ class HomeViewModel
         _jsonCleaned.value = null
     }
 
-    fun verifyMessagesToDelete() {
-        viewModelScope.launch {
-            repository.verifyMessagesToDelete()
-        }
+    fun verifyMessagesToDelete() = viewModelScope.launch {
+        repository.verifyMessagesToDelete()
     }
 
     fun getDialogSubscription(): Int {
@@ -185,5 +183,13 @@ class HomeViewModel
                 Timber.e(ex)
             }
         }
+    }
+
+    fun verifyMessagesReceived() {
+        repository.verifyMessagesReceived()
+    }
+
+    fun verifyMessagesRead() {
+        repository.verifyMessagesRead()
     }
 }

@@ -48,7 +48,6 @@ class IncomingMultiAttachmentMsgViewHolder(
         }
     }
 
-
     init {
         super.parentContainerMessage = binding.containerIncomingMessage
 //        super.progressBar = binding.progressBar

@@ -83,9 +83,9 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
             showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
             hideViews(progressBar, imageRetry)
             if (mine) { // is Mine
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-            } else {
                 imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+            } else {
+                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
             }
         }
     }

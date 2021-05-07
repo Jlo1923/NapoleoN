@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.repository.selfDestructTime
 
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
@@ -23,7 +24,8 @@ class SelfDestructTimeRepository @Inject constructor(
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val napoleonApi: NapoleonApi,
-    private val attachmentLocalDataSource: AttachmentLocalDataSource
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
+    private val syncManager: SyncManager
 ) : IContractSelfDestructTime.Repository {
 
     override fun getSelfDestructTime(): Int {
@@ -109,6 +111,10 @@ class SelfDestructTimeRepository @Inject constructor(
                 attachmentLocalDataSource.updateAttachment(it)
             }
         }
+    }
+
+    override fun tryMarkMessageParentAsRead(webId: String) {
+        syncManager.tryMarkMessageParentAsRead(listOf(webId))
     }
 
 }

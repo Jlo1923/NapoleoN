@@ -48,6 +48,8 @@ interface IContractSelfDestructTime {
         fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>)
 
         fun updateAttachments(attachmentsWithWebId: List<AttachmentEntity?>)
+        
+        fun tryMarkMessageParentAsRead(webId: String)
 
     }
 }

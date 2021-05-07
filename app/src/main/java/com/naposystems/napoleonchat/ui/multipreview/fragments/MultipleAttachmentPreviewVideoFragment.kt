@@ -208,16 +208,15 @@ class MultipleAttachmentPreviewVideoFragment(
             imageViewStatus.show()
             frameStatus.show()
             if (file.messageAndAttachment?.isMine == 1) { // is Mine
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-            } else {
                 imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+            } else {
+                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
             }
         }
         configTimer(attachmentEntity)
     }
 
     private fun configTimer(attachmentEntity: AttachmentEntity) {
-
         countDownTimer?.cancel()
         val endTime = attachmentEntity.totalSelfDestructionAt
         when {
