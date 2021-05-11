@@ -47,8 +47,6 @@ class ConversationCallActivity :
 
         //Llaves Acciones
         const val ACTION_ANSWER_CALL = "answerCall"
-
-        const val ITS_FROM_RETURN_CALL = "its_from_return_call"
     }
 
     @Inject
@@ -204,19 +202,8 @@ class ConversationCallActivity :
     }
 
     override fun onBackPressed() {
-
-        if (NapoleonApplication.statusCall.isConnectedCall()) {
-
-            Timber.d("startCallActivity, onBackPressed")
-
-            if (NapoleonApplication.callModel?.isVideoCall == true) {
-                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
-            }
-
-            NapoleonApplication.isShowingCallActivity = false
-
-            super.onBackPressed()
-        }
+        setCallOnBackground()
+        super.onBackPressed()
     }
 
     override fun finish() {
@@ -230,8 +217,8 @@ class ConversationCallActivity :
     }
 
     override fun onPause() {
+        setCallOnBackground()
         super.onPause()
-        webRTCClient.stopProximitySensor()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -246,6 +233,23 @@ class ConversationCallActivity :
         ) {
             isAnswerCall = true
             answerCall()
+        }
+    }
+
+    private fun setCallOnBackground() {
+
+        webRTCClient.stopProximitySensor()
+
+        if (NapoleonApplication.statusCall.isConnectedCall()) {
+
+            Timber.d("startCallActivity, onBackPressed")
+
+            if (NapoleonApplication.callModel?.isVideoCall == true) {
+                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
+            }
+
+            NapoleonApplication.isShowingCallActivity = false
+
         }
     }
 
@@ -278,9 +282,6 @@ class ConversationCallActivity :
                     }
                 }
 
-                if (extras.containsKey(ITS_FROM_RETURN_CALL)) {
-                    webRTCClient.setItsReturnCall(extras.getBoolean(ITS_FROM_RETURN_CALL, false))
-                }
             }
 
         } catch (e: Exception) {

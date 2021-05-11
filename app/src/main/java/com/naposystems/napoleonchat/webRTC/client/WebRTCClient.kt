@@ -71,8 +71,6 @@ interface WebRTCClient {
     //UI
     fun setTextViewCallDuration(textView: TextView)
 
-    fun setItsReturnCall(itsReturnCall: Boolean)
-
     //Hang Up
     fun emitHangUp()
     fun hideNotification()

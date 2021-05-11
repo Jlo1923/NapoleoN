@@ -180,6 +180,8 @@ class WebRTCClientImp
 
     private var callTime: Long = 0
 
+    val oneSecond = TimeUnit.SECONDS.toMillis(1)
+
     private var mediaPlayerHasStopped: Boolean = false
 
     private var isFirstTimeBluetoothAvailable: Boolean = false
@@ -189,8 +191,6 @@ class WebRTCClientImp
     private var isHeadsetConnected: Boolean = false
 
     private var isBluetoothStopped: Boolean = false
-
-    private var isReturnCall: Boolean = false
 
     private var textViewTimer: TextView? = null
 
@@ -244,7 +244,6 @@ class WebRTCClientImp
             isBluetoothAvailable = false
             isHeadsetConnected = false
             isBluetoothStopped = false
-            isReturnCall = false
 
             textViewTimer = null
 
@@ -410,9 +409,9 @@ class WebRTCClientImp
 
                     override fun onRenegotiationNeeded() {
                         super.onRenegotiationNeeded()
-                        Timber.d("LLAMADA PASO: onRenegotiationNeeded renegotiateCall: $renegotiateCall isReturnCall: $isReturnCall")
-                        if ((renegotiateCall || isReturnCall) && NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-                            isReturnCall = false
+                        Timber.d("LLAMADA PASO: onRenegotiationNeeded renegotiateCall: $renegotiateCall")
+                        if (renegotiateCall && NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL
+                        ) {
                             renegotiateCall = false
                             Timber.d("LLAMADA PASO: onRenegotiationNeeded CREAR OFERTA")
                             createOffer()
@@ -967,14 +966,8 @@ class WebRTCClientImp
     private fun startCallTimer() {
         textViewTimer?.text =
             Utils.getDuration(callTime, callTime >= TimeUnit.HOURS.toMillis(1))
-        val oneSecond = TimeUnit.SECONDS.toMillis(1)
         callTime += oneSecond
         callTimerHandler.postDelayed(callTimerRunnable, oneSecond)
-    }
-
-    override fun setItsReturnCall(itsReturnCall: Boolean) {
-        if (NapoleonApplication.callModel?.isVideoCall == true)
-            this.isReturnCall = itsReturnCall
     }
 
     //region Implementation BluetoothStateManager.BluetoothStateListener
@@ -1188,10 +1181,12 @@ class WebRTCClientImp
 
         evenstFromWebRTCClientListener?.enableControls()
 
-        callTimerHandler.postDelayed(
-            callTimerRunnable,
-            TimeUnit.SECONDS.toMillis(1)
-        )
+
+        if (callTime == 0L)
+            callTimerHandler.postDelayed(
+                callTimerRunnable,
+                TimeUnit.SECONDS.toMillis(1)
+            )
 
         handlerNotification.notificationCallInProgress()
 

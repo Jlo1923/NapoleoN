@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
-import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
@@ -245,9 +244,6 @@ class HandlerNotificationImp
     override fun notificationCallInProgress() {
 
         val intent = Intent(context, ConversationCallActivity::class.java).apply {
-            putExtras(Bundle().apply {
-                putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
-            })
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }
 
