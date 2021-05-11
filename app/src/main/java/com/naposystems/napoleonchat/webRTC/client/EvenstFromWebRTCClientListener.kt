@@ -13,7 +13,7 @@ interface EvenstFromWebRTCClientListener {
 
     //UI
     fun showTimer()
-    fun showConnectingTitle()
+    fun showCypheryngCall()
     fun showReConnectingTitle()
     fun showFinishingTitle()
     fun enableControls()

@@ -57,16 +57,6 @@ class WebRTCService : Service() {
 
         Timber.d("LLAMADA PASO 1: INICIANDO SERVICIO")
 
-//        var callModel = CallModel()
-
-//        intent.extras?.let { bundle ->
-//            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
-//                callModel =
-//                    bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
-//                Timber.d("LLAMADA OBTENIENDO EXTRAS: STARTWEBRTCSERVICE")
-//            }
-//        }
-
         intent.action?.let { action ->
 
             handlerMediaPlayerNotification.stopRingtone()

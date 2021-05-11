@@ -66,6 +66,9 @@ class ConversationCallActivity :
     @Inject
     lateinit var handlerDialog: HandlerDialog
 
+    private var isAnswerCall = false
+
+
     private lateinit var binding: ActivityConversationCallBinding
 
     private val viewModel: ConversationCallViewModel by viewModels { viewModelFactory }
@@ -150,7 +153,10 @@ class ConversationCallActivity :
         if (NapoleonApplication.statusCall.isNoCall()) {
 
             when (NapoleonApplication.callModel?.typeCall) {
-                Constants.TypeCall.IS_INCOMING_CALL -> webRTCClient.playRingtone()
+                Constants.TypeCall.IS_INCOMING_CALL -> {
+                    if (isAnswerCall.not())
+                        webRTCClient.playRingtone()
+                }
                 Constants.TypeCall.IS_OUTGOING_CALL -> webRTCClient.playRingBackTone()
             }
 
@@ -238,6 +244,7 @@ class ConversationCallActivity :
             NapoleonApplication.statusCall.isNoCall() &&
             NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
+            isAnswerCall = true
             answerCall()
         }
     }
@@ -265,6 +272,7 @@ class ConversationCallActivity :
                     webRTCClient.setOffer()
 
                     if (extras.getBoolean(ACTION_ANSWER_CALL, false)) {
+                        isAnswerCall = true
                         Timber.d("LLAMADA PASO: LLAMADA ENTRANTE RESPONDIENDO LLAMADA")
                         answerCall()
                     }
@@ -471,7 +479,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun showConnectingTitle() {
+    override fun showCypheryngCall() {
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE

@@ -463,7 +463,7 @@ class WebRTCClientImp
                         when (iceConnectionState) {
 
                             PeerConnection.IceConnectionState.CHECKING -> {
-                                evenstFromWebRTCClientListener?.showConnectingTitle()
+                                evenstFromWebRTCClientListener?.showCypheryngCall()
                             }
 
                             PeerConnection.IceConnectionState.CONNECTED -> {
@@ -570,7 +570,7 @@ class WebRTCClientImp
 
     override fun subscribeToPresenceChannel() {
         NapoleonApplication.callModel?.let {
-            if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
+            if (it.mustSubscribeToPresenceChannel && it.channelName != "" && NapoleonApplication.statusCall.isNoCall()) {
                 Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
                 socketClient.subscribeToPresenceChannel()
             }
@@ -1183,6 +1183,8 @@ class WebRTCClientImp
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
         countDownRingCall.cancel()
+
+        countDownReconnecting.cancel()
 
         evenstFromWebRTCClientListener?.enableControls()
 

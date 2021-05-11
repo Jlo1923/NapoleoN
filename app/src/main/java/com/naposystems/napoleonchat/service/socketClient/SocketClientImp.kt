@@ -587,7 +587,7 @@ class SocketClientImp
         subscribeChannels()
 
         NapoleonApplication.callModel?.let {
-            if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
+            if (it.mustSubscribeToPresenceChannel && it.channelName != "" && NapoleonApplication.statusCall.isNoCall()) {
                 Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
                 subscribeToPresenceChannel()
             }
