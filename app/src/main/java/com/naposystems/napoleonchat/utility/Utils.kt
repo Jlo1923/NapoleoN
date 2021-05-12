@@ -23,7 +23,6 @@ import android.provider.Settings
 import android.util.Base64
 import android.util.Base64OutputStream
 import android.util.TypedValue
-import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
@@ -52,6 +51,55 @@ import kotlin.math.roundToInt
 class Utils {
 
     companion object {
+
+        fun encoderOffer(offer: String): String {
+
+            return offer
+//                .replace(
+//                    Constants.ParamsOffer.PARAM_ONE_ORIGINAL,
+//                    Constants.ParamsOffer.PARAM_ONE_REPLACE
+//                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_TWO_ORIGINAL,
+                    Constants.ParamsOffer.PARAM_TWO_REPLACE
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_THREE_ORIGINAL,
+                    Constants.ParamsOffer.PARAM_THREE_REPLACE
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_FOUR_ORIGINAL,
+                    Constants.ParamsOffer.PARAM_FOUR_REPLACE
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_FIVE_ORIGINAL,
+                    Constants.ParamsOffer.PARAM_FIVE_REPLACE
+                )
+        }
+
+        fun decoderOffer(offer: String): String {
+            return offer
+//                .replace(
+//                    Constants.ParamsOffer.PARAM_ONE_REPLACE,
+//                    Constants.ParamsOffer.PARAM_ONE_ORIGINAL
+//                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_TWO_REPLACE,
+                    Constants.ParamsOffer.PARAM_TWO_ORIGINAL
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_THREE_REPLACE,
+                    Constants.ParamsOffer.PARAM_THREE_ORIGINAL
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_FOUR_REPLACE,
+                    Constants.ParamsOffer.PARAM_FOUR_ORIGINAL
+                )
+                .replace(
+                    Constants.ParamsOffer.PARAM_FIVE_REPLACE,
+                    Constants.ParamsOffer.PARAM_FIVE_ORIGINAL
+                )
+        }
 
         private val mediaPlayer: MediaPlayer by lazy {
             MediaPlayer().apply {
@@ -206,7 +254,11 @@ class Utils {
                 if (!path.exists())
                     path.mkdirs()
                 val image = File(path, fileName)
-                FileProvider.getUriForFile(context, "com.naposystems.napoleonchat.provider", image)
+                FileProvider.getUriForFile(
+                    context,
+                    "com.naposystems.napoleonchat.provider",
+                    image
+                )
             } catch (e: Exception) {
                 Timber.e(e)
                 Uri.parse("")
@@ -445,10 +497,12 @@ class Utils {
                     duration >= TimeUnit.HOURS.toSeconds(12).toInt() -> EVERY_ONE_DAY.time
                     duration >= TimeUnit.HOURS.toSeconds(1).toInt() -> EVERY_TWELVE_HOURS.time
                     duration >= TimeUnit.MINUTES.toSeconds(30).toInt() -> EVERY_ONE_HOUR.time
-                    duration >= TimeUnit.MINUTES.toSeconds(10).toInt() -> EVERY_THIRTY_MINUTES.time
+                    duration >= TimeUnit.MINUTES.toSeconds(10)
+                        .toInt() -> EVERY_THIRTY_MINUTES.time
                     duration >= TimeUnit.MINUTES.toSeconds(1).toInt() -> EVERY_TEN_MINUTES.time
                     duration >= TimeUnit.SECONDS.toSeconds(30).toInt() -> EVERY_ONE_MINUTE.time
-                    duration >= TimeUnit.SECONDS.toSeconds(15).toInt() -> EVERY_THIRTY_SECONDS.time
+                    duration >= TimeUnit.SECONDS.toSeconds(15)
+                        .toInt() -> EVERY_THIRTY_SECONDS.time
                     else -> EVERY_FIFTEEN_SECONDS.time
                 }
             } else {
@@ -634,7 +688,8 @@ class Utils {
             var isOnline = false
             withContext(Dispatchers.IO) {
                 isOnline = try {
-                    val command = Runtime.getRuntime().exec(Constants.ValidConnection.REQUEST_PIN)
+                    val command =
+                        Runtime.getRuntime().exec(Constants.ValidConnection.REQUEST_PIN)
                     val valid = command.waitFor()
                     valid == 0
                 } catch (e: Exception) {

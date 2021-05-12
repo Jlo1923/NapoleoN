@@ -42,9 +42,6 @@ class ConversationCallActivity :
 
     companion object {
 
-        //Llaves Modelo
-//        const val KEY_CALL_MODEL = "callModel"
-
         //Llaves Acciones
         const val ACTION_ANSWER_CALL = "answerCall"
     }

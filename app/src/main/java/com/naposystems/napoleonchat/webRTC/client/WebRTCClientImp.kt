@@ -645,14 +645,7 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: STARTWEBRTCSERVICE")
 
-        val intent = Intent(context, WebRTCService::class.java)
-//        val intent = Intent(context, WebRTCService::class.java).apply {
-//            putExtras(Bundle().apply {
-//                putSerializable(Constants.CallKeys.CALL_MODEL, callModel)
-//            })
-//        }
-
-        context.startService(intent)
+        context.startService(Intent(context, WebRTCService::class.java))
     }
 
     //Change To VideoCall
@@ -1021,7 +1014,7 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO: Inicia el servicio WebRTC desde itsSubscribedToPresenceChannelIncomingCall")
 
-        NapoleonApplication.callModel?.channelName.let {
+        NapoleonApplication.callModel?.let {
             startWebRTCService()
         }
     }

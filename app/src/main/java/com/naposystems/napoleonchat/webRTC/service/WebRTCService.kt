@@ -181,8 +181,9 @@ class WebRTCService : Service() {
                 })
             }
 
-            if (NapoleonApplication.isVisible && action.isNotEmpty())
+            if (NapoleonApplication.isVisible && action.isNotEmpty()){
                 intent.action = action
+            }
 
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 

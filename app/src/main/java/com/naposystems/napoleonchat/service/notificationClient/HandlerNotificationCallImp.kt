@@ -24,18 +24,11 @@ class HandlerNotificationCallImp
 
             NapoleonApplication.callModel?.let {
                 it.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-            }
-
-            NapoleonApplication.callModel?.let {
                 it.mustSubscribeToPresenceChannel = true
-            }
-
-            if (NapoleonApplication.isVisible.not()) {
-                NapoleonApplication.callModel?.let {
+                if (NapoleonApplication.isVisible.not()) {
                     it.isFromClosedApp = Constants.FromClosedApp.YES
                 }
             }
-
             webRTCClient.connectSocket()
         } else {
             NapoleonApplication.callModel?.let {
