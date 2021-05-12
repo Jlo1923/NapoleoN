@@ -78,6 +78,8 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
                 )
             }
         } catch (exception: Exception) {
+            messageEntity.status = Constants.MessageStatus.ERROR.status
+            repository.updateMessage(messageEntity)
             return null
         }
         return null

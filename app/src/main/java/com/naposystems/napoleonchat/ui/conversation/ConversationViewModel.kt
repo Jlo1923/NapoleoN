@@ -13,6 +13,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
+import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.service.uploadService.UploadService
 import com.naposystems.napoleonchat.source.local.entity.*
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
@@ -21,6 +22,8 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.message.Messa
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEntity
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
 import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
@@ -44,7 +47,9 @@ class ConversationViewModel @Inject constructor(
     private val cryptoMessage: CryptoMessage,
     private val context: Context,
     private val repository: IContractConversation.Repository,
-    private val sharedPreferencesManager: SharedPreferencesManager
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val repositoryMessages: IContractMultipleAttachmentPreview.Repository,
+    private val repositorySelfDestruction: IContractSelfDestructTime.Repository
 ) : ViewModel(), IContractConversation.ViewModel {
 
     private lateinit var userEntity: UserEntity
@@ -700,6 +705,54 @@ class ConversationViewModel @Inject constructor(
 
     fun removePendingUris() {
         sharedPreferencesManager.puStringSet("test", emptyList())
+    }
+
+    fun sendMessageToRemote(messageEntity: MessageEntity, attachments: List<AttachmentEntity?>) {
+        if (messageEntity.mustSendToRemote()) {
+            viewModelScope.launch {
+                try{
+                    val messageResponse = repositoryMessages.sendMessage(messageEntity)
+                    val attachmentsWithWebId =
+                        setMessageWebIdToAttachments(attachments, messageResponse)
+                    repositorySelfDestruction.updateAttachments(attachmentsWithWebId)
+                    messageResponse?.let { pairData ->
+                        pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
+                    }
+                }catch (exception: Exception){
+                    messageEntity.status = Constants.MessageStatus.ERROR.status
+                    repository.updateMessage(messageEntity)
+                }
+            }
+        } else {
+            initUploadServiceForSendFiles(messageEntity, attachments)
+        }
+    }
+
+    private fun initUploadServiceForSendFiles(
+        messageEntity: MessageEntity,
+        attachments: List<AttachmentEntity?>
+    ) {
+        // we can create notification for upload attachments
+        // todo: mover esto a un activity para usar el context
+        val intent = Intent(context, MultipleUploadService::class.java).apply {
+            putExtras(Bundle().apply {
+                putParcelable(MultipleUploadService.MESSAGE_KEY, messageEntity)
+                putParcelableArrayList(MultipleUploadService.ATTACHMENT_KEY, ArrayList(attachments))
+            })
+        }
+        context.startService(intent)
+    }
+
+    private fun setMessageWebIdToAttachments(
+        attachments: List<AttachmentEntity?>,
+        messageResponse: Pair<MessageEntity?, String>?
+    ): List<AttachmentEntity?> {
+        attachments.forEach { attachment ->
+            attachment?.let {
+                it.messageWebId = messageResponse?.second ?: ""
+            }
+        }
+        return attachments
     }
 
     //endregion

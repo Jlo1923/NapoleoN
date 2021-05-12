@@ -71,7 +71,7 @@ class MyMultiAttachmentMsgViewHolder(
         bindViewModel()
         paintAttachments()
         paintUploadFiles()
-        tryUploadAttachments()
+        //tryUploadAttachments()
         paintMoreData(timeFormat)
     }
 
@@ -85,6 +85,12 @@ class MyMultiAttachmentMsgViewHolder(
                     msgAndAttachment.messageEntity.createdAt,
                     it
                 )
+            }
+
+            if (msgAndAttachment.messageEntity.status == Constants.MessageStatus.ERROR.status) {
+                imageButtonState.show()
+            } else {
+                tryUploadAttachments()
             }
 
         }

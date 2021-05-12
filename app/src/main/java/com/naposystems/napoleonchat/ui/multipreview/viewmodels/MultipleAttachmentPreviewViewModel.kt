@@ -190,7 +190,11 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                         val messageEntity = insertMessageToContact(itemMessage)
                         deleteMessageNotSent(it.id)
                         val attachments = insertAttachmentsWithMsgId(listFiles, messageEntity.id)
-                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
+//                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
+//                            messageEntity,
+//                            attachments
+//                        )
+                        actions.value = MultipleAttachmentPreviewAction.ExitToConversationAndSendData(
                             messageEntity,
                             attachments
                         )

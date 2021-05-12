@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentBinding
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.contacts.showToast
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
@@ -20,16 +22,13 @@ import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewAct
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_CONTACT
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES
-import com.naposystems.napoleonchat.utility.extras.MULTI_EXTRA_FILES_DELETE
+import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-const val MULTI_ATTACHMENT_PREVIEW_INTENT = 1000
 
 class MultipleAttachmentActivity : AppCompatActivity() {
 
@@ -115,9 +114,23 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
             when (resultCode) {
-                RESULT_OK -> finish()
+                RESULT_OK -> handleResultOk(data)
                 RESULT_CANCELED -> handleResultCanceled(data)
             }
+        }
+    }
+
+    private fun handleResultOk(data: Intent?) {
+        data?.extras?.apply {
+            val intentResult = Intent()
+            val data = Bundle()
+            val msg = this.getParcelable<MessageEntity>(EXTRA_MULTI_MSG_TO_SEND)
+            val attachments = this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
+            data.putParcelable(EXTRA_MULTI_MSG_TO_SEND, msg)
+            data.putParcelableArrayList(EXTRA_MULTI_ATTACHMENTS_TO_SEND, ArrayList(attachments))
+            intentResult.putExtras(data)
+            setResult(RESULT_OK, intentResult)
+            finish()
         }
     }
 

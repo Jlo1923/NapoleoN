@@ -94,6 +94,7 @@ import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.extensions.forMimeTypeNapoleon
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.*
+import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
@@ -501,7 +502,7 @@ class ConversationFragment
                         intent.putExtras(Bundle().apply {
                             putParcelable(MULTI_EXTRA_CONTACT, args.contact)
                         })
-                        startActivity(intent)
+                        startActivityForResult(intent, MULTI_ATTACHMENT_INTENT)
 
 //                        findNavController().navigate(
 //                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
@@ -1508,64 +1509,89 @@ class ConversationFragment
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != RC_DOCUMENT || resultCode != RESULT_OK)
-            return
 
-        Timber.d("URI FILE: ${data?.data.toString()}")
+        if (requestCode == MULTI_ATTACHMENT_INTENT) {
+            data?.let { handleMultiAttachmentResult(it) }
+        } else {
+            if (requestCode != RC_DOCUMENT || resultCode != RESULT_OK)
+                return
 
-        data?.data?.let { uri ->
+            Timber.d("URI FILE: ${data?.data.toString()}")
 
-            try {
-                val contentResolver = requireContext().contentResolver
-
-                val cursor = contentResolver.query(
-                    uri,
-                    arrayOf(
-                        MediaStore.Files.FileColumns.MIME_TYPE,
-                        MediaStore.Files.FileColumns.SIZE
-                    ),
-                    null,
-                    null,
-                    null
-                )
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    cursor.use {
-                        val mimeTypeIndex =
-                            cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
-                        val mimeType = cursor.getStringOrNull(mimeTypeIndex)
-
-                        val sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
-                        val size = cursor.getInt(sizeIndex)
-
-                        if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            handlerDialog.generalDialog(
-                                getString(R.string.text_title_attach_doc),
-                                getString(R.string.text_attch_doc_not_allowed),
-                                false,
-                                childFragmentManager,
-                                getString(R.string.text_okay)
-                            ) {
-
-                            }
-                        } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            handlerDialog.generalDialog(
-                                getString(R.string.text_title_attach_doc),
-                                getString(R.string.text_attch_doc_size_exceed),
-                                false,
-                                childFragmentManager,
-                                getString(R.string.text_okay)
-                            ) {
-
-                            }
-                        } else {
-                            Timber.d("DocumentAttachment $mimeType, $size")
-                            viewModel.sendDocumentAttachment(uri)
-                        }
-                    }
+            data?.data?.let { uri ->
+                try {
+                    handleActivityResultOld(uri)
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
-            } catch (e: Exception) {
-                Timber.e(e)
+            }
+        }
+
+
+    }
+
+    private fun handleMultiAttachmentResult(data: Intent) {
+
+        data.extras?.apply {
+            val msg = this.getParcelable<MessageEntity>(EXTRA_MULTI_MSG_TO_SEND)
+            val attachments =
+                this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
+
+            ifNotNull(msg, attachments) { msg, attachments ->
+                viewModel.sendMessageToRemote(msg, attachments)
+            }
+
+        }
+
+    }
+
+    private fun handleActivityResultOld(uri: Uri) {
+        val contentResolver = requireContext().contentResolver
+
+        val cursor = contentResolver.query(
+            uri,
+            arrayOf(
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.SIZE
+            ),
+            null,
+            null,
+            null
+        )
+
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.use {
+                val mimeTypeIndex =
+                    cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                val mimeType = cursor.getStringOrNull(mimeTypeIndex)
+
+                val sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+                val size = cursor.getInt(sizeIndex)
+
+                if (!documentsMimeTypeAllowed.contains(mimeType)) {
+                    handlerDialog.generalDialog(
+                        getString(R.string.text_title_attach_doc),
+                        getString(R.string.text_attch_doc_not_allowed),
+                        false,
+                        childFragmentManager,
+                        getString(R.string.text_okay)
+                    ) {
+
+                    }
+                } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
+                    handlerDialog.generalDialog(
+                        getString(R.string.text_title_attach_doc),
+                        getString(R.string.text_attch_doc_size_exceed),
+                        false,
+                        childFragmentManager,
+                        getString(R.string.text_okay)
+                    ) {
+
+                    }
+                } else {
+                    Timber.d("DocumentAttachment $mimeType, $size")
+                    viewModel.sendDocumentAttachment(uri)
+                }
             }
         }
     }
