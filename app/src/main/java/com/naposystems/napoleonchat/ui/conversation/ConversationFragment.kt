@@ -67,6 +67,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.Conversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.SendMessageToRemote
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
@@ -2331,7 +2332,15 @@ class ConversationFragment
     override fun onMultipleAttachmentMsgAction(action: MultiAttachmentMsgAction) {
         when (action) {
             is OpenMultipleAttachmentPreview -> openMultipleAttachmentPreview(action)
+            is SendMessageToRemote -> sendMessageAndAttachmentsToRemote(action)
         }
+    }
+
+    private fun sendMessageAndAttachmentsToRemote(action: SendMessageToRemote) {
+        viewModel.sendMessageToRemote(
+            action.messageEntity,
+            action.attachments
+        )
     }
 
     /**

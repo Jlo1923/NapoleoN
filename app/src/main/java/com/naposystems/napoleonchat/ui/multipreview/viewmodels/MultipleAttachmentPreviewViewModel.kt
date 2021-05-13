@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ExitToConversationAndSendData
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
@@ -190,14 +191,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                         val messageEntity = insertMessageToContact(itemMessage)
                         deleteMessageNotSent(it.id)
                         val attachments = insertAttachmentsWithMsgId(listFiles, messageEntity.id)
-//                        actions.value = MultipleAttachmentPreviewAction.SendMessageToRemote(
-//                            messageEntity,
-//                            attachments
-//                        )
-                        actions.value = MultipleAttachmentPreviewAction.ExitToConversationAndSendData(
-                            messageEntity,
-                            attachments
-                        )
+                        actions.value = ExitToConversationAndSendData(messageEntity, attachments)
                     }
                 }
             } catch (exception: Exception) {

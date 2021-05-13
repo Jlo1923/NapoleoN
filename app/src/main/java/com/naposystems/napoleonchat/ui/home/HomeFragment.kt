@@ -35,13 +35,10 @@ import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayForma
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
-import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
-import com.naposystems.napoleonchat.utility.ItemAnimator
-import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
-import com.naposystems.napoleonchat.utility.isConnectedCall
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager
@@ -317,6 +314,20 @@ class HomeFragment : BaseFragment() {
             })*/
 
         (activity as MainActivity).getUser()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        validateMustGoToContacts()
+    }
+
+    private fun validateMustGoToContacts() {
+        val uris = homeViewModel.getPendingUris()
+        if (uris.isEmpty().not()) {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToContactsFragment()
+            )
+        }
     }
 
     private fun observeContact() {

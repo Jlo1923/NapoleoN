@@ -318,13 +318,13 @@ class ConversationAdapter(
     private fun getItemTypeForOneAttachment(conversation: MessageAttachmentRelation): Int {
         return when (conversation.attachmentEntityList[0].type) {
             Constants.AttachmentType.IMAGE.type -> {
-                if (conversation.isMine()) TYPE_MY_MESSAGE_IMAGE else TYPE_INCOMING_MESSAGE_IMAGE
+                if (conversation.isMine()) TYPE_MY_MULTI_ATTACHMENT else TYPE_INCOMING_MULTI_ATTACHMENT
             }
             Constants.AttachmentType.AUDIO.type -> {
                 if (conversation.isMine()) TYPE_MY_MESSAGE_AUDIO else TYPE_INCOMING_MESSAGE_AUDIO
             }
             Constants.AttachmentType.VIDEO.type -> {
-                if (conversation.isMine()) TYPE_MY_MESSAGE_VIDEO else TYPE_INCOMING_MESSAGE_VIDEO
+                if (conversation.isMine()) TYPE_MY_MULTI_ATTACHMENT else TYPE_INCOMING_MULTI_ATTACHMENT
             }
             Constants.AttachmentType.DOCUMENT.type -> {
                 if (conversation.isMine()) TYPE_MY_MESSAGE_DOCUMENT else TYPE_INCOMING_MESSAGE_DOCUMENT
