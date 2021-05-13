@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.selfDestructTime
 
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
@@ -45,6 +46,10 @@ interface IContractSelfDestructTime {
         ): Response<DeleteMessagesResDTO>
 
         fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>)
+
+        fun updateAttachments(attachmentsWithWebId: List<AttachmentEntity?>)
+        
+        fun tryMarkMessageParentAsRead(webId: String)
 
     }
 }

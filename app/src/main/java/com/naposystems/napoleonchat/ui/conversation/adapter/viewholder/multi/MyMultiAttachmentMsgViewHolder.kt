@@ -3,12 +3,12 @@ package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
+import com.naposystems.napoleonchat.ui.conversation.adapter.bindMessageDateSend
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
@@ -17,11 +17,10 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
-import com.naposystems.napoleonchat.utility.extensions.getMultipleAttachmentFileItemFromAttachmentAndMsg
-import com.naposystems.napoleonchat.utility.extensions.hide
-import com.naposystems.napoleonchat.utility.extensions.hideViews
-import com.naposystems.napoleonchat.utility.extensions.showViews
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
+
 
 class MyMultiAttachmentMsgViewHolder(
     private val binding: ConversationItemMyMessageMultiBinding,
@@ -32,6 +31,15 @@ class MyMultiAttachmentMsgViewHolder(
 
     private lateinit var msgAndAttachment: MessageAttachmentRelation
     lateinit var currentAttachments: List<AttachmentEntity>
+
+    init {
+        super.parentContainerMessage = binding.containerIncomingMessage
+//        super.progressBar = binding.progressBar
+//        super.progressBarIndeterminate = binding.progressBarIndeterminate
+//        super.imageButtonState = binding.imageButtonState
+//        super.textViewCountDown = binding.textViewCountDown
+//        super.quote = binding.quote
+    }
 
     companion object {
         fun from(
@@ -62,6 +70,38 @@ class MyMultiAttachmentMsgViewHolder(
         configListenersViews()
         bindViewModel()
         paintAttachments()
+        paintUploadFiles()
+        tryUploadAttachments()
+        paintMoreData(timeFormat)
+    }
+
+    private fun paintMoreData(timeFormat: Int?) {
+        binding.apply {
+            textViewMsg.text = msgAndAttachment.messageEntity.body
+            textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
+            timeFormat?.let {
+                bindMessageDateSend(
+                    textViewMsgDate,
+                    msgAndAttachment.messageEntity.createdAt,
+                    it
+                )
+            }
+
+        }
+    }
+
+    private fun tryUploadAttachments() {
+        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
+            it.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
+                    it.status == Constants.AttachmentStatus.ERROR.status
+        }
+        if (attachmentsFilter.isNotEmpty()) {
+            viewModel.retryUploadAllFiles(
+                attachmentsFilter,
+                binding.root.context,
+                msgAndAttachment.messageEntity
+            )
+        }
     }
 
     private fun paintAttachments() {
@@ -74,6 +114,16 @@ class MyMultiAttachmentMsgViewHolder(
                 5 -> showFiveItems(this)
                 else -> showFiveItems(this)
             }
+        }
+    }
+
+    private fun paintUploadFiles() = msgAndAttachment.attachmentEntityList.apply {
+        val countSent = this.filter { it.isSent() || it.isReceived() || it.isReaded() }
+        if (countSent.size == this.size) {
+            binding.textViewCountFiles.hide()
+        } else {
+            val data = Pair(countSent.size, this.size)
+            showQuantity(data)
         }
     }
 
@@ -133,6 +183,7 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
+        textViewCountFiles.show()
         textViewCountFiles.text = "${data.first} / ${data.second}"
     }
 
@@ -140,35 +191,36 @@ class MyMultiAttachmentMsgViewHolder(
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewOneFile)
-        viewOneFile.bindAttachments(listElements)
+
+        viewOneFile.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewTwoFiles)
-        viewTwoFiles.bindAttachments(listElements)
+        viewTwoFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles)
         showViews(viewThreeFiles)
-        viewThreeFiles.bindAttachments(listElements)
+        viewThreeFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles)
         showViews(viewFourFiles)
-        viewFourFiles.bindAttachments(listElements)
+        viewFourFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles)
         showViews(viewFiveFiles)
-        viewFiveFiles.bindAttachments(listElements)
+        viewFiveFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
 }

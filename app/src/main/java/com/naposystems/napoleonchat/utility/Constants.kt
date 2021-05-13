@@ -122,7 +122,6 @@ object Constants {
         const val PREF_NOTIFICATION_MESSAGE_CHANNEL_ID = "notification_message_channel_id"
         const val PREF_NOTIFICATION_GROUP_CHANNEL_ID = "notification_group_channel_id"
 
-
         //region RecoveryAccount
         const val PREF_ACCOUNT_RECOVERY_ATTEMPTS = "account_recovery_attempts"
         const val PREF_RECOVERY_QUESTIONS_SAVED = "recovery_questions_saved"

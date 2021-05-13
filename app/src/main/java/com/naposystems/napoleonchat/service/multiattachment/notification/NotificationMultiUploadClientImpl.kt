@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.service.download.notification
+package com.naposystems.napoleonchat.service.multiattachment.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,46 +12,47 @@ import com.naposystems.napoleonchat.R
 import timber.log.Timber
 import javax.inject.Inject
 
-const val NOTIFICATION_DOWNLOADING_MULTI = 20102022
-
-class NotificationDownloadClientImp
+class NotificationMultiUploadClientImpl
 @Inject constructor(
     private val context: Context
-) : NotificationDownloadClient {
+) : NotificationMultiUploadClient {
 
-    override fun createDownloadNotification(
+    companion object {
+        const val NOTIFICATION_UPLOADING_MULTI = 20102021
+    }
+
+    override fun createUploadNotification(
         context: Context,
-        messageId: Int
+        id: Int
     ): Notification {
+        val text = context.getString(R.string.text_sending_file_multiple) + """ ${id} """
 
-        Log.i("Jkdev download service", "bajando $messageId")
+        createNotificationChannel(id.toString())
 
-        createNotificationChannel(messageId.toString())
-
+        Log.i("Jkdev notification", text)
         val notificationBuilder = NotificationCompat.Builder(
             context,
-            context.getString(R.string.alerts_channel_id)
-        )
-            .setSmallIcon(R.drawable.ic_file_download_black)
-            .setContentTitle(context.getString(R.string.text_downloading_file))
-            .setContentText(context.getString(R.string.text_downloading_file))
+            id.toString()
+        ).setSmallIcon(R.drawable.ic_file_upload_black)
+            .setContentTitle(context.getString(R.string.text_sending_file_multiple))
+            .setContentText(text)
             .setProgress(0, 0, true)
             .setOngoing(true)
 
         return notificationBuilder.build()
     }
 
-    override fun updateDownloadNotificationProgress(max: Int, progress: Int, messageId: Int) {
 
-        Log.i("Jkdev updateando service", "bajando $messageId")
-
+    override fun updateUploadNotificationProgress(max: Int, progress: Int, id: Int) {
+        val text = context.getString(R.string.text_sending_file_multiple) + """ ${id} """
+        Log.i("Jkdev update", text)
         val notificationBuilder = NotificationCompat.Builder(
             context,
-            context.getString(R.string.alerts_channel_id)
+            id.toString()
         )
-            .setSmallIcon(R.drawable.ic_file_download_black)
-            .setContentTitle(context.getString(R.string.text_sending_file))
-            .setContentText(context.getString(R.string.text_sending_file))
+            .setSmallIcon(R.drawable.ic_file_upload_black)
+            .setContentTitle(context.getString(R.string.text_sending_file_multiple))
+            .setContentText(context.getString(R.string.text_sending_file_multiple))
             .setProgress(max, progress, false)
             .setOngoing(true)
 
@@ -59,13 +60,13 @@ class NotificationDownloadClientImp
 
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(NOTIFICATION_DOWNLOADING_MULTI, notification)
+
+        mNotificationManager.notify(id, notification)
+
     }
 
     override fun cancelNotification(id: Int) {
-
-        Log.i("Jkdev cancelled service", "cancelled $id")
-
+        Log.i("Jkdev cancelNotification", "$id")
         val notificationManager =
             ContextCompat.getSystemService(
                 context,

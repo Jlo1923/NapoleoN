@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.multipreview
+package com.naposystems.napoleonchat.ui.multipreview.viewmodels
 
 import android.content.Context
 import android.content.Intent
@@ -17,7 +17,6 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
-import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
@@ -59,16 +58,12 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         loading()
     }
 
-    private fun loading() {
-        _state.value = MultipleAttachmentPreviewState.Loading
-    }
-
     fun changeVisibilityOptions() {
         isShowingOptions = isShowingOptions.not()
-        if (isShowingOptions) {
-            actions.value = MultipleAttachmentPreviewAction.ShowAttachmentOptions
+        actions.value = if (isShowingOptions) {
+            MultipleAttachmentPreviewAction.ShowAttachmentOptions
         } else {
-            actions.value = MultipleAttachmentPreviewAction.HideAttachmentOptions
+            MultipleAttachmentPreviewAction.HideAttachmentOptions
         }
     }
 
@@ -84,33 +79,6 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             defineDefaultSelfDestructionTime()
         } else {
             createUriForFiles(filesWithoutUri)
-        }
-    }
-
-    private fun createUriForFiles(filesWithoutUri: List<MultipleAttachmentFileItem>) {
-        viewModelScope.launch {
-            filesWithoutUri.forEach { file ->
-                if (file.isVideo()) {
-                    if (BuildConfig.ENCRYPT_API) {
-                        val attachmentEntity =
-                            file.messageAndAttachment?.attachment?.toAttachmentEntity()
-                        attachmentEntity?.let { attachment ->
-                            val newUri = repositoryPreviewMedia.createTempFile(attachment)
-                            newUri?.let { file.contentUri = it.toUri() }
-                        }
-                    } else {
-                        file.contentUri = Utils.getFileUri(
-                            context = context,
-                            subFolder = Constants.CacheDirectories.VIDEOS.folder,
-                            fileName = file.messageAndAttachment?.attachment?.fileName ?: ""
-                        )
-                    }
-                }
-            }
-
-            listFiles = filesWithoutUri.toMutableList()
-            defineDefaultSelfDestructionTime()
-            showFilesAsPager()
         }
     }
 
@@ -140,7 +108,8 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun loadSelfDestructionTimeByIndex(position: Int) {
         if (modeOnlyView.not()) {
-            actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
+            actions.value =
+                MultipleAttachmentPreviewAction.ShowSelfDestruction(listFiles[position].selfDestruction)
         }
     }
 
@@ -159,6 +128,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                                 itemMessage.contactId
                             )
                         }
+                        repository.tryMarkMessageParentAsRead(attachment.webId)
                     }
                 }
             }
@@ -178,6 +148,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                 val messageResponse = repositoryMessages.sendMessage(messageEntity)
                 val attachmentsWithWebId =
                     setMessageWebIdToAttachments(attachments, messageResponse)
+                repository.updateAttachments(attachmentsWithWebId)
                 messageResponse?.let { pairData ->
                     pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
                 }
@@ -226,100 +197,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                     }
                 }
             } catch (exception: Exception) {
-                actions.value = Exit
+                exitPreview()
             }
         }
-    }
-
-    private fun showFilesAsPager() {
-        if (listFiles.isNotEmpty()) {
-            _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
-            validateMustShowTabs()
-        } else {
-            exitPreview()
-        }
-    }
-
-    private fun exitPreview() {
-        actions.value = Exit
-    }
-
-    private fun isTheLastFile(): Boolean = listFiles.isEmpty()
-
-    private fun validateMustShowTabs() {
-        if (listFiles.size == 1) {
-            actions.value = MultipleAttachmentPreviewAction.HideFileTabs
-        }
-    }
-
-    private fun selectItemInTabLayoutByIndex(selectedIndexToDelete: Int) {
-        val indexToSelectInTabLayout =
-            if (selectedIndexToDelete == 0) 0 else selectedIndexToDelete - 1
-        actions.value = SelectItemInTabLayout(indexToSelectInTabLayout)
-    }
-
-    private fun removeFileFromListAndShowListInPager(selectedIndexToDelete: Int) {
-        if (selectedIndexToDelete < listFiles.size) {
-            val file = listFiles[selectedIndexToDelete]
-            listFilesForRemoveInCreate.add(file)
-            listFiles.remove(file)
-            showFilesAsPager()
-        }
-    }
-
-    private fun defineDefaultSelfDestructionTime() {
-        contactEntity?.let {
-            viewModelScope.launch {
-                val selfDestructionTime = repository.getSelfDestructTimeAsIntByContact(it.id)
-                val selfDestructionTimeFinal = if (selfDestructionTime < 0) {
-                    repository.getSelfDestructTime()
-                } else {
-                    selfDestructionTime
-                }
-                listFiles.forEach { it.selfDestruction = selfDestructionTimeFinal }
-                showFilesAsPager()
-            }
-        }
-    }
-
-
-    private fun setMessageWebIdToAttachments(
-        attachments: List<AttachmentEntity?>,
-        messageResponse: Pair<MessageEntity?, String>?
-    ): List<AttachmentEntity?> {
-        attachments.forEach { attachment ->
-            attachment?.let { it.messageWebId = messageResponse?.second ?: "" }
-        }
-        return attachments
-    }
-
-    private fun getItemMessageToSend(message: String): ItemMessage {
-        return ItemMessage(
-            messageString = message,
-            attachment = null,
-            numberAttachments = listFiles.size,
-            selfDestructTime = getHighestTimeInFiles(),
-            quote = "",
-            contact = contactEntity
-        )
-    }
-
-    private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
-
-    private fun initUploadServiceForSendFiles(
-        messageEntity: MessageEntity,
-        attachments: List<AttachmentEntity?>
-    ) {
-        // we can create notification for upload attachments
-        // todo: mover esto a un activity para usar el context
-        val intent = Intent(context, MultipleUploadService::class.java).apply {
-            putExtras(Bundle().apply {
-                putParcelable(MESSAGE_KEY, messageEntity)
-                putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
-            })
-        }
-        context.startService(intent)
-        actions.value = MultipleAttachmentPreviewAction.ExitToConversation
     }
 
     fun markAttachmentVideoAsRead(fileItem: MultipleAttachmentFileItem) {
@@ -378,17 +258,144 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun validateExitInCreateMode() {
         if (listFilesForRemoveInCreate.isEmpty()) {
-            actions.value = Exit
+            exitPreview()
         } else {
             repository.saveDeleteFilesInCache(listFilesForRemoveInCreate.toList())
-            actions.value = ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
+            actions.value =
+                MultipleAttachmentPreviewAction.ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
         }
     }
 
     fun onChangeSelfDestruction(iconSelfDestruction: Int) {
         contactEntity?.let {
-            actions.value = OnChangeSelfDestruction(it.id, iconSelfDestruction)
+            actions.value =
+                MultipleAttachmentPreviewAction.OnChangeSelfDestruction(it.id, iconSelfDestruction)
         }
     }
+
+    private fun showFilesAsPager() {
+        if (listFiles.isNotEmpty()) {
+            _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
+            validateMustShowTabs()
+        } else {
+            exitPreview()
+        }
+    }
+
+    private fun exitPreview() {
+        actions.value = MultipleAttachmentPreviewAction.Exit
+    }
+
+    private fun isTheLastFile(): Boolean = listFiles.isEmpty()
+
+    private fun validateMustShowTabs() {
+        if (listFiles.size == 1) {
+            actions.value = MultipleAttachmentPreviewAction.HideFileTabs
+        }
+    }
+
+    private fun selectItemInTabLayoutByIndex(selectedIndexToDelete: Int) {
+        val indexToSelectInTabLayout =
+            if (selectedIndexToDelete == 0) 0 else selectedIndexToDelete - 1
+        actions.value =
+            MultipleAttachmentPreviewAction.SelectItemInTabLayout(indexToSelectInTabLayout)
+    }
+
+    private fun removeFileFromListAndShowListInPager(selectedIndexToDelete: Int) {
+        if (selectedIndexToDelete < listFiles.size) {
+            val file = listFiles[selectedIndexToDelete]
+            listFilesForRemoveInCreate.add(file)
+            listFiles.remove(file)
+            showFilesAsPager()
+        }
+    }
+
+    private fun defineDefaultSelfDestructionTime() {
+        contactEntity?.let {
+            viewModelScope.launch {
+                val selfDestructionTime = repository.getSelfDestructTimeAsIntByContact(it.id)
+                val selfDestructionTimeFinal = if (selfDestructionTime < 0) {
+                    repository.getSelfDestructTime()
+                } else {
+                    selfDestructionTime
+                }
+                listFiles.forEach { it.selfDestruction = selfDestructionTimeFinal }
+                showFilesAsPager()
+            }
+        }
+    }
+
+    private fun setMessageWebIdToAttachments(
+        attachments: List<AttachmentEntity?>,
+        messageResponse: Pair<MessageEntity?, String>?
+    ): List<AttachmentEntity?> {
+        attachments.forEach { attachment ->
+            attachment?.let {
+                it.messageWebId = messageResponse?.second ?: ""
+            }
+        }
+        return attachments
+    }
+
+    private fun getItemMessageToSend(message: String): ItemMessage {
+        return ItemMessage(
+            messageString = message,
+            attachment = null,
+            numberAttachments = listFiles.size,
+            selfDestructTime = getHighestTimeInFiles(),
+            quote = "",
+            contact = contactEntity
+        )
+    }
+
+    private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
+
+    private fun loading() {
+        _state.value = MultipleAttachmentPreviewState.Loading
+    }
+
+    private fun initUploadServiceForSendFiles(
+        messageEntity: MessageEntity,
+        attachments: List<AttachmentEntity?>
+    ) {
+        // we can create notification for upload attachments
+        // todo: mover esto a un activity para usar el context
+        val intent = Intent(context, MultipleUploadService::class.java).apply {
+            putExtras(Bundle().apply {
+                putParcelable(MESSAGE_KEY, messageEntity)
+                putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
+            })
+        }
+        context.startService(intent)
+        actions.value = MultipleAttachmentPreviewAction.ExitToConversation
+    }
+
+    private fun createUriForFiles(filesWithoutUri: List<MultipleAttachmentFileItem>) {
+        viewModelScope.launch {
+            filesWithoutUri.forEach { file ->
+                if (file.isVideo()) {
+                    if (BuildConfig.ENCRYPT_API) {
+                        val attachmentEntity =
+                            file.messageAndAttachment?.attachment?.toAttachmentEntity()
+                        attachmentEntity?.let { attachment ->
+                            val newUri = repositoryPreviewMedia.createTempFile(attachment)
+                            newUri?.let { file.contentUri = it.toUri() }
+                        }
+                    } else {
+                        file.contentUri = Utils.getFileUri(
+                            context = context,
+                            subFolder = Constants.CacheDirectories.VIDEOS.folder,
+                            fileName = file.messageAndAttachment?.attachment?.fileName ?: ""
+                        )
+                    }
+                }
+            }
+
+            listFiles = filesWithoutUri.toMutableList()
+            defineDefaultSelfDestructionTime()
+            showFilesAsPager()
+        }
+    }
+
 
 }

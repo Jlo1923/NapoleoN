@@ -74,7 +74,9 @@ import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
 import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
+import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentItemPreview
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewItemRepository
 import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
 import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
@@ -246,5 +248,10 @@ abstract class RepositoryModule {
     abstract fun provideDownloadServiceRepository(
         repository: DownloadServiceRepository
     ): IContractDownloadService.Repository
+
+    @Binds
+    abstract fun provideMultipleAttachmentPreviewItemRepository(
+        repository: MultipleAttachmentPreviewItemRepository
+    ): IContractMultipleAttachmentItemPreview.Repository
 
 }

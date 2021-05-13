@@ -15,5 +15,7 @@
     <string name="multi_button_delete_for_me">Eliminar para mí</string>
     <string name="multi_button_delete_for_all">Eliminar para todos</string>
 
+    <string name="multi_max_files_from_outside">No puedes enviar mas de 10 archivos</string>
+
 
 </resources>

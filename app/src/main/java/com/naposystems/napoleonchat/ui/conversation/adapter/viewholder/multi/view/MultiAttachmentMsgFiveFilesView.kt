@@ -26,7 +26,7 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
 
     lateinit var listAttachments: List<AttachmentEntity>
 
-    fun bindAttachments(listAttachments: List<AttachmentEntity>) {
+    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) {
         this.listAttachments = listAttachments
         viewBinding.apply {
             viewFileOne.defineListener(this@MultiAttachmentMsgFiveFilesView)
@@ -35,11 +35,11 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
             viewFileFour.defineListener(this@MultiAttachmentMsgFiveFilesView)
             viewFileFive.defineListener(this@MultiAttachmentMsgFiveFilesView)
 
-            viewFileOne.bindAttachment(listAttachments[0], 0)
-            viewFileTwo.bindAttachment(listAttachments[1], 1)
-            viewFileThree.bindAttachment(listAttachments[2], 2)
-            viewFileFour.bindAttachment(listAttachments[3], 3)
-            viewFileFive.bindAttachment(listAttachments[4], 4)
+            viewFileOne.bindAttachment(listAttachments[0], 0, mine)
+            viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
+            viewFileThree.bindAttachment(listAttachments[2], 2, mine)
+            viewFileFour.bindAttachment(listAttachments[3], 3, mine)
+            viewFileFive.bindAttachment(listAttachments[4], 4, mine)
         }
         validateMustShowMoreFiles()
         defineViewListeners()

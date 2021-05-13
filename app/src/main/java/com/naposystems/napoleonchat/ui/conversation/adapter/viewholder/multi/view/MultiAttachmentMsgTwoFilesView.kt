@@ -23,11 +23,11 @@ class MultiAttachmentMsgTwoFilesView @JvmOverloads constructor(
             true
         )
 
-    fun bindAttachments(listAttachments: List<AttachmentEntity>) = viewBinding.apply {
+    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) = viewBinding.apply {
         viewFileOne.defineListener(this@MultiAttachmentMsgTwoFilesView)
         viewFileTwo.defineListener(this@MultiAttachmentMsgTwoFilesView)
-        viewFileOne.bindAttachment(listAttachments[0], 0)
-        viewFileTwo.bindAttachment(listAttachments[1], 1)
+        viewFileOne.bindAttachment(listAttachments[0], 0, mine)
+        viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {

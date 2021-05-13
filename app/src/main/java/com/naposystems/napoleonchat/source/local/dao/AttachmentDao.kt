@@ -1,11 +1,13 @@
 package com.naposystems.napoleonchat.source.local.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AttachmentDao {
@@ -45,6 +47,13 @@ interface AttachmentDao {
 
     @Query("SELECT * FROM  ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} =:id")
     suspend fun getAttachmentByWebId(id: String): AttachmentEntity?
+
+    @Query(
+        "SELECT * " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} = :id"
+    )
+    fun getAttachmentByWebIdLiveData(id: String): LiveData<AttachmentEntity?>
 
     @Query(
         "SELECT ${DBConstants.Attachment.COLUMN_SELF_DESTRUCTION_AT} " +
@@ -87,6 +96,15 @@ interface AttachmentDao {
         webId: String,
         status: Int
     )
+
+    @Query(
+        "SELECT * " +
+                "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                "WHERE ${DBConstants.Attachment.COLUMN_SELF_DESTRUCTION_AT} <> 0 " +
+                "AND ${DBConstants.Attachment.COLUMN_STATUS} = 11 " +
+                "AND ${DBConstants.Attachment.COLUMN_TOTAL_SELF_DESTRUCTION_AT} < strftime('%s','now')"
+    )
+    fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
 
 
 }

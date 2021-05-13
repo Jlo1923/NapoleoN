@@ -154,7 +154,7 @@ class HomeViewModel
         _jsonCleaned.value = null
     }
 
-    fun verifyMessagesToDelete() {
+    fun verifyMessagesToDelete() = viewModelScope.launch {
         repository.verifyMessagesToDelete()
     }
 
@@ -183,5 +183,13 @@ class HomeViewModel
                 Timber.e(ex)
             }
         }
+    }
+
+    fun verifyMessagesReceived() {
+        repository.verifyMessagesReceived()
+    }
+
+    fun verifyMessagesRead() {
+        repository.verifyMessagesRead()
     }
 }

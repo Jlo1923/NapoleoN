@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.service.syncManager
 
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.service.socketClient.GetMessagesSocketListener
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
@@ -24,7 +23,10 @@ interface SyncManager {
 
     fun insertNewMessage(newMessageDataEventRes: NewMessageDataEventRes)
 
-    fun updateMessagesStatus(messagesWebIds: List<String>, state: Int)
+    fun updateMessagesStatus(
+        messagesWebIds: List<String>,
+        state: Int
+    )
 
     fun updateAttachmentsStatus(attachmentsWebIds: List<String>, status: Int)
 
@@ -53,4 +55,8 @@ interface SyncManager {
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 
     fun rejectSecondCallCall(contactId: Int, channelName: String)
+
+    fun tryMarkMessageParentAsReceived(idsAttachments: List<String>)
+
+    fun tryMarkMessageParentAsRead(idsAttachments: List<String>)
 }

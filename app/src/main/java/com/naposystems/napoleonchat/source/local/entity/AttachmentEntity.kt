@@ -80,8 +80,11 @@ data class AttachmentEntity(
         return type == Constants.AttachmentType.VIDEO.type && isCompressed.not()
     }
 
+    fun isDownload(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
     fun isSent(): Boolean = status == AttachmentStatus.SENT.status
-    
+    fun isReceived(): Boolean = status == AttachmentStatus.RECEIVED.status
+    fun isReaded(): Boolean = status == AttachmentStatus.READED.status
+
     fun isDownloaded(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
 
 }
