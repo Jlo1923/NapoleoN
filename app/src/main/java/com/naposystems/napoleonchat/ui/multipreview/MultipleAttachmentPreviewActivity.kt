@@ -282,7 +282,21 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             is SendMessageToRemote -> sendMessageToRemote(action)
             is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
             is OnChangeSelfDestruction -> onChangeSelfDestruction(action)
+            is ExitToConversationAndSendData -> exitToConversationAndSendData(action)
         }
+    }
+
+    private fun exitToConversationAndSendData(action: ExitToConversationAndSendData) {
+
+        val intentResult = Intent()
+        var data = Bundle().apply {
+            putParcelable(EXTRA_MULTI_MSG_TO_SEND, action.messageEntity)
+            putParcelableArrayList(EXTRA_MULTI_ATTACHMENTS_TO_SEND, ArrayList(action.attachments))
+        }
+        intentResult.putExtras(data)
+        setResult(RESULT_OK, intentResult)
+        finish()
+
     }
 
     private fun exitPreviewAndSendDeleteFiles(

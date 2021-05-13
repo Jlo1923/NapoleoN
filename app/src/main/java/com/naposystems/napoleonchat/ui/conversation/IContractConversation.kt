@@ -112,7 +112,12 @@ interface IContractConversation {
         suspend fun getLocalUser(): UserEntity
         suspend fun insertMessage(messageEntity: MessageEntity): Long
         fun insertListMessage(messageEntityList: List<MessageEntity>)
-        fun updateMessage(messageEntity: MessageEntity)
+
+        fun updateMessage(
+            messageEntity: MessageEntity,
+            mustUpdateSelfDestruction: Boolean = true
+        )
+
         suspend fun sendTextMessagesRead(contactId: Int)
         suspend fun sendMissedCallRead(contactId: Int)
         fun insertAttachment(attachmentEntity: AttachmentEntity): Long

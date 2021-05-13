@@ -33,6 +33,11 @@ sealed class MultipleAttachmentPreviewAction {
         val attachments: List<AttachmentEntity?>
     ) : MultipleAttachmentPreviewAction()
 
+    class ExitToConversationAndSendData (
+        val messageEntity: MessageEntity,
+        val attachments: List<AttachmentEntity?>
+    ) : MultipleAttachmentPreviewAction()
+
     class ExitAndSendDeleteFiles(
         val listFilesForRemoveInCreate: List<MultipleAttachmentFileItem>
     ) : MultipleAttachmentPreviewAction()

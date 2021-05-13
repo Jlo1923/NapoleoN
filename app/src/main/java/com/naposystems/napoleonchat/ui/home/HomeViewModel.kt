@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.home
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,13 +11,15 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class HomeViewModel
 @Inject constructor(
-    private val repository: HomeRepository
+    private val repository: HomeRepository,
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) : ViewModel() {
 
     private lateinit var _userEntity: LiveData<UserEntity>
@@ -191,5 +194,12 @@ class HomeViewModel
 
     fun verifyMessagesRead() {
         repository.verifyMessagesRead()
+    }
+
+    fun getPendingUris(): List<Uri> {
+        val urisString = sharedPreferencesManager.getStringSet("test")
+        val listString = urisString?.toList()
+        val listUris = listString?.map { Uri.parse(it) }
+        return listUris ?: emptyList()
     }
 }
