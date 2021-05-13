@@ -185,6 +185,7 @@ class ConversationViewModel @Inject constructor(
                     attachment?.getSelfAutoDestructionForSave(selfDestructTime) ?: 0
 
                 if (messageString.isNotEmpty() || attachment != null) {
+                    attachment?.selfDestructionAt = selfAutoDestruction
                     val message = insertNewMessage(selfAutoDestruction)
                     contact?.let { deleteMessageNotSent(it.id) }
                     tryInsertAttachIfExists(message, attachment)

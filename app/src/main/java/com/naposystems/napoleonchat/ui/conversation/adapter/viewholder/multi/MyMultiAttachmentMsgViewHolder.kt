@@ -3,12 +3,14 @@ package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemMyMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.bindMessageDateSend
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
@@ -18,9 +20,10 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.lis
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENDING
 import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
-
 
 class MyMultiAttachmentMsgViewHolder(
     private val binding: ConversationItemMyMessageMultiBinding,
@@ -66,13 +69,56 @@ class MyMultiAttachmentMsgViewHolder(
     ) {
         super.bind(item, clickListener, isFirst, timeFormat, mediaPlayerManager)
         msgAndAttachment = item
-        //viewModel.getAttachmentsInMessage(item.messageEntity.id)
         configListenersViews()
         bindViewModel()
         paintAttachments()
         paintUploadFiles()
-        //tryUploadAttachments()
         paintMoreData(timeFormat)
+        paintMessageStatus()
+        defineListeners()
+    }
+
+    private fun paintMessageStatus() = binding.apply {
+        when (msgAndAttachment.messageEntity.status) {
+            ERROR.status -> paintMessageError()
+            SENDING.status -> paintMessageSending()
+            else -> paintMessageOk()
+        }
+    }
+
+    private fun paintMessageOk() = binding.apply {
+        hideViews(progressBarIndeterminate, imageButtonState)
+        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+        tryUploadAttachments()
+    }
+
+    private fun paintMessageSending() =
+        binding.apply {
+            progressBarIndeterminate.show()
+            paintMessageError()
+        }
+
+    private fun paintMessageError() = binding.apply {
+        showViews(imageButtonState)
+        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            R.drawable.ic_message_error,
+            0
+        )
+    }
+
+    private fun defineListeners() {
+        binding.apply {
+            imageButtonState.setOnClickListener {
+                listener.onMultipleAttachmentMsgAction(
+                    MultiAttachmentMsgAction.SendMessageToRemote(
+                        msgAndAttachment.messageEntity,
+                        msgAndAttachment.attachmentEntityList
+                    )
+                )
+            }
+        }
     }
 
     private fun paintMoreData(timeFormat: Int?) {
@@ -86,13 +132,6 @@ class MyMultiAttachmentMsgViewHolder(
                     it
                 )
             }
-
-            if (msgAndAttachment.messageEntity.status == Constants.MessageStatus.ERROR.status) {
-                imageButtonState.show()
-            } else {
-                tryUploadAttachments()
-            }
-
         }
     }
 
@@ -161,6 +200,7 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun configListenersViews() = binding.apply {
+        viewOneFile.defineListener(this@MyMultiAttachmentMsgViewHolder)
         viewTwoFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
         viewThreeFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
         viewFourFiles.defineListener(this@MyMultiAttachmentMsgViewHolder)
@@ -203,28 +243,28 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
-        hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles)
+        hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles, viewOneFile)
         showViews(viewTwoFiles)
         viewTwoFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
-        hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles)
+        hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles, viewOneFile)
         showViews(viewThreeFiles)
         viewThreeFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles)
+        hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles, viewOneFile)
         showViews(viewFourFiles)
         viewFourFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 
     private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
         currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles)
+        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewOneFile)
         showViews(viewFiveFiles)
         viewFiveFiles.bindAttachments(listElements, msgAndAttachment.isMine())
     }
