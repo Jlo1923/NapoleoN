@@ -37,11 +37,6 @@ class MyMultiAttachmentMsgViewHolder(
 
     init {
         super.parentContainerMessage = binding.containerIncomingMessage
-//        super.progressBar = binding.progressBar
-//        super.progressBarIndeterminate = binding.progressBarIndeterminate
-//        super.imageButtonState = binding.imageButtonState
-//        super.textViewCountDown = binding.textViewCountDown
-//        super.quote = binding.quote
     }
 
     companion object {
@@ -81,25 +76,38 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintMessageStatus() = binding.apply {
         when (msgAndAttachment.messageEntity.status) {
             ERROR.status -> paintMessageError()
-            SENDING.status -> paintMessageSending()
             else -> paintMessageOk()
         }
     }
 
-    private fun paintMessageOk() = binding.apply {
-        hideViews(progressBarIndeterminate, imageButtonState)
-        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
-        tryUploadAttachments()
+    private fun paintMessageOk() {
+        binding.apply {
+            hideViews(progressBarIndeterminate, imageButtonState)
+            removeIconErrorMsg()
+            tryUploadAttachments()
+        }
     }
 
-    private fun paintMessageSending() =
-        binding.apply {
-            progressBarIndeterminate.show()
-            paintMessageError()
-        }
+    private fun ConversationItemMyMessageMultiBinding.removeIconErrorMsg() {
+        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+    }
 
-    private fun paintMessageError() = binding.apply {
-        showViews(imageButtonState)
+    private fun paintMessageSending() {
+        binding.apply {
+            showViews(progressBarIndeterminate, imageButtonState)
+        }
+    }
+
+
+    private fun paintMessageError() {
+        binding.apply {
+            showViews(imageButtonState)
+            hideViews(progressBarIndeterminate)
+            showIconErrorMsg()
+        }
+    }
+
+    private fun ConversationItemMyMessageMultiBinding.showIconErrorMsg() {
         textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
@@ -117,6 +125,7 @@ class MyMultiAttachmentMsgViewHolder(
                         msgAndAttachment.attachmentEntityList
                     )
                 )
+                paintMessageSending()
             }
         }
     }

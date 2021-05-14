@@ -259,7 +259,7 @@ class HomeRepositoryImp @Inject constructor(
     }
 
     override fun verifyMessagesReceived() {
-        syncManager.notifyMessagesReaded()
+        syncManager.verifyMessagesReceived()
     }
 
     override fun verifyMessagesRead() {
