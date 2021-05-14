@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ExitToConversationAndSendData
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState.SuccessFilesAsPager
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.Constants
@@ -103,7 +104,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         if (isTheLastFile()) {
             exitPreview()
         } else {
-            selectItemInTabLayoutByIndex(selectedIndexToDelete)
+            //selectItemInTabLayoutByIndex(selectedIndexToDelete)
         }
     }
 
@@ -271,9 +272,11 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    private fun showFilesAsPager() {
+    private fun showFilesAsPager(indexToSelect: Int? = null) {
         if (listFiles.isNotEmpty()) {
-            _state.value = MultipleAttachmentPreviewState.SuccessFilesAsPager(ArrayList(listFiles))
+            val indexToSelectInPager =
+                indexToSelect?.let { if (it == 0) 0 else it - 1 } ?: run { null }
+            _state.value = SuccessFilesAsPager(ArrayList(listFiles), indexToSelectInPager)
             validateMustShowTabs()
         } else {
             exitPreview()
@@ -304,7 +307,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             val file = listFiles[selectedIndexToDelete]
             listFilesForRemoveInCreate.add(file)
             listFiles.remove(file)
-            showFilesAsPager()
+            showFilesAsPager(selectedIndexToDelete)
         }
     }
 
