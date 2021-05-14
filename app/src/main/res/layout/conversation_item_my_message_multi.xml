@@ -110,17 +110,6 @@
         app:layout_constraintTop_toTopOf="@id/container_message"
         tools:visibility="visible" />
 
-    <com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
-        android:id="@+id/progressBar"
-        style="@style/CircleProgressBar"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
-        app:layout_constraintEnd_toEndOf="@id/imageButton_state"
-        app:layout_constraintStart_toStartOf="@id/imageButton_state"
-        app:layout_constraintTop_toTopOf="@id/imageButton_state"
-        tools:progress="70"
-        tools:visibility="visible" />
-
     <ProgressBar
         android:id="@+id/progressBar_indeterminate"
         style="@style/ProgressIndeterminate"

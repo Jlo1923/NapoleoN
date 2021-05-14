@@ -7,7 +7,8 @@ sealed class MultipleAttachmentPreviewState {
     object Loading : MultipleAttachmentPreviewState()
 
     class SuccessFilesAsPager(
-        val listFiles: ArrayList<MultipleAttachmentFileItem>
+        val listFiles: ArrayList<MultipleAttachmentFileItem>,
+        val indexToSelect: Int? = null
     ) : MultipleAttachmentPreviewState()
 
     object Error : MultipleAttachmentPreviewState()
