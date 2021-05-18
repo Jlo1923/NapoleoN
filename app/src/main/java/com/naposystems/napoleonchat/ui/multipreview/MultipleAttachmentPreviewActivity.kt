@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.ui.multipreview
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.size
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -11,12 +12,12 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPreviewBinding
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
-import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemAttachment
 import com.naposystems.napoleonchat.ui.multipreview.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.*
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState.SuccessFilesAsPager
 import com.naposystems.napoleonchat.ui.multipreview.fragments.dialog.MultipleAttachmentRemoveAttachmentDialogFragment
 import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachmentPreviewListener
 import com.naposystems.napoleonchat.ui.multipreview.listeners.MultipleAttachmentRemoveListener
@@ -27,6 +28,8 @@ import com.naposystems.napoleonchat.ui.multipreview.model.MODE_CREATE
 import com.naposystems.napoleonchat.ui.multipreview.model.MODE_RECEIVER
 import com.naposystems.napoleonchat.ui.multipreview.model.MODE_SENDER
 import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemoveItem
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.multipreview.views.ViewMultipleAttachmentTabView
 import com.naposystems.napoleonchat.ui.selfDestructTime.Location
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
@@ -47,8 +50,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-class MultipleAttachmentPreviewActivity
-    : AppCompatActivity(),
+class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     ViewAttachmentOptionsListener,
     MultipleAttachmentPreviewListener,
     MultipleAttachmentRemoveListener {
@@ -57,6 +59,8 @@ class MultipleAttachmentPreviewActivity
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: MultipleAttachmentPreviewViewModel
+
+    private lateinit var viewModelItem: MultipleAttachmentPreviewItemViewModel
 
     private lateinit var viewBinding: ActivityMultipleAttachmentPreviewBinding
 
@@ -69,6 +73,9 @@ class MultipleAttachmentPreviewActivity
 
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentPreviewViewModel::class.java)
+
+        viewModelItem = ViewModelProvider(this, viewModelFactory)
+            .get(MultipleAttachmentPreviewItemViewModel::class.java)
 
         lifecycle.addObserver(viewModel)
 
@@ -121,10 +128,10 @@ class MultipleAttachmentPreviewActivity
     }
 
     override fun deleteAttachmentByDestructionTime(
-        attachmentEntity: MultipleAttachmentItemAttachment,
+        attachmentWebId: String,
         position: Int
     ) {
-        viewModel.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
+        viewModel.deleteAttachmentByDestructionTime(attachmentWebId, position)
     }
 
     private fun onChangeSelfDestruction(action: MultipleAttachmentPreviewAction.OnChangeSelfDestruction) {
@@ -191,7 +198,10 @@ class MultipleAttachmentPreviewActivity
                 viewPreviewBottom.getTabLayout(),
                 viewPagerAttachments
             ) { tab, position ->
-                val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
+                val view = ViewMultipleAttachmentTabView(
+                    viewBinding.root.context,
+                    viewModel = viewModelItem
+                )
                 view.bindFile(it[position])
                 view.selected(position == 0)
                 tab.customView = view
@@ -232,18 +242,25 @@ class MultipleAttachmentPreviewActivity
         when (state) {
             MultipleAttachmentPreviewState.Error -> TODO()
             MultipleAttachmentPreviewState.Loading -> showLoading()
-            is MultipleAttachmentPreviewState.SuccessFilesAsPager -> showFilesAsPager(state.listFiles)
+            is SuccessFilesAsPager -> showFilesAsPager(state)
         }
     }
 
-    private fun showFilesAsPager(listFiles: ArrayList<MultipleAttachmentFileItem>) {
+    private fun showFilesAsPager(state: SuccessFilesAsPager) {
         showPagerAndOptions()
-        adapter = MultipleAttachmentFragmentAdapter(this, listFiles)
-        configureTabsAndViewPager(listFiles)
+        adapter = MultipleAttachmentFragmentAdapter(this, state.listFiles)
+        configureTabsAndViewPager(state.listFiles)
         addListenerToPager()
         viewBinding.viewPreviewBottom.postDelayed(
-            { extractSelectedIndex() }, 500
+            { extractSelectedIndex() }, 250
         )
+
+        state.indexToSelect?.let {
+            viewBinding.viewPreviewBottom.postDelayed(
+                { selectElementInTabLayout(it) }, 300
+            )
+        }
+
     }
 
     private fun showLoading() = viewBinding.apply {
@@ -268,12 +285,26 @@ class MultipleAttachmentPreviewActivity
             RemoveAttachForReceiver -> showBottomDialogForRemove(getTextForDialogForReceiver())
             RemoveAttachForSender -> showBottomDialogForRemove(getTextForDialogForSender())
             is ShowSelectFolderName -> TODO()
-            is SelectItemInTabLayout -> removeElementPager(action.indexItem)
+            is SelectItemInTabLayout -> selectElementInTabLayout(action.indexItem)
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
             is SendMessageToRemote -> sendMessageToRemote(action)
             is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
             is OnChangeSelfDestruction -> onChangeSelfDestruction(action)
+            is ExitToConversationAndSendData -> exitToConversationAndSendData(action)
         }
+    }
+
+    private fun exitToConversationAndSendData(action: ExitToConversationAndSendData) {
+
+        val intentResult = Intent()
+        var data = Bundle().apply {
+            putParcelable(EXTRA_MULTI_MSG_TO_SEND, action.messageEntity)
+            putParcelableArrayList(EXTRA_MULTI_ATTACHMENTS_TO_SEND, ArrayList(action.attachments))
+        }
+        intentResult.putExtras(data)
+        setResult(RESULT_OK, intentResult)
+        finish()
+
     }
 
     private fun exitPreviewAndSendDeleteFiles(
@@ -374,9 +405,15 @@ class MultipleAttachmentPreviewActivity
 
     private fun hideBottomTabs() = viewBinding.viewPreviewBottom.hideTabLayout()
 
-    private fun removeElementPager(indexItem: Int) =
+    private fun selectElementInTabLayout(indexItem: Int) =
         viewBinding.viewPreviewBottom.getTabLayout().apply {
-            selectTab(getTabAt(indexItem))
+            val indexSelect =
+                if (viewBinding.viewPreviewBottom.getTabLayout().tabCount == indexItem) {
+                    indexItem - 1
+                } else {
+                    indexItem
+                }
+            selectTab(getTabAt(indexSelect))
         }
 
     private fun showAttachmentOptionsWithoutAnim() =
@@ -433,7 +470,10 @@ class MultipleAttachmentPreviewActivity
         val selectedFileToSee = viewBinding.viewPagerAttachments.currentItem
         viewModel.updateSelfDestructionForItemPosition(selectedFileToSee, selfDestructTimeSelected)
         val iconSelfDestruction = getDrawableSelfDestruction(selfDestructTimeSelected)
-        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(iconSelfDestruction, selfDestructTimeSelected)
+        viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(
+            iconSelfDestruction,
+            selfDestructTimeSelected
+        )
     }
 
     private fun hideAnimAttachmentOptions() = viewBinding.apply {

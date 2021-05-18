@@ -3,11 +3,11 @@ final String REGION = "us-west-2"
 
 node('master') {
     stage("Cleaning existing resources"){
-        def versionName = params.VersionName
+        def newVersionName = params.VersionName
         def environment = params.Environment
         def recentChangeEs = params.recentChangeEs
         def recentChangeEn = params.recentChangeEn
-        def version
+        def currentVersionName
         cleanWs()
     }
     if(environment == "prod"){
@@ -30,21 +30,29 @@ node('master') {
     }
 
     stage("Generating version") {
-        versionName = "${gitCommitMessage}"
+
+        currentVersionName = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | sed 's/versionName//g'", returnStdout: true).trim()
         if (params.VersionName?.trim()) {
-            versionName = "${params.VersionName}"
+            newVersionName = "${params.VersionName}"
+        } else {
+            newVersionName = "${gitCommitMessage}"
         }
-        version = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | sed 's/versionName//g'", returnStdout: true).trim()
-        versionCode = sh(script: "cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'", returnStdout: true).trim().toInteger()
-        increasedVersion = versionCode + 1
-        finalVersionName = "1.1.${increasedVersion}-${versionName}"
-        sh("sed -i 's/versionCode ${versionCode}/versionCode ${increasedVersion}/g' app/build.gradle")
-        sh("sed -i 's/${version}/${finalVersionName}/g' app/build.gradle")
+
+        currentVersionCode = sh(script: "cat app/build.gradle | grep \"versionCode\" | sed 's/\"//g' | tr -d \" \\t\" | sed 's/versionCode//g'", returnStdout: true).trim().toInteger()
+        if (params.VersionCode?.trim()) {
+            input 'This parameter is going to change the version code of the deploy are you sure?'
+            newVersionCode = "${params.VersionCode}"
+        } else {
+            newVersionCode = currentVersionCode + 1
+        }
+        finalVersionName = "1.1.${newVersionCode}-${newVersionName}"
+        sh("sed -i 's/versionCode ${currentVersionCode}/versionCode ${newVersionCode}/g' app/build.gradle")
+        sh("sed -i 's/${currentVersionName}/${finalVersionName}/g' app/build.gradle")
     }
 
     stage("Building"){
         echo "VersionName ${finalVersionName}"
-        echo "VersionCode ${increasedVersion}"
+        echo "VersionCode ${newVersionCode}"
         sh(script:"chmod +x ./gradlew")
         sh(script:"./gradlew clean bundle")
         script {
@@ -66,17 +74,17 @@ node('master') {
             sh("git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android.git")
             sh("cd nuevo-napoleon-secret-chat-android")
             sh("git checkout development")
-            sh("sed -i 's/versionCode ${versionCode}/versionCode ${increasedVersion}/g' app/build.gradle")
-            sh("sed -i 's/${version}/${finalVersionName}/g' app/build.gradle")
+            sh("sed -i 's/versionCode ${currentVersionCode}/versionCode ${newVersionCode}/g' app/build.gradle")
+            sh("sed -i 's/${currentVersionName}/${finalVersionName}/g' app/build.gradle")
             sh("git add app/build.gradle")
-            sh("git commit -a -m \"Increasing-version-to-${increasedVersion}\"")
+            sh("git commit -a -m \"Increasing-version-to-${newVersionCode}\"")
             sh("git push")
         }
     }
 
     stage("Slack notification"){
         HORA = sh(script:"date +%T", returnStdout: true).trim();
-        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${finalVersionName}* con código de version *${increasedVersion}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
+        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${finalVersionName}* con código de version *${newVersionCode}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
     }
 
     cleanWs()

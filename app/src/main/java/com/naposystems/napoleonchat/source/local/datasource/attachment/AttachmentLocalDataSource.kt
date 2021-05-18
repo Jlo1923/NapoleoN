@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.source.local.datasource.attachment
 
+import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import kotlinx.coroutines.flow.Flow
 
 interface AttachmentLocalDataSource {
 
@@ -23,5 +25,9 @@ interface AttachmentLocalDataSource {
     fun existAttachmentById(id: String): Boolean
 
     suspend fun getAttachmentByWebId(webId: String): AttachmentEntity?
+
+    fun getAttachmentByWebIdLiveData(webId: String): LiveData<AttachmentEntity?>
+
+    fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
 
 }

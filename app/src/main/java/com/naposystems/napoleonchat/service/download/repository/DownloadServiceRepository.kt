@@ -38,6 +38,7 @@ class DownloadServiceRepository @Inject constructor(
         uploadJob = coroutineScope.launch {
             val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
             try {
+                updateAttachmentStatus(attachment, Constants.AttachmentStatus.DOWNLOADING.status)
                 val response = napoleonApi.downloadFileByUrl(attachment.body)
                 if (response.isSuccessful) {
                     response.body()?.let { body ->

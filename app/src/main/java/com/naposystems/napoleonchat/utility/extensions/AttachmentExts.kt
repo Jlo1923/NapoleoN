@@ -100,7 +100,7 @@ fun MessageEntity.toMessageReqDto(cryptoMessage: CryptoMessage): MessageReqDTO =
     quoted = "",
     body = getBody(cryptoMessage),
     numberAttachments = numberAttachments,
-    destroy = 7,
+    destroy = selfDestructionAt,
     messageType = Constants.MessageTextType.NORMAL.type,
     uuidSender = uuid ?: UUID.randomUUID().toString()
 )
@@ -140,4 +140,12 @@ fun getMultipleAttachmentFileItemFromAttachmentAndMsg(
         selfDestruction = 0,
         messageAndAttachment = message
     )
+}
+
+fun String.forMimeTypeNapoleon(): String {
+    return when {
+        this.startsWith("image") -> Constants.AttachmentType.IMAGE.type
+        this.startsWith("video") -> Constants.AttachmentType.VIDEO.type
+        else -> ""
+    }
 }

@@ -176,7 +176,7 @@ class SharedPreferencesManager @Inject constructor(
         return stringSet?.toSet()
     }
 
-    fun removeSetdsToRemove() {
+    fun removeSetIdsToRemove() {
         with(sharedPreferences.edit()) {
             remove("IDS_TO_DELETE")
         }

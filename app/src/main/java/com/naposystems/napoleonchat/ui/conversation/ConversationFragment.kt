@@ -67,6 +67,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.Conversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.helpers.ConversationViewModelsForViewHolders
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.SendMessageToRemote
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
@@ -87,11 +88,14 @@ import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFr
 import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
+import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.forMimeTypeNapoleon
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.*
+import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contactProfile.ContactProfileSharedViewModel
@@ -499,7 +503,7 @@ class ConversationFragment
                         intent.putExtras(Bundle().apply {
                             putParcelable(MULTI_EXTRA_CONTACT, args.contact)
                         })
-                        startActivity(intent)
+                        startActivityForResult(intent, MULTI_ATTACHMENT_INTENT)
 
 //                        findNavController().navigate(
 //                            ConversationFragmentDirections.actionConversationFragmentToAttachmentGalleryFoldersFragment(
@@ -724,26 +728,41 @@ class ConversationFragment
 
     override fun onStart() {
         super.onStart()
+        validateMustGoToPreviewAttachmentsFromOutside()
+    }
+
+    private fun validateMustGoToPreviewAttachmentsFromOutside() {
         val uris = viewModel.getPendingUris()
         if (uris.isEmpty().not()) {
-            viewModel.removePendingUris()
-            val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
-            val listElements = uris.map {
-                val mimeType = binding.root.context.contentResolver.getType(it)
-                MultipleAttachmentFileItem(
-                    id = 0,
-                    attachmentType = mimeType ?: "",
-                    contentUri = it,
-                    isSelected = false,
-                    selfDestruction = 0
-                )
+            if (uris.size <= 10) {
+                handleIntentExtrasDataForMultiple(uris)
+            } else {
+                viewModel.removePendingUris()
+                showToast(binding.root.context, getString(R.string.multi_max_files_from_outside))
+                activity?.finish()
             }
-            intent.putExtras(Bundle().apply {
-                putParcelable(MULTI_EXTRA_CONTACT, args.contact)
-                putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
-            })
-            startActivity(intent)
         }
+    }
+
+    private fun handleIntentExtrasDataForMultiple(uris: List<Uri>) {
+        viewModel.removePendingUris()
+        val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
+        val listElements = uris.map {
+            val mimeType = binding.root.context.contentResolver.getType(it)
+            val mimeTypeForNapo = mimeType?.forMimeTypeNapoleon() ?: ""
+            MultipleAttachmentFileItem(
+                id = 0,
+                attachmentType = mimeTypeForNapo,
+                contentUri = it,
+                isSelected = false,
+                selfDestruction = 0
+            )
+        }
+        intent.putExtras(Bundle().apply {
+            putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+            putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
+        })
+        startActivity(intent)
     }
 
     @InternalCoroutinesApi
@@ -1491,64 +1510,89 @@ class ConversationFragment
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != RC_DOCUMENT || resultCode != RESULT_OK)
-            return
 
-        Timber.d("URI FILE: ${data?.data.toString()}")
+        if (requestCode == MULTI_ATTACHMENT_INTENT) {
+            data?.let { handleMultiAttachmentResult(it) }
+        } else {
+            if (requestCode != RC_DOCUMENT || resultCode != RESULT_OK)
+                return
 
-        data?.data?.let { uri ->
+            Timber.d("URI FILE: ${data?.data.toString()}")
 
-            try {
-                val contentResolver = requireContext().contentResolver
-
-                val cursor = contentResolver.query(
-                    uri,
-                    arrayOf(
-                        MediaStore.Files.FileColumns.MIME_TYPE,
-                        MediaStore.Files.FileColumns.SIZE
-                    ),
-                    null,
-                    null,
-                    null
-                )
-
-                if (cursor != null && cursor.moveToFirst()) {
-                    cursor.use {
-                        val mimeTypeIndex =
-                            cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
-                        val mimeType = cursor.getStringOrNull(mimeTypeIndex)
-
-                        val sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
-                        val size = cursor.getInt(sizeIndex)
-
-                        if (!documentsMimeTypeAllowed.contains(mimeType)) {
-                            handlerDialog.generalDialog(
-                                getString(R.string.text_title_attach_doc),
-                                getString(R.string.text_attch_doc_not_allowed),
-                                false,
-                                childFragmentManager,
-                                getString(R.string.text_okay)
-                            ) {
-
-                            }
-                        } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
-                            handlerDialog.generalDialog(
-                                getString(R.string.text_title_attach_doc),
-                                getString(R.string.text_attch_doc_size_exceed),
-                                false,
-                                childFragmentManager,
-                                getString(R.string.text_okay)
-                            ) {
-
-                            }
-                        } else {
-                            Timber.d("DocumentAttachment $mimeType, $size")
-                            viewModel.sendDocumentAttachment(uri)
-                        }
-                    }
+            data?.data?.let { uri ->
+                try {
+                    handleActivityResultOld(uri)
+                } catch (e: Exception) {
+                    Timber.e(e)
                 }
-            } catch (e: Exception) {
-                Timber.e(e)
+            }
+        }
+
+
+    }
+
+    private fun handleMultiAttachmentResult(data: Intent) {
+
+        data.extras?.apply {
+            val msg = this.getParcelable<MessageEntity>(EXTRA_MULTI_MSG_TO_SEND)
+            val attachments =
+                this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
+
+            ifNotNull(msg, attachments) { msg, attachments ->
+                viewModel.sendMessageToRemote(msg, attachments)
+            }
+
+        }
+
+    }
+
+    private fun handleActivityResultOld(uri: Uri) {
+        val contentResolver = requireContext().contentResolver
+
+        val cursor = contentResolver.query(
+            uri,
+            arrayOf(
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.SIZE
+            ),
+            null,
+            null,
+            null
+        )
+
+        if (cursor != null && cursor.moveToFirst()) {
+            cursor.use {
+                val mimeTypeIndex =
+                    cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+                val mimeType = cursor.getStringOrNull(mimeTypeIndex)
+
+                val sizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+                val size = cursor.getInt(sizeIndex)
+
+                if (!documentsMimeTypeAllowed.contains(mimeType)) {
+                    handlerDialog.generalDialog(
+                        getString(R.string.text_title_attach_doc),
+                        getString(R.string.text_attch_doc_not_allowed),
+                        false,
+                        childFragmentManager,
+                        getString(R.string.text_okay)
+                    ) {
+
+                    }
+                } else if (size > Constants.MAX_DOCUMENT_FILE_SIZE) {
+                    handlerDialog.generalDialog(
+                        getString(R.string.text_title_attach_doc),
+                        getString(R.string.text_attch_doc_size_exceed),
+                        false,
+                        childFragmentManager,
+                        getString(R.string.text_okay)
+                    ) {
+
+                    }
+                } else {
+                    Timber.d("DocumentAttachment $mimeType, $size")
+                    viewModel.sendDocumentAttachment(uri)
+                }
             }
         }
     }
@@ -2143,10 +2187,10 @@ class ConversationFragment
         conversationAdapterOnClickEvent(item)
     }
 
-    override fun onLongClick(item: MessageEntity) {
+    override fun onLongClick(messageEntity: MessageEntity) {
         if (actionMode.mode == null) {
             actionMode.startActionMode(view, R.menu.menu_selection_message)
-            updateStateSelectionMessage(item)
+            updateStateSelectionMessage(messageEntity)
         }
     }
 
@@ -2288,9 +2332,20 @@ class ConversationFragment
     override fun onMultipleAttachmentMsgAction(action: MultiAttachmentMsgAction) {
         when (action) {
             is OpenMultipleAttachmentPreview -> openMultipleAttachmentPreview(action)
+            is SendMessageToRemote -> sendMessageAndAttachmentsToRemote(action)
         }
     }
 
+    private fun sendMessageAndAttachmentsToRemote(action: SendMessageToRemote) {
+        viewModel.sendMessageToRemote(
+            action.messageEntity,
+            action.attachments
+        )
+    }
+
+    /**
+     * Este metodo es el punto de entrada para ver los attachments de un item de conversacion
+     */
     private fun openMultipleAttachmentPreview(action: OpenMultipleAttachmentPreview) {
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
@@ -2326,3 +2381,5 @@ class ConversationFragment
 
     //endregion
 }
+
+

@@ -54,8 +54,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView_status"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_margin="@dimen/x_small_margin"
         android:elevation="4dp"
         android:visibility="gone"

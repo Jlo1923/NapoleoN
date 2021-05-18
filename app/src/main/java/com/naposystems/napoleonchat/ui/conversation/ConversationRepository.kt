@@ -304,20 +304,25 @@ class ConversationRepository @Inject constructor(
         messageLocalDataSource.insertListMessage(messageEntityList)
     }
 
-    //actualizar tiempo de autodestrucción para los mensajes fallidos y enviados no leídos 
-    override fun updateMessage(messageEntity: MessageEntity) {
+    //actualizar tiempo de autodestrucción para los mensajes fallidos
+    override fun updateMessage(
+        messageEntity: MessageEntity,
+        mustUpdateSelfDestruction: Boolean
+    ) {
         Timber.d("updateMessage")
         when (messageEntity.status) {
             Constants.MessageStatus.ERROR.status -> {
-                val selfDestructTime = sharedPreferencesManager.getInt(
-                    Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
-                )
-                val currentTime =
-                    TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-                messageEntity.updatedAt = currentTime
-                messageEntity.selfDestructionAt = selfDestructTime
-                messageEntity.totalSelfDestructionAt =
-                    currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                if (mustUpdateSelfDestruction) {
+                    val selfDestructTime = sharedPreferencesManager.getInt(
+                        Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+                    )
+                    val currentTime =
+                        TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+                    messageEntity.updatedAt = currentTime
+                    messageEntity.selfDestructionAt = selfDestructTime
+                    messageEntity.totalSelfDestructionAt =
+                        currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                }
                 messageLocalDataSource.updateMessage(messageEntity)
             }
             else -> {
@@ -523,6 +528,11 @@ class ConversationRepository @Inject constructor(
         contactId: Int,
         listMessageRelations: List<MessageAttachmentRelation>
     ) {
+
+        /**
+         * Esta porcion de codigo se usa para la eliminacion de mensajes que contengan un attachment
+         * de tipo audio, con el Rxevent se encargan de pausar el sonido, revisar
+         */
         listMessageRelations.filter { messageAndAttachment ->
             messageAndAttachment.attachmentEntityList.count() > 0 &&
                     messageAndAttachment.attachmentEntityList[0].type == Constants.AttachmentType.AUDIO.type
@@ -531,6 +541,7 @@ class ConversationRepository @Inject constructor(
                 RxBus.publish(RxEvent.MessagesToEliminate(listMessagesFiltered))
             }
         }
+
         messageLocalDataSource.deleteMessagesSelected(contactId, listMessageRelations)
     }
 

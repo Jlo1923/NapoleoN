@@ -6,12 +6,18 @@ import android.content.Context
 interface NotificationDownloadClient {
 
     fun createDownloadNotification(
-        context: Context
+        context: Context,
+        messageId: Int
     ): Notification
 
     fun updateDownloadNotificationProgress(
         max: Int,
-        progress: Int
+        progress: Int,
+        messageId: Int
+    )
+
+    fun cancelNotification(
+        id: Int
     )
 
 }

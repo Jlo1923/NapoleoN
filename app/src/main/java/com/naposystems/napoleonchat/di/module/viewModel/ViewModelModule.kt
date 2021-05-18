@@ -24,7 +24,8 @@ import com.naposystems.napoleonchat.ui.home.HomeViewModel
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
-import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewViewModel
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
+import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
@@ -294,5 +295,12 @@ abstract class ViewModelModule {
     @ViewModelKey(IncomingMultiAttachmentMsgViewModel::class)
     internal abstract fun bindIncomingMultiAttachmentMsgViewModel(
         viewModel: IncomingMultiAttachmentMsgViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MultipleAttachmentPreviewItemViewModel::class)
+    internal abstract fun bindMultipleAttachmentPreviewItemViewModel(
+        viewModel: MultipleAttachmentPreviewItemViewModel
     ): ViewModel
 }

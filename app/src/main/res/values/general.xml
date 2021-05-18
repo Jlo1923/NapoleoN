@@ -103,5 +103,10 @@
     <string name="text_reject">Reject</string>
     <string name="text_count_messages">Messages</string>
     <string name="text_sending_file">Sending file</string>
+    <string name="text_sending_file_multiple">Sending multiples files</string>
+
+    <string name="text_downloading_file">Donwloading files</string>
+    <string name="text_downloading_file_multiple">Donwloading multiple files</string>
+
     <string name="text_activated">activated</string>
 </resources>

@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.naposystems.napoleonchat.databinding.ViewMultiAttachmentMsgOneFilesBinding
-import com.naposystems.napoleonchat.databinding.ViewMultiAttachmentMsgTwoFilesBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
@@ -24,9 +23,9 @@ class MultiAttachmentMsgOneFileView @JvmOverloads constructor(
             true
         )
 
-    fun bindAttachments(listAttachments: List<AttachmentEntity>) = viewBinding.apply {
+    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) = viewBinding.apply {
         viewFileOne.defineListener(this@MultiAttachmentMsgOneFileView)
-        viewFileOne.bindAttachment(listAttachments[0], 0)
+        viewFileOne.bindAttachment(listAttachments[0], 0, mine)
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {

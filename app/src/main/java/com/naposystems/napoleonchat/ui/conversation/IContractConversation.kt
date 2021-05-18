@@ -112,7 +112,12 @@ interface IContractConversation {
         suspend fun getLocalUser(): UserEntity
         suspend fun insertMessage(messageEntity: MessageEntity): Long
         fun insertListMessage(messageEntityList: List<MessageEntity>)
-        fun updateMessage(messageEntity: MessageEntity)
+
+        fun updateMessage(
+            messageEntity: MessageEntity,
+            mustUpdateSelfDestruction: Boolean = true
+        )
+
         suspend fun sendTextMessagesRead(contactId: Int)
         suspend fun sendMissedCallRead(contactId: Int)
         fun insertAttachment(attachmentEntity: AttachmentEntity): Long
@@ -127,6 +132,10 @@ interface IContractConversation {
         suspend fun deleteMessagesByStatusForMe(contactId: Int, status: Int)
         suspend fun updateStateSelectionMessage(contactId: Int, idMessage: Int, isSelected: Int)
         suspend fun cleanSelectionMessages(contactId: Int)
+
+        /**
+         * Elimina los mensajes seleccionados en la conversacion
+         */
         suspend fun deleteMessagesSelected(
             contactId: Int,
             listMessageRelations: List<MessageAttachmentRelation>

@@ -2,6 +2,14 @@ package com.naposystems.napoleonchat.di.module.ui
 
 import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogFragment
+import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeFakeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.deletionMesssages.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.dialog.logout.LogoutDialogFragment
+import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogFragment
+import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogFragment
+import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.napoleonchat.ui.addContact.AddContactFragment
 import com.naposystems.napoleonchat.ui.appearanceSettings.AppearanceSettingsFragment
 import com.naposystems.napoleonchat.ui.attachmentAudio.AttachmentAudioFragment
@@ -11,9 +19,6 @@ import com.naposystems.napoleonchat.ui.attachmentLocation.AttachmentLocationFrag
 import com.naposystems.napoleonchat.ui.attachmentPreview.AttachmentPreviewFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.blockedContacts.BlockedContactsFragment
-import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
-import com.naposystems.napoleonchat.dialog.changeParams.ChangeFakeParamsDialogFragment
-import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.colorScheme.ColorSchemeFragment
 import com.naposystems.napoleonchat.ui.contactProfile.ContactProfileFragment
 import com.naposystems.napoleonchat.ui.contactUs.ContactUsFragment
@@ -21,13 +26,13 @@ import com.naposystems.napoleonchat.ui.contacts.ContactsFragment
 import com.naposystems.napoleonchat.ui.conversation.ConversationFragment
 import com.naposystems.napoleonchat.ui.conversationCamera.ConversationCameraFragment
 import com.naposystems.napoleonchat.ui.customUserNotification.CustomUserNotificationFragment
-import com.naposystems.napoleonchat.dialog.deletionMesssages.DeletionMessagesDialogFragment
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment
 import com.naposystems.napoleonchat.ui.help.HelpFragment
 import com.naposystems.napoleonchat.ui.home.HomeFragment
 import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
-import com.naposystems.napoleonchat.dialog.logout.LogoutDialogFragment
+import com.naposystems.napoleonchat.ui.multipreview.fragments.MultipleAttachmentPreviewImageFragment
+import com.naposystems.napoleonchat.ui.multipreview.fragments.MultipleAttachmentPreviewVideoFragment
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingFragment
@@ -49,10 +54,7 @@ import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.Se
 import com.naposystems.napoleonchat.ui.splash.SplashFragment
 import com.naposystems.napoleonchat.ui.status.StatusFragment
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionFragment
-import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogFragment
-import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.ui.unlockAppTime.UnlockAppTimeFragment
-import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -221,5 +223,13 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributePermissionDialogFragment(): PermissionDialogFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeMultipleAttachmentPreviewImageFragment(
+    ): MultipleAttachmentPreviewImageFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeMultipleAttachmentPreviewVideoFragment(
+    ): MultipleAttachmentPreviewVideoFragment
 
 }
