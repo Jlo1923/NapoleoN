@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.repository.profile.ProfileRepository
-import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
 import timber.log.Timber

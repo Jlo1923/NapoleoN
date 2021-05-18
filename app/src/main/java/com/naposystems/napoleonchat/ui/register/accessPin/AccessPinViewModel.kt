@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepositoryImp
+import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepository
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class AccessPinViewModel @Inject constructor(
     private val context: Context,
-    private val repository: AccessPinRepositoryImp
+    private val repository: AccessPinRepository
 ) : ViewModel() {
 
     val accessPin = MutableLiveData<String>()

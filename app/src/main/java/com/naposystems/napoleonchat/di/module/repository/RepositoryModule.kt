@@ -2,17 +2,17 @@ package com.naposystems.napoleonchat.di.module.repository
 
 import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepository
 import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepositoryImp
-import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
-import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepository
+import com.naposystems.napoleonchat.repository.addContact.AddContactRepositoryImp
+import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepositoryImp
 import com.naposystems.napoleonchat.repository.attachmentGallery.AttachmentGalleryRepository
 import com.naposystems.napoleonchat.repository.attachmentGalleryFolder.AttachmentGalleryFolderRepository
 import com.naposystems.napoleonchat.repository.attachmentLocation.AttachmentLocationRepository
 import com.naposystems.napoleonchat.repository.base.BaseRepository
 import com.naposystems.napoleonchat.repository.base.BaseRepositoryImp
-import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
+import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepositoryImp
 import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
-import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
+import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepositoryImp
 import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepositoryImp
@@ -55,15 +55,15 @@ import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMu
 import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
-import com.naposystems.napoleonchat.ui.addContact.IContractAddContact
-import com.naposystems.napoleonchat.ui.appearanceSettings.IContractAppearanceSettings
+import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
+import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepository
 import com.naposystems.napoleonchat.ui.attachmentGallery.IContractAttachmentGallery
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.IContractAttachmentGalleryFolders
 import com.naposystems.napoleonchat.ui.attachmentLocation.IContractAttachmentLocation
-import com.naposystems.napoleonchat.ui.blockedContacts.IContractBlockedContact
+import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
 import com.naposystems.napoleonchat.ui.colorScheme.IContractColorScheme
 import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
-import com.naposystems.napoleonchat.ui.contactUs.IContractContactUs
+import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.ui.contacts.IContractContacts
 import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
@@ -130,12 +130,19 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindAccessPinRepository(repository: AccessPinRepositoryImp): AccessPinRepository
 
-    //NO Refactorizados
     @Binds
-    abstract fun bindAddContactRepository(repository: AddContactRepository): IContractAddContact.Repository
+    abstract fun bindAddContactRepository(repository: AddContactRepositoryImp): AddContactRepository
 
     @Binds
-    abstract fun bindAppearanceSettingsRepository(repository: AppearanceSettingsRepository): IContractAppearanceSettings.Repository
+    abstract fun bindAppearanceSettingsRepository(repository: AppearanceSettingsRepositoryImp): AppearanceSettingsRepository
+
+    @Binds
+    abstract fun bindBlockedContactRepository(repository: BlockedContactRepositoryImp): BlockedContactRepository
+
+    @Binds
+    abstract fun bindContactUsRepository(repository: ContactUsRepositoryImp): ContactUsRepository
+
+    //NO Refactorizados
 
     @Binds
     abstract fun bindAttachmentGalleryFolderRepository(repository: AttachmentGalleryFolderRepository): IContractAttachmentGalleryFolders.Repository
@@ -147,9 +154,6 @@ abstract class RepositoryModule {
     abstract fun bindAttachmentLocationRepository(repository: AttachmentLocationRepository): IContractAttachmentLocation.Repository
 
     @Binds
-    abstract fun bindBlockedContactRepository(repository: BlockedContactRepository): IContractBlockedContact.Repository
-
-    @Binds
     abstract fun bindColorSchemeRepository(repository: ColorSchemeRepository): IContractColorScheme.Repository
 
     @Binds
@@ -157,9 +161,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindContactsRepository(repository: ContactsRepository): IContractContacts.Repository
-
-    @Binds
-    abstract fun bindContactUsRepository(repository: ContactUsRepository): IContractContactUs.Repository
 
     @Binds
     abstract fun bindConversationCallRepository(repository: ConversationCallRepositoryImp): ConversationCallRepository
