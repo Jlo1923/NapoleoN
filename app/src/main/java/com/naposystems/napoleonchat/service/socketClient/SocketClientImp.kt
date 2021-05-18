@@ -203,8 +203,6 @@ class SocketClientImp
 
                                 Timber.d("LLAMADA PASO 2: NO Esta en llamada")
 
-//                            NapoleonApplication.statusCall = StatusCallEnum.STATUS_PROCESSING_CALL
-
                                 when (callModel.typeCall) {
 
                                     Constants.TypeCall.IS_INCOMING_CALL -> {
@@ -587,7 +585,10 @@ class SocketClientImp
         subscribeChannels()
 
         NapoleonApplication.callModel?.let {
-            if (it.mustSubscribeToPresenceChannel && it.channelName != "") {
+            if (it.mustSubscribeToPresenceChannel &&
+                it.channelName != "" &&
+                NapoleonApplication.statusCall.isNoCall()
+            ) {
                 Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
                 subscribeToPresenceChannel()
             }

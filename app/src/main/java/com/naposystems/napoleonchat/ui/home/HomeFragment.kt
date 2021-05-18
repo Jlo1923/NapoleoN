@@ -168,11 +168,7 @@ class HomeFragment : BaseFragment() {
 
         binding.textViewReturnCall.setOnClickListener {
             Timber.d("startCallActivity returnCall HomeFragment")
-            val intent = Intent(context, ConversationCallActivity::class.java).apply {
-                putExtras(Bundle().apply {
-                    putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
-                })
-            }
+            val intent = Intent(context, ConversationCallActivity::class.java)
             startActivity(intent)
         }
 
