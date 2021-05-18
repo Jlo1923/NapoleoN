@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EditAccessPinViewModel @Inject constructor(
-    private val repository: IContractEditAccessPin.Repository
-) : ViewModel(), IContractEditAccessPin.ViewModel {
+    private val repository: EditAccessPinRepository
+) : ViewModel() {
 
     val oldAccessPin = MutableLiveData<String>()
     val newAccessPin = MutableLiveData<String>()
@@ -30,16 +31,16 @@ class EditAccessPinViewModel @Inject constructor(
     }
 
     //region Implementation IContractEditAccessPin.ViewModel
-    override fun getLocalUser() {
+    fun getLocalUser() {
         viewModelScope.launch {
             userEntity = repository.getLocalUser()
         }
     }
 
-    override fun validateAccessPin(newAccessPin: String) =
+    fun validateAccessPin(newAccessPin: String) =
         userEntity.accessPin == newAccessPin
 
-    override fun updateAccessPin(newAccessPin: String) {
+    fun updateAccessPin(newAccessPin: String) {
         viewModelScope.launch {
             repository.updateAccessPin(newAccessPin, userEntity.firebaseId)
             userEntity = repository.getLocalUser()

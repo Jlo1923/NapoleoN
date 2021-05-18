@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepositoryImp
 import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
-import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
+import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepositoryImp
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepository
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepositoryImp
 import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
@@ -69,7 +69,7 @@ import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
-import com.naposystems.napoleonchat.ui.editAccessPin.IContractEditAccessPin
+import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
 import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
@@ -142,6 +142,9 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindContactUsRepository(repository: ContactUsRepositoryImp): ContactUsRepository
 
+    @Binds
+    abstract fun bindEditAccessPinRepository(repository: EditAccessPinRepositoryImp): EditAccessPinRepository
+
     //NO Refactorizados
 
     @Binds
@@ -168,8 +171,6 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindConversationRepository(repository: ConversationRepository): IContractConversation.Repository
 
-    @Binds
-    abstract fun bindEditAccessPinRepository(repository: EditAccessPinRepository): IContractEditAccessPin.Repository
 
     @Binds
     abstract fun bindEnterPinRepository(repository: EnterPinRepository): IContractEnterPin.Repository
