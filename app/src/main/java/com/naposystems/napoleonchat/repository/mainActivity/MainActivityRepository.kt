@@ -18,4 +18,6 @@ interface MainActivityRepository {
     fun disconnectSocket()
 
     fun removeUriListCache()
+    fun wasInPreviewActivity(): Boolean
+    fun removeWasInPreviewActivity()
 }

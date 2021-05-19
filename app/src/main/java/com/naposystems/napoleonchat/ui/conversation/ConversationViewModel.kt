@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEn
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
 import com.naposystems.napoleonchat.utility.extensions.getMessageEntityForCreate
 import com.naposystems.napoleonchat.utility.extensions.getSelfAutoDestructionForSave
@@ -698,20 +699,20 @@ class ConversationViewModel @Inject constructor(
     }
 
     fun getPendingUris(): List<Uri> {
-        val urisString = sharedPreferencesManager.getStringSet("test")
+        val urisString = sharedPreferencesManager.getStringSet(URIS_CACHE)
         val listString = urisString?.toList()
         val listUris = listString?.map { Uri.parse(it) }
         return listUris ?: emptyList()
     }
 
     fun removePendingUris() {
-        sharedPreferencesManager.puStringSet("test", emptyList())
+        sharedPreferencesManager.puStringSet(URIS_CACHE, emptyList())
     }
 
     fun sendMessageToRemote(messageEntity: MessageEntity, attachments: List<AttachmentEntity?>) {
         if (messageEntity.mustSendToRemote()) {
             viewModelScope.launch {
-                try{
+                try {
                     val messageResponse = repositoryMessages.sendMessage(messageEntity)
                     val attachmentsWithWebId =
                         setMessageWebIdToAttachments(attachments, messageResponse)
@@ -719,7 +720,7 @@ class ConversationViewModel @Inject constructor(
                     messageResponse?.let { pairData ->
                         pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
                     }
-                }catch (exception: Exception){
+                } catch (exception: Exception) {
                     messageEntity.status = Constants.MessageStatus.ERROR.status
                     repository.updateMessage(messageEntity, false)
                 }
