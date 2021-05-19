@@ -400,5 +400,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
+    fun markWasInPreviewActivity() {
+        repository.markWasInPreviewActivity()
+    }
+
 
 }

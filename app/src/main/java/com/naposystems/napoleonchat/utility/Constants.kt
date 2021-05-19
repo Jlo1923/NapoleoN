@@ -154,6 +154,11 @@ object Constants {
         const val PREF_SHOW_CASE_FIFTH_STEP_HAS_BEEN_SHOW = "show_case_fifth_step_has_been_show"
         const val PREF_SHOW_CASE_SIXTH_STEP_HAS_BEEN_SHOW = "show_case_sixth_step_has_been_show"
         const val PREF_SHOW_CASE_SEVENTH_STEP_HAS_BEEN_SHOW = "show_case_seventh_step_has_been_show"
+
+        const val URIS_CACHE = "URIS_CACHE"
+        const val WAS_IN_PREVIEW = "WAS_IN_PREVIEW"
+
+
         //endregion
     }
 

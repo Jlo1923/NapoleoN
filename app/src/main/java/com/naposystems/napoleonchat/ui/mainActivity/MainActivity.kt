@@ -653,23 +653,31 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun validLockTime() {
-        if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
-            when (accountStatus) {
-                Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
-                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+        if (viewModel.wasInPreviewActivity()) {
+            // No debemos validar el PIN
+            viewModel.removeWasInPreviewActivity()
+        } else {
+            if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
+                when (accountStatus) {
+                    Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
-                    val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
-                    if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
-                        val currentTime = System.currentTimeMillis()
+                        Timber.d("AccountStatus validLockTime {$accountStatus}")
 
-                        if (currentTime >= viewModel.getLockTimeApp()) {
-                            navToEnterPin()
+                        val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
+                        if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
+                            val currentTime = System.currentTimeMillis()
+
+                            if (currentTime >= viewModel.getLockTimeApp()) {
+                                navToEnterPin()
+                            }
                         }
                     }
                 }
             }
         }
+
+
     }
 
     private fun validateExtrasForShareFromOutside() = intent.apply {

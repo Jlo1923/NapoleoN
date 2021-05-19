@@ -67,7 +67,7 @@
         android:id="@+id/frame_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/xx_large_margin"
+        android:layout_marginBottom="@dimen/xxx_large_margin"
         android:layout_marginEnd="@dimen/small_margin"
         android:background="@drawable/bg_black_transparent_circle"
         android:visibility="gone"

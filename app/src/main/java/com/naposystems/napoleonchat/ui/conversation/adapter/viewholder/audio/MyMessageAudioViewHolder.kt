@@ -10,8 +10,7 @@ import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
 class MyMessageAudioViewHolder constructor(
     private val binding: ConversationItemMyMessageWithAudioBinding
-) :
-    ConversationViewHolder(binding.root, binding.root.context) {
+) : ConversationViewHolder(binding.root, binding.root.context) {
 
     init {
         super.parentContainerMessage = binding.containerMyMessage

@@ -88,7 +88,7 @@ data class NewMessageEventAttachmentRes(
     @Json(name = "height") val height: Int,
     @Json(name = "mime_type") val mimeType: String,
     @Json(name = "ext") val extension: String,
-    @Json(name = "duration") val duration: Long,
+    @Json(name = "duration") val duration: Float,
     @Json(name = "destroy") val destroy: String
 ) {
     companion object {
@@ -111,7 +111,7 @@ data class NewMessageEventAttachmentRes(
                     thumbnailUri = "",
                     status = Constants.AttachmentStatus.NOT_DOWNLOADED.status,
                     extension = attachmentDTO.extension,
-                    duration = attachmentDTO.duration,
+                    duration = attachmentDTO.duration.toLong(),
                     selfDestructionAt = attachmentDTO.destroy.toInt()
                 )
                 mutableList.add(attachment)
