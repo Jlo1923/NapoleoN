@@ -20,20 +20,21 @@
         style="@style/TextCountDownSelfDestruct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/normal_margin"
+        android:layout_marginTop="@dimen/xx_large_margin"
         android:layout_marginEnd="@dimen/small_margin"
         android:padding="@dimen/x_small_padding"
         android:text="12:12"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <FrameLayout
         android:id="@+id/frame_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/normal_margin"
         android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginBottom="@dimen/xx_large_margin"
         android:background="@drawable/bg_black_transparent_circle"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
