@@ -2,13 +2,13 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.selfDestructTime.SelfDestructTimeDialogFragment">
+    tools:context=".dialog.selfDestructTime.SelfDestructTimeDialogFragment">
 
     <data>
 
         <variable
             name="viewModel"
-            type="com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel" />
+            type="com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

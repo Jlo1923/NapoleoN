@@ -22,7 +22,7 @@ import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState.SuccessFilesAsPager
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import com.naposystems.napoleonchat.utility.Utils
@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MultipleAttachmentPreviewViewModel @Inject constructor(
-    private val repository: IContractSelfDestructTime.Repository,
+    private val repository: SelfDestructTimeDialogRepository,
     private val repositoryMessages: IContractMultipleAttachmentPreview.Repository,
     private val repositoryPreviewMedia: IContractPreviewMedia.Repository,
     private val context: Context

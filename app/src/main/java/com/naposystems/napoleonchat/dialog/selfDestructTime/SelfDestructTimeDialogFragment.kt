@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.selfDestructTime
+package com.naposystems.napoleonchat.dialog.selfDestructTime
 
 import android.content.Context
 import android.os.Bundle
@@ -49,7 +49,7 @@ class SelfDestructTimeDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: SelfDestructTimeViewModel by viewModels { viewModelFactory }
+    private val viewModel: SelfDestructTimeDialogViewModel by viewModels { viewModelFactory }
     private lateinit var binding: SelfDestructTimeDialogFragmentBinding
     private lateinit var listener: SelfDestructTimeListener
 

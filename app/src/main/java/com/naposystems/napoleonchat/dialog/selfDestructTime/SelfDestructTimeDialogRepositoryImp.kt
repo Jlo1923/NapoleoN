@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.repository.selfDestructTime
+package com.naposystems.napoleonchat.dialog.selfDestructTime
 
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
@@ -12,7 +12,6 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessage
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
-import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.WAS_IN_PREVIEW
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -20,14 +19,14 @@ import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
 
-class SelfDestructTimeRepository @Inject constructor(
+class SelfDestructTimeDialogRepositoryImp @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
     private val napoleonApi: NapoleonApi,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val syncManager: SyncManager
-) : IContractSelfDestructTime.Repository {
+) : SelfDestructTimeDialogRepository {
 
     override fun getSelfDestructTime(): Int {
         return sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)

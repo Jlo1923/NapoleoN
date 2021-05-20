@@ -12,7 +12,7 @@ import javax.inject.Inject
 class LanguageSelectionDialogViewModel
 @Inject constructor(
     private val repository: LanguageSelectionDialogRepositoryImp
-) : ViewModel(), LanguageSelectionDialogRepository.ViewModel {
+) : ViewModel() {
 
     val languagesList = getLanguages()
 
@@ -28,7 +28,7 @@ class LanguageSelectionDialogViewModel
         repository.getLanguages()
     }
 
-    override fun setSelectedLanguage(language: Language, location: Int) {
+     fun setSelectedLanguage(language: Language, location: Int) {
         viewModelScope.launch {
             try {
                 when (location) {
@@ -51,14 +51,14 @@ class LanguageSelectionDialogViewModel
         }
     }
 
-    override fun getLanguages() = repository.getLanguages()
+     fun getLanguages() = repository.getLanguages()
 
-    override suspend fun updateLanguageLocal(language: Language) {
+     suspend fun updateLanguageLocal(language: Language) {
         repository.updateUserLanguagePreference(language.iso)
         _selectedLanguage.value = language
     }
 
-    override fun resetErrorUpdatingLanguage() {
+     fun resetErrorUpdatingLanguage() {
         _errorUpdatingLanguage.value = null
     }
 }

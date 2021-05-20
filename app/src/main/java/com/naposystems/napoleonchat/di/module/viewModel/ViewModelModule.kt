@@ -40,8 +40,7 @@ import com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknam
 import com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionViewModel
 import com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewModel
+import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewDialogModel
 import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
@@ -130,11 +129,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(SelfDestructTimeViewModel::class)
-    internal abstract fun bindSelfDestructTimeViewModel(viewModel: SelfDestructTimeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(EditAccessPinViewModel::class)
     internal abstract fun bindEditAccessPinViewModel(viewModel: EditAccessPinViewModel): ViewModel
 
@@ -203,12 +197,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactProfileViewModel::class)
     internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
-
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
-    internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
 
     @Binds
     @IntoMap

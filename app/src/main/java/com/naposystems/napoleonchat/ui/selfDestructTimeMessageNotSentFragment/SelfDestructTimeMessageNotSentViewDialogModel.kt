@@ -7,21 +7,21 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SelfDestructTimeMessageNotSentViewModel @Inject constructor(
-    private val repository: IContractSelfDestructTimeMessageNotSent.Repository
-) : ViewModel(), IContractSelfDestructTimeMessageNotSent.ViewModel {
+class SelfDestructTimeMessageNotSentViewDialogModel @Inject constructor(
+    private val repository: SelfDestructTimeMessageNotSentDialogRepository
+) : ViewModel() {
 
     private val _selfDestructTimeMessage = MutableLiveData<Int>()
     val selfDestructTimeMessage: LiveData<Int>
         get() = _selfDestructTimeMessage
 
-    override fun getSelfDestructTimeMessageNotSent() {
+    fun getSelfDestructTimeMessageNotSent() {
         viewModelScope.launch {
             _selfDestructTimeMessage.value = repository.getSelfDestructTimeMessageNotSent()
         }
     }
 
-    override fun setSelfDestructTimeMessageNotSent(time: Int) {
+    fun setSelfDestructTimeMessageNotSent(time: Int) {
         viewModelScope.launch {
             repository.setSelfDestructTimeMessageNotSent(time)
             _selfDestructTimeMessage.value = time

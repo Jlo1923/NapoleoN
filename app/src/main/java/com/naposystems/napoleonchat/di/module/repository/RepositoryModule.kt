@@ -39,19 +39,17 @@ import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
 import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepositoryImp
 import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepositoryImp
-import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
-import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepository
-import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepository
-import com.naposystems.napoleonchat.repository.selfDestructTime.SelfDestructTimeRepository
-import com.naposystems.napoleonchat.repository.selfDestructTimeMessageNotSent.SelfDestructTimeMessageNotSentRepository
+import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepositoryImp
+import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepositoryImp
+import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepositoryImp
 import com.naposystems.napoleonchat.repository.sendCode.SendCodeRepository
 import com.naposystems.napoleonchat.repository.sendCode.SendCodeRepositoryImp
 import com.naposystems.napoleonchat.repository.splash.SplashRepository
 import com.naposystems.napoleonchat.repository.splash.SplashRepositoryImp
 import com.naposystems.napoleonchat.repository.status.StatusRepository
 import com.naposystems.napoleonchat.repository.status.StatusRepositoryImp
-import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
-import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeRepository
+import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepositoryImp
+import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeRepositoryImp
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepository
 import com.naposystems.napoleonchat.repository.validateNickname.ValidateNicknameRepositoryImp
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
@@ -81,13 +79,11 @@ import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackg
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
-import com.naposystems.napoleonchat.ui.registerRecoveryAccount.IContractRegisterRecoveryAccount
-import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.IContractRegisterRecoveryAccountQuestion
-import com.naposystems.napoleonchat.ui.securitySettings.IContractSecuritySettings
-import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.IContractSelfDestructTimeMessageNotSent
-import com.naposystems.napoleonchat.ui.subscription.IContractSubscription
-import com.naposystems.napoleonchat.ui.unlockAppTime.IContractUnlockAppTime
+import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
+import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepository
+import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepository
+import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
+import com.naposystems.napoleonchat.repository.unlockAppTime.UnlockAppTimeRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepository
 import com.naposystems.napoleonchat.webRTC.service.WebRTCServiceRepositoryImp
 import dagger.Binds
@@ -165,6 +161,24 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindRecoveryAccountRepository(repository: RecoveryAccountRepositoryImp): RecoveryAccountRepository
 
+    @Binds
+    abstract fun bindRecoveryAccountQuestionsRepository(repository: RecoveryAccountQuestionsRepositoryImp): RecoveryAccountQuestionsRepository
+
+    @Binds
+    abstract fun bindRegisterRecoveryAccountRepository(repository: RegisterRecoveryAccountRepositoryImp): RegisterRecoveryAccountRepository
+
+    @Binds
+    abstract fun bindRegisterRecoveryAccountQuestionRepository(repository: RegisterRecoveryAccountQuestionRepositoryImp): RegisterRecoveryAccountQuestionRepository
+
+    @Binds
+    abstract fun bindSecuritySettingsRepository(repository: SecuritySettingsRepositoryImp): SecuritySettingsRepository
+
+    @Binds
+    abstract fun bindSubscriptionRepository(repository: SubscriptionRepositoryImp): SubscriptionRepository
+
+    @Binds
+    abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepositoryImp): UnlockAppTimeRepository
+
     //NO Refactorizados
 
     @Binds
@@ -187,30 +201,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindPreviewMediaRepository(repository: PreviewMediaRepository): IContractPreviewMedia.Repository
-
-    @Binds
-    abstract fun bindRecoveryAccountQuestionsRepository(repository: RecoveryAccountQuestionsRepositoryImp): RecoveryAccountQuestionsRepository.Repository
-
-    @Binds
-    abstract fun bindRegisterRecoveryAccountRepository(repository: RegisterRecoveryAccountRepository): IContractRegisterRecoveryAccount.Repository
-
-    @Binds
-    abstract fun bindRegisterRecoveryAccountQuestionRepository(repository: RegisterRecoveryAccountQuestionRepository): IContractRegisterRecoveryAccountQuestion.Repository
-
-    @Binds
-    abstract fun bindSecuritySettingsRepository(repository: SecuritySettingsRepository): IContractSecuritySettings.Repository
-
-    @Binds
-    abstract fun bindSelfDestructTimeRepository(repository: SelfDestructTimeRepository): IContractSelfDestructTime.Repository
-
-    @Binds
-    abstract fun bindSelfDestructTimeMessageNotSentRepository(repository: SelfDestructTimeMessageNotSentRepository): IContractSelfDestructTimeMessageNotSent.Repository
-
-    @Binds
-    abstract fun bindSubscriptionRepository(repository: SubscriptionRepository): IContractSubscription.Repository
-
-    @Binds
-    abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepository): IContractUnlockAppTime.Repository
 
     @Binds
     abstract fun provideMultiUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository

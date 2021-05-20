@@ -3,7 +3,6 @@ package com.naposystems.napoleonchat.ui.multipreview
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.size
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -31,8 +30,8 @@ import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemo
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.multipreview.views.ViewMultipleAttachmentTabView
-import com.naposystems.napoleonchat.ui.selfDestructTime.Location
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
 import com.naposystems.napoleonchat.utility.anims.animHideSlideUp
 import com.naposystems.napoleonchat.utility.anims.animShowSlideDown

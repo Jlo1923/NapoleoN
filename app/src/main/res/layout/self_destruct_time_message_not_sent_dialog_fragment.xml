@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
-        tools:context=".ui.selfDestructTime.SelfDestructTimeDialogFragment">
+        tools:context=".dialog.selfDestructTime.SelfDestructTimeDialogFragment">
 
         <TextView
             android:id="@+id/textView_title"

@@ -21,7 +21,7 @@ class RecoveryAccountQuestionsRepositoryImp @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val userLocalDataSourceImp: UserLocalDataSourceImp
-) : RecoveryAccountQuestionsRepository.Repository {
+) : RecoveryAccountQuestionsRepository {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()

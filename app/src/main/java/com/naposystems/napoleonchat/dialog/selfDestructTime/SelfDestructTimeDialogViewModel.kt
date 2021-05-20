@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.selfDestructTime
+package com.naposystems.napoleonchat.dialog.selfDestructTime
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SelfDestructTimeViewModel
+class SelfDestructTimeDialogViewModel
 @Inject constructor(
-    private val repository: IContractSelfDestructTime.Repository
-) : ViewModel(), IContractSelfDestructTime.ViewModel {
+    private val repository: SelfDestructTimeDialogRepository
+) : ViewModel() {
 
     lateinit var getDestructTimeByContact: LiveData<Int>
     var selfDestructTimeByContact: Int? = -1
@@ -24,28 +24,28 @@ class SelfDestructTimeViewModel
         get() = _messageSelfDestructTimeNotSent
 
     //region IContractSelfDestructTime.ViewMode
-    override fun getSelfDestructTime() {
+    fun getSelfDestructTime() {
         _selfDestructTimeGlobal.value = repository.getSelfDestructTime()
     }
 
-    override fun setSelfDestructTime(selfDestructTime: Int) {
+    fun setSelfDestructTime(selfDestructTime: Int) {
         repository.setSelfDestructTime(selfDestructTime)
     }
 
-    override fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int) {
+    fun setSelfDestructTimeByContact(selfDestructTime: Int, contactId: Int) {
         viewModelScope.launch {
             repository.setSelfDestructTimeByContact(selfDestructTime, contactId)
         }
     }
 
-    override fun getSelfDestructTimeByContact(contactId: Int) {
+    fun getSelfDestructTimeByContact(contactId: Int) {
         viewModelScope.launch {
             val selfDestructTime = repository.getSelfDestructTimeByContact(contactId)
             getDestructTimeByContact = selfDestructTime
         }
     }
 
-    override fun getMessageSelfDestructTimeNotSent() {
+    fun getMessageSelfDestructTimeNotSent() {
         _messageSelfDestructTimeNotSent.value = repository.getMessageSelfDestructTimeNotSent()
     }
     //endregion

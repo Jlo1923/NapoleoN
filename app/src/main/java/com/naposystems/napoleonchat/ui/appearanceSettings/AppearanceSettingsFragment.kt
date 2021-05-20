@@ -34,6 +34,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel

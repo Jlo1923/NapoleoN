@@ -29,7 +29,7 @@ class SelfDestructTimeMessageNotSentDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: SelfDestructTimeMessageNotSentViewModel by viewModels { viewModelFactory }
+    private val viewModel: SelfDestructTimeMessageNotSentViewDialogModel by viewModels { viewModelFactory }
     private lateinit var binding: SelfDestructTimeMessageNotSentDialogFragmentBinding
     private lateinit var listener: MessageSelfDestructTimeNotSentListener
 

@@ -11,9 +11,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class RecoveryAccountQuestionsViewModel @Inject constructor(
-    private val repository: RecoveryAccountQuestionsRepository.Repository
-) : ViewModel(), RecoveryAccountQuestionsRepository.ViewModel {
+class RecoveryAccountQuestionsViewModel
+@Inject constructor(
+    private val repository: RecoveryAccountQuestionsRepository
+) : ViewModel() {
 
     private val _sendAnswersSuccessfully = MutableLiveData<Boolean>()
     val sendAnswersSuccessfully: LiveData<Boolean>
@@ -35,7 +36,7 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         _recoveryAnswers.value = ArrayList()
     }
 
-    override fun addRecoveryAnswer(answer: RecoveryAccountAnswers) {
+    fun addRecoveryAnswer(answer: RecoveryAccountAnswers) {
         val mutableAnswers: MutableList<RecoveryAccountAnswers> = ArrayList()
 
         mutableAnswers.addAll(_recoveryAnswers.value!!)
@@ -44,7 +45,7 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         _recoveryAnswers.value = mutableAnswers
     }
 
-    override fun sendRecoveryAnswers(nickname: String) {
+    fun sendRecoveryAnswers(nickname: String) {
         viewModelScope.launch {
             try {
                 val recoveryAnswers =
@@ -86,13 +87,13 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         }
     }
 
-    override fun setFreeTrialPref(subscription: Boolean) {
+    fun setFreeTrialPref(subscription: Boolean) {
         viewModelScope.launch {
             repository.setFreeTrialPref(subscription)
         }
     }
 
-    override fun setAttemptPref() {
+    fun setAttemptPref() {
         viewModelScope.launch {
             repository.setAttemptPref()
         }

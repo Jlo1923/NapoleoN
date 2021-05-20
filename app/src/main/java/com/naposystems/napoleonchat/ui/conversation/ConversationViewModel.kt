@@ -23,7 +23,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
-import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
@@ -50,7 +50,7 @@ class ConversationViewModel @Inject constructor(
     private val repository: IContractConversation.Repository,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val repositoryMessages: IContractMultipleAttachmentPreview.Repository,
-    private val repositorySelfDestruction: IContractSelfDestructTime.Repository
+    private val repositorySelfDestruction: SelfDestructTimeDialogRepository
 ) : ViewModel(), IContractConversation.ViewModel {
 
     private lateinit var userEntity: UserEntity

@@ -1,13 +1,12 @@
-package com.naposystems.napoleonchat.repository.selfDestructTimeMessageNotSent
+package com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment
 
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.IContractSelfDestructTimeMessageNotSent
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import javax.inject.Inject
 
-class SelfDestructTimeMessageNotSentRepository @Inject constructor(
+class SelfDestructTimeMessageNotSentDialogRepositoryImp @Inject constructor(
     private val sharedPreferencesManager: SharedPreferencesManager
-) : IContractSelfDestructTimeMessageNotSent.Repository {
+) : SelfDestructTimeMessageNotSentDialogRepository {
 
     override suspend fun getSelfDestructTimeMessageNotSent(): Int {
         return sharedPreferencesManager.getInt(

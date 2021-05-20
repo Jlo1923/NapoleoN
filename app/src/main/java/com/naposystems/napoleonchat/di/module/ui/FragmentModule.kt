@@ -49,7 +49,7 @@ import com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknam
 import com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountFragment
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment
 import com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsFragment
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.napoleonchat.ui.splash.SplashFragment
 import com.naposystems.napoleonchat.ui.status.StatusFragment

@@ -7,7 +7,7 @@
 
         <variable
             name="clickListener"
-            type="com.naposystems.napoleonchat.ui.languageSelection.adapter.LanguageSelectionAdapter.LanguageSelectionListener" />
+            type="com.naposystems.napoleonchat.dialog.languageSelection.adapter.LanguageSelectionDialogAdapter.LanguageSelectionListener" />
 
         <variable
             name="language"
@@ -41,9 +41,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:background="?attr/attrBackgroundColorBackgroundDialog"
+            android:gravity="center"
+            android:orientation="vertical"
             android:padding="@dimen/normal_padding">
 
             <androidx.appcompat.widget.AppCompatImageView

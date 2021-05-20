@@ -3,12 +3,13 @@ package com.naposystems.napoleonchat.ui.securitySettings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepository
 import com.naposystems.napoleonchat.utility.Constants
 import javax.inject.Inject
 
 class SecuritySettingsViewModel @Inject constructor(
-    private val repository: IContractSecuritySettings.Repository
-) : ViewModel(), IContractSecuritySettings.ViewModel {
+    private val repository: SecuritySettingsRepository
+) : ViewModel() {
 
     private val _allowDownloads = MutableLiveData<Int>()
     val allowDownloads: LiveData<Int>
@@ -23,11 +24,11 @@ class SecuritySettingsViewModel @Inject constructor(
         get() = _timeRequestAccessPin
 
     //region Implementation IContractSecuritySettings.ViewModel
-    override fun getAllowDownload() {
+    fun getAllowDownload() {
         _allowDownloads.value = repository.getAllowDownload()
     }
 
-    override fun updateAllowDownload(state: Boolean) {
+    fun updateAllowDownload(state: Boolean) {
         val newState = if (state) Constants.AllowDownloadAttachments.YES.option
         else Constants.AllowDownloadAttachments.NO.option
 
@@ -35,11 +36,11 @@ class SecuritySettingsViewModel @Inject constructor(
         _allowDownloads.value = newState
     }
 
-    override fun getBiometricsOption() {
+    fun getBiometricsOption() {
         _biometricsOption.value = repository.getBiometricsOption()
     }
 
-    override fun getTimeRequestAccessPin() {
+    fun getTimeRequestAccessPin() {
         _timeRequestAccessPin.value = repository.getTimeRequestAccessPin()
     }
 
