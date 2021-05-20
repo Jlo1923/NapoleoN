@@ -90,6 +90,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         extractFilesFromExtras()
         extractIsModeViewInConversation()
         defineListeners()
+        viewModel.markWasInPreviewActivity()
     }
 
     override fun changeVisibilityOptions() = viewModel.changeVisibilityOptions()

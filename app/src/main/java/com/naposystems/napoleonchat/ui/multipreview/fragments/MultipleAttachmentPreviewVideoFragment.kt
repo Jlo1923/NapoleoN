@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmen
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import java.util.concurrent.TimeUnit
@@ -199,6 +200,9 @@ class MultipleAttachmentPreviewVideoFragment(
             imageViewStatus.show()
             frameStatus.show()
             imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
+            if (file.messageAndAttachment?.isMine == 0) {
+                hideViews(imageViewStatus, frameStatus)
+            }
         }
         configTimer(attachmentEntity)
     }

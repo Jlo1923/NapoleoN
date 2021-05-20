@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -197,7 +198,7 @@ class HomeViewModel
     }
 
     fun getPendingUris(): List<Uri> {
-        val urisString = sharedPreferencesManager.getStringSet("test")
+        val urisString = sharedPreferencesManager.getStringSet(URIS_CACHE)
         val listString = urisString?.toList()
         val listUris = listString?.map { Uri.parse(it) }
         return listUris ?: emptyList()

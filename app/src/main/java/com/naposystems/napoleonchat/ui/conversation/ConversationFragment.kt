@@ -758,7 +758,7 @@ class ConversationFragment
             putParcelable(MULTI_EXTRA_CONTACT, args.contact)
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(listElements))
         })
-        startActivity(intent)
+        startActivityForResult(intent, MULTI_ATTACHMENT_INTENT)
     }
 
     @InternalCoroutinesApi

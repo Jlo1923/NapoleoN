@@ -118,19 +118,21 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     fun validateMustAttachmentMarkAsReaded(position: Int) {
         viewModelScope.launch {
             if (listFiles.isNotEmpty()) {
-                val attachment = listFiles[position].messageAndAttachment?.attachment
-                attachment?.let { attachment ->
-                    val msgAttachment = listFiles[position].messageAndAttachment
-                    msgAttachment?.let { itemMessage ->
-                        if (attachment.status != Constants.AttachmentStatus.READED.status
-                            && itemMessage.isMine == Constants.IsMine.NO.value
-                        ) {
-                            itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
-                                itemMessage.attachment,
-                                itemMessage.contactId
-                            )
+                if (listFiles[position].isVideo().not()) {
+                    val attachment = listFiles[position].messageAndAttachment?.attachment
+                    attachment?.let { attachment ->
+                        val msgAttachment = listFiles[position].messageAndAttachment
+                        msgAttachment?.let { itemMessage ->
+                            if (attachment.status != Constants.AttachmentStatus.READED.status
+                                && itemMessage.isMine == Constants.IsMine.NO.value
+                            ) {
+                                itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
+                                    itemMessage.attachment,
+                                    itemMessage.contactId
+                                )
+                            }
+                            repository.tryMarkMessageParentAsRead(attachment.webId)
                         }
-                        repository.tryMarkMessageParentAsRead(attachment.webId)
                     }
                 }
             }
@@ -396,6 +398,10 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
             defineDefaultSelfDestructionTime()
             showFilesAsPager()
         }
+    }
+
+    fun markWasInPreviewActivity() {
+        repository.markWasInPreviewActivity()
     }
 
 
