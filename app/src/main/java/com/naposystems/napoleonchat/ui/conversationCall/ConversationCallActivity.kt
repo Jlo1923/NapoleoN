@@ -134,7 +134,6 @@ class ConversationCallActivity :
             Timber.e(e.localizedMessage)
         }
 
-
         with(window) {
             setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
@@ -447,6 +446,10 @@ class ConversationCallActivity :
     }
 
     override fun contactAcceptChangeToVideoCall() {
+
+        with(window) {
+            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
 
         NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
 
