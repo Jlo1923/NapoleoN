@@ -5,14 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.recoveryAccountQuestions.RecoveryAccountAnswers
+import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class RecoveryAccountQuestionsViewModel @Inject constructor(
-    private val repository: IContractRecoveryAccountQuestions.Repository
-) : ViewModel(), IContractRecoveryAccountQuestions.ViewModel {
+    private val repository: RecoveryAccountQuestionsRepository.Repository
+) : ViewModel(), RecoveryAccountQuestionsRepository.ViewModel {
 
     private val _sendAnswersSuccessfully = MutableLiveData<Boolean>()
     val sendAnswersSuccessfully: LiveData<Boolean>

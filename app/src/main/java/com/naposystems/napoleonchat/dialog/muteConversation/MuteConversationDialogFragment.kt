@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.muteConversation
+package com.naposystems.napoleonchat.dialog.muteConversation
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.naposystems.napoleonchat.R
-import com.naposystems.napoleonchat.databinding.ConversationMuteDialogFragmentBinding
+import com.naposystems.napoleonchat.databinding.MuteConversationDialogFragmentBinding
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
@@ -39,8 +39,8 @@ class MuteConversationDialogFragment : DialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: MuteConversationViewModel by viewModels { viewModelFactory }
-    private lateinit var binding: ConversationMuteDialogFragmentBinding
+    private val viewModel: MuteConversationDialogViewModel by viewModels { viewModelFactory }
+    private lateinit var binding: MuteConversationDialogFragmentBinding
     private lateinit var listener: MuteConversationListener
 
     override fun onAttach(context: Context) {
@@ -53,7 +53,7 @@ class MuteConversationDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(
-            inflater, R.layout.conversation_mute_dialog_fragment, container, false
+            inflater, R.layout.mute_conversation_dialog_fragment, container, false
         )
 
         binding.lifecycleOwner = this

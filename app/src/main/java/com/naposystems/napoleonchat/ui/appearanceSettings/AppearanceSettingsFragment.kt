@@ -26,7 +26,7 @@ import com.naposystems.napoleonchat.databinding.AppearanceSettingsFragmentBindin
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
-import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.napoleonchat.dialog.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogFragment
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogFragment
@@ -34,7 +34,6 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.dialog.PermissionDialogFragment
 import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel

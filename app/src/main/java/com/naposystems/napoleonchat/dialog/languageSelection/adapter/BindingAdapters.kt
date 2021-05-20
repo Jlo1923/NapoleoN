@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.languageSelection.adapter
+package com.naposystems.napoleonchat.dialog.languageSelection.adapter
 
 import android.content.Context
 import androidx.appcompat.widget.AppCompatImageView

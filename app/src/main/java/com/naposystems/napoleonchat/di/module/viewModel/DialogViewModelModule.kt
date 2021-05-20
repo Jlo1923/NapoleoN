@@ -5,9 +5,11 @@ import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogView
 import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogViewModel
 import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogViewModel
 import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogViewModel
+import com.naposystems.napoleonchat.dialog.languageSelection.LanguageSelectionDialogViewModel
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.logout.LogoutDialogViewModel
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogViewModel
 import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelKey
 import dagger.Binds
@@ -56,5 +58,16 @@ abstract class DialogViewModelModule {
     @IntoMap
     @ViewModelKey(UserDisplayFormatDialogViewModel::class)
     internal abstract fun bindUserDisplayFormatViewModel(viewModel: UserDisplayFormatDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguageSelectionDialogViewModel::class)
+    internal abstract fun bindLanguageSelectionViewModel(viewModel: LanguageSelectionDialogViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MuteConversationDialogViewModel::class)
+    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationDialogViewModel): ViewModel
 
 }

@@ -4,13 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class EnterPinViewModel @Inject constructor(
-    private val repository: IContractEnterPin.Repository
-) : ViewModel(), IContractEnterPin.ViewModel {
+    private val repository: EnterPinRepository
+) : ViewModel() {
 
     private val _attempts = MutableLiveData<Int>()
     val attempts: LiveData<Int>
@@ -28,7 +29,7 @@ class EnterPinViewModel @Inject constructor(
     val biometricsOption: LiveData<Int>
         get() = _biometricsOption
 
-    override fun validatedAccessPin(pin: String) {
+    fun validatedAccessPin(pin: String) {
         viewModelScope.launch {
             val pinUser = repository.getAccessPin().accessPin
 
@@ -40,8 +41,7 @@ class EnterPinViewModel @Inject constructor(
                 repository.setAttempts(0)
                 repository.setTotalAttempts(0)
                 repository.setLockStatus(Constants.LockStatus.UNLOCK.state)
-            }
-            else {
+            } else {
                 _validPassword.value = false
                 _attempts.value = _attempts.value!!.inc()
                 repository.setAttempts(_attempts.value!!)
@@ -92,37 +92,37 @@ class EnterPinViewModel @Inject constructor(
         }
     }
 
-    override fun getAttempts() {
+    fun getAttempts() {
         viewModelScope.launch {
             _attempts.value = repository.getAttempts()
         }
     }
 
-    override fun setAttempts(attempts: Int) {
+    fun setAttempts(attempts: Int) {
         viewModelScope.launch {
             repository.setAttempts(attempts)
         }
     }
 
-    override fun setTotalAttempts(attempts: Int) {
+    fun setTotalAttempts(attempts: Int) {
         viewModelScope.launch {
             repository.setTotalAttempts(attempts)
         }
     }
 
-    override fun setLockStatus(state: Int) {
+    fun setLockStatus(state: Int) {
         viewModelScope.launch {
             repository.setLockStatus(state)
         }
     }
 
-    override fun getBiometricsOption() {
+    fun getBiometricsOption() {
         viewModelScope.launch {
             _biometricsOption.value = repository.getBiometricsOption()
         }
     }
 
-    override fun setBiometricPreference(option: Int) {
+    fun setBiometricPreference(option: Int) {
         repository.setBiometricPreference(option)
     }
 }

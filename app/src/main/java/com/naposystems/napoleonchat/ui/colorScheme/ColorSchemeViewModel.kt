@@ -8,8 +8,10 @@ import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ColorSchemeViewModel @Inject constructor(private val repository: ColorSchemeRepository) :
-    ViewModel(), IContractColorScheme.ViewModel {
+class ColorSchemeViewModel
+@Inject constructor(
+    private val repository: ColorSchemeRepository
+) : ViewModel() {
 
     private val _theme = MutableLiveData<Int>()
     val theme: LiveData<Int>
@@ -20,15 +22,15 @@ class ColorSchemeViewModel @Inject constructor(private val repository: ColorSche
     }
 
     //region Implementation IContractColorScheme.ViewModel
-    override fun getActualTheme() {
+    fun getActualTheme() {
         _theme.value = repository.getActualTheme()
     }
 
-    override fun setTheme(theme: Int) {
+    fun setTheme(theme: Int) {
         _theme.value = theme
     }
 
-    override fun saveTheme(newTheme: Int) {
+    fun saveTheme(newTheme: Int) {
         viewModelScope.launch {
             repository.saveTheme(newTheme)
             _theme.value = newTheme

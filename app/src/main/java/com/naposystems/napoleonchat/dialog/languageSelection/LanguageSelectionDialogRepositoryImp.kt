@@ -1,26 +1,25 @@
-package com.naposystems.napoleonchat.repository.languageSelection
+package com.naposystems.napoleonchat.dialog.languageSelection
 
 import android.content.Context
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.model.languageSelection.Language
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.language.UserLanguageReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.profile.UpdateUserInfoResDTO
-import com.naposystems.napoleonchat.model.languageSelection.Language
-import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import retrofit2.Response
 import javax.inject.Inject
 
-class LanguageSelectionRepository @Inject constructor(
+class LanguageSelectionDialogRepositoryImp
+@Inject constructor(
     private val context: Context,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val napoleonApi: NapoleonApi
-) :
-    IContractLanguageSelection.Repository {
+) : LanguageSelectionDialogRepository {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder().build()

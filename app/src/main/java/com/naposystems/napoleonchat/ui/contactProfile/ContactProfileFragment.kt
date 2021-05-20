@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -37,12 +36,11 @@ import com.naposystems.napoleonchat.dialog.changeParams.ChangeFakeParamsDialogFr
 import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.Utils.Companion.showSimpleSnackbar
 import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel

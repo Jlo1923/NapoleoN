@@ -30,10 +30,10 @@ import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinFragment
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinFragment
 import com.naposystems.napoleonchat.ui.help.HelpFragment
 import com.naposystems.napoleonchat.ui.home.HomeFragment
-import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.napoleonchat.dialog.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.napoleonchat.ui.multipreview.fragments.MultipleAttachmentPreviewImageFragment
 import com.naposystems.napoleonchat.ui.multipreview.fragments.MultipleAttachmentPreviewVideoFragment
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifFragment
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingFragment
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatFragment

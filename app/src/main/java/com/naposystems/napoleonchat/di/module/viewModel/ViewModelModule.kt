@@ -21,12 +21,10 @@ import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallViewMode
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinViewModel
 import com.naposystems.napoleonchat.ui.home.HomeViewModel
-import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
@@ -69,11 +67,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EnterCodeViewModel::class)
     internal abstract fun bindEnterCodeViewModel(viewModel: EnterCodeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LanguageSelectionViewModel::class)
-    internal abstract fun bindLanguageSelectionViewModel(viewModel: LanguageSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -210,11 +203,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactProfileViewModel::class)
     internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MuteConversationViewModel::class)
-    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationViewModel): ViewModel
 
 
     @Binds

@@ -33,8 +33,6 @@ class PreviewBackgroundChatFragment : BaseFragment() {
 
     private val args: PreviewBackgroundChatFragmentArgs by navArgs()
 
-    @Inject
-    override lateinit var viewModelFactory: ViewModelFactory
     private val viewModel: PreviewBackgroundChatViewModel by viewModels { viewModelFactory }
     private lateinit var binding: PreviewBackgroundChatFragmentBinding
     private val fileName: String = "chat_background.jpg"

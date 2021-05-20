@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel" />
+            type="com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogViewModel" />
 
     </data>
 
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
-        tools:context=".ui.muteConversation.MuteConversationDialogFragment">
+        tools:context=".dialog.muteConversation.MuteConversationDialogFragment">
 
         <TextView
             android:id="@+id/textView_title"

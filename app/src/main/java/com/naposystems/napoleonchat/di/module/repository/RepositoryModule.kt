@@ -2,38 +2,43 @@ package com.naposystems.napoleonchat.di.module.repository
 
 import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepository
 import com.naposystems.napoleonchat.repository.accessPin.AccessPinRepositoryImp
+import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
 import com.naposystems.napoleonchat.repository.addContact.AddContactRepositoryImp
+import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepository
 import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepositoryImp
 import com.naposystems.napoleonchat.repository.attachmentGallery.AttachmentGalleryRepository
 import com.naposystems.napoleonchat.repository.attachmentGalleryFolder.AttachmentGalleryFolderRepository
 import com.naposystems.napoleonchat.repository.attachmentLocation.AttachmentLocationRepository
 import com.naposystems.napoleonchat.repository.base.BaseRepository
 import com.naposystems.napoleonchat.repository.base.BaseRepositoryImp
+import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepositoryImp
 import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepository
+import com.naposystems.napoleonchat.repository.colorScheme.ColorSchemeRepositoryImp
 import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
+import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepositoryImp
+import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
 import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepositoryImp
-import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
+import com.naposystems.napoleonchat.repository.contacts.ContactsRepositoryImp
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepository
 import com.naposystems.napoleonchat.repository.conversationCall.ConversationCallRepositoryImp
-import com.naposystems.napoleonchat.repository.conversationMute.ConversationMuteRepository
+import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
 import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepositoryImp
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepository
 import com.naposystems.napoleonchat.repository.enterCode.EnterCodeRepositoryImp
-import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
+import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepositoryImp
 import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.repository.home.HomeRepositoryImp
-import com.naposystems.napoleonchat.repository.languageSelection.LanguageSelectionRepository
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepositoryImp
 import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepository
 import com.naposystems.napoleonchat.repository.notificationSettings.NotificationSettingRepository
-import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
+import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepositoryImp
 import com.naposystems.napoleonchat.repository.previewMedia.PreviewMediaRepository
 import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
-import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
-import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
+import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepositoryImp
+import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepositoryImp
 import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
 import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepository
 import com.naposystems.napoleonchat.repository.securitySettings.SecuritySettingsRepository
@@ -55,36 +60,27 @@ import com.naposystems.napoleonchat.service.multiattachment.contract.IContractMu
 import com.naposystems.napoleonchat.service.multiattachment.repository.MultipleUploadRepository
 import com.naposystems.napoleonchat.service.uploadService.IContractUploadService
 import com.naposystems.napoleonchat.service.uploadService.UploadServiceRepository
-import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
-import com.naposystems.napoleonchat.repository.appearanceSettings.AppearanceSettingsRepository
 import com.naposystems.napoleonchat.ui.attachmentGallery.IContractAttachmentGallery
 import com.naposystems.napoleonchat.ui.attachmentGalleryFolder.IContractAttachmentGalleryFolders
 import com.naposystems.napoleonchat.ui.attachmentLocation.IContractAttachmentLocation
-import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
-import com.naposystems.napoleonchat.ui.colorScheme.IContractColorScheme
-import com.naposystems.napoleonchat.ui.contactProfile.IContractContactProfile
-import com.naposystems.napoleonchat.repository.contactUs.ContactUsRepository
-import com.naposystems.napoleonchat.ui.contacts.IContractContacts
+import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.ui.conversation.ConversationRepository
 import com.naposystems.napoleonchat.ui.conversation.IContractConversation
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.repository.MyMultiAttachmentMsgRepository
-import com.naposystems.napoleonchat.repository.editAccessPin.EditAccessPinRepository
-import com.naposystems.napoleonchat.ui.enterPin.IContractEnterPin
-import com.naposystems.napoleonchat.ui.languageSelection.IContractLanguageSelection
+import com.naposystems.napoleonchat.repository.enterPin.EnterPinRepository
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
 import com.naposystems.napoleonchat.ui.multi.repository.MultipleAttachmentRepository
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentItemPreview
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewItemRepository
 import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
-import com.naposystems.napoleonchat.ui.muteConversation.IMuteConversation
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
-import com.naposystems.napoleonchat.ui.previewBackgroundChat.IContractPreviewBackgroundChat
+import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.ui.recoveryAccount.IContractRecoveryAccount
-import com.naposystems.napoleonchat.ui.recoveryAccountQuestions.IContractRecoveryAccountQuestions
+import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
+import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
 import com.naposystems.napoleonchat.ui.registerRecoveryAccount.IContractRegisterRecoveryAccount
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.IContractRegisterRecoveryAccountQuestion
 import com.naposystems.napoleonchat.ui.securitySettings.IContractSecuritySettings
@@ -145,6 +141,30 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindEditAccessPinRepository(repository: EditAccessPinRepositoryImp): EditAccessPinRepository
 
+    @Binds
+    abstract fun bindColorSchemeRepository(repository: ColorSchemeRepositoryImp): ColorSchemeRepository
+
+    @Binds
+    abstract fun bindContactProfileRepository(repository: ContactProfileRepositoryImp): ContactProfileRepository
+
+    @Binds
+    abstract fun bindContactsRepository(repository: ContactsRepositoryImp): ContactsRepository
+
+    @Binds
+    abstract fun bindEnterPinRepository(repository: EnterPinRepositoryImp): EnterPinRepository
+
+    @Binds
+    abstract fun bindConversationCallRepository(repository: ConversationCallRepositoryImp): ConversationCallRepository
+
+    @Binds
+    abstract fun bindWebRTCServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
+
+    @Binds
+    abstract fun bindPreviewBackgroundChatRepository(repository: PreviewBackgroundChatRepositoryImp): PreviewBackgroundChatRepository
+
+    @Binds
+    abstract fun bindRecoveryAccountRepository(repository: RecoveryAccountRepositoryImp): RecoveryAccountRepository
+
     //NO Refactorizados
 
     @Binds
@@ -157,30 +177,7 @@ abstract class RepositoryModule {
     abstract fun bindAttachmentLocationRepository(repository: AttachmentLocationRepository): IContractAttachmentLocation.Repository
 
     @Binds
-    abstract fun bindColorSchemeRepository(repository: ColorSchemeRepository): IContractColorScheme.Repository
-
-    @Binds
-    abstract fun bindContactProfileRepository(repository: ContactProfileRepository): IContractContactProfile.Repository
-
-    @Binds
-    abstract fun bindContactsRepository(repository: ContactsRepository): IContractContacts.Repository
-
-    @Binds
-    abstract fun bindConversationCallRepository(repository: ConversationCallRepositoryImp): ConversationCallRepository
-
-    @Binds
     abstract fun bindConversationRepository(repository: ConversationRepository): IContractConversation.Repository
-
-
-    @Binds
-    abstract fun bindEnterPinRepository(repository: EnterPinRepository): IContractEnterPin.Repository
-
-    @Binds
-    abstract fun bindLanguageSelectionRepository(repository: LanguageSelectionRepository): IContractLanguageSelection.Repository
-
-
-    @Binds
-    abstract fun bindConversationMuteRepository(repository: ConversationMuteRepository): IMuteConversation.Repository
 
     @Binds
     abstract fun bindNapoleonKeyboardGifRepository(repository: NapoleonKeyboardGifRepository): IContractNapoleonKeyboardGif.Repository
@@ -189,17 +186,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationSettingRepository(repository: NotificationSettingRepository): IContractNotificationSetting.Repository
 
     @Binds
-    abstract fun bindPreviewBackgroundChatRepository(repository: PreviewBackgroundChatRepository): IContractPreviewBackgroundChat.Repository
-
-    @Binds
     abstract fun bindPreviewMediaRepository(repository: PreviewMediaRepository): IContractPreviewMedia.Repository
 
-
     @Binds
-    abstract fun bindRecoveryAccountRepository(repository: RecoveryAccountRepository): IContractRecoveryAccount.Repository
-
-    @Binds
-    abstract fun bindRecoveryAccountQuestionsRepository(repository: RecoveryAccountQuestionsRepository): IContractRecoveryAccountQuestions.Repository
+    abstract fun bindRecoveryAccountQuestionsRepository(repository: RecoveryAccountQuestionsRepositoryImp): RecoveryAccountQuestionsRepository.Repository
 
     @Binds
     abstract fun bindRegisterRecoveryAccountRepository(repository: RegisterRecoveryAccountRepository): IContractRegisterRecoveryAccount.Repository
@@ -221,9 +211,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepository): IContractUnlockAppTime.Repository
-
-    @Binds
-    abstract fun bindWebRTCServiceRepository(repository: WebRTCServiceRepositoryImp): WebRTCServiceRepository
 
     @Binds
     abstract fun provideMultiUploadServiceRepository(repository: UploadServiceRepository): IContractUploadService.Repository

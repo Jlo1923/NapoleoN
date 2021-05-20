@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.languageSelection
+package com.naposystems.napoleonchat.dialog.languageSelection
 
 import android.content.Context
 import android.os.Bundle
@@ -12,7 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.LanguageSelectionDialogFragmentBinding
 import com.naposystems.napoleonchat.model.languageSelection.Language
-import com.naposystems.napoleonchat.ui.languageSelection.adapter.LanguageSelectionAdapter
+import com.naposystems.napoleonchat.dialog.languageSelection.adapter.LanguageSelectionDialogAdapter
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.adapters.showToast
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -32,9 +32,9 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private val viewModel: LanguageSelectionViewModel by viewModels { viewModelFactory }
+    private val viewModel: LanguageSelectionDialogViewModel by viewModels { viewModelFactory }
     private lateinit var binding: LanguageSelectionDialogFragmentBinding
-    private lateinit var adapter: LanguageSelectionAdapter
+    private lateinit var adapter: LanguageSelectionDialogAdapter
 
     override fun onAttach(context: Context) {
         AndroidSupportInjection.inject(this)
@@ -53,9 +53,9 @@ class LanguageSelectionDialogFragment : BottomSheetDialogFragment() {
         )
 
         adapter =
-            LanguageSelectionAdapter(
+            LanguageSelectionDialogAdapter(
                 viewModel.languagesList,
-                LanguageSelectionAdapter.LanguageSelectionListener { languageSelected ->
+                LanguageSelectionDialogAdapter.LanguageSelectionListener { languageSelected ->
                     arguments?.getInt(LOCATION)?.let { location ->
                         viewModel.setSelectedLanguage(languageSelected, location)
                     }

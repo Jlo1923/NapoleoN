@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.languageSelection.adapter
+package com.naposystems.napoleonchat.dialog.languageSelection.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.naposystems.napoleonchat.databinding.LanguageSelectionDialogFragmentItemBinding
 import com.naposystems.napoleonchat.model.languageSelection.Language
 
-class LanguageSelectionAdapter(
+class LanguageSelectionDialogAdapter(
     private val languages: List<Language>,
     private val clickListener: LanguageSelectionListener,
     private val languageSelected: String
 ) :
-    RecyclerView.Adapter<LanguageSelectionAdapter.LanguageViewHolder>() {
+    RecyclerView.Adapter<LanguageSelectionDialogAdapter.LanguageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LanguageViewHolder {
         return LanguageViewHolder.from(parent)

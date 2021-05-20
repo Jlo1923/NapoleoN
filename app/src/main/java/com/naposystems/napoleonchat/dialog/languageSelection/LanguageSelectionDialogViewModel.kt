@@ -1,19 +1,18 @@
-package com.naposystems.napoleonchat.ui.languageSelection
+package com.naposystems.napoleonchat.dialog.languageSelection
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.languageSelection.Language
-import com.naposystems.napoleonchat.repository.languageSelection.LanguageSelectionRepository
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class LanguageSelectionViewModel
+class LanguageSelectionDialogViewModel
 @Inject constructor(
-    private val repository: LanguageSelectionRepository
-) : ViewModel(), IContractLanguageSelection.ViewModel {
+    private val repository: LanguageSelectionDialogRepositoryImp
+) : ViewModel(), LanguageSelectionDialogRepository.ViewModel {
 
     val languagesList = getLanguages()
 
