@@ -24,7 +24,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -41,11 +40,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
+import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
@@ -63,7 +62,8 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity :
+    AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -620,18 +620,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun validLockTime() {
-        if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
-            when (accountStatus) {
-                Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
-                    Timber.d("AccountStatus validLockTime {$accountStatus}")
+        if (viewModel.wasInPreviewActivity()) {
+            // No debemos validar el PIN
+            viewModel.removeWasInPreviewActivity()
+        } else {
+            if (viewModel.getOutputControl() == Constants.OutputControl.FALSE.state) {
+                when (accountStatus) {
+                    Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
-                    val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
-                    if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
-                        val currentTime = System.currentTimeMillis()
+                        Timber.d("AccountStatus validLockTime {$accountStatus}")
 
-                        if (currentTime >= viewModel.getLockTimeApp()) {
-                            navToEnterPin()
+                        val timeAccessRequestPin = viewModel.getTimeRequestAccessPin()
+                        if (timeAccessRequestPin != Constants.TimeRequestAccessPin.NEVER.time) {
+                            val currentTime = System.currentTimeMillis()
+
+                            if (currentTime >= viewModel.getLockTimeApp()) {
+                                navToEnterPin()
+                            }
                         }
                     }
                 }

@@ -120,4 +120,12 @@ class MainActivityViewModel
     fun removeUriListCache() {
         repository.removeUriListCache()
     }
+
+    fun wasInPreviewActivity(): Boolean {
+        return repository.wasInPreviewActivity()
+    }
+
+    fun removeWasInPreviewActivity() {
+        repository.removeWasInPreviewActivity()
+    }
 }

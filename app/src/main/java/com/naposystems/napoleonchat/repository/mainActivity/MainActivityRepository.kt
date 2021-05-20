@@ -18,6 +18,7 @@ interface MainActivityRepository {
     fun getRecoveryQuestionsPref(): Int
     fun disconnectSocket()
     fun addUriListToCache(listOf: List<Uri>)
-
     fun removeUriListCache()
+    fun wasInPreviewActivity(): Boolean
+    fun removeWasInPreviewActivity()
 }

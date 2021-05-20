@@ -8,6 +8,8 @@ import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_JSON_NOTIFICATION
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_LAST_JSON_NOTIFICATION
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.WAS_IN_PREVIEW
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import javax.inject.Inject
 
@@ -84,12 +86,12 @@ class MainActivityRepositoryImp @Inject constructor(
 //            socketClient.disconnectSocket()
     }
 
-    override fun addUriListToCache(listOf: List<Uri>) {
-        sharedPreferencesManager.puStringSet("test", listOf)
+    override  fun addUriListToCache(listOf: List<Uri>) {
+        sharedPreferencesManager.puStringSet(URIS_CACHE, listOf)
     }
 
     fun getPendingUris(): List<Uri> {
-        val urisString = sharedPreferencesManager.getStringSet("test")
+        val urisString = sharedPreferencesManager.getStringSet(URIS_CACHE)
         val listString = urisString?.toList()
         val listUris = listString?.map { Uri.parse(it) }
         return listUris ?: emptyList()
@@ -98,4 +100,13 @@ class MainActivityRepositoryImp @Inject constructor(
     override fun removeUriListCache() {
         sharedPreferencesManager.removeSetIdsToRemove()
     }
+
+    override fun wasInPreviewActivity(): Boolean {
+        return sharedPreferencesManager.getBoolean(WAS_IN_PREVIEW, false)
+    }
+
+    override fun removeWasInPreviewActivity() {
+        sharedPreferencesManager.putBoolean(WAS_IN_PREVIEW, false)
+    }
+
 }

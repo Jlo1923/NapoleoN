@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesR
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.selfDestructTime.IContractSelfDestructTime
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.WAS_IN_PREVIEW
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import retrofit2.Response
 import timber.log.Timber
@@ -115,6 +116,10 @@ class SelfDestructTimeRepository @Inject constructor(
 
     override fun tryMarkMessageParentAsRead(webId: String) {
         syncManager.tryMarkMessageParentAsRead(listOf(webId))
+    }
+
+    override fun markWasInPreviewActivity() {
+        sharedPreferencesManager.putBoolean(WAS_IN_PREVIEW, true)
     }
 
 }

@@ -6,18 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.multipreview.fragments.MultipleAttachmentPreviewVideoFragment">
 
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/false_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/false_view" />
+
     <TextView
         android:id="@+id/text_time_autodestruction"
         style="@style/TextCountDownSelfDestruct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/normal_margin"
+        android:layout_marginTop="@dimen/xx_large_margin"
         android:layout_marginEnd="@dimen/small_margin"
         android:padding="@dimen/x_small_padding"
         android:text="12:12"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/image_button_play"
@@ -43,15 +53,6 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/player_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="@id/false_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/false_view" />
-
     <View
         android:id="@+id/false_view"
         android:layout_width="match_parent"
@@ -66,7 +67,7 @@
         android:id="@+id/frame_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/normal_margin"
+        android:layout_marginBottom="@dimen/xxx_large_margin"
         android:layout_marginEnd="@dimen/small_margin"
         android:background="@drawable/bg_black_transparent_circle"
         android:visibility="gone"
