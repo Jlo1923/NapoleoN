@@ -31,9 +31,9 @@ import com.naposystems.napoleonchat.databinding.ProfileFragmentBinding
 import com.naposystems.napoleonchat.source.remote.dto.user.UserAvatarReqDTO
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
-import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
-import com.naposystems.napoleonchat.ui.logout.LogoutDialogFragment
+import com.naposystems.napoleonchat.dialog.logout.LogoutDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils

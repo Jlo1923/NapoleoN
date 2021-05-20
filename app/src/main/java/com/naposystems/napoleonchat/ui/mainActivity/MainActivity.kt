@@ -24,7 +24,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
@@ -41,12 +40,11 @@ import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMainBinding
-import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
-import com.naposystems.napoleonchat.ui.accountAttack.AccountAttackDialogFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
@@ -64,7 +62,8 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity :
+    AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -126,25 +125,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MainActivityViewModel::class.java)
-
-        intent.extras?.let { bundle ->
-
-            var callModel = CallModel(
-                contactId = 0,
-                channelName = "",
-                isVideoCall = false
-            )
-
-            if (bundle.containsKey(Constants.CallKeys.CALL_MODEL)) {
-                callModel = bundle.getSerializable(Constants.CallKeys.CALL_MODEL) as CallModel
-            }
-
-            if (callModel.channelName != "" || callModel.contactId > 0) {
-                viewModel.setCallChannel(callModel.channelName)
-                viewModel.setIsVideoCall(callModel.isVideoCall)
-                viewModel.getContact(callModel.contactId)
-            }
-        }
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_SECURE,
@@ -263,7 +243,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             when (destination.id) {
                 R.id.splashFragment,
                 R.id.landingFragment,
-                R.id.registerFragment,
+                R.id.validateNicknameFragment,
                 R.id.enterPinFragment,
                 R.id.unlockAppTimeFragment,
                 R.id.conversationCameraFragment,
@@ -329,22 +309,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.contact.observe(this, Observer { contact ->
             if (contact != null && this.hasMicAndCameraPermission()) {
                 Timber.d("startCallActivity MainActivity viewmodel.contact")
-                val intent = Intent(this, ConversationCallActivity::class.java).apply {
-                    putExtras(Bundle().apply {
-//                        putSerializable(
-//                            ConversationCallActivity.KEY_CALL_MODEL, CallModel(
-//                                contactId = contact.id,
-//                                channelName = viewModel.getCallChannel(),
-//                                isVideoCall = viewModel.isVideoCall() ?: false,
-//                                typeCall = Constants.TypeCall.IS_INCOMING_CALL
-//                            )
-//                        )
-                    })
-                }
-                startActivity(intent)
+                val intent = Intent(this, ConversationCallActivity::class.java)
 
-                viewModel.resetContact()
-                viewModel.resetCallChannel()
+                startActivity(intent)
             }
         })
 
@@ -676,8 +643,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-
-
     }
 
     private fun validateExtrasForShareFromOutside() = intent.apply {

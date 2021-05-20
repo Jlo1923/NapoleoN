@@ -76,6 +76,22 @@ object Constants {
         const val OFFER = "offer"
     }
 
+    object ParamsOffer {
+
+        const val PARAM_TWO_ORIGINAL = "na=extmap"
+        const val PARAM_TWO_REPLACE = "#$#"
+
+        const val PARAM_THREE_ORIGINAL = "na=rtpmap"
+        const val PARAM_THREE_REPLACE = "#%#"
+
+        const val PARAM_FOUR_ORIGINAL = "na=rtcp-fb"
+        const val PARAM_FOUR_REPLACE = "#&#"
+
+        const val PARAM_FIVE_ORIGINAL = "na=ssrc"
+        const val PARAM_FIVE_REPLACE = "#?#"
+
+    }
+
     object NotificationKeys {
         const val TYPE_NOTIFICATION = "type_notification"
         const val MESSAGE_ID = "message_id"

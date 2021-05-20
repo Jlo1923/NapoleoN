@@ -1,11 +1,9 @@
 package com.naposystems.napoleonchat.ui.subscription
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -15,13 +13,12 @@ import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
-import com.naposystems.napoleonchat.ui.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
 import com.naposystems.napoleonchat.ui.subscription.adapter.SkuDetailsAdapter
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*

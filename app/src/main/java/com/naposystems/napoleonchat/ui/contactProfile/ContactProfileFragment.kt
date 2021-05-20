@@ -33,8 +33,8 @@ import com.naposystems.napoleonchat.utils.handlerNotificationChannel.HandlerNoti
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
-import com.naposystems.napoleonchat.ui.changeParams.ChangeFakeParamsDialogFragment
-import com.naposystems.napoleonchat.ui.changeParams.ChangeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeFakeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment

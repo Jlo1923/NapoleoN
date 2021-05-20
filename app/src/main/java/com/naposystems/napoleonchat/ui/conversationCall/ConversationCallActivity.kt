@@ -42,13 +42,8 @@ class ConversationCallActivity :
 
     companion object {
 
-        //Llaves Modelo
-//        const val KEY_CALL_MODEL = "callModel"
-
         //Llaves Acciones
         const val ACTION_ANSWER_CALL = "answerCall"
-
-        const val ITS_FROM_RETURN_CALL = "its_from_return_call"
     }
 
     @Inject
@@ -65,6 +60,9 @@ class ConversationCallActivity :
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
+
+    private var isAnswerCall = false
+
 
     private lateinit var binding: ActivityConversationCallBinding
 
@@ -136,7 +134,6 @@ class ConversationCallActivity :
             Timber.e(e.localizedMessage)
         }
 
-
         with(window) {
             setFlags(
                 WindowManager.LayoutParams.FLAG_SECURE,
@@ -150,7 +147,10 @@ class ConversationCallActivity :
         if (NapoleonApplication.statusCall.isNoCall()) {
 
             when (NapoleonApplication.callModel?.typeCall) {
-                Constants.TypeCall.IS_INCOMING_CALL -> webRTCClient.playRingtone()
+                Constants.TypeCall.IS_INCOMING_CALL -> {
+                    if (isAnswerCall.not())
+                        webRTCClient.playRingtone()
+                }
                 Constants.TypeCall.IS_OUTGOING_CALL -> webRTCClient.playRingBackTone()
             }
 
@@ -198,19 +198,8 @@ class ConversationCallActivity :
     }
 
     override fun onBackPressed() {
-
-        if (NapoleonApplication.statusCall.isConnectedCall()) {
-
-            Timber.d("startCallActivity, onBackPressed")
-
-            if (NapoleonApplication.callModel?.isVideoCall == true) {
-                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
-            }
-
-            NapoleonApplication.isShowingCallActivity = false
-
-            super.onBackPressed()
-        }
+        setCallOnBackground()
+        super.onBackPressed()
     }
 
     override fun finish() {
@@ -224,8 +213,8 @@ class ConversationCallActivity :
     }
 
     override fun onPause() {
+        setCallOnBackground()
         super.onPause()
-        webRTCClient.stopProximitySensor()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -238,7 +227,25 @@ class ConversationCallActivity :
             NapoleonApplication.statusCall.isNoCall() &&
             NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL
         ) {
+            isAnswerCall = true
             answerCall()
+        }
+    }
+
+    private fun setCallOnBackground() {
+
+        webRTCClient.stopProximitySensor()
+
+        if (NapoleonApplication.statusCall.isConnectedCall()) {
+
+            Timber.d("startCallActivity, onBackPressed")
+
+            if (NapoleonApplication.callModel?.isVideoCall == true) {
+                webRTCClient.toggleVideo(checked = true, itsFromBackPressed = true)
+            }
+
+            NapoleonApplication.isShowingCallActivity = false
+
         }
     }
 
@@ -265,14 +272,12 @@ class ConversationCallActivity :
                     webRTCClient.setOffer()
 
                     if (extras.getBoolean(ACTION_ANSWER_CALL, false)) {
+                        isAnswerCall = true
                         Timber.d("LLAMADA PASO: LLAMADA ENTRANTE RESPONDIENDO LLAMADA")
                         answerCall()
                     }
                 }
 
-                if (extras.containsKey(ITS_FROM_RETURN_CALL)) {
-                    webRTCClient.setItsReturnCall(extras.getBoolean(ITS_FROM_RETURN_CALL, false))
-                }
             }
 
         } catch (e: Exception) {
@@ -442,6 +447,10 @@ class ConversationCallActivity :
 
     override fun contactAcceptChangeToVideoCall() {
 
+        with(window) {
+            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
         NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
 
         NapoleonApplication.callModel?.isVideoCall = true
@@ -471,7 +480,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun showConnectingTitle() {
+    override fun showCypheryngCall() {
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE

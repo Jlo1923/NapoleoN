@@ -30,8 +30,8 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
-import com.naposystems.napoleonchat.ui.dialog.timeFormat.TimeFormatDialogViewModel
-import com.naposystems.napoleonchat.ui.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
+import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -168,11 +168,7 @@ class HomeFragment : BaseFragment() {
 
         binding.textViewReturnCall.setOnClickListener {
             Timber.d("startCallActivity returnCall HomeFragment")
-            val intent = Intent(context, ConversationCallActivity::class.java).apply {
-                putExtras(Bundle().apply {
-                    putBoolean(ConversationCallActivity.ITS_FROM_RETURN_CALL, true)
-                })
-            }
+            val intent = Intent(context, ConversationCallActivity::class.java)
             startActivity(intent)
         }
 

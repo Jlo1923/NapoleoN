@@ -10,6 +10,7 @@ import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesR
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Utils
 
 //region Funciones de Extension de Post
 fun Map<String, String>.toCallModel(): CallModel {
@@ -29,7 +30,7 @@ fun Map<String, String>.toCallModel(): CallModel {
         contactId = this[Constants.CallKeys.CONTACT_ID]?.toInt() ?: 0
 
     if (containsKey(Constants.CallKeys.OFFER))
-        offer = this[Constants.CallKeys.OFFER].toString()
+        offer = Utils.decoderOffer(this[Constants.CallKeys.OFFER].toString())
 
     return CallModel(
         contactId,

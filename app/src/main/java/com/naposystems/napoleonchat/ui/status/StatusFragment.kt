@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
@@ -14,6 +15,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.StatusFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
+import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
@@ -33,14 +35,15 @@ class StatusFragment : BaseFragment() {
     lateinit var handlerDialog: HandlerDialog
 
     @Inject
-    override lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
 
-    private lateinit var viewModel: StatusViewModel
+
+    private val viewModel: StatusViewModel by viewModels { viewModelFactory }
+
     private lateinit var binding: StatusFragmentBinding
+
     private lateinit var adapter: StatusAdapter
+
     private val args: StatusFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -59,9 +62,8 @@ class StatusFragment : BaseFragment() {
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-            .get(StatusViewModel::class.java)
 
         binding.viewModel = viewModel
 

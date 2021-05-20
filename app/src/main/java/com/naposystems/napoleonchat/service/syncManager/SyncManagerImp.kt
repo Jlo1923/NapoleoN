@@ -35,6 +35,7 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
+import com.naposystems.napoleonchat.utility.Utils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
@@ -786,7 +787,7 @@ class SyncManagerImp @Inject constructor(
                 val callContactReqDTO = CallContactReqDTO(
                     contactToCall = callModel.contactId,
                     isVideoCall = callModel.isVideoCall,
-                    offer = callModel.offer
+                    offer = Utils.encoderOffer(callModel.offer)
                 )
                 napoleonApi.callContact(callContactReqDTO)
             }

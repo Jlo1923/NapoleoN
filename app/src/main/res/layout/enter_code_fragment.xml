@@ -1,182 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.register.enterCode.EnterCodeFragment">
 
-    <data>
-
-    </data>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinator"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.register.enterCode.EnterCodeFragment">
+        android:fillViewport="true">
 
-        <ScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:background="?attr/attrBackgroundColorBackground">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:background="?attr/attrBackgroundColorBackground">
+                android:paddingStart="@dimen/normal_padding"
+                android:paddingEnd="@dimen/normal_padding"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/textView_attempts_for_enter_code"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/normal_padding"
-                    android:paddingEnd="@dimen/normal_padding"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:textColor="?attr/attrTextColorSecondaryTextColor"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/text_number_attempts"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/textView_note"
+                    style="@style/BodyTextView.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x_large_margin"
+                    android:text="@string/text_check_push"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toBottomOf="@id/textView_attempts_for_enter_code" />
 
-                    <TextView
-                        android:id="@+id/textView_attempts_for_enter_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/normal_margin"
-                        android:textColor="?attr/attrTextColorSecondaryTextColor"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="@string/text_number_attempts"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/textView_note"
-                        style="@style/BodyTextView.Bold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/x_large_margin"
-                        android:text="@string/text_check_push"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textView_attempts_for_enter_code" />
-
-                    <com.naposystems.napoleonchat.ui.custom.EnterCodeWidget
-                        android:id="@+id/enter_code_widget"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/normal_margin"
-                        app:errorText="@string/text_message_code_fail"
-                        app:isSecureText="false"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textView_note"
-                        app:numBoxes="6" />
+                <com.naposystems.napoleonchat.ui.custom.EnterCodeWidget
+                    android:id="@+id/enter_code_widget"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    app:errorText="@string/text_message_code_fail"
+                    app:isSecureText="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView_note"
+                    app:numBoxes="6" />
 
 
-                    <!--<TextView
-                        android:id="@+id/textView_error"
-                        style="@style/SmallBodyTextView.Error"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/normal_margin"
-                        android:text="@string/text_message_code_fail"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:visibility="gone" />-->
+                <!--<TextView
+                    android:id="@+id/textView_error"
+                    style="@style/SmallBodyTextView.Error"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:text="@string/text_message_code_fail"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:visibility="gone" />-->
 
-                    <TextView
-                        android:id="@+id/textView_time_for_enter_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/normal_margin"
-                        android:textColor="?attr/attrTextColorSecondaryTextColor"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/enter_code_widget"
-                        tools:text="Nuevo intento en: 30 segundos"
-                        tools:visibility="visible" />
+                <TextView
+                    android:id="@+id/textView_time_for_enter_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:textColor="?attr/attrTextColorSecondaryTextColor"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/enter_code_widget"
+                    tools:text="Nuevo intento en: 30 segundos"
+                    tools:visibility="visible" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_code_forwarding"
-                        style="@style/AppPrimaryButtonText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/small_margin"
-                        android:text="@string/text_dont_receive_code"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textView_time_for_enter_code" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_code_forwarding"
+                    style="@style/AppPrimaryButtonText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/small_margin"
+                    android:text="@string/text_dont_receive_code"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView_time_for_enter_code" />
 
-                    <!--<TextView
-                        android:id="@+id/textView_time_for_new_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:text="Nuevo intento en: 30 segundos"
-                        tools:visibility="gone" />
+                <!--<TextView
+                    android:id="@+id/textView_time_for_new_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Nuevo intento en: 30 segundos"
+                    tools:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/textView_attempt_for_new_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/textView_time_for_new_code"
-                        tools:text="@string/text_number_attempts" />-->
+                <TextView
+                    android:id="@+id/textView_attempt_for_new_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView_time_for_new_code"
+                    tools:text="@string/text_number_attempts" />-->
 
-                    <ViewSwitcher
-                        android:id="@+id/viewSwitcher"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/button_code_forwarding">
+                <ViewSwitcher
+                    android:id="@+id/viewSwitcher"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/button_code_forwarding">
 
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/button_continue"
-                                style="@style/AppPrimaryButton"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/small_margin"
-                                android:enabled="false"
-                                android:text="@string/text_continue"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintWidth_percent="@dimen/width_app_button" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <ProgressBar
-                            android:id="@+id/progressBar"
-                            android:layout_width="wrap_content"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_continue"
+                            style="@style/AppPrimaryButton"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center" />
-                    </ViewSwitcher>
+                            android:layout_marginTop="@dimen/small_margin"
+                            android:enabled="false"
+                            android:text="@string/text_continue"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="@dimen/width_app_button" />
 
-                    <com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCustomView
-                        android:id="@+id/numeric_keyboard"
-                        android:layout_width="0dp"
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/normal_margin"
-                        android:enabled="false"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/viewSwitcher" />
+                        android:layout_gravity="center" />
+                </ViewSwitcher>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                <com.naposystems.napoleonchat.ui.custom.numericKeyboard.NumericKeyboardCustomView
+                    android:id="@+id/numeric_keyboard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/normal_margin"
+                    android:enabled="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/viewSwitcher" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

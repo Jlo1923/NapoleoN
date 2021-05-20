@@ -86,7 +86,7 @@ class MainActivityRepositoryImp @Inject constructor(
 //            socketClient.disconnectSocket()
     }
 
-    fun addUriListToCache(listOf: List<Uri>) {
+    override  fun addUriListToCache(listOf: List<Uri>) {
         sharedPreferencesManager.puStringSet(URIS_CACHE, listOf)
     }
 

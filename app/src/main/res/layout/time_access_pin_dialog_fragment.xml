@@ -7,14 +7,14 @@
 
         <variable
             name="viewModel"
-            type="com.naposystems.napoleonchat.ui.timeAccessPin.TimeAccessPinDialogViewModel" />
+            type="com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/attrBackgroundColorBackgroundDialog"
-        tools:context=".ui.timeAccessPin.TimeAccessPinDialogFragment">
+        tools:context=".dialog.timeAccessPin.TimeAccessPinDialogFragment">
 
         <TextView
             android:id="@+id/textView_title"

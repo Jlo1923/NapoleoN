@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepositoryImp
+import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
@@ -14,11 +14,8 @@ import javax.inject.Inject
 
 class MainActivityViewModel
 @Inject constructor(
-    private val repository: MainActivityRepositoryImp
+    private val repository: MainActivityRepository
 ) : ViewModel() {
-
-    private var callChannel = ""
-    private var isVideoCall: Boolean? = null
 
     private val _user = MutableLiveData<UserEntity>()
     val userEntity: LiveData<UserEntity>
@@ -106,30 +103,6 @@ class MainActivityViewModel
         viewModelScope.launch {
             _contact.value = repository.getContactById(contactId)
         }
-    }
-
-    fun resetContact() {
-        _contact.value = null
-    }
-
-    fun getCallChannel() = this.callChannel
-
-    fun setCallChannel(channel: String) {
-        callChannel = channel
-    }
-
-    fun resetCallChannel() {
-        callChannel = ""
-    }
-
-    fun setIsVideoCall(isVideoCall: Boolean) {
-        this.isVideoCall = isVideoCall
-    }
-
-    fun isVideoCall() = isVideoCall
-
-    fun resetIsVideoCall() {
-        isVideoCall = null
     }
 
     fun getRecoveryQuestionsPref(): Int {

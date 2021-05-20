@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.profile.ProfileRepository
 import com.naposystems.napoleonchat.repository.profile.ProfileRepositoryImp
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import kotlinx.coroutines.launch
@@ -11,7 +12,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ProfileViewModel @Inject constructor(
-    private val repository: ProfileRepositoryImp
+    private val repository: ProfileRepository
 ) : ViewModel() {
 
     lateinit var userEntity: LiveData<UserEntity>
