@@ -31,7 +31,7 @@ import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.repository.home.HomeRepositoryImp
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepository
 import com.naposystems.napoleonchat.repository.mainActivity.MainActivityRepositoryImp
-import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepository
+import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepositoryImp
 import com.naposystems.napoleonchat.repository.notificationSettings.NotificationSettingRepository
 import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepositoryImp
 import com.naposystems.napoleonchat.repository.previewMedia.PreviewMediaRepository
@@ -73,7 +73,7 @@ import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAt
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewItemRepository
 import com.naposystems.napoleonchat.ui.multipreview.repository.MultipleAttachmentPreviewRepository
-import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.IContractNapoleonKeyboardGif
+import com.naposystems.napoleonchat.repository.napoleonKeyboardGif.NapoleonKeyboardGifRepository
 import com.naposystems.napoleonchat.ui.notificationSetting.IContractNotificationSetting
 import com.naposystems.napoleonchat.repository.previewBackgrounChat.PreviewBackgroundChatRepository
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
@@ -179,6 +179,9 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindUnlockAppTimeRepository(repository: UnlockAppTimeRepositoryImp): UnlockAppTimeRepository
 
+    @Binds
+    abstract fun bindNapoleonKeyboardGifRepository(repository: NapoleonKeyboardGifRepositoryImp): NapoleonKeyboardGifRepository
+
     //NO Refactorizados
 
     @Binds
@@ -192,9 +195,6 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindConversationRepository(repository: ConversationRepository): IContractConversation.Repository
-
-    @Binds
-    abstract fun bindNapoleonKeyboardGifRepository(repository: NapoleonKeyboardGifRepository): IContractNapoleonKeyboardGif.Repository
 
     @Binds
     abstract fun bindNotificationSettingRepository(repository: NotificationSettingRepository): IContractNotificationSetting.Repository
