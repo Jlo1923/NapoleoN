@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.source.local.entity.*
         QuoteEntity::class,
         MessageNotSentEntity::class
     ],
-    version = 3
+    version = 4
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -73,6 +73,13 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
                     total_self_destruction_at = (SELECT total_self_destruction_at FROM message WHERE attachment.message_id = message.id), 
                     updated_at = (SELECT updated_at FROM message WHERE attachment.message_id = message.id)"""
                 )
+
+            }
+        }
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("CREATE UNIQUE INDEX index_message_uuid ON message ( 'uuid' );")
 
             }
         }

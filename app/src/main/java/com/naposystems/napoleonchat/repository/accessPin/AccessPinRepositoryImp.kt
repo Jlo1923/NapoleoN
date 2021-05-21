@@ -101,7 +101,7 @@ class AccessPinRepositoryImp @Inject constructor(
     }
 
 
-    fun getUnprocessableEntityError(response: Response<CreateAccountResDTO>): ArrayList<String> {
+    override fun getUnprocessableEntityError(response: Response<CreateAccountResDTO>): ArrayList<String> {
 
         val adapter = moshi.adapter(CreateAccountUnprocessableEntityDTO::class.java)
 
@@ -110,7 +110,7 @@ class AccessPinRepositoryImp @Inject constructor(
         return WebServiceUtils.getUnprocessableEntityErrors(enterCodeError!!)
     }
 
-    fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {
+    override fun getError(response: Response<CreateAccountResDTO>): ArrayList<String> {
 
         val adapter = moshi.adapter(CreateAccountErrorDTO::class.java)
 

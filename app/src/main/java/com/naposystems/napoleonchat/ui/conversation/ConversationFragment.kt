@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.database.getStringOrNull
 import androidx.core.graphics.toRect
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.emoji.text.EmojiCompat
 import androidx.fragment.app.activityViewModels
@@ -91,6 +92,7 @@ import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermission
 import com.naposystems.napoleonchat.utility.adapters.verifyCameraAndMicPermissionForCall
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
+import com.naposystems.napoleonchat.utility.extensions.forMimeTypeNapoleon
 import com.naposystems.napoleonchat.utility.extensions.toAttachmentEntityDocument
 import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.helpers.ifNotNull

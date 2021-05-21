@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.source.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.google.android.material.circularreveal.CircularRevealHelper
 import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -14,10 +15,10 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 interface MessageDao {
 
     //region Consultas INSERT
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMessage(messageEntity: MessageEntity): Long
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertMessageList(messageEntityList: List<MessageEntity>)
     //endregion
 
