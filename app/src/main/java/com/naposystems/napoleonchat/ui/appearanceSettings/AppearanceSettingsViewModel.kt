@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class AppearanceSettingsViewModel @Inject constructor(
     private val repository: AppearanceSettingsRepository
-) : ViewModel(), IContractAppearanceSettings.ViewModel {
+) : ViewModel() {
 
     private val _colorScheme = MutableLiveData<Int>()
     val colorScheme: LiveData<Int>
@@ -36,25 +36,25 @@ class AppearanceSettingsViewModel @Inject constructor(
     }
 
     //region Implementation IContractAppearanceSettings.ViewModel
-    override fun getColorScheme() {
+    fun getColorScheme() {
         _colorScheme.value = repository.getColorScheme()
     }
 
-    override fun getUserDisplayFormat() {
+    fun getUserDisplayFormat() {
         _userDisplayFormat.value = repository.getUserDisplayFormat()
     }
 
-    override fun getTimeFormat() {
+    fun getTimeFormat() {
         _timeFormat.value = repository.getTimeFormat()
     }
 
-    override fun getConversationBackground() {
+    fun getConversationBackground() {
         viewModelScope.launch {
             _conversationBackground.value = repository.getConversationBackground()
         }
     }
 
-    override fun resetConversationBackgroundLiveData() {
+    fun resetConversationBackgroundLiveData() {
         _conversationBackground.value = null
     }
 

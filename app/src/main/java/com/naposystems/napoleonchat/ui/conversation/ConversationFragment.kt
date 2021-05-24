@@ -81,11 +81,11 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
-import com.naposystems.napoleonchat.ui.selfDestructTime.Location
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
@@ -152,7 +152,7 @@ class ConversationFragment
     private val viewModel: ConversationViewModel by viewModels {
         viewModelFactory
     }
-    private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+    private val selfDestructTimeViewModel: SelfDestructTimeDialogViewModel by viewModels {
         viewModelFactory
     }
 

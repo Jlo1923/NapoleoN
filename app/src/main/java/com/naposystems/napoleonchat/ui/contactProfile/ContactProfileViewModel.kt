@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.repository.contactProfile.ContactProfileRepository
 import com.naposystems.napoleonchat.source.remote.dto.muteConversation.MuteConversationReqDTO
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
@@ -13,8 +14,8 @@ import javax.inject.Inject
 
 class ContactProfileViewModel @Inject constructor(
     private val context: Context,
-    private val repository: IContractContactProfile.Repository
-) : ViewModel(), IContractContactProfile.ViewModel {
+    private val repository: ContactProfileRepository
+) : ViewModel() {
 
     private val _contactProfileWsError = MutableLiveData<String>()
     val contactProfileWsError: LiveData<String> get() = _contactProfileWsError
@@ -23,7 +24,7 @@ class ContactProfileViewModel @Inject constructor(
     val muteConversationWsError: LiveData<List<String>>
         get() = _muteConversationWsError
 
-    override fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
+    fun updateAvatarFakeContact(contactId: Int, avatarFake: String) {
         viewModelScope.launch {
             try {
                 val response = repository.updateAvatarFakeContact(contactId, avatarFake)
@@ -37,7 +38,7 @@ class ContactProfileViewModel @Inject constructor(
         }
     }
 
-    override fun restoreContact(contactId: Int) {
+    fun restoreContact(contactId: Int) {
         viewModelScope.launch {
             try {
                 val response = repository.restoreContact(contactId)
@@ -51,7 +52,7 @@ class ContactProfileViewModel @Inject constructor(
         }
     }
 
-    override fun updateContactSilenced(contactId: Int, contactSilenced: Boolean) {
+    fun updateContactSilenced(contactId: Int, contactSilenced: Boolean) {
         viewModelScope.launch {
             try {
                 val response =
@@ -73,7 +74,7 @@ class ContactProfileViewModel @Inject constructor(
         }
     }
 
-    override fun restoreImageByContact(contactId: Int) {
+    fun restoreImageByContact(contactId: Int) {
         viewModelScope.launch {
             repository.restoreImageByContact(contactId)
         }

@@ -1,10 +1,7 @@
 package com.naposystems.napoleonchat.source.local.entity
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.source.local.DBConstants
@@ -23,11 +20,10 @@ import kotlinx.android.parcel.Parcelize
             onUpdate = ForeignKey.CASCADE
         )
     ],
-//    indices = [Index(
-//        value = [DBConstants.Message.COLUMN_WEB_ID],
-//        unique = true
-//    )]
-
+    indices = [Index(
+        value = [DBConstants.Message.COLUMN_UUID],
+        unique = true
+    )]
 )
 data class MessageEntity(
     @PrimaryKey(autoGenerate = true)

@@ -9,9 +9,10 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class PreviewBackgroundChatViewModel@Inject constructor(
+class PreviewBackgroundChatViewModel
+@Inject constructor(
     private val repository: PreviewBackgroundChatRepository
-) : ViewModel(), IContractPreviewBackgroundChat.ViewModel {
+) : ViewModel() {
 
     private val _chatBackgroundUpdated = MutableLiveData<Boolean>()
     val chatBackgroundUpdated: LiveData<Boolean>
@@ -34,11 +35,11 @@ class PreviewBackgroundChatViewModel@Inject constructor(
         _chatBackground.value = null
     }
 
-    fun setChatBackground (uri: String) {
+    fun setChatBackground(uri: String) {
         _chatBackground.value = uri
     }
 
-    override fun updateChatBackground(uri: String) {
+    fun updateChatBackground(uri: String) {
         viewModelScope.launch {
             try {
                 repository.updateChatBackground(uri)

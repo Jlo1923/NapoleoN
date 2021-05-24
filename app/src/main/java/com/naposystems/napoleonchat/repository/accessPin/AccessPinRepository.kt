@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.repository.accessPin
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
+import okhttp3.ResponseBody
 import retrofit2.Response
 
 interface AccessPinRepository {
@@ -14,4 +15,6 @@ interface AccessPinRepository {
     fun createdUserPref()
     suspend fun setFreeTrialPref(subscription: Boolean)
     fun saveSecretKey(secretKey: String)
+    fun getUnprocessableEntityError(response: Response<CreateAccountResDTO>): ArrayList<String>
+    fun getError(response: Response<CreateAccountResDTO>): ArrayList<String>
 }

@@ -21,12 +21,10 @@ import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallViewMode
 import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinViewModel
 import com.naposystems.napoleonchat.ui.home.HomeViewModel
-import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
 import com.naposystems.napoleonchat.ui.notificationSetting.NotificationSettingViewModel
 import com.naposystems.napoleonchat.ui.previewBackgroundChat.PreviewBackgroundChatViewModel
@@ -42,8 +40,7 @@ import com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknam
 import com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionViewModel
 import com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewModel
+import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewDialogModel
 import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel
@@ -69,11 +66,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(EnterCodeViewModel::class)
     internal abstract fun bindEnterCodeViewModel(viewModel: EnterCodeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LanguageSelectionViewModel::class)
-    internal abstract fun bindLanguageSelectionViewModel(viewModel: LanguageSelectionViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -134,11 +126,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SecuritySettingsViewModel::class)
     internal abstract fun bindSecuritySettingsViewModel(viewModel: SecuritySettingsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SelfDestructTimeViewModel::class)
-    internal abstract fun bindSelfDestructTimeViewModel(viewModel: SelfDestructTimeViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -210,17 +197,6 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ContactProfileViewModel::class)
     internal abstract fun bindContactProfileViewModel(viewModel: ContactProfileViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MuteConversationViewModel::class)
-    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationViewModel): ViewModel
-
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(SelfDestructTimeMessageNotSentViewModel::class)
-    internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -2,13 +2,17 @@ package com.naposystems.napoleonchat.di.module.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.naposystems.napoleonchat.dialog.accountAttack.AccountAttackDialogViewModel
+import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogViewModel
 import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogViewModel
 import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogViewModel
-import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogViewModel
+import com.naposystems.napoleonchat.dialog.languageSelection.LanguageSelectionDialogViewModel
+import com.naposystems.napoleonchat.dialog.logout.LogoutDialogViewModel
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogViewModel
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
+import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogViewModel
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
-import com.naposystems.napoleonchat.dialog.logout.LogoutDialogViewModel
-import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogViewModel
+import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewDialogModel
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelKey
 import dagger.Binds
 import dagger.Module
@@ -56,5 +60,26 @@ abstract class DialogViewModelModule {
     @IntoMap
     @ViewModelKey(UserDisplayFormatDialogViewModel::class)
     internal abstract fun bindUserDisplayFormatViewModel(viewModel: UserDisplayFormatDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguageSelectionDialogViewModel::class)
+    internal abstract fun bindLanguageSelectionViewModel(viewModel: LanguageSelectionDialogViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MuteConversationDialogViewModel::class)
+    internal abstract fun bindMuteConversationViewModel(viewModel: MuteConversationDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SelfDestructTimeDialogViewModel::class)
+    internal abstract fun bindSelfDestructTimeViewModel(viewModel: SelfDestructTimeDialogViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SelfDestructTimeMessageNotSentViewDialogModel::class)
+    internal abstract fun bindSelfDestructTimeMessageNotSentViewModel(viewModel: SelfDestructTimeMessageNotSentViewDialogModel): ViewModel
 
 }

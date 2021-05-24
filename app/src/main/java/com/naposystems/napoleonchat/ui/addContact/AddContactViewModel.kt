@@ -9,6 +9,7 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.model.FriendShipRequestAdapterType
 import com.naposystems.napoleonchat.model.addContact.Contact
+import com.naposystems.napoleonchat.repository.addContact.AddContactRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestsResDTO
 import com.naposystems.napoleonchat.source.remote.dto.contacts.ContactResDTO
@@ -16,10 +17,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddContactViewModel @Inject constructor(
-    private val repository: IContractAddContact.Repository,
+    private val repository: AddContactRepository,
     private val context: Context
-) :
-    ViewModel(), IContractAddContact.ViewModel {
+) : ViewModel() {
 
     private val _users = MutableLiveData<MutableList<Contact>>()
     val users: LiveData<MutableList<Contact>>
@@ -53,7 +53,7 @@ class AddContactViewModel @Inject constructor(
     }
 
     //region Implementation IContractAddContact.ViewModel
-    override fun getFriendshipRequests() {
+    fun getFriendshipRequests() {
 
         viewModelScope.launch {
             try {
@@ -70,7 +70,7 @@ class AddContactViewModel @Inject constructor(
     }
 
 
-    override fun searchContact(query: String) {
+    fun searchContact(query: String) {
 
         viewModelScope.launch {
             try {
@@ -90,27 +90,27 @@ class AddContactViewModel @Inject constructor(
         }
     }
 
-    override fun resetContacts() {
+    fun resetContacts() {
         _users.value = mutableListOf()
     }
 
-    override fun getUsers(): List<Any>? {
+    fun getUsers(): List<Any>? {
         return _users.value
     }
 
-    override fun getSearchOpened(): Boolean? {
+    fun getSearchOpened(): Boolean? {
         return _opened.value ?: false
     }
 
-    override fun setSearchOpened() {
+    fun setSearchOpened() {
         _opened.value = true
     }
 
-    override fun getRequestSend(): List<FriendShipRequestAdapterType>? {
+    fun getRequestSend(): List<FriendShipRequestAdapterType>? {
         return _friendshipRequests.value
     }
 
-    override fun sendFriendshipRequest(contact: Contact) {
+    fun sendFriendshipRequest(contact: Contact) {
         viewModelScope.launch {
             try {
                 val response = repository.sendFriendshipRequest(contact)
@@ -123,7 +123,7 @@ class AddContactViewModel @Inject constructor(
         }
     }
 
-    override fun acceptOrRefuseRequest(contact: Contact, state: Boolean): FriendShipRequest {
+    fun acceptOrRefuseRequest(contact: Contact, state: Boolean): FriendShipRequest {
         contactModel = contact
         isOffer = true
         return FriendShipRequest(
@@ -137,16 +137,15 @@ class AddContactViewModel @Inject constructor(
         )
     }
 
-    override fun validateIfExistsOffer() {
+    fun validateIfExistsOffer() {
         if (isOffer) {
             _updateItem.value = contactModel
             isOffer = false
         }
     }
 
-    override fun getContact(contact: Contact): ContactEntity? {
-        val user = repository.getContact(contact.id)
-        return user
+    fun getContact(contact: Contact): ContactEntity? {
+        return repository.getContact(contact.id)
     }
     //endregion
 }

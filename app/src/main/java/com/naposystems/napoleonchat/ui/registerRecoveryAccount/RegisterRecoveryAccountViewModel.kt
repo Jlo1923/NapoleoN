@@ -3,12 +3,12 @@ package com.naposystems.napoleonchat.ui.registerRecoveryAccount
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepository
+import com.naposystems.napoleonchat.repository.registerRecoveryAccount.RegisterRecoveryAccountRepositoryImp
 import javax.inject.Inject
 
 class RegisterRecoveryAccountViewModel @Inject constructor(
-    private val repository: RegisterRecoveryAccountRepository
-) : ViewModel(), IContractRegisterRecoveryAccount.ViewModel {
+    private val repository: RegisterRecoveryAccountRepositoryImp
+) : ViewModel() {
 
     private val _recoveryQuestionsPref = MutableLiveData<Int>()
     val recoveryQuestionsPref: LiveData<Int>
@@ -18,7 +18,7 @@ class RegisterRecoveryAccountViewModel @Inject constructor(
         _recoveryQuestionsPref.value = null
     }
 
-    override fun getRecoveryQuestionsPref() {
+    fun getRecoveryQuestionsPref() {
         _recoveryQuestionsPref.value = repository.getRecoveryQuestionsPref()
     }
 }

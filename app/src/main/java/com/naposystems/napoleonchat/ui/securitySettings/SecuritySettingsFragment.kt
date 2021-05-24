@@ -14,9 +14,9 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
-import com.naposystems.napoleonchat.ui.selfDestructTime.Location
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeDialogFragment
-import com.naposystems.napoleonchat.ui.selfDestructTime.SelfDestructTimeViewModel
+import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
 import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
@@ -37,7 +37,7 @@ class SecuritySettingsFragment : BaseFragment() {
     private lateinit var binding: SecuritySettingsFragmentBinding
     private var showCase: ShowCaseManager? = null
 
-    private val selfDestructTimeViewModel: SelfDestructTimeViewModel by viewModels {
+    private val selfDestructTimeViewModel: SelfDestructTimeDialogViewModel by viewModels {
         viewModelFactory
     }
 

@@ -4,15 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.repository.blockedContact.BlockedContactRepository
+import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class BlockedContactsViewModel @Inject constructor(private val repository: BlockedContactRepository) :
-    ViewModel(), IContractBlockedContact.ViewModel {
+class BlockedContactsViewModel
+@Inject constructor(
+    private val repository: BlockedContactRepository
+) : ViewModel() {
 
     private lateinit var _blockedContacts: LiveData<List<ContactEntity>>
     val blockedContacts: LiveData<List<ContactEntity>>
@@ -27,17 +29,17 @@ class BlockedContactsViewModel @Inject constructor(private val repository: Block
         get() = _webServiceErrors
 
     //region Implementation IContractBlockedContact.ViewModel
-    override fun getBlockedContacts() {
+    fun getBlockedContacts() {
         viewModelScope.launch {
             try {
-                _blockedContacts =  repository.getBlockedContactsLocal()
+                _blockedContacts = repository.getBlockedContactsLocal()
             } catch (e: Exception) {
                 Timber.e(e)
             }
         }
     }
 
-    override fun searchLocalBlockedContact(query: String) {
+    fun searchLocalBlockedContact(query: String) {
         _listBlockedContacts.value = _blockedContacts.value!!.filter {
             Utils.validateNickname(it, query) || Utils.validateDisplayName(it, query)
         }

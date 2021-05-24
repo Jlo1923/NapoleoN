@@ -4,18 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
-import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.napoleonchat.model.Questions
 import com.naposystems.napoleonchat.model.RecoveryAnswer
+import com.naposystems.napoleonchat.repository.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionRepository
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.getQuestions.RegisterRecoveryAccountQuestionResDTO
+import com.naposystems.napoleonchat.source.remote.dto.registerRecoveryAccountQuestion.sendAnswers.RegisterRecoveryAccountReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
-    private val repository: IContractRegisterRecoveryAccountQuestion.Repository
-) : ViewModel(), IContractRegisterRecoveryAccountQuestion.ViewModel {
+    private val repository: RegisterRecoveryAccountQuestionRepository
+) : ViewModel() {
 
     private val _questions = MutableLiveData<List<Questions>>()
     val questions: LiveData<List<Questions>>
@@ -50,7 +51,7 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
 
     //region Implementation IContractRegisterRecoveryAccountQuestion.ViewModel
 
-    override fun addRecoveryAnswer(answer: RecoveryAnswer, isFinal: Int) {
+    fun addRecoveryAnswer(answer: RecoveryAnswer, isFinal: Int) {
         val mutableAnswers: MutableList<RecoveryAnswer> = ArrayList()
 
         mutableAnswers.addAll(_recoveryAnswers.value!!)
@@ -66,12 +67,12 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
 
         _questions.value = mutableQuestions
         _recoveryAnswers.value = mutableAnswers
-        if(isFinal != 0) {
+        if (isFinal != 0) {
             _countAnswers.value = _countAnswers.value!! + 1
         }
     }
 
-    override fun getQuestions() {
+    fun getQuestions() {
         viewModelScope.launch {
             try {
                 val response = repository.getQuestions()
@@ -94,7 +95,7 @@ class RegisterRecoveryAccountQuestionViewModel @Inject constructor(
         }
     }
 
-    override fun sendRecoveryAnswers() {
+    fun sendRecoveryAnswers() {
         viewModelScope.launch {
             try {
                 val recoveryAnswers = RegisterRecoveryAccountReqDTO(

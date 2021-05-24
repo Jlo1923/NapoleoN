@@ -4,20 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
-import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUrl
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-
 class SubscriptionViewModel @Inject constructor(
     private val repository: SubscriptionRepository
-) : ViewModel(), IContractSubscription.ViewModel {
+) : ViewModel() {
 
     private val _typeSubscription = MutableLiveData<List<TypeSubscription>>()
     val typeSubscription: LiveData<List<TypeSubscription>>
@@ -48,7 +47,7 @@ class SubscriptionViewModel @Inject constructor(
     val subscriptionState: LiveData<String>
         get() = _subscriptionState
 
-    override fun getTypeSubscription() {
+    fun getTypeSubscription() {
         viewModelScope.launch {
             try {
                 val response = repository.getTypeSubscription()
@@ -64,22 +63,22 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    override fun getFreeTrial(): Long {
+    fun getFreeTrial(): Long {
         return repository.getFreeTrial()
     }
 
-    /*override fun getRemoteSubscription() {
+    /* fun getRemoteSubscription() {
         viewModelScope.launch {
             repository.getRemoteSubscription()
             getSubscription()
         }
     }*/
 
-    /*override fun getSubscription() {
+    /* fun getSubscription() {
         _subscriptionUser.value = repository.getSubscription()
     }*/
 
-    override fun sendPayment(typePayment: Int) {
+    fun sendPayment(typePayment: Int) {
         viewModelScope.launch {
             try {
                 val response = repository.sendPayment(typePayment)
@@ -96,7 +95,7 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    override fun checkSubscription() {
+    fun checkSubscription() {
         viewModelScope.launch {
             try {
                 val response = repository.checkSubscription()
@@ -112,7 +111,7 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    override fun resetViewModel() {
+    fun resetViewModel() {
         _subscriptionUrl.value = null
     }
 }

@@ -1,14 +1,20 @@
 package com.naposystems.napoleonchat.ui.contacts
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class ContactsViewModel @Inject constructor(private val repository: IContractContacts.Repository) :
-    ViewModel(), IContractContacts.ViewModel {
+class ContactsViewModel
+@Inject constructor(
+    private val repository: ContactsRepository
+) : ViewModel() {
 
     private lateinit var _contacts: LiveData<MutableList<ContactEntity>>
     val contacts: LiveData<MutableList<ContactEntity>>
@@ -34,7 +40,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
 
     //region Implementation IContractContacts.ViewModel
 
-    override fun getLocalContacts() {
+    fun getLocalContacts() {
         viewModelScope.launch {
             try {
                 _contacts = repository.getLocalContacts()
@@ -45,7 +51,7 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
         }
     }
 
-    override fun searchContact(query: String) {
+    fun searchContact(query: String) {
         viewModelScope.launch {
             try {
                 _contactsForSearch.value = _contacts.value!!.filter {
@@ -57,17 +63,17 @@ class ContactsViewModel @Inject constructor(private val repository: IContractCon
         }
     }
 
-    override fun setTextSearch(text: String) {
+    fun setTextSearch(text: String) {
         textBarSearch = text
     }
 
-    override fun getTextSearch() = textBarSearch
+    fun getTextSearch() = textBarSearch
 
-    override fun resetTextSearch() {
+    fun resetTextSearch() {
         textBarSearch = ""
     }
 
-    override fun resetContactsLoaded() {
+    fun resetContactsLoaded() {
         _contactsLoaded.value = false
     }
 

@@ -5,14 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.recoveryAccountQuestions.RecoveryAccountAnswers
+import com.naposystems.napoleonchat.repository.recoveryAccountQuestions.RecoveryAccountQuestionsRepository
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class RecoveryAccountQuestionsViewModel @Inject constructor(
-    private val repository: IContractRecoveryAccountQuestions.Repository
-) : ViewModel(), IContractRecoveryAccountQuestions.ViewModel {
+class RecoveryAccountQuestionsViewModel
+@Inject constructor(
+    private val repository: RecoveryAccountQuestionsRepository
+) : ViewModel() {
 
     private val _sendAnswersSuccessfully = MutableLiveData<Boolean>()
     val sendAnswersSuccessfully: LiveData<Boolean>
@@ -34,7 +36,7 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         _recoveryAnswers.value = ArrayList()
     }
 
-    override fun addRecoveryAnswer(answer: RecoveryAccountAnswers) {
+    fun addRecoveryAnswer(answer: RecoveryAccountAnswers) {
         val mutableAnswers: MutableList<RecoveryAccountAnswers> = ArrayList()
 
         mutableAnswers.addAll(_recoveryAnswers.value!!)
@@ -43,7 +45,7 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         _recoveryAnswers.value = mutableAnswers
     }
 
-    override fun sendRecoveryAnswers(nickname: String) {
+    fun sendRecoveryAnswers(nickname: String) {
         viewModelScope.launch {
             try {
                 val recoveryAnswers =
@@ -85,13 +87,13 @@ class RecoveryAccountQuestionsViewModel @Inject constructor(
         }
     }
 
-    override fun setFreeTrialPref(subscription: Boolean) {
+    fun setFreeTrialPref(subscription: Boolean) {
         viewModelScope.launch {
             repository.setFreeTrialPref(subscription)
         }
     }
 
-    override fun setAttemptPref() {
+    fun setAttemptPref() {
         viewModelScope.launch {
             repository.setAttemptPref()
         }

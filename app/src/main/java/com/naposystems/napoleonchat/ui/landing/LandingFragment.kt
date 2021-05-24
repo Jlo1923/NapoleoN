@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.LandingFragmentBinding
-import com.naposystems.napoleonchat.ui.languageSelection.LanguageSelectionDialogFragment
+import com.naposystems.napoleonchat.dialog.languageSelection.LanguageSelectionDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 
 class LandingFragment : Fragment() {

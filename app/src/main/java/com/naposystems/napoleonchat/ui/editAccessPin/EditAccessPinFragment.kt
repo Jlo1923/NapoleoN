@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.ui.editAccessPin
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -17,9 +15,6 @@ import com.naposystems.napoleonchat.databinding.EditAccessPinFragmentBinding
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.utility.FieldsValidator
 import com.naposystems.napoleonchat.utility.Utils
-import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
-import dagger.android.support.AndroidSupportInjection
-import javax.inject.Inject
 
 class EditAccessPinFragment : BaseFragment() {
 
@@ -27,9 +22,8 @@ class EditAccessPinFragment : BaseFragment() {
         fun newInstance() = EditAccessPinFragment()
     }
 
-    @Inject
-    override lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: EditAccessPinViewModel
+
     private lateinit var binding: EditAccessPinFragmentBinding
 
     override fun onCreateView(

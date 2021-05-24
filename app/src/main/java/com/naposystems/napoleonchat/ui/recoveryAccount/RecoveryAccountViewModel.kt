@@ -4,16 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.model.recoveryAccount.RecoveryAccountUserType
+import com.naposystems.napoleonchat.repository.recoveryAccount.RecoveryAccountRepository
+import com.naposystems.napoleonchat.source.remote.dto.recoveryAccount.RecoveryAccountUserTypeResDTO
 import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class RecoveryAccountViewModel @Inject constructor(
-    private val repository: IContractRecoveryAccount.Repository
-) : ViewModel(), IContractRecoveryAccount.ViewModel {
+class RecoveryAccountViewModel
+@Inject constructor(
+    private val repository: RecoveryAccountRepository
+) : ViewModel() {
 
     private val _userType = MutableLiveData<RecoveryAccountUserType>()
     val userType: LiveData<RecoveryAccountUserType>
@@ -31,7 +33,7 @@ class RecoveryAccountViewModel @Inject constructor(
     val successToken: LiveData<Boolean>
         get() = _successToken
 
-    override fun sendNickname(nickname: String) {
+    fun sendNickname(nickname: String) {
         viewModelScope.launch {
             try {
                 val response = repository.getUserType(nickname)
@@ -57,11 +59,11 @@ class RecoveryAccountViewModel @Inject constructor(
         }
     }
 
-    override fun resetRecoveryQuestions() {
+    fun resetRecoveryQuestions() {
         _userType.value = null
     }
 
-    override fun setFirebaseId(token: String) {
+    fun setFirebaseId(token: String) {
         viewModelScope.launch {
             repository.setFirebaseId(token)
             _successToken.value = true

@@ -37,7 +37,7 @@ import com.naposystems.napoleonchat.dialog.changeParams.ChangeFakeParamsDialogFr
 import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
-import com.naposystems.napoleonchat.ui.muteConversation.MuteConversationDialogFragment
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
