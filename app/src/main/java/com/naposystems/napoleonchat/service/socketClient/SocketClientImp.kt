@@ -113,7 +113,7 @@ class SocketClientImp
             Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
     }
 
-    override fun connectSocket() {
+    override suspend fun connectSocket() {
 
         Timber.d("LLAMADA PASO 4: EN CONNECT SOCKET")
 
@@ -171,7 +171,7 @@ class SocketClientImp
         }
     }
 
-    override fun subscribeToPresenceChannel() {
+    override suspend fun subscribeToPresenceChannel() {
 
         Timber.d("LLAMADA PASO 5: SUSCRIBIRSE AL CANAL DE LLAMADAS")
 
@@ -470,7 +470,7 @@ class SocketClientImp
     override fun isConnected(): Boolean =
         getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKECT_CHANNEL_STATUS_CONNECTED.status
 
-//endregion
+    //endregion
 
     // region Region Escuchadores de Eventos
     private fun subscribeChannels() {
@@ -480,18 +480,18 @@ class SocketClientImp
                 Constants.SharedPreferences.PREF_SOCKET_ID,
                 pusher.connection.socketId
             )
+            GlobalScope.launch {
+                subscribeToPrivateGeneralChannel()
 
-            subscribeToPrivateGeneralChannel()
-
-            subscribeToPrivateGlobalChannel()
-
+                subscribeToPrivateGlobalChannel()
+            }
         } catch (e: Exception) {
 
             Timber.e(e)
         }
     }
 
-    private fun subscribeToPrivateGeneralChannel() {
+    private suspend fun subscribeToPrivateGeneralChannel() {
 
         try {
 
@@ -548,7 +548,7 @@ class SocketClientImp
         }
     }
 
-    private fun subscribeToPrivateGlobalChannel() {
+    private suspend fun subscribeToPrivateGlobalChannel() {
 
         try {
 
@@ -590,7 +590,9 @@ class SocketClientImp
                 NapoleonApplication.statusCall.isNoCall()
             ) {
                 Timber.d("LLAMADA PASO 5: SE VA A SUSCRIBIR AL CANAL DE PRESENCIA")
-                subscribeToPresenceChannel()
+                GlobalScope.launch {
+                    subscribeToPresenceChannel()
+                }
             }
         }
 

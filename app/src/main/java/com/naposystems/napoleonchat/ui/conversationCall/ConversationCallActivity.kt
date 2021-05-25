@@ -389,14 +389,12 @@ class ConversationCallActivity :
                 }
             }
             StatusCallEnum.STATUS_CONNECTED_CALL -> {
-
                 Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
                 webRTCClient.emitHangUp()
             }
         }
-
+        webRTCClient.playEndCall()
         webRTCClient.disposeCall()
-
     }
 
     private fun initSurfaceRenders() {
