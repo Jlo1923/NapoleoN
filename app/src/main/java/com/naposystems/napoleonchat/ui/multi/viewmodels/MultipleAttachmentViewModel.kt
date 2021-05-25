@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.multi
+package com.naposystems.napoleonchat.ui.multi.viewmodels
 
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.ui.multi.contract.IContractMultipleAttachment
@@ -57,10 +57,10 @@ class MultipleAttachmentViewModel @Inject constructor(
         }
     }
 
-    private fun successFolders(it: MultipleAttachmentState) {
-        _state.value = it
-        if (it is MultipleAttachmentState.SuccessFolders) {
-            cacheListFolders = it.listElements
+    private fun successFolders(state: MultipleAttachmentState) {
+        _state.value = state
+        if (state is MultipleAttachmentState.SuccessFolders) {
+            cacheListFolders = state.listElements
         }
     }
 

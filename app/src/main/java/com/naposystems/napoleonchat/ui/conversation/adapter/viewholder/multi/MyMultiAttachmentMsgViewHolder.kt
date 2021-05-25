@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR
@@ -76,6 +77,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintMessageStatus() = binding.apply {
         when (msgAndAttachment.messageEntity.status) {
             ERROR.status -> paintMessageError()
+            //SENDING.status -> paintMessageSending()
             else -> paintMessageOk()
         }
     }
@@ -97,7 +99,6 @@ class MyMultiAttachmentMsgViewHolder(
             showViews(progressBarIndeterminate, imageButtonState)
         }
     }
-
 
     private fun paintMessageError() {
         binding.apply {
@@ -174,7 +175,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintUploadFiles() = msgAndAttachment.attachmentEntityList.apply {
         val countSent = this.filter { it.isSent() || it.isReceived() || it.isReaded() }
         if (countSent.size == this.size) {
-            binding.textViewCountFiles.hide()
+            binding.viewUploadAttachmentsIndicator.hide()
         } else {
             val data = Pair(countSent.size, this.size)
             showQuantity(data)
@@ -224,7 +225,7 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun handleActions(action: MultiAttachmentMsgEvent) {
         when (action) {
-            MultiAttachmentMsgEvent.HideQuantity -> binding.textViewCountFiles.hide()
+            MultiAttachmentMsgEvent.HideQuantity -> binding.viewUploadAttachmentsIndicator.hide()
             is MultiAttachmentMsgEvent.ShowQuantity -> showQuantity(action.data)
         }
     }
@@ -238,8 +239,12 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
-        textViewCountFiles.show()
-        textViewCountFiles.text = "${data.first} / ${data.second}"
+        val data = UploadAttachmentsIndicatorModel(
+            msgAndAttachment.messageEntity.status,
+            data.first,
+            data.second
+        )
+        binding.viewUploadAttachmentsIndicator.bindDataInfo(data)
     }
 
     private fun showOneItem(listElements: List<AttachmentEntity>) = binding.apply {

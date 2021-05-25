@@ -27,17 +27,18 @@ class MultiAttachmentMsgFourFilesView @JvmOverloads constructor(
     init {
     }
 
-    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) = viewBinding.apply {
-        viewFileOne.defineListener(this@MultiAttachmentMsgFourFilesView)
-        viewFileTwo.defineListener(this@MultiAttachmentMsgFourFilesView)
-        viewFileThree.defineListener(this@MultiAttachmentMsgFourFilesView)
-        viewFileFour.defineListener(this@MultiAttachmentMsgFourFilesView)
+    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) =
+        viewBinding.apply {
+            viewFileOne.defineListener(this@MultiAttachmentMsgFourFilesView)
+            viewFileTwo.defineListener(this@MultiAttachmentMsgFourFilesView)
+            viewFileThree.defineListener(this@MultiAttachmentMsgFourFilesView)
+            viewFileFour.defineListener(this@MultiAttachmentMsgFourFilesView)
 
-        viewFileOne.bindAttachment(listAttachments[0], 0, mine)
-        viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
-        viewFileThree.bindAttachment(listAttachments[2], 2, mine)
-        viewFileFour.bindAttachment(listAttachments[3], 3, mine)
-    }
+            viewFileOne.bindAttachment(listAttachments[0], 0, mine)
+            viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
+            viewFileThree.bindAttachment(listAttachments[2], 2, mine)
+            viewFileFour.bindAttachment(listAttachments[3], 3, mine)
+        }
 
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {

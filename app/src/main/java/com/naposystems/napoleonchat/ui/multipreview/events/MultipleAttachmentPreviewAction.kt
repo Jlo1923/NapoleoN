@@ -16,10 +16,6 @@ sealed class MultipleAttachmentPreviewAction {
     object RemoveAttachForReceiver : MultipleAttachmentPreviewAction()
     object RemoveAttachForSender : MultipleAttachmentPreviewAction()
 
-    class ShowSelectFolderName(
-        val folderName: String
-    ) : MultipleAttachmentPreviewAction()
-
     class SelectItemInTabLayout(
         val indexItem: Int
     ) : MultipleAttachmentPreviewAction()
@@ -28,12 +24,7 @@ sealed class MultipleAttachmentPreviewAction {
         val selfDestruction: Int
     ) : MultipleAttachmentPreviewAction()
 
-    class SendMessageToRemote(
-        val messageEntity: MessageEntity,
-        val attachments: List<AttachmentEntity?>
-    ) : MultipleAttachmentPreviewAction()
-
-    class ExitToConversationAndSendData (
+    class ExitToConversationAndSendData(
         val messageEntity: MessageEntity,
         val attachments: List<AttachmentEntity?>
     ) : MultipleAttachmentPreviewAction()

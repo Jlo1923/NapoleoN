@@ -161,8 +161,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     }
 
     private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() {
-            it.status == NOT_DOWNLOADED.status
-        }
+        attachmentList.firstOrNull() { it.isNotDownloaded() || it.isCancelUpload() }
 
 }

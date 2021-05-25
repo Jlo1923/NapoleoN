@@ -46,7 +46,23 @@ class MultipleUploadService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
+        getMessageAndAttachmentsFromExtras(intent)
+        getCommandAction(intent)
+        handleTryNextAttachment()
+        return START_NOT_STICKY
+    }
 
+    private fun getCommandAction(intent: Intent) {
+        intent.action?.let { action ->
+            Timber.d("onStartCommand action: $action")
+            if (action == ACTION_CANCEL_UPLOAD) {
+                repository.cancelUpload()
+                stopService()
+            }
+        }
+    }
+
+    private fun getMessageAndAttachmentsFromExtras(intent: Intent) {
         intent.extras?.let { bundle ->
             val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
             val attachments =
@@ -54,18 +70,6 @@ class MultipleUploadService : Service() {
             val forList = attachments.map { Pair(message, it) }.toList()
             attachmentList.addAll(forList)
         }
-
-        handleTryNextAttachment()
-
-        intent.action?.let { action ->
-            Timber.d("onStartCommand action: $action")
-            if (action == MultipleUploadService.ACTION_CANCEL_UPLOAD) {
-                repository.cancelUpload()
-                stopService()
-            }
-        }
-
-        return START_NOT_STICKY
     }
 
     private fun getNextAttachment(): Pair<MessageEntity?, AttachmentEntity>? {

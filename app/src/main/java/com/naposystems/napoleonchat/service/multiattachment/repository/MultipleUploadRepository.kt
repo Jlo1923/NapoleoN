@@ -12,6 +12,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
+import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType
 import com.naposystems.napoleonchat.utility.Constants.IsMine
@@ -160,6 +161,7 @@ class MultipleUploadRepository @Inject constructor(
             }
         } catch (exception: Exception) {
             Timber.d("Ops error ")
+            handleExceptionInUploadAttachment()
         }
     }
 
@@ -215,8 +217,7 @@ class MultipleUploadRepository @Inject constructor(
         messageEntity: MessageEntity,
         attachmentEntity: AttachmentEntity?
     ) {
-        messageEntity.status = MessageStatus.ERROR.status
-        updateMessage(messageEntity)
+        updateMessageStatus(messageEntity, MessageStatus.ERROR.status)
         attachmentEntity?.let {
             attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
             updateAttachment(attachmentEntity)

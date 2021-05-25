@@ -75,7 +75,7 @@ class IncomingMultiAttachmentMsgViewHolder(
     }
 
     private fun paintDownloadFiles() = msgAndAttachment.attachmentEntityList.apply {
-        val countSent = this.filter { it.isDownload() || it.isReceived() || it.isReaded() }
+        val countSent = this.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
         if (countSent.size == this.size) {
             binding.textViewCountFiles.hide()
         } else {

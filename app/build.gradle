@@ -13,7 +13,8 @@ apply plugin: 'com.google.firebase.crashlytics'
 android {
     signingConfigs {
         config {
-            storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
+            //storeFile file(String.valueOf(System.getenv("JKS_KEY_PATH")))
+            storeFile file("\\pepito.jks")
             keyAlias = 'napoleonsecretchat'
             storePassword 'gQADhnGTHEcQAn9U'
             keyPassword 'gQADhnGTHEcQAn9U'

@@ -18,7 +18,9 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.*
+import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
+import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import timber.log.Timber
@@ -47,7 +49,21 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
     fun bindAttachment(attachmentEntity: AttachmentEntity, index: Int, mine: Boolean) {
         theAttachment = attachmentEntity
         mIndex = index
-        loadImage()
+        theAttachment?.let {
+            if (it.body.isNotEmpty()) {
+                viewBinding.apply {
+                    imageViewAttachment.show()
+                    imageViewEmpty.hide()
+                }
+                loadImage()
+            } else {
+                viewBinding.apply {
+                    imageViewAttachment.hide()
+                    imageViewEmpty.show()
+                }
+            }
+        }
+
         handleAttachmentStatus(mine)
         handleAttachmentType()
     }
@@ -69,17 +85,27 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
     }
 
     private fun handleAttachmentStatus(mine: Boolean) {
+        if (mine) {
+            handleAttachmentStatusForSender()
+        } else {
+            handleAttachmentStatusForReceiver()
+        }
+    }
+
+    private fun handleAttachmentStatusForSender() {
         theAttachment?.let {
             when (it.status) {
-                SENDING.status, DOWNLOADING.status -> uiModeProcessing()
-                SENT.status, NOT_DOWNLOADED.status, DOWNLOAD_ERROR.status -> uiModeDone()
-                ERROR.status -> uiModeError()
-                RECEIVED.status, DOWNLOAD_COMPLETE.status -> uiReceived(mine)
-                READED.status -> uiReaded(mine)
-                //NOT_DOWNLOADED.status -> launchDownload()
+                SENDING.status -> uiModeProcessing()
+                SENT.status -> uiModeDone()
+                ERROR.status, UPLOAD_CANCEL.status -> uiModeError()
+                READED.status -> uiReadedSender()
                 else -> Unit
             }
         }
+    }
+
+    private fun handleAttachmentStatusForReceiver() {
+        TODO("Not yet implemented")
     }
 
     private fun uiReceived(mine: Boolean) {
@@ -95,15 +121,16 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         }
     }
 
-    private fun uiReaded(mine: Boolean) {
+    private fun uiReadedSender() {
         viewBinding.apply {
             showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
             hideViews(progressBar, imageRetry)
-            if (mine) { // is Sender
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
-            } else { // is Receiver
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-            }
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+//            if (mine) { // is Sender
+//
+//            } else { // is Receiver
+//                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
+//            }
         }
     }
 

@@ -49,6 +49,10 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
                 )
             }
         }
+        /**
+         * Por defecto se estan dejando los attachments nuevos como ERROR en su estado, para facilitar
+         * el proceso de subida cuando no hubo conexion
+         */
         attachments.forEach {
             it?.let {
                 it.messageId = messageId
