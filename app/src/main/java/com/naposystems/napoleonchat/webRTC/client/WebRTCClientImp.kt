@@ -844,6 +844,12 @@ class WebRTCClientImp
 
     }
 
+    override fun playEndCall() {
+
+        handlerMediaPlayerNotification.playEndTone()
+
+    }
+
     override fun playRingBackTone() {
 
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
@@ -1224,7 +1230,7 @@ class WebRTCClientImp
         context.startService(intent)
     }
 
-    override fun disposeCall(typeEndCallEnum: TypeEndCallEnum?) {
+    override fun disposeCall(typeEndCall: TypeEndCallEnum?) {
 
         Timber.d("LLAMADA PASO: DISPOSE CALL")
 
@@ -1234,7 +1240,7 @@ class WebRTCClientImp
 
                 disposingCall = true
 
-                typeEndCallEnum?.let { typeEndCall ->
+                typeEndCall?.let { typeEndCall ->
                     when (typeEndCall) {
                         TypeEndCallEnum.TYPE_CANCEL -> {
                             syncManager.cancelCall()
@@ -1262,6 +1268,12 @@ class WebRTCClientImp
 
                 NapoleonApplication.callModel = null
 
+                if (NapoleonApplication.statusCall.isConnectedCall()) {
+                    handlerMediaPlayerNotification.playEndTone()
+                }else{
+                    handlerMediaPlayerNotification.stopRingtone()
+                }
+
                 NapoleonApplication.statusCall = StatusCallEnum.STATUS_NO_CALL
 
                 processDisposeCall()
@@ -1283,12 +1295,6 @@ class WebRTCClientImp
             RxBus.publish(RxEvent.CallEnd())
 
             Timber.d("LLAMADA PASO: PROCESS DISPOSE CALL")
-
-            handlerMediaPlayerNotification.stopRingtone()
-
-            if (NapoleonApplication.statusCall.isConnectedCall()) {
-                handlerMediaPlayerNotification.playEndTone()
-            }
 
             countDownEndCallBusy.cancel()
 
