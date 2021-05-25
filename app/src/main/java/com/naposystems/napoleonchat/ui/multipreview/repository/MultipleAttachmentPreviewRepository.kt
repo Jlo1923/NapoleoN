@@ -28,6 +28,9 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
 ) : IContractMultipleAttachmentPreview.Repository {
 
     override suspend fun insertMessageToContact(message: ItemMessage): MessageEntity {
+        /**
+         * Se marca el mensaje como error para facilitar el proceso de subida
+         */
         val messageToInsert = message.getMessageEntityForCreate()
         val idMessage = repository.insertMessage(messageToInsert).toInt()
         messageToInsert.id = idMessage
@@ -43,6 +46,9 @@ class MultipleAttachmentPreviewRepository @Inject constructor(
         val attachments = listFiles.map { multipleAttachmentFile ->
             val file = getFileFromFileItem(multipleAttachmentFile)
             file?.let {
+                /**
+                 * Marcamos el attachment como error para facilitar el proceso de subida
+                 */
                 multipleAttachmentFile.toAttachmentEntityWithFile(
                     it,
                     multipleAttachmentFile.selfDestruction

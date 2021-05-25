@@ -85,6 +85,7 @@ data class AttachmentEntity(
     fun isReaded(): Boolean = status == AttachmentStatus.READED.status
     fun isDownloadComplete(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
     fun isCancelUpload(): Boolean = status == AttachmentStatus.UPLOAD_CANCEL.status
+    fun isError(): Boolean = status == AttachmentStatus.ERROR.status
     fun isNotDownloaded(): Boolean = status == AttachmentStatus.NOT_DOWNLOADED.status
 
 }

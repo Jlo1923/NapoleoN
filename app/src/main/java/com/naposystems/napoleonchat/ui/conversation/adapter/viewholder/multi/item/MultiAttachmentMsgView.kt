@@ -105,7 +105,6 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
     }
 
     private fun handleAttachmentStatusForReceiver() {
-        TODO("Not yet implemented")
     }
 
     private fun uiReceived(mine: Boolean) {

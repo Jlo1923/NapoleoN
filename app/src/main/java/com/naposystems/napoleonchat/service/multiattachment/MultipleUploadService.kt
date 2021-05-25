@@ -11,7 +11,6 @@ import com.naposystems.napoleonchat.service.multiattachment.notification.Notific
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.SENDING
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -35,7 +34,7 @@ class MultipleUploadService : Service() {
     private lateinit var napoleonApplication: NapoleonApplication
     private val compositeDisposable = CompositeDisposable()
     var attachmentList: MutableList<Pair<MessageEntity?, AttachmentEntity>> = mutableListOf()
-    lateinit var currentMessagePairData: Pair<MessageEntity?, AttachmentEntity>
+    var currentMessagePairData: Pair<MessageEntity?, AttachmentEntity>? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -62,21 +61,51 @@ class MultipleUploadService : Service() {
         }
     }
 
+    private fun handleTryNextAttachment() {
+        /**
+         * Antes de tomar un nuevo attachment, debemos validar el padre del attachment que estabamos tratando
+         * debemos validar si todos los attachments del mensaje padre fueron tratados como SENT
+         * de ser asi, el mensaje padre debemos marcarlos como SENT
+         */
+        val nextAttachment = getNextAttachmentForTryUpload()
+        nextAttachment?.let { pair ->
+            currentMessagePairData = pair
+            pair.first?.let { repository.uploadAttachment(pair.second, it) }
+            showNotification(pair)
+        } ?: run { handleUploadSuccess() }
+    }
+
     private fun getMessageAndAttachmentsFromExtras(intent: Intent) {
         intent.extras?.let { bundle ->
             val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
-            val attachments =
+            val attachmentsIn =
                 bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
-            val forList = attachments.map { Pair(message, it) }.toList()
-            attachmentList.addAll(forList)
+
+            /**
+             * Al momento de iniciar el proceso de subir archivos, debemos marcar el mensaje padre en estado SENDING
+             * y cada uno de sus Attachments como ERROR, para que a medida que tome UNO, lo marque
+             * como SENDING.
+             *
+             * Debemos agregar a la lista los elementos que no esten en ella para evitar duplicidad
+             */
+            message?.let {
+                it.status = Constants.MessageStatus.SENDING.status
+                repository.updateMessage(it)
+            }
+            val forList = attachmentsIn.map { Pair(message, it) }.toList()
+            forList.forEach {
+                if (attachmentList.contains(it).not()) {
+                    it.second.status = Constants.AttachmentStatus.ERROR.status
+                    repository.updateAttachment(it.second)
+                    attachmentList.add(it)
+                }
+            }
         }
     }
 
-    private fun getNextAttachment(): Pair<MessageEntity?, AttachmentEntity>? {
+    private fun getNextAttachmentForTryUpload(): Pair<MessageEntity?, AttachmentEntity>? {
         return attachmentList.firstOrNull() {
-            it.second.status == SENDING.status ||
-                    it.second.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
-                    it.second.status == Constants.AttachmentStatus.ERROR.status
+            it.second.isCancelUpload() || it.second.isError()
         }
     }
 
@@ -126,22 +155,13 @@ class MultipleUploadService : Service() {
         stopService()
     }
 
-    private fun handleTryNextAttachment() {
-        val nextAttachment = getNextAttachment()
-        nextAttachment?.let { pair ->
-            currentMessagePairData = pair
-            pair.first?.let { repository.uploadAttachment(pair.second, it) }
-            showNotification(pair)
-        } ?: run { handleUploadSuccess() }
-    }
-
     private fun handleUploadError() {
         Timber.d("RxEvent.UploadError")
         stopService()
     }
 
     private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) {
-        currentMessagePairData.first?.let {
+        currentMessagePairData?.first?.let {
             notificationUploadService.updateUploadNotificationProgress(
                 PROGRESS_MAX, event.progress.toInt(), it.id
             )
@@ -149,7 +169,7 @@ class MultipleUploadService : Service() {
     }
 
     private fun stopService() {
-        currentMessagePairData.first?.let {
+        currentMessagePairData?.first?.let {
             notificationUploadService.cancelNotification(it.id)
         }
         stopSelf()

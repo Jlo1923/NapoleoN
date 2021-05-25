@@ -122,9 +122,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
 
     private fun handleDownloadSuccess() {
         Timber.d("RxEvent.UploadSuccess")
-        /**
-         * Marcar el mensaje padre como recibido
-         */
         stopService()
     }
 

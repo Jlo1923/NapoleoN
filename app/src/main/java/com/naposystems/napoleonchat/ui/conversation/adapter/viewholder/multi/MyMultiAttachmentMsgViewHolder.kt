@@ -86,7 +86,7 @@ class MyMultiAttachmentMsgViewHolder(
         binding.apply {
             hideViews(progressBarIndeterminate, imageButtonState)
             removeIconErrorMsg()
-            tryUploadAttachments()
+            //tryUploadAttachments()
         }
     }
 
@@ -244,6 +244,7 @@ class MyMultiAttachmentMsgViewHolder(
             data.first,
             data.second
         )
+        binding.viewUploadAttachmentsIndicator.show()
         binding.viewUploadAttachmentsIndicator.bindDataInfo(data)
     }
 
