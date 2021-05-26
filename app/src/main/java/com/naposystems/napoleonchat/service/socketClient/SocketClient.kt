@@ -13,9 +13,9 @@ interface SocketClient {
 
     fun getStatusGlobalChannel(): Boolean
 
-    fun connectSocket()
+    suspend fun connectSocket()
 
-    fun subscribeToPresenceChannel()
+    suspend fun subscribeToPresenceChannel()
 
     fun disconnectSocket()
 

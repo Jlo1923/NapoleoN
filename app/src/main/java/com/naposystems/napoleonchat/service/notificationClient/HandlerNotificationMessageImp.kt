@@ -24,6 +24,8 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -68,7 +70,9 @@ class HandlerNotificationMessageImp
             processQueueMessagesNotifications()
         } else {
             Timber.d("LLAMADA PASO 3: HANDLER MESSAGE")
-            socketClient.connectSocket()
+            GlobalScope.launch {
+                socketClient.connectSocket()
+            }
             listenConnectChannel()
         }
     }

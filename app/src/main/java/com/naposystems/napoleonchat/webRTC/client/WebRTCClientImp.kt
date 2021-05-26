@@ -31,6 +31,8 @@ import com.naposystems.napoleonchat.webRTC.CustomSdpObserver
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.webrtc.*
 import timber.log.Timber
@@ -75,6 +77,7 @@ class WebRTCClientImp
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
             syncManager.sendMissedCall()
+            handlerMediaPlayerNotification.playEndTone()
             disposeCall(TypeEndCallEnum.TYPE_CANCEL)
 
         }
@@ -97,6 +100,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
+            handlerMediaPlayerNotification.playEndTone()
             disposeCall()
         }
 
@@ -373,8 +377,9 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO 3: CONECTAR SOCKET")
 
-        socketClient.connectSocket()
-
+        GlobalScope.launch {
+            socketClient.connectSocket()
+        }
     }
 
     private fun createPeerConnection() {
@@ -571,7 +576,9 @@ class WebRTCClientImp
         NapoleonApplication.callModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "" && NapoleonApplication.statusCall.isNoCall()) {
                 Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
-                socketClient.subscribeToPresenceChannel()
+                GlobalScope.launch {
+                    socketClient.subscribeToPresenceChannel()
+                }
             }
         }
     }
@@ -844,6 +851,12 @@ class WebRTCClientImp
 
     }
 
+    override fun playEndCall() {
+
+        handlerMediaPlayerNotification.playEndTone()
+
+    }
+
     override fun playRingBackTone() {
 
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
@@ -1062,7 +1075,7 @@ class WebRTCClientImp
     }
 
     override fun rejectSecondCall(contactId: Int, channelName: String) {
-        syncManager.rejectSecondCallCall(contactId, channelName)
+        syncManager.rejectCall(contactId, channelName)
     }
 
     override fun contactRejectCall() {
@@ -1078,6 +1091,7 @@ class WebRTCClientImp
     override fun contactCancelCall() {
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
+            handlerMediaPlayerNotification.playEndTone()
             disposeCall()
         }
     }
@@ -1211,6 +1225,7 @@ class WebRTCClientImp
     override fun contactHasHangup() {
         NapoleonApplication.callModel.let { _ ->
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
+            handlerMediaPlayerNotification.playEndTone()
             disposeCall()
         }
     }
@@ -1224,7 +1239,7 @@ class WebRTCClientImp
         context.startService(intent)
     }
 
-    override fun disposeCall(typeEndCallEnum: TypeEndCallEnum?) {
+    override fun disposeCall(typeEndCall: TypeEndCallEnum?) {
 
         Timber.d("LLAMADA PASO: DISPOSE CALL")
 
@@ -1234,7 +1249,7 @@ class WebRTCClientImp
 
                 disposingCall = true
 
-                typeEndCallEnum?.let { typeEndCall ->
+                typeEndCall?.let { typeEndCall ->
                     when (typeEndCall) {
                         TypeEndCallEnum.TYPE_CANCEL -> {
                             syncManager.cancelCall()
@@ -1283,12 +1298,6 @@ class WebRTCClientImp
             RxBus.publish(RxEvent.CallEnd())
 
             Timber.d("LLAMADA PASO: PROCESS DISPOSE CALL")
-
-            handlerMediaPlayerNotification.stopRingtone()
-
-            if (NapoleonApplication.statusCall.isConnectedCall()) {
-                handlerMediaPlayerNotification.playEndTone()
-            }
 
             countDownEndCallBusy.cancel()
 

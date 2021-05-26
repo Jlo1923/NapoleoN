@@ -1,8 +1,8 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
 import com.naposystems.napoleonchat.app.NapoleonApplication
-import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.model.toCallModel
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
@@ -12,6 +12,7 @@ import javax.inject.Inject
 class HandlerNotificationCallImp
 @Inject constructor(
     private val webRTCClient: WebRTCClient,
+    private val syncManager: SyncManager,
 ) : HandlerNotificationCall {
 
     override fun handlerCall(dataFromNotification: Map<String, String>) {
@@ -32,13 +33,12 @@ class HandlerNotificationCallImp
             webRTCClient.connectSocket()
         } else {
             NapoleonApplication.callModel?.let {
-
-                val callModel: CallModel = dataFromNotification.toCallModel()
-
-                webRTCClient.rejectSecondCall(
-                    contactId = callModel.contactId,
-                    channelName = callModel.channelName
-                )
+                dataFromNotification.toCallModel().let {
+                    syncManager.rejectCall(
+                        contactId = it.contactId,
+                        channelName = it.channelName
+                    )
+                }
             }
         }
     }

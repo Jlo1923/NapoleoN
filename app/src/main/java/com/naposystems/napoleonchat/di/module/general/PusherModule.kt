@@ -20,6 +20,9 @@ class PusherModule {
     fun providePusher(sharedPreferencesManager: SharedPreferencesManager): Pusher {
 
         val pusherOptions = PusherOptions()
+        pusherOptions.activityTimeout = 180000
+        pusherOptions.maxReconnectGapInSeconds = 4
+        pusherOptions.maxReconnectionAttempts = 3
 
         val authorizer = HttpAuthorizer(BuildConfig.SOCKET_BASE_URL)
 
