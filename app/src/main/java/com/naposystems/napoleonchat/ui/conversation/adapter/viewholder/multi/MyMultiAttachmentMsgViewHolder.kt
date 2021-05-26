@@ -244,8 +244,10 @@ class MyMultiAttachmentMsgViewHolder(
             data.first,
             data.second
         )
-        binding.viewUploadAttachmentsIndicator.show()
-        binding.viewUploadAttachmentsIndicator.bindDataInfo(data)
+        binding.viewUploadAttachmentsIndicator.apply {
+            show()
+            bindDataInfo(data)
+        }
     }
 
     private fun showOneItem(listElements: List<AttachmentEntity>) = binding.apply {

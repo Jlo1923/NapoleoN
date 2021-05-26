@@ -1,15 +1,17 @@
 package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.naposystems.napoleonchat.databinding.ViewUploadAttachmentsIndicatorBinding
-import com.naposystems.napoleonchat.di.module.sources.local.LocalDataSourceModule
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
+import com.naposystems.napoleonchat.utility.anims.animShowSlideUp
 import com.naposystems.napoleonchat.utility.extensions.hide
+import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 
 class ViewUploadAttachmentsIndicator @JvmOverloads constructor(
@@ -24,23 +26,26 @@ class ViewUploadAttachmentsIndicator @JvmOverloads constructor(
             true
         )
 
-    init {
-    }
 
     fun bindDataInfo(dataModel: UploadAttachmentsIndicatorModel) {
         handleStatusMessage(dataModel.messageStatus)
-        writeQuantity(dataModel.uploadAttachmentsCount, dataModel.attachmentsQuantity)
+        showCountAndQuantity(dataModel.uploadAttachmentsCount, dataModel.attachmentsQuantity)
     }
 
-    private fun writeQuantity(uploadAttachmentsCount: Int, attachmentsQuantity: Int) =
+    @SuppressLint("SetTextI18n")
+    private fun showCountAndQuantity(
+        uploadAttachmentsCount: Int,
+        attachmentsQuantity: Int
+    ) {
         viewBinding.apply {
             textCount.text = uploadAttachmentsCount.toString()
             textQuantity.text = "/ $attachmentsQuantity"
         }
+    }
 
     private fun handleStatusMessage(messageStatus: Int) = when (messageStatus) {
-        Constants.MessageStatus.SENDING.status -> uiModeSending()
-        else -> uiModeNormal()
+        Constants.MessageStatus.ERROR.status -> uiModeNormal()
+        else -> uiModeSending()
     }
 
     private fun uiModeSending() = viewBinding.apply {
