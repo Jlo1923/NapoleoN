@@ -6,7 +6,7 @@
     android:layout_height="200dp"
     android:background="@color/black_212121">
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MyMultiAttachmentMsgView
         android:id="@+id/view_file_one"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MyMultiAttachmentMsgView
         android:id="@+id/view_file_two"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -26,7 +26,7 @@
         app:layout_constraintStart_toStartOf="@id/guideline_vertical_70_percent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item.MyMultiAttachmentMsgView
         android:id="@+id/view_file_three"
         android:layout_width="0dp"
         android:layout_height="0dp"

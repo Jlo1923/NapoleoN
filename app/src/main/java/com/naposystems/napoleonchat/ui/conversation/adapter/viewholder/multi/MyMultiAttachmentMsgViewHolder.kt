@@ -120,10 +120,11 @@ class MyMultiAttachmentMsgViewHolder(
     private fun defineListeners() {
         binding.apply {
             imageButtonState.setOnClickListener {
+                val attachmentsToSendRemote =
+                    msgAndAttachment.attachmentEntityList.filter { it.isError() }
                 listener.onMultipleAttachmentMsgAction(
                     MultiAttachmentMsgAction.SendMessageToRemote(
-                        msgAndAttachment.messageEntity,
-                        msgAndAttachment.attachmentEntityList
+                        msgAndAttachment.messageEntity, attachmentsToSendRemote
                     )
                 )
                 paintMessageSending()
@@ -146,10 +147,8 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun tryUploadAttachments() {
-        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
-            it.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
-                    it.status == Constants.AttachmentStatus.ERROR.status
-        }
+        val attachmentsFilter =
+            msgAndAttachment.attachmentEntityList.filter { it.isError() }
         if (attachmentsFilter.isNotEmpty()) {
             viewModel.retryUploadAllFiles(
                 attachmentsFilter,
@@ -254,7 +253,6 @@ class MyMultiAttachmentMsgViewHolder(
         currentAttachments = listElements
         hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
         showViews(viewOneFile)
-
         viewOneFile.bindAttachments(listElements, msgAndAttachment.isMine())
     }
 

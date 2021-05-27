@@ -26,7 +26,7 @@ import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import timber.log.Timber
 import kotlin.properties.Delegates
 
-class MultiAttachmentMsgView @JvmOverloads constructor(
+class IncomingMultiAttachmentMsgView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
 ) : ConstraintLayout(context, attrs) {
@@ -72,9 +72,9 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
         theAttachment?.let {
             viewBinding.apply {
                 if (it.type == "video") {
-                    imageViewIconShow.setImageDrawable(root.context.getDrawable(R.drawable.ic_play_arrow_black))
+                    //imageViewIconShow.setImageDrawable(root.context.getDrawable(R.drawable.ic_play_arrow_black))
                 } else {
-                    imageViewIconShow.setImageDrawable(root.context.getDrawable(R.drawable.ic_eye_black))
+                    //imageViewIconShow.setImageDrawable(root.context.getDrawable(R.drawable.ic_eye_black))
                 }
             }
         }
@@ -93,60 +93,9 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
     }
 
     private fun handleAttachmentStatusForSender() {
-        theAttachment?.let {
-            when (it.status) {
-                SENDING.status -> uiModeProcessing()
-                SENT.status -> uiModeDone()
-                ERROR.status, UPLOAD_CANCEL.status -> uiModeError()
-                READED.status -> uiReadedSender()
-                else -> Unit
-            }
-        }
     }
 
     private fun handleAttachmentStatusForReceiver() {
-    }
-
-    private fun uiReceived(mine: Boolean) {
-        viewBinding.apply {
-            if (mine.not()) { // is Receiver
-                showViews(imageViewAttachment, imageViewIconShow)
-                hideViews(progressBar, imageRetry, imageViewStatus)
-            } else {
-                showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
-                hideViews(progressBar, imageRetry)
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
-            }
-        }
-    }
-
-    private fun uiReadedSender() {
-        viewBinding.apply {
-            showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
-            hideViews(progressBar, imageRetry)
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
-//            if (mine) { // is Sender
-//
-//            } else { // is Receiver
-//                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-//            }
-        }
-    }
-
-    private fun uiModeError() = viewBinding.apply {
-        showViews(imageRetry)
-        hideViews(progressBar, imageViewAttachment, imageViewIconShow, imageViewStatus)
-    }
-
-    private fun uiModeDone() = viewBinding.apply {
-        showViews(imageViewAttachment, imageViewIconShow, imageViewStatus)
-        hideViews(progressBar, imageRetry)
-        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
-    }
-
-    private fun uiModeProcessing() = viewBinding.apply {
-        hideViews(imageViewAttachment, imageViewIconShow, imageRetry, imageViewStatus)
-        showViews(progressBar)
     }
 
     private fun defineViewListeners() = viewBinding.apply {
@@ -156,11 +105,11 @@ class MultiAttachmentMsgView @JvmOverloads constructor(
             }
         }
 
-        imageRetry.setOnClickListener {
-            ifNotNull(theAttachment, listener) { attachment, listener ->
-                listener.onMsgItemFileAction(RetryUpload(attachment))
-            }
-        }
+//        imageRetry.setOnClickListener {
+//            ifNotNull(theAttachment, listener) { attachment, listener ->
+//                listener.onMsgItemFileAction(RetryUpload(attachment))
+//            }
+//        }
     }
 
     private fun launchDownload() = ifNotNull(theAttachment, listener) { attachment, listener ->

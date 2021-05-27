@@ -81,11 +81,14 @@ data class AttachmentEntity(
     }
 
     fun isSent(): Boolean = status == AttachmentStatus.SENT.status
+    fun isSending(): Boolean = status == AttachmentStatus.SENDING.status
     fun isReceived(): Boolean = status == AttachmentStatus.RECEIVED.status
     fun isReaded(): Boolean = status == AttachmentStatus.READED.status
     fun isDownloadComplete(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
     fun isCancelUpload(): Boolean = status == AttachmentStatus.UPLOAD_CANCEL.status
     fun isError(): Boolean = status == AttachmentStatus.ERROR.status
     fun isNotDownloaded(): Boolean = status == AttachmentStatus.NOT_DOWNLOADED.status
+
+    fun isTypeVideo(): Boolean = type == "video"
 
 }

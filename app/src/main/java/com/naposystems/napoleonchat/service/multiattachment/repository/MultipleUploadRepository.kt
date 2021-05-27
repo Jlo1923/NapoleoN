@@ -12,13 +12,10 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
-import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType
-import com.naposystems.napoleonchat.utility.Constants.IsMine
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENDING
-import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -68,6 +65,8 @@ class MultipleUploadRepository @Inject constructor(
         uploadJob = coroutineScope.launch {
             try {
                 updateMessageStatus(messageEntity, SENDING.status)
+                currentAttachment.status = Constants.AttachmentStatus.SENDING.status
+                updateAttachment(currentAttachment)
                 publishEventStart()
                 val pairFiles = getDestFileForCompress(attachmentEntity)
                 compressVideo(attachmentEntity, pairFiles.first, pairFiles.second, this)
@@ -135,7 +134,7 @@ class MultipleUploadRepository @Inject constructor(
             Timber.d("*Test: tmessages VideoCompressResult.Success")
 
             currentAttachment.apply {
-                if (it.srcFile.isFile && it.srcFile.exists() && !isCompressed && type == AttachmentType.VIDEO.type) {
+                if (it.srcFile.isFile && it.srcFile.exists() && isCompressed.not() && type == AttachmentType.VIDEO.type) {
                     it.srcFile.delete()
                 }
 
@@ -200,8 +199,6 @@ class MultipleUploadRepository @Inject constructor(
         setStatusErrorMessageAndAttachment(currentMessage, currentAttachment)
         publishEventError()
         Timber.d("offer(UploadResult.Error(attachment, \"Algo ha salido mal\", null))")
-
-        publishEventError()
     }
 
     private fun handleResponseSuccessful(response: Response<AttachmentResDTO>) {
@@ -230,7 +227,7 @@ class MultipleUploadRepository @Inject constructor(
         messageEntity: MessageEntity,
         attachmentEntity: AttachmentEntity?
     ) {
-        //updateMessageStatus(messageEntity, MessageStatus.ERROR.status)
+        updateMessageStatus(messageEntity, MessageStatus.ERROR.status)
         attachmentEntity?.let {
             attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
             updateAttachment(attachmentEntity)
@@ -299,7 +296,7 @@ class MultipleUploadRepository @Inject constructor(
 
     private fun updateMessageStatus(messageEntity: MessageEntity, status: Int) {
         messageEntity.status = status
-        updateMessage(messageEntity)
+        msgDataSource.updateMessage(messageEntity)
     }
 
     private fun handleMessageStatusError(messageEntity: MessageEntity) {
@@ -316,7 +313,7 @@ class MultipleUploadRepository @Inject constructor(
 
     private fun handleExceptionInUploadAttachment() {
         currentAttachment.apply {
-            status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+            status = Constants.AttachmentStatus.ERROR.status
             updateAttachment(this)
         }
         currentMessage.apply {
