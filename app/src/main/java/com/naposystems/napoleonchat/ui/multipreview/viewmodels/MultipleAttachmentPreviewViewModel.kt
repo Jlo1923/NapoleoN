@@ -27,6 +27,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.isVideo
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -116,7 +117,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun validateMustAttachmentMarkAsReaded(position: Int) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             if (listFiles.isNotEmpty()) {
                 if (listFiles[position].isVideo().not()) {
                     markAttachmentImageAsRead(position)
@@ -189,7 +190,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun markAttachmentVideoAsRead(fileItem: MultipleAttachmentFileItem) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             fileItem.messageAndAttachment?.let {
                 if (it.isMine == Constants.IsMine.NO.value) {
                     repository.sentAttachmentReaded(fileItem)

@@ -15,6 +15,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.extensions.getBlurTransformation
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.show
@@ -37,23 +38,17 @@ class ViewMultipleAttachmentTabView @JvmOverloads constructor(
     private fun loadImage(file: MultipleAttachmentFileItem) {
 
         if (file.messageAndAttachment == null) {
-            try {
-                binding.apply {
-                    Glide.with(root.context).load(file.contentUri)
-                        .into(imageFolderThumbnail)
-                }
-            } catch (exception: Exception) {
-
+            binding.apply {
+                Glide.with(root.context)
+                    .load(file.contentUri)
+                    .into(imageFolderThumbnail)
             }
         } else {
-            try {
-                binding.apply {
-                    Glide.with(root.context)
-                        .load(file.messageAndAttachment.attachment.body)
-                        .into(imageFolderThumbnail)
-                }
-            } catch (exception: Exception) {
-
+            binding.apply {
+                Glide.with(root.context)
+                    .load(file.messageAndAttachment.attachment.body)
+                    .transform(*getBlurTransformation(root.context))
+                    .into(imageFolderThumbnail)
             }
         }
     }
@@ -84,24 +79,18 @@ class ViewMultipleAttachmentTabView @JvmOverloads constructor(
         }
     }
 
-    private fun hideStatus() {
-        binding.apply {
-            imageViewStatus.hide()
-        }
+    private fun hideStatus() = binding.apply {
+        imageViewStatus.hide()
     }
 
-    private fun onModeReceived() {
-        binding.apply {
-            imageViewStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
-        }
+    private fun onModeReceived() = binding.apply {
+        imageViewStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
     }
 
-    private fun onModeReaded() {
-        binding.apply {
-            imageViewStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
-        }
+    private fun onModeReaded() = binding.apply {
+        imageViewStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
     }
 
     fun selected(isSelected: Boolean) {

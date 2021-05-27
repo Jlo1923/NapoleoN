@@ -2333,10 +2333,11 @@ class ConversationFragment
     }
 
     private fun sendMessageAndAttachmentsToRemote(action: SendMessageToRemote) {
-        viewModel.sendMessageToRemote(
-            action.messageEntity,
-            action.attachments
-        )
+        if (Utils.isInternetAvailable(binding.root.context)) {
+            viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
+        } else {
+            Utils.showToast(binding.root.context, getString(R.string.msg_not_connection))
+        }
     }
 
     /**

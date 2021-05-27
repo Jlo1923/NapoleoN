@@ -49,6 +49,8 @@ class MultipleAttachmentPreviewVideoFragment(
 
     private var countDownTimer: CountDownTimer? = null
 
+    private var wasPlaying = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,7 +68,10 @@ class MultipleAttachmentPreviewVideoFragment(
 
         binding.apply {
             viewVideoController.setListener(this@MultipleAttachmentPreviewVideoFragment)
-            imageButtonPlay.setOnClickListener { playVideo() }
+            imageButtonPlay.setOnClickListener {
+                playVideo()
+                wasPlaying = true
+            }
             falseView.setOnClickListener { pauseVideo() }
         }
 
@@ -91,7 +96,10 @@ class MultipleAttachmentPreviewVideoFragment(
         super.onPause()
         pauseVideo(false)
         hidePlayerOptions()
-        listener?.forceShowOptions()
+        listener?.let {
+            it.forceShowOptions()
+            if (wasPlaying) it.markAttachmentAsRead(file)
+        }
     }
 
     override fun onStart() {
@@ -180,42 +188,35 @@ class MultipleAttachmentPreviewVideoFragment(
         }
     }
 
-    private fun hideStatus() {
-        binding.apply {
-            imageViewStatus.hide()
-            frameStatus.hide()
-        }
+    private fun hideStatus() = binding.apply {
+        imageViewStatus.hide()
+        frameStatus.hide()
     }
 
-    private fun onModeWhite() {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
-        }
+    private fun onModeWhite() = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
     }
 
-    private fun onModeReceived(attachmentEntity: AttachmentEntity) {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
-            if (file.messageAndAttachment?.isMine == 0) {
-                hideViews(imageViewStatus, frameStatus)
-            }
+    private fun onModeReceived(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
+        if (file.messageAndAttachment?.isMine == 0) {
+            hideViews(imageViewStatus, frameStatus)
         }
         configTimer(attachmentEntity)
     }
 
-    private fun onModeReaded(attachmentEntity: AttachmentEntity) {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            if (file.messageAndAttachment?.isMine == 1) { // is Mine
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
-            } else {
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-            }
+
+    private fun onModeReaded(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        if (file.messageAndAttachment?.isMine == 1) { // is Mine
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+        } else {
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
         }
         configTimer(attachmentEntity)
     }

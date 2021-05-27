@@ -18,10 +18,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.utility.BlurTransformation
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.*
-import com.naposystems.napoleonchat.utility.extensions.hide
-import com.naposystems.napoleonchat.utility.extensions.hideViews
-import com.naposystems.napoleonchat.utility.extensions.show
-import com.naposystems.napoleonchat.utility.extensions.showViews
+import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import timber.log.Timber
 import kotlin.properties.Delegates
@@ -97,19 +94,10 @@ class MyMultiAttachmentMsgView @JvmOverloads constructor(
     private fun loadImage() {
         try {
             viewBinding.apply {
-
-                val transformationList: MutableList<Transformation<Bitmap>> = arrayListOf()
-                transformationList.apply {
-                    add(CenterCrop())
-                    add(BlurTransformation(root.context))
-                    add(RoundedCorners(8))
-                }
-
                 Glide.with(root.context)
                     .load(theAttachment?.body)
-                    .transform(*transformationList.toTypedArray())
+                    .transform(*getBlurTransformation(root.context))
                     .into(imageViewAttachment)
-
             }
         } catch (exception: Exception) {
             Timber.e(exception)
