@@ -94,55 +94,46 @@ class MyMultiAttachmentMsgViewHolder(
         textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 
-    private fun paintMessageSending() {
-        binding.apply {
-            showViews(progressBarIndeterminate, imageButtonState)
-        }
+    private fun paintMessageSending() = binding.apply {
+        showViews(progressBarIndeterminate, imageButtonState)
     }
 
-    private fun paintMessageError() {
-        binding.apply {
-            showViews(imageButtonState)
-            hideViews(progressBarIndeterminate)
-            showIconErrorMsg()
-        }
+    private fun paintMessageError() = binding.apply {
+        showViews(imageButtonState)
+        hideViews(progressBarIndeterminate)
+        showIconErrorMsg()
     }
 
-    private fun ConversationItemMyMessageMultiBinding.showIconErrorMsg() {
+    private fun ConversationItemMyMessageMultiBinding.showIconErrorMsg() =
         textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
             R.drawable.ic_message_error,
             0
         )
-    }
 
-    private fun defineListeners() {
-        binding.apply {
-            imageButtonState.setOnClickListener {
-                val attachmentsToSendRemote =
-                    msgAndAttachment.attachmentEntityList.filter { it.isError() }
-                listener.onMultipleAttachmentMsgAction(
-                    MultiAttachmentMsgAction.SendMessageToRemote(
-                        msgAndAttachment.messageEntity, attachmentsToSendRemote
-                    )
+    private fun defineListeners() = binding.apply {
+        imageButtonState.setOnClickListener {
+            val attachmentsToSendRemote =
+                msgAndAttachment.attachmentEntityList.filter { it.isError() }
+            listener.onMultipleAttachmentMsgAction(
+                MultiAttachmentMsgAction.SendMessageToRemote(
+                    msgAndAttachment.messageEntity, attachmentsToSendRemote
                 )
-                paintMessageSending()
-            }
+            )
+            paintMessageSending()
         }
     }
 
-    private fun paintMoreData(timeFormat: Int?) {
-        binding.apply {
-            textViewMsg.text = msgAndAttachment.messageEntity.body
-            textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
-            timeFormat?.let {
-                bindMessageDateSend(
-                    textViewMsgDate,
-                    msgAndAttachment.messageEntity.createdAt,
-                    it
-                )
-            }
+    private fun paintMoreData(timeFormat: Int?) = binding.apply {
+        textViewMsg.text = msgAndAttachment.messageEntity.body
+        textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
+        timeFormat?.let {
+            bindMessageDateSend(
+                textViewMsgDate,
+                msgAndAttachment.messageEntity.createdAt,
+                it
+            )
         }
     }
 
@@ -158,16 +149,14 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun paintAttachments() {
-        msgAndAttachment.attachmentEntityList.apply {
-            when (this.size) {
-                1 -> showOneItem(this)
-                2 -> showTwoItems(this)
-                3 -> showThreeElements(this)
-                4 -> showFourItems(this)
-                5 -> showFiveItems(this)
-                else -> showFiveItems(this)
-            }
+    private fun paintAttachments() = msgAndAttachment.attachmentEntityList.apply {
+        when (this.size) {
+            1 -> showOneItem(this)
+            2 -> showTwoItems(this)
+            3 -> showThreeElements(this)
+            4 -> showFourItems(this)
+            5 -> showFiveItems(this)
+            else -> showFiveItems(this)
         }
     }
 

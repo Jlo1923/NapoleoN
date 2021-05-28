@@ -10,7 +10,7 @@ import com.naposystems.napoleonchat.service.download.contract.IContractDownloadS
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.NOT_DOWNLOADED
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.DownloadAttachmentsIndicatorModel
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber

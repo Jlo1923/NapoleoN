@@ -48,20 +48,14 @@
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/textView_count_files"
-            style="@style/TextAppearance.AppCompat.Caption"
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.ViewDownloadAttachmentsIndicator
+            android:id="@+id/viewDownloadAttachmentsIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
-            android:drawableEnd="@drawable/ic_baseline_arrow_downward_24"
-            android:drawablePadding="@dimen/x_small_padding"
-            android:drawableTint="@color/black"
             android:gravity="center"
-            android:padding="@dimen/x_small_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="8 / 10"
             tools:visibility="visible" />
 
         <TextView

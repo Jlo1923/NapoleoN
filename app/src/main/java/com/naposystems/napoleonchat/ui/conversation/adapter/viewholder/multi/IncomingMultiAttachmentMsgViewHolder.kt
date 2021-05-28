@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.DownloadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.*
@@ -77,7 +78,7 @@ class IncomingMultiAttachmentMsgViewHolder(
     private fun paintDownloadFiles() = msgAndAttachment.attachmentEntityList.apply {
         val countSent = this.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
         if (countSent.size == this.size) {
-            binding.textViewCountFiles.hide()
+            binding.viewDownloadAttachmentsIndicator.hide()
         } else {
             val data = Pair(countSent.size, this.size)
             showQuantity(data)
@@ -163,13 +164,21 @@ class IncomingMultiAttachmentMsgViewHolder(
 
     private fun handleActions(action: MultiAttachmentMsgEvent) {
         when (action) {
-            MultiAttachmentMsgEvent.HideQuantity -> binding.textViewCountFiles.hide()
+            MultiAttachmentMsgEvent.HideQuantity -> binding.viewDownloadAttachmentsIndicator.hide()
             is MultiAttachmentMsgEvent.ShowQuantity -> showQuantity(action.data)
         }
     }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
-        textViewCountFiles.text = "${data.first} / ${data.second}"
+        val data = DownloadAttachmentsIndicatorModel(
+            msgAndAttachment.messageEntity.status,
+            data.first,
+            data.second
+        )
+        binding.viewDownloadAttachmentsIndicator.apply {
+            show()
+            bindDataInfo(data)
+        }
     }
 
     private fun handleState(state: MultiAttachmentMsgState) = when (state) {

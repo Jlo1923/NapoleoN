@@ -51,13 +51,11 @@ class MultipleUploadService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun getCommandAction(intent: Intent) {
-        intent.action?.let { action ->
-            Timber.d("onStartCommand action: $action")
-            if (action == ACTION_CANCEL_UPLOAD) {
-                repository.cancelUpload()
-                stopService()
-            }
+    private fun getCommandAction(intent: Intent) = intent.action?.let { action ->
+        Timber.d("onStartCommand action: $action")
+        if (action == ACTION_CANCEL_UPLOAD) {
+            repository.cancelUpload()
+            stopService()
         }
     }
 
@@ -75,30 +73,28 @@ class MultipleUploadService : Service() {
         } ?: run { handleUploadSuccess() }
     }
 
-    private fun getMessageAndAttachmentsFromExtras(intent: Intent) {
-        intent.extras?.let { bundle ->
-            val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
-            val attachmentsIn =
-                bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
+    private fun getMessageAndAttachmentsFromExtras(intent: Intent) = intent.extras?.let { bundle ->
+        val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
+        val attachmentsIn =
+            bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
 
-            /**
-             * Al momento de iniciar el proceso de subir archivos, debemos marcar el mensaje padre en estado SENDING
-             * y cada uno de sus Attachments como ERROR, para que a medida que tome UNO, lo marque
-             * como SENDING.
-             *
-             * Debemos agregar a la lista los elementos que no esten en ella para evitar duplicidad
-             */
-            message?.let {
-                it.status = Constants.MessageStatus.SENDING.status
-                repository.updateMessage(it)
-            }
-            val forList = attachmentsIn.map { Pair(message, it) }.toList()
-            forList.forEach {
-                if (attachmentList.contains(it).not()) {
-                    it.second.status = Constants.AttachmentStatus.ERROR.status
-                    repository.updateAttachment(it.second)
-                    attachmentList.add(it)
-                }
+        /**
+         * Al momento de iniciar el proceso de subir archivos, debemos marcar el mensaje padre en estado SENDING
+         * y cada uno de sus Attachments como ERROR, para que a medida que tome UNO, lo marque
+         * como SENDING.
+         *
+         * Debemos agregar a la lista los elementos que no esten en ella para evitar duplicidad
+         */
+        message?.let {
+            it.status = Constants.MessageStatus.SENDING.status
+            repository.updateMessage(it)
+        }
+        val forList = attachmentsIn.map { Pair(message, it) }.toList()
+        forList.forEach {
+            if (attachmentList.contains(it).not()) {
+                it.second.status = Constants.AttachmentStatus.ERROR.status
+                repository.updateAttachment(it.second)
+                attachmentList.add(it)
             }
         }
     }
