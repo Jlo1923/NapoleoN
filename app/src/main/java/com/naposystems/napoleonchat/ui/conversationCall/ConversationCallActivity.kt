@@ -34,6 +34,8 @@ import com.naposystems.napoleonchat.webRTC.client.EvenstFromWebRTCClientListener
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -361,8 +363,9 @@ class ConversationCallActivity :
 
         binding.fabAnswer.visibility = View.GONE
 
-        webRTCClient.createAnswer()
-
+        GlobalScope.launch {
+            webRTCClient.createAnswer()
+        }
     }
 
     private fun hangUp() {
