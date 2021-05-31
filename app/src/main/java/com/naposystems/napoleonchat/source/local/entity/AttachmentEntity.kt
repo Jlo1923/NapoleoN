@@ -89,6 +89,6 @@ data class AttachmentEntity(
     fun isError(): Boolean = status == AttachmentStatus.ERROR.status
     fun isNotDownloaded(): Boolean = status == AttachmentStatus.NOT_DOWNLOADED.status
 
-    fun isTypeVideo(): Boolean = type == "video"
+    fun isTypeVideo(): Boolean = type == Constants.AttachmentType.VIDEO.type
 
 }

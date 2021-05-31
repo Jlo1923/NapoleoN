@@ -195,7 +195,7 @@ class SyncManagerImp @Inject constructor(
                         it?.let {
                             attachmentLocalDataSource.updateAttachmentStatus(
                                 it,
-                                Constants.AttachmentStatus.DOWNLOADING.status
+                                Constants.AttachmentStatus.NOT_DOWNLOADED.status
                             )
                         }
                     }

@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,12 +6,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.naposystems.napoleonchat.databinding.ViewUploadAttachmentsIndicatorBinding
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
-import com.naposystems.napoleonchat.utility.anims.animShowSlideUp
 import com.naposystems.napoleonchat.utility.extensions.hide
-import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 
 class ViewUploadAttachmentsIndicator @JvmOverloads constructor(

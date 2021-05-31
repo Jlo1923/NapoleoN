@@ -6,7 +6,7 @@
     android:layout_height="200dp"
     android:background="@color/black_212121">
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MyMultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver.ReceiverMultiAttachmentMsgView
         android:id="@+id/view_file_one"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="#345678" />
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MyMultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver.ReceiverMultiAttachmentMsgView
         android:id="@+id/view_file_two"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -28,54 +28,27 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="#234567" />
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MyMultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver.ReceiverMultiAttachmentMsgView
         android:id="@+id/view_file_three"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_one"
+        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_middle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
         tools:background="#345678" />
 
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MyMultiAttachmentMsgView
+    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver.ReceiverMultiAttachmentMsgView
         android:id="@+id/view_file_four"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideline_vertical_two"
-        app:layout_constraintStart_toStartOf="@id/guideline_vertical_one"
-        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
-        tools:background="#345678" />
-
-    <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MyMultiAttachmentMsgView
-        android:id="@+id/view_file_five"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline_vertical_two"
+        app:layout_constraintStart_toStartOf="@id/guideline_vertical_middle"
         app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
-        tools:background="#345678" />
-
-    <TextView
-        android:id="@+id/text_more_files_quantity"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/black_overlay"
-        android:elevation="4dp"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline2"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline_vertical_two"
-        app:layout_constraintTop_toTopOf="@id/guideline_horizontal_middle"
-        tools:text="+2" />
+        tools:background="#234567" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_vertical_middle"
@@ -90,19 +63,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_vertical_one"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.33" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_vertical_two"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.66" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

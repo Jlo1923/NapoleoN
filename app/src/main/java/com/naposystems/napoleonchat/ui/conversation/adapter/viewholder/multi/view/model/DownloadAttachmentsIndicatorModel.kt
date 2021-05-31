@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.model
 
 data class DownloadAttachmentsIndicatorModel(
     val messageStatus: Int,

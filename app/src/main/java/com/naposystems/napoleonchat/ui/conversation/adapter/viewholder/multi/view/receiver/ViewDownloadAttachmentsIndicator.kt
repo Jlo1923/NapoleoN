@@ -1,11 +1,11 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.naposystems.napoleonchat.databinding.ViewDownloadAttachmentsIndicatorBinding
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.DownloadAttachmentsIndicatorModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.model.DownloadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.show

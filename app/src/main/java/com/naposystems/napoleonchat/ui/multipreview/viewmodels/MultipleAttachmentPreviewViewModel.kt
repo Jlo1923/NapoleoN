@@ -324,16 +324,14 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         return attachments
     }
 
-    private fun getItemMessageToSend(message: String): ItemMessage {
-        return ItemMessage(
-            messageString = message,
-            attachment = null,
-            numberAttachments = listFiles.size,
-            selfDestructTime = getHighestTimeInFiles(),
-            quote = "",
-            contact = contactEntity
-        )
-    }
+    private fun getItemMessageToSend(message: String): ItemMessage = ItemMessage(
+        messageString = message,
+        attachment = null,
+        numberAttachments = listFiles.size,
+        selfDestructTime = getHighestTimeInFiles(),
+        quote = "",
+        contact = contactEntity
+    )
 
     private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
 

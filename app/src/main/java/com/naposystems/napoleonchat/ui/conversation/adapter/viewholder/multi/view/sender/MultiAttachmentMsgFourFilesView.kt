@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender
 
 import android.content.Context
 import android.util.AttributeSet
@@ -24,22 +24,23 @@ class MultiAttachmentMsgFourFilesView @JvmOverloads constructor(
             true
         )
 
-    init {
-    }
-
-    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) =
+    fun bindAttachments(
+        listAttachments: List<AttachmentEntity>,
+        isStateError: Boolean
+    ) =
         viewBinding.apply {
+
             viewFileOne.defineListener(this@MultiAttachmentMsgFourFilesView)
             viewFileTwo.defineListener(this@MultiAttachmentMsgFourFilesView)
             viewFileThree.defineListener(this@MultiAttachmentMsgFourFilesView)
             viewFileFour.defineListener(this@MultiAttachmentMsgFourFilesView)
 
-            viewFileOne.bindAttachment(listAttachments[0], 0, mine)
-            viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
-            viewFileThree.bindAttachment(listAttachments[2], 2, mine)
-            viewFileFour.bindAttachment(listAttachments[3], 3, mine)
-        }
+            viewFileOne.bindAttachment(listAttachments[0], 0, isStateError)
+            viewFileTwo.bindAttachment(listAttachments[1], 1, isStateError)
+            viewFileThree.bindAttachment(listAttachments[2], 2, isStateError)
+            viewFileFour.bindAttachment(listAttachments[3], 3, isStateError)
 
+        }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {
         this.listener = listener

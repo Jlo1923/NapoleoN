@@ -1,23 +1,16 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.item
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.Transformation
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ItemViewMultiAttachmentMsgItemBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.RetryUpload
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.ViewAttachment
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
-import com.naposystems.napoleonchat.utility.BlurTransformation
-import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.*
 import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.helpers.ifNotNull
 import timber.log.Timber
@@ -43,29 +36,12 @@ class MyMultiAttachmentMsgView @JvmOverloads constructor(
         defineViewListeners()
     }
 
-    fun bindAttachment(attachmentEntity: AttachmentEntity, index: Int, mine: Boolean) {
+    fun bindAttachment(attachmentEntity: AttachmentEntity, index: Int, isMsgStateError: Boolean) {
         theAttachment = attachmentEntity
         mIndex = index
-        handleAttachmentImage()
+        loadImage()
         theAttachment?.let {
-            viewBinding.viewAttachmentStatus.bindAttachment(it)
-        }
-    }
-
-    private fun handleAttachmentImage() {
-        theAttachment?.let {
-            if (it.body.isNotEmpty()) {
-                viewBinding.apply {
-                    imageViewAttachment.show()
-                    imageViewEmpty.hide()
-                }
-                loadImage()
-            } else {
-                viewBinding.apply {
-                    imageViewAttachment.hide()
-                    imageViewEmpty.show()
-                }
-            }
+            viewBinding.viewAttachmentStatus.bindAttachment(it, isMsgStateError)
         }
     }
 
@@ -95,7 +71,7 @@ class MyMultiAttachmentMsgView @JvmOverloads constructor(
         try {
             viewBinding.apply {
                 Glide.with(root.context)
-                    .load(theAttachment?.body)
+                    .load(theAttachment?.thumbnailUri?.toUri())
                     .transform(*getBlurTransformation(root.context))
                     .into(imageViewAttachment)
             }

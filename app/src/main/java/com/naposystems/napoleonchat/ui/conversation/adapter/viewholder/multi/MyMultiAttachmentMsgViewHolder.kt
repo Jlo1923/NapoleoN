@@ -18,7 +18,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.UploadAttachmentsIndicatorModel
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR
@@ -67,7 +67,7 @@ class MyMultiAttachmentMsgViewHolder(
         msgAndAttachment = item
         configListenersViews()
         bindViewModel()
-        paintAttachments()
+        paintAttachments(item.messageEntity.status)
         paintUploadFiles()
         paintMoreData(timeFormat)
         paintMessageStatus()
@@ -149,14 +149,20 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun paintAttachments() = msgAndAttachment.attachmentEntityList.apply {
-        when (this.size) {
-            1 -> showOneItem(this)
-            2 -> showTwoItems(this)
-            3 -> showThreeElements(this)
-            4 -> showFourItems(this)
-            5 -> showFiveItems(this)
-            else -> showFiveItems(this)
+    private fun paintAttachments(messageStatus: Int) {
+
+        val isStateError =
+            messageStatus == com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR.status
+
+        msgAndAttachment.attachmentEntityList.apply {
+            when (this.size) {
+                1 -> showOneItem(this, isStateError)
+                2 -> showTwoItems(this, isStateError)
+                3 -> showThreeElements(this, isStateError)
+                4 -> showFourItems(this, isStateError)
+                5 -> showFiveItems(this, isStateError)
+                else -> showFiveItems(this, isStateError)
+            }
         }
     }
 
@@ -218,13 +224,13 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun handleState(state: MultiAttachmentMsgState) = when (state) {
-        is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
-        is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
-        is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
-        is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
-        is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
-    }
+//    private fun handleState(state: MultiAttachmentMsgState) = when (state) {
+//        is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
+//        is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
+//    }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
         val data = UploadAttachmentsIndicatorModel(
@@ -238,39 +244,44 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun showOneItem(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
-        showViews(viewOneFile)
-        viewOneFile.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showOneItem(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
+            showViews(viewOneFile)
+            viewOneFile.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles, viewOneFile)
-        showViews(viewTwoFiles)
-        viewTwoFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showTwoItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles, viewOneFile)
+            showViews(viewTwoFiles)
+            viewTwoFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles, viewOneFile)
-        showViews(viewThreeFiles)
-        viewThreeFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showThreeElements(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles, viewOneFile)
+            showViews(viewThreeFiles)
+            viewThreeFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles, viewOneFile)
-        showViews(viewFourFiles)
-        viewFourFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showFourItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles, viewOneFile)
+            showViews(viewFourFiles)
+            viewFourFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewOneFile)
-        showViews(viewFiveFiles)
-        viewFiveFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showFiveItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewOneFile)
+            showViews(viewFiveFiles)
+            viewFiveFiles.bindAttachments(listElements, isStateError)
+        }
 
 }

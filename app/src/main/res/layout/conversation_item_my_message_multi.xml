@@ -17,38 +17,38 @@
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgOneFileView
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MultiAttachmentMsgOneFileView
             android:id="@+id/view_one_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgTwoFilesView
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MultiAttachmentMsgTwoFilesView
             android:id="@+id/view_two_files"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgThreeFilesView
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MultiAttachmentMsgThreeFilesView
             android:id="@+id/view_three_files"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgFourFilesView
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MultiAttachmentMsgFourFilesView
             android:id="@+id/view_four_files"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
             tools:visibility="gone" />
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.MultiAttachmentMsgFiveFilesView
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.MultiAttachmentMsgFiveFilesView
             android:id="@+id/view_five_files"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone" />
 
-        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.ViewUploadAttachmentsIndicator
+        <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.ViewUploadAttachmentsIndicator
             android:id="@+id/viewUploadAttachmentsIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

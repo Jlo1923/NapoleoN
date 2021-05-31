@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender
 
 import android.content.Context
 import android.util.AttributeSet
@@ -24,9 +24,9 @@ class ViewAttachmentStatusSenderCollage @JvmOverloads constructor(
             true
         )
 
-    fun bindAttachment(attachment: AttachmentEntity) {
+    fun bindAttachment(attachment: AttachmentEntity, isMsgStateError: Boolean) {
         bindAttachmentType(attachment)
-        bindAttachmentStatus(attachment.status)
+        bindAttachmentStatus(attachment.status, isMsgStateError)
     }
 
     private fun bindAttachmentType(attachment: AttachmentEntity) = viewBinding.apply {
@@ -39,9 +39,9 @@ class ViewAttachmentStatusSenderCollage @JvmOverloads constructor(
         }
     }
 
-    private fun bindAttachmentStatus(attachmentStatus: Int) {
+    private fun bindAttachmentStatus(attachmentStatus: Int, isMsgStateError: Boolean) {
         when (attachmentStatus) {
-            Constants.AttachmentStatus.ERROR.status -> uiModeError()
+            Constants.AttachmentStatus.ERROR.status -> uiModeError(isMsgStateError)
             Constants.AttachmentStatus.SENDING.status -> uiModeSending()
             Constants.AttachmentStatus.SENT.status -> uiModeSent()
             Constants.AttachmentStatus.RECEIVED.status -> uiModeReceived()
@@ -50,14 +50,20 @@ class ViewAttachmentStatusSenderCollage @JvmOverloads constructor(
         }
     }
 
-    private fun uiModeError() = viewBinding.apply {
-        showViews(layoutCenterStatus, imageViewStatusError)
+    private fun uiModeError(isMsgStateError: Boolean) = viewBinding.apply {
+        layoutCenterStatus.show()
+        if (isMsgStateError) imageViewStatusError.show() else imageViewStatusError.hide()
         hideViews(progressBar, imageViewStatusReceived, imageViewStatusRead, imageViewStatusSent)
     }
 
     private fun uiModeSending() = viewBinding.apply {
         showViews(layoutCenterStatus, progressBar)
-        hideViews(imageViewStatusReceived, imageViewStatusRead, imageViewStatusSent, imageViewStatusError)
+        hideViews(
+            imageViewStatusReceived,
+            imageViewStatusRead,
+            imageViewStatusSent,
+            imageViewStatusError
+        )
     }
 
     private fun uiModeSent() = viewBinding.apply {

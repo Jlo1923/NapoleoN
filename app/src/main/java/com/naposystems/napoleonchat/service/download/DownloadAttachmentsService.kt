@@ -10,7 +10,6 @@ import com.naposystems.napoleonchat.service.download.contract.IContractDownloadS
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.models.DownloadAttachmentsIndicatorModel
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -43,39 +42,38 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         subscribeRxEvents()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
+        getAttachmentFromExtras(intent)
+        getCommandAction(intent)
+        return START_NOT_STICKY
+    }
 
-        intent.extras?.let { bundle ->
-            val attachmentsIn =
-                bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
-            attachmentsIn.forEach { attachToAdd ->
-                val toAdd = attachmentList.firstOrNull() { attachInList ->
-                    attachInList.id == attachToAdd.id
-                }
-                if (toAdd == null) {
-                    attachmentList.add(attachToAdd)
-                }
+    private fun getAttachmentFromExtras(intent: Intent) = intent.extras?.let { bundle ->
+        val attachmentsIn =
+            bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
+        attachmentsIn.forEach { attachToAdd ->
+            val toAdd = attachmentList.firstOrNull() { attachInList ->
+                attachInList.id == attachToAdd.id
             }
-            if (attachmentList.isNotEmpty()) {
+            if (toAdd == null) {
+                attachmentList.add(attachToAdd)
+            }
+            if (attachmentList.size == 1) {
                 handleTryNextAttachment()
             }
         }
+    }
 
-        intent.action?.let { action ->
-            Timber.d("onStartCommand action: $action")
-            if (action == ACTION_CANCEL_DOWNLOAD) {
-                repository.cancelDownload()
-                stopSelf()
-                stopForeground(true)
-            }
+    private fun getCommandAction(intent: Intent) = intent.action?.let { action ->
+        Timber.d("onStartCommand action: $action")
+        if (action == ACTION_CANCEL_DOWNLOAD) {
+            repository.cancelDownload()
+            stopSelf()
+            stopForeground(true)
         }
-
-        return START_NOT_STICKY
     }
 
     override fun showNotification(attachmentEntity: AttachmentEntity) {
