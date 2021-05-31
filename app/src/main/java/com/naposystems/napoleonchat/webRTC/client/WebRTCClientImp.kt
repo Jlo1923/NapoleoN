@@ -71,7 +71,7 @@ class WebRTCClientImp
 
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
-        TimeUnit.SECONDS.toMillis(30),
+        TimeUnit.MINUTES.toMillis(30),
         TimeUnit.SECONDS.toMillis(1)
     ) {
         override fun onFinish() {
@@ -605,6 +605,8 @@ class WebRTCClientImp
 
         Timber.d("LLAMADA PASO 5: Creando Respuesta")
 
+        Timber.d("LLAMADA PASO 5: ${peerConnection?.connectionState()}")
+
         peerConnection?.createAnswer(
             object : CustomSdpObserver("Local Answer") {
                 override fun onCreateSuccess(sessionDescription: SessionDescription) {
@@ -1045,7 +1047,9 @@ class WebRTCClientImp
                 CustomSdpObserver("Remote offer"),
                 sessionDescription
             )
-            createAnswer()
+            GlobalScope.launch {
+                createAnswer()
+            }
         }
     }
 
