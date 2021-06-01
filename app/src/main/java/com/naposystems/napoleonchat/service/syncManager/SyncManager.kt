@@ -36,6 +36,8 @@ interface SyncManager {
 
     fun sendMissedCall()
 
+    fun rejectCall(contactId: Int, channelName: String)
+
     fun rejectCall()
 
     fun cancelCall()
@@ -54,7 +56,7 @@ interface SyncManager {
 
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 
-    fun rejectCall(contactId: Int, channelName: String)
+
 
     fun tryMarkMessageParentAsReceived(idsAttachments: List<String>)
 

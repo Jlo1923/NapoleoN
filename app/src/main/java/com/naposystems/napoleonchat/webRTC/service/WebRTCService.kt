@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
+import com.naposystems.napoleonchat.utility.isConnectedCall
 import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import dagger.android.AndroidInjection
@@ -24,10 +25,13 @@ class WebRTCService : Service() {
 
     companion object {
         const val ACTION_ANSWER_CALL = "ANSWER_CALL"
-        const val ACTION_DENY_CALL = "DENY_CALL"
-        const val ACTION_CALL_END = "CALL_END"
-        const val ACTION_FAILED_CALL_END = "FAILED_CALL_END"
-        const val ACTION_HANG_UP = "HANG_UP"
+        const val ACTION_CANCEL_CALL = "CANCEL_CALL"
+        const val ACTION_REJECT_CALL = "REJECT_CALL"
+
+        const val ACTION_CONTACT_CANCEL_CALL = "ACTION_CONTACT_CANCEL_CALL"
+        const val ACTION_CONTACT_REJECT_CALL = "REJECT_CALL"
+
+        const val ACTION_HANG_UP_CALL = "HANG_UP_CALL"
         const val ACTION_OPEN_CALL = "OPEN_CALL"
         const val ACTION_HIDE_NOTIFICATION = "HIDE_NOTIFICATION"
     }
@@ -70,40 +74,75 @@ class WebRTCService : Service() {
                         action = ACTION_ANSWER_CALL
                     )
                 }
-                ACTION_DENY_CALL -> {
 
+                /*
+                Accion de colgar desde la notificacion
+                Cuando es llamada entrante
+                 */
+                ACTION_REJECT_CALL -> {
                     Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
-
                     if (NapoleonApplication.isShowingCallActivity) {
-                        RxBus.publish(RxEvent.HangupByNotification())
+                        if (NapoleonApplication.statusCall.isConnectedCall())
+                            RxBus.publish(RxEvent.HangupByNotification())
+                        else
+                            repository.disposeCall(TypeEndCallEnum.TYPE_REJECT)
                     } else {
                         repository.disposeCall(TypeEndCallEnum.TYPE_REJECT)
                     }
-
                     hideNotification()
                 }
 
-                ACTION_CALL_END -> {
-                    Timber.d("LLAMADA PASO: LLAMADA FINALIZADA")
-
+                /*
+                Accion de colgar desde la notificacion
+                Cuando es llamada saliente
+                 */
+                ACTION_CANCEL_CALL -> {
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
                     if (NapoleonApplication.isShowingCallActivity) {
-                        RxBus.publish(RxEvent.HangupByNotification())
+                        if (NapoleonApplication.statusCall.isConnectedCall())
+                            RxBus.publish(RxEvent.HangupByNotification())
+                        else
+                            repository.disposeCall(TypeEndCallEnum.TYPE_CANCEL)
                     } else {
                         repository.disposeCall(TypeEndCallEnum.TYPE_CANCEL)
                     }
-
-                    hideNotification()
-
-                }
-
-                ACTION_FAILED_CALL_END -> {
                     hideNotification()
                 }
 
-                ACTION_HANG_UP -> {
+                /*
+                Accion el contacto cancela la llamada
+                 */
+                ACTION_CONTACT_REJECT_CALL -> {
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
+                    if (NapoleonApplication.isShowingCallActivity) {
+                        if (NapoleonApplication.statusCall.isConnectedCall())
+                            RxBus.publish(RxEvent.HangupByNotification())
+                        else
+                            repository.contactRejectCall()
+                    } else {
+                        repository.contactRejectCall()
+                    }
+                    hideNotification()
+                }
 
+                /*
+                Accion el contacto rechaza la llamada
+                 */
+                ACTION_CONTACT_CANCEL_CALL -> {
+                    Timber.d("LLAMADA PASO: RECHAZANDO LLAMADA")
+                    if (NapoleonApplication.isShowingCallActivity) {
+                        if (NapoleonApplication.statusCall.isConnectedCall())
+                            RxBus.publish(RxEvent.HangupByNotification())
+                        else
+                            repository.contactCancelCall()
+                    } else {
+                        repository.contactCancelCall()
+                    }
+                    hideNotification()
+                }
+
+                ACTION_HANG_UP_CALL -> {
                     Timber.d("LLAMADA PASO: COLGANDO LLAMADA")
-
                     if (NapoleonApplication.isShowingCallActivity) {
                         RxBus.publish(RxEvent.HangupByNotification())
                     } else {
@@ -153,17 +192,16 @@ class WebRTCService : Service() {
 
             if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
-                callModel.typeCall = if (callModel.offer != "")
-                    Constants.TypeCall.IS_INCOMING_CALL
-                else
-                    Constants.TypeCall.IS_OUTGOING_CALL
+//                callModel.typeCall = if (callModel.offer != "")
+//                    Constants.TypeCall.IS_INCOMING_CALL
+//                else
+//                    Constants.TypeCall.IS_OUTGOING_CALL
 
                 val notification = handlerNotification.createNotificationCallBuilder()
 
                 startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)
             }
         }
-
     }
 
     private fun startConversationCallActivity(action: String = "") {
@@ -181,7 +219,7 @@ class WebRTCService : Service() {
                 })
             }
 
-            if (NapoleonApplication.isVisible && action.isNotEmpty()){
+            if (NapoleonApplication.isVisible && action.isNotEmpty()) {
                 intent.action = action
             }
 

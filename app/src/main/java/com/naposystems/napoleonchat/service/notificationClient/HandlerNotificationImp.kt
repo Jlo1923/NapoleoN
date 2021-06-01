@@ -196,7 +196,7 @@ class HandlerNotificationImp
                 Constants.TypeCall.IS_INCOMING_CALL -> {
                     addAction(
                         getServiceNotificationAction(
-                            WebRTCService.ACTION_DENY_CALL,
+                            WebRTCService.ACTION_REJECT_CALL,
                             R.drawable.ic_close_black_24,
                             R.string.text_reject
                         )
@@ -212,7 +212,7 @@ class HandlerNotificationImp
                 Constants.TypeCall.IS_OUTGOING_CALL -> {
                     addAction(
                         getServiceNotificationAction(
-                            WebRTCService.ACTION_HANG_UP,
+                            WebRTCService.ACTION_CANCEL_CALL,
                             R.drawable.ic_close_black_24,
                             R.string.text_hang_up_call
                         )
@@ -269,7 +269,7 @@ class HandlerNotificationImp
             }
             addAction(
                 getServiceNotificationAction(
-                    WebRTCService.ACTION_HANG_UP,
+                    WebRTCService.ACTION_HANG_UP_CALL,
                     R.drawable.ic_close_black_24,
                     R.string.text_hang_up_call
                 )
