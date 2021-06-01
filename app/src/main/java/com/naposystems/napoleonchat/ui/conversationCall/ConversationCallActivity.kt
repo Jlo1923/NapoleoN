@@ -34,6 +34,8 @@ import com.naposystems.napoleonchat.webRTC.client.EvenstFromWebRTCClientListener
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -361,8 +363,9 @@ class ConversationCallActivity :
 
         binding.fabAnswer.visibility = View.GONE
 
-        webRTCClient.createAnswer()
-
+        GlobalScope.launch {
+            webRTCClient.createAnswer()
+        }
     }
 
     private fun hangUp() {
@@ -389,14 +392,12 @@ class ConversationCallActivity :
                 }
             }
             StatusCallEnum.STATUS_CONNECTED_CALL -> {
-
                 Timber.d("LLAMADA PASO: SI LLAMADA ACTIVA EMITE COLGAR")
                 webRTCClient.emitHangUp()
             }
         }
-
+        webRTCClient.playEndCall()
         webRTCClient.disposeCall()
-
     }
 
     private fun initSurfaceRenders() {
@@ -446,10 +447,13 @@ class ConversationCallActivity :
     }
 
     override fun contactAcceptChangeToVideoCall() {
-
-        with(window) {
-            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        }
+//        try {
+//            with(window) {
+//                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//            }
+//        } catch (ex: Exception) {
+//            Timber.e(ex.localizedMessage.toString())
+//        }
 
         NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
 
@@ -566,7 +570,6 @@ class ConversationCallActivity :
         } catch (e: Exception) {
             Timber.e(e.localizedMessage)
         }
-
     }
 
     override fun toggleLocalRenderVisibility(visibility: Int) {
@@ -591,8 +594,8 @@ class ConversationCallActivity :
 
         when {
             audioManager.isBluetoothScoOn -> {
-                binding.imageButtonBluetooth.setChecked(checked = true, notifyListener = false)
                 binding.imageButtonSpeaker.setChecked(checked = false, notifyListener = false)
+                binding.imageButtonBluetooth.setChecked(checked = true, notifyListener = false)
             }
             audioManager.isSpeakerphoneOn -> {
                 binding.imageButtonSpeaker.setChecked(checked = true, notifyListener = false)

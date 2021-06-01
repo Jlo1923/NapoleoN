@@ -23,7 +23,7 @@ class BaseRepositoryImp @Inject constructor(
         )
     }
 
-    override fun connectSocket() {
+    override suspend fun connectSocket() {
         Timber.d("LLAMADA PASO 3: BASE REPOSITORY")
         socketClient.connectSocket()
     }

@@ -48,6 +48,7 @@ interface WebRTCClient {
 
     //Ringtone
     fun playRingtone()
+    fun playEndCall()
     fun playRingBackTone()
     fun stopRingAndVibrate()
 

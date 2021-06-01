@@ -26,9 +26,9 @@ android {
         applicationId "com.naposystems.napoleonchat"
         minSdkVersion 24
         targetSdkVersion 30
-        versionCode 82
+        versionCode 84
 
-        versionName "1.1.82-fix-qa"
+        versionName "1.1.84-fix-qa"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables.useSupportLibrary = true
@@ -134,8 +134,8 @@ android {
             debuggable true
             buildConfigField("String", "BASE_URL", "\"https://dev.napoleon-chat.com/api/\"")
             buildConfigField("String", "HOST_URL", "\"dev.napoleon-chat.com\"")
-            buildConfigField("String", "STUN_SERVER", "\"stun:stun-dev.napoleon-chat.com:3478\"")
-            buildConfigField("String", "TURN_SERVER", "\"turn:turn-dev.napoleon-chat.com:3478\"")
+            buildConfigField("String", "STUN_SERVER", "\"stun:stun-prod.napoleon-chat.com:3478\"")
+            buildConfigField("String", "TURN_SERVER", "\"turn:turn-prod.napoleon-chat.com:3478\"")
             buildConfigField("String", "SOCKET_BASE_URL", "\"https://dev.napoleon-chat.com/broadcasting/auth\"")
             buildConfigField("String", "KEY_OF_KEYS", "\"c6a45c9c226f72230c4fa1bd4d67f06687a97614\"")
             buildConfigField("boolean", "ENCRYPT_API", "false")

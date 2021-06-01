@@ -543,7 +543,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun rejectSecondCallCall(contactId: Int, channelName: String) {
+    override fun rejectCall(contactId: Int, channelName: String) {
         GlobalScope.launch {
             val rejectCallReqDTO = RejectCallReqDTO(
                 contactId = contactId,

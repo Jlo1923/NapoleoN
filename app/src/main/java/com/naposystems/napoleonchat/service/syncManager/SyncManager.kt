@@ -54,7 +54,7 @@ interface SyncManager {
 
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
 
-    fun rejectSecondCallCall(contactId: Int, channelName: String)
+    fun rejectCall(contactId: Int, channelName: String)
 
     fun tryMarkMessageParentAsReceived(idsAttachments: List<String>)
 

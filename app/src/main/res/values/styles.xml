@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -107,6 +107,7 @@
         <item name="attrTintColorControlIncomingMessage">@color/color_4D4D4D</item>
         <item name="attrTintProgressBar">@color/colorPrimary</item>
         <item name="attrTintColorIconMedia">@color/color_C0C0C0</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
     </style>
 
     <style name="AppThemeDarkNapoleon" parent="AppTheme">

@@ -29,6 +29,8 @@ class BaseViewModel @Inject constructor(
     }
 
     fun connectSocket() {
-        repository.connectSocket()
+        viewModelScope.launch {
+            repository.connectSocket()
+        }
     }
 }

@@ -24,7 +24,6 @@ class HandlerMediaPlayerNotificationImp
         ACTION_PLAY_RING_BACK
     }
 
-    //    lateinit var mediaPlayer: MediaPlayer
     var mediaPlayer: MediaPlayer? = null
 
     var currentlyAction: ActionPlay = ActionPlay.ACTION_NONE
@@ -122,7 +121,7 @@ class HandlerMediaPlayerNotificationImp
                 if (mediaPlayer == null)
                     mediaPlayer = MediaPlayer()
 
-                mediaPlayer = mediaPlayer?.apply {
+                mediaPlayer?.apply {
                     //                    setAudioAttributes(
                     //                        AudioAttributes
                     //                            .Builder()
@@ -158,7 +157,6 @@ class HandlerMediaPlayerNotificationImp
 
     private fun stopMedia() {
         try {
-
             if (mediaPlayer != null) {
                 if (mediaPlayer!!.isPlaying) {
                     Timber.d("RINGTONE: stopMedia mediaPlayer. $mediaPlayer ")
@@ -168,11 +166,8 @@ class HandlerMediaPlayerNotificationImp
                     }
                 }
             }
-
             mediaPlayer = null
-
             vibrator?.cancel()
-
         } catch (e: Exception) {
             Timber.e(e)
         }
