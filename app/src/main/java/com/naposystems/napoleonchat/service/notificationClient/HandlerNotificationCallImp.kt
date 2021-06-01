@@ -6,6 +6,8 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,10 +36,12 @@ class HandlerNotificationCallImp
         } else {
             NapoleonApplication.callModel?.let {
                 dataFromNotification.toCallModel().let {
-                    syncManager.rejectCall(
-                        contactId = it.contactId,
-                        channelName = it.channelName
-                    )
+                    GlobalScope.launch {
+                        syncManager.rejectCall(
+                            contactId = it.contactId,
+                            channelName = it.channelName
+                        )
+                    }
                 }
             }
         }

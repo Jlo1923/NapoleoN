@@ -12,3 +12,4 @@ data class CallModel(
     var isFromClosedApp: Constants.FromClosedApp = Constants.FromClosedApp.NO,
     var mustSubscribeToPresenceChannel: Boolean = false
 ) : Serializable
+

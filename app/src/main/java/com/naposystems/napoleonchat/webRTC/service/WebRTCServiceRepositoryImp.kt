@@ -19,6 +19,13 @@ class WebRTCServiceRepositoryImp
         } else {
             webRTCClient.disposeCall(typeEndCall)
         }
+    }
 
+    override fun contactCancelCall() {
+        webRTCClient.contactCancelCall()
+    }
+
+    override fun contactRejectCall() {
+        webRTCClient.contactRejectCall()
     }
 }

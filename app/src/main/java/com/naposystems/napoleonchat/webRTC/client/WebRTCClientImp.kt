@@ -76,10 +76,12 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            syncManager.sendMissedCall()
             handlerMediaPlayerNotification.playEndTone()
-            disposeCall(TypeEndCallEnum.TYPE_CANCEL)
-
+            if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+                cancelCall()
+            } else {
+                disposeCall()
+            }
         }
 
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -1074,15 +1076,11 @@ class WebRTCClientImp
         }
     }
 
-    override fun rejectCall() {
-        syncManager.rejectCall()
-    }
-
     override fun rejectSecondCall(contactId: Int, channelName: String) {
         syncManager.rejectCall(contactId, channelName)
     }
 
-    override fun contactRejectCall() {
+    override fun contactOccupiedRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
             syncManager.sendMissedCall()
             evenstFromWebRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
@@ -1092,10 +1090,42 @@ class WebRTCClientImp
         }
     }
 
+    override fun listenerRejectCall() {
+        contactRejectCall()
+    }
+
+    override fun listenerCancelCall() {
+        contactCancelCall()
+    }
+
+    override fun contactRejectCall() {
+        NapoleonApplication.callModel?.channelName?.let {
+            syncManager.sendMissedCall()
+            handlerMediaPlayerNotification.playEndTone()
+            disposeCall()
+        }
+    }
+
     override fun contactCancelCall() {
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
             handlerMediaPlayerNotification.playEndTone()
+            disposeCall()
+        }
+    }
+
+    override fun rejectCall() {
+        NapoleonApplication.callModel?.channelName?.let {
+            syncManager.rejectCall()
+            disposeCall()
+        }
+    }
+
+    override fun cancelCall() {
+        NapoleonApplication.callModel?.let {
+            Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
+            syncManager.sendMissedCall()
+            syncManager.cancelCall()
             disposeCall()
         }
     }

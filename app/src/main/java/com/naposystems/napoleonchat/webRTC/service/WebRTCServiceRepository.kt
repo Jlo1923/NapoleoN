@@ -4,4 +4,6 @@ import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 
 interface WebRTCServiceRepository {
     fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
+    fun contactCancelCall()
+    fun contactRejectCall()
 }

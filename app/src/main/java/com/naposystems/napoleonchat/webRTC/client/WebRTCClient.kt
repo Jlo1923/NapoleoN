@@ -77,7 +77,8 @@ interface WebRTCClient {
     fun hideNotification()
     fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
 
-    fun rejectCall()
+    fun contactRejectCall()
+    fun contactCancelCall()
     fun rejectSecondCall(contactId: Int, channelName: String)
 
 }

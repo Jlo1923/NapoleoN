@@ -528,9 +528,9 @@ class SocketClientImp
                             listenBLockOrDeleteFriendship()
 
                             //Metodos de Llamadas
-                            listenRejectedCall()
+                            listenContactRejectedCall()
 
-                            listenCancelCall()
+                            listenContactCancelCall()
 
                             syncManager.getMyMessages(null)
 
@@ -1166,7 +1166,7 @@ class SocketClientImp
                 })
     }
 
-    private fun listenRejectedCall() {
+    private fun listenContactRejectedCall() {
 
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.REJECTED_CALL.event,
@@ -1193,12 +1193,12 @@ class SocketClientImp
                                         if (callModel.channelName == presenceChannel) {
                                             if (NapoleonApplication.isShowingCallActivity) {
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA ESTA MOSTRANDO LLAMADA")
-                                                eventsFromSocketClientListener.contactRejectCall()
+                                                eventsFromSocketClientListener.listenerRejectCall()
                                             } else {
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
                                                 val intent =
                                                     Intent(context, WebRTCService::class.java)
-                                                intent.action = WebRTCService.ACTION_DENY_CALL
+                                                intent.action = WebRTCService.ACTION_CONTACT_REJECT_CALL
                                                 context.startService(intent)
                                             }
                                         }
@@ -1219,7 +1219,7 @@ class SocketClientImp
                 })
     }
 
-    private fun listenCancelCall() {
+    private fun listenContactCancelCall() {
 
         pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.CANCEL_CALL.event,
@@ -1246,12 +1246,12 @@ class SocketClientImp
                                         if (callModel.channelName == presenceChannel) {
                                             if (NapoleonApplication.isShowingCallActivity) {
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA ESTA MOSTRANDO LLAMADA")
-                                                eventsFromSocketClientListener.contactCancelCall()
+                                                eventsFromSocketClientListener.listenerCancelCall()
                                             } else {
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
                                                 val intent =
                                                     Intent(context, WebRTCService::class.java)
-                                                intent.action = WebRTCService.ACTION_CALL_END
+                                                intent.action = WebRTCService.ACTION_CONTACT_CANCEL_CALL
                                                 context.startService(intent)
                                             }
                                         }
