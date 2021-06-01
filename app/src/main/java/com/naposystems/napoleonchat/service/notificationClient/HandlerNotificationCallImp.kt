@@ -6,8 +6,6 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.isNoCall
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,10 +16,12 @@ class HandlerNotificationCallImp
 ) : HandlerNotificationCall {
 
     override fun handlerCall(dataFromNotification: Map<String, String>) {
+
         Timber.d("LLAMADA PASO 2: EN HANDLER CALL")
+
         if (NapoleonApplication.statusCall.isNoCall()) {
 
-            Timber.d("LLAMADA PASO 1: APLICACION NO VISIBLE")
+            Timber.d("LLAMADA PASO 2: NO ESTA EN LLAMADA")
 
             NapoleonApplication.callModel = dataFromNotification.toCallModel()
 
@@ -34,17 +34,15 @@ class HandlerNotificationCallImp
             }
             webRTCClient.connectSocket()
         } else {
-            NapoleonApplication.callModel?.let {
-                dataFromNotification.toCallModel().let {
-                    GlobalScope.launch {
-                        syncManager.rejectCall(
-                            contactId = it.contactId,
-                            channelName = it.channelName
-                        )
-                    }
-                }
+
+            Timber.d("LLAMADA PASO 2: ESTA EN LLAMADA")
+
+            dataFromNotification.toCallModel().let {
+                syncManager.rejectCall(
+                    contactId = it.contactId,
+                    channelName = it.channelName
+                )
             }
         }
     }
-
 }

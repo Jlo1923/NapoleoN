@@ -15,6 +15,7 @@ interface EvenstFromWebRTCClientListener {
     fun showTimer()
     fun showCypheryngCall()
     fun showReConnectingTitle()
+    fun showOccupiedTitle()
     fun showFinishingTitle()
     fun enableControls()
     fun showRemoteVideo()

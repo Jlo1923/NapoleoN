@@ -15,9 +15,6 @@ interface EventsFromSocketClientListener {
     //endregion
 
     //region Handler Call
-    fun contactOccupiedRejectCall()
-    fun rejectCall()
-    fun cancelCall()
     fun listenerRejectCall()
     fun listenerCancelCall()
     //endregion

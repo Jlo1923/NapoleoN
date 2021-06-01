@@ -91,7 +91,9 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(2),
         TimeUnit.SECONDS.toMillis(1)
     ) {
-        override fun onFinish() = Unit
+        override fun onFinish() {
+            disposeCall()
+        }
 
         override fun onTick(millisUntilFinished: Long) = Unit
     }
@@ -574,13 +576,11 @@ class WebRTCClientImp
         }, mediaConstraints)
     }
 
-    override fun subscribeToPresenceChannel() {
+    override suspend fun subscribeToPresenceChannel() {
         NapoleonApplication.callModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "" && NapoleonApplication.statusCall.isNoCall()) {
                 Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
-                GlobalScope.launch {
-                    socketClient.subscribeToPresenceChannel()
-                }
+                socketClient.subscribeToPresenceChannel()
             }
         }
     }
@@ -1076,20 +1076,6 @@ class WebRTCClientImp
         }
     }
 
-    override fun rejectSecondCall(contactId: Int, channelName: String) {
-        syncManager.rejectCall(contactId, channelName)
-    }
-
-    override fun contactOccupiedRejectCall() {
-        NapoleonApplication.callModel?.channelName?.let {
-            syncManager.sendMissedCall()
-            evenstFromWebRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
-            countDownEndCallBusy.start()
-            handlerMediaPlayerNotification.playBusyTone()
-            disposeCall()
-        }
-    }
-
     override fun listenerRejectCall() {
         contactRejectCall()
     }
@@ -1100,9 +1086,10 @@ class WebRTCClientImp
 
     override fun contactRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
+            evenstFromWebRTCClientListener?.showOccupiedTitle()
+            countDownEndCallBusy.start()
+            handlerMediaPlayerNotification.playBusyTone()
             syncManager.sendMissedCall()
-            handlerMediaPlayerNotification.playEndTone()
-            disposeCall()
         }
     }
 
@@ -1114,18 +1101,11 @@ class WebRTCClientImp
         }
     }
 
-    override fun rejectCall() {
-        NapoleonApplication.callModel?.channelName?.let {
-            syncManager.rejectCall()
-            disposeCall()
-        }
-    }
-
     override fun cancelCall() {
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
-            syncManager.sendMissedCall()
             syncManager.cancelCall()
+            syncManager.sendMissedCall()
             disposeCall()
         }
     }

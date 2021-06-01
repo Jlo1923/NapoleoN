@@ -130,7 +130,7 @@ class SocketClientImp
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
 
-                Timber.d("LLAMADA PASO 4: CONNECT SOCKET")
+                Timber.d("LLAMADA PASO 4: SOCKET DESCONECTADO, CONECTANDO SOCKET")
 
                 pusher.connect(object : ConnectionEventListener {
 
@@ -139,7 +139,7 @@ class SocketClientImp
                         when (connectionStateChange?.currentState) {
 
                             CONNECTED -> {
-                                Timber.d("LLAMADA PASO 4: SE CONECTO AL SOCKET")
+                                Timber.d("LLAMADA PASO 4: CONEXION AL SOCKET EXITOSA")
                                 handlerStateConnectedSocket()
                             }
 
@@ -148,7 +148,7 @@ class SocketClientImp
                             ConnectionState.CONNECTING,
                             ConnectionState.RECONNECTING,
                             ConnectionState.ALL -> {
-                                Timber.e("ConnectionStateChange Unhandling ${connectionStateChange.currentState}")
+                                Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange.currentState}")
                             }
                         }
                     }
@@ -164,7 +164,9 @@ class SocketClientImp
                 })
 
             } else if (pusher.connection.state == CONNECTED) {
-                Timber.d("LLAMADA PASO 4: PREVIAMENTE CONECTADA")
+
+                Timber.d("LLAMADA PASO 4: SOCKET PREVIAMENTE CONECTADO")
+
                 handlerStateConnectedSocket()
 
             }
@@ -580,7 +582,7 @@ class SocketClientImp
 
     private fun handlerStateConnectedSocket() {
 
-        Timber.d("LLAMADA PASO 5: EN CONNECT SOCKET YA CONECTADO")
+        Timber.d("LLAMADA PASO 5: MANEJO DE SOCKET YA CONECTADO")
 
         subscribeChannels()
 
@@ -1198,7 +1200,8 @@ class SocketClientImp
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
                                                 val intent =
                                                     Intent(context, WebRTCService::class.java)
-                                                intent.action = WebRTCService.ACTION_CONTACT_REJECT_CALL
+                                                intent.action =
+                                                    WebRTCService.ACTION_CONTACT_REJECT_CALL
                                                 context.startService(intent)
                                             }
                                         }
@@ -1251,7 +1254,8 @@ class SocketClientImp
                                                 Timber.d("LLAMADA PASO: RECHAZAR LLAMADA NO ESTA MOSTRANDO LLAMADA")
                                                 val intent =
                                                     Intent(context, WebRTCService::class.java)
-                                                intent.action = WebRTCService.ACTION_CONTACT_CANCEL_CALL
+                                                intent.action =
+                                                    WebRTCService.ACTION_CONTACT_CANCEL_CALL
                                                 context.startService(intent)
                                             }
                                         }

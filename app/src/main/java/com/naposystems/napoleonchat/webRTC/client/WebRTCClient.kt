@@ -22,7 +22,7 @@ interface WebRTCClient {
 
     fun connectSocket()
 
-    fun subscribeToPresenceChannel()
+    suspend fun subscribeToPresenceChannel()
 
     fun setOffer()
 
@@ -77,8 +77,7 @@ interface WebRTCClient {
     fun hideNotification()
     fun disposeCall(typeEndCall: TypeEndCallEnum? = null)
 
+    fun cancelCall()
     fun contactRejectCall()
     fun contactCancelCall()
-    fun rejectSecondCall(contactId: Int, channelName: String)
-
 }

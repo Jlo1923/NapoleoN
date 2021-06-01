@@ -107,7 +107,9 @@ class ConversationCallActivity :
 
         if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
             Timber.d("LLAMADA PASO 2: LLAMADA SALIENTE SUSCRIBIENDOSE AL CANAL DE PRESENCIA")
-            webRTCClient.subscribeToPresenceChannel()
+            GlobalScope.launch {
+                webRTCClient.subscribeToPresenceChannel()
+            }
         }
 
         if (NapoleonApplication.callModel?.isVideoCall == true) {
@@ -498,6 +500,15 @@ class ConversationCallActivity :
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
             binding.textViewCalling.text = getString(R.string.text_reconnecting_call)
+        }
+    }
+
+    override fun showOccupiedTitle() {
+        runOnUiThread {
+            binding.textViewCalling.visibility = View.VISIBLE
+            binding.textViewCallDuration.visibility = View.GONE
+            binding.textViewCalling.text =
+                getString(R.string.text_contact_is_busy, contact?.getNickName())
         }
     }
 
