@@ -70,8 +70,7 @@ class MyMultiAttachmentMsgViewHolder(
         paintAttachments(item.messageEntity.status)
         paintUploadFiles()
         paintMoreData(timeFormat)
-        paintMessageStatus
-        ()
+        paintMessageStatus()
         defineListeners()
     }
 

@@ -88,6 +88,7 @@ data class AttachmentEntity(
     fun isCancelUpload(): Boolean = status == AttachmentStatus.UPLOAD_CANCEL.status
     fun isError(): Boolean = status == AttachmentStatus.ERROR.status
     fun isNotDownloaded(): Boolean = status == AttachmentStatus.NOT_DOWNLOADED.status
+    fun isDownloadCancel(): Boolean = status == AttachmentStatus.DOWNLOAD_CANCEL.status
 
     fun isTypeVideo(): Boolean = type == Constants.AttachmentType.VIDEO.type
 

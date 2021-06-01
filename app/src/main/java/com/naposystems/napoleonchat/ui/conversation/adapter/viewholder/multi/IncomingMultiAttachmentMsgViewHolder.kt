@@ -3,12 +3,14 @@ package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
+import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ConversationItemIncomingMessageMultiBinding
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.conversation.adapter.ConversationViewHolder
 import com.naposystems.napoleonchat.ui.conversation.adapter.bindMessageDateSend
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgAction.OpenMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
@@ -19,6 +21,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.vie
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.IncomingMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.*
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
@@ -73,6 +76,22 @@ class IncomingMultiAttachmentMsgViewHolder(
         paintDownloadFiles()
         paintMoreData(timeFormat)
         paintMessageStatus()
+        defineListeners()
+    }
+
+    private fun defineListeners() = binding.apply {
+        imageButtonState.setOnClickListener {
+            if (Utils.isInternetAvailable(binding.root.context)) {
+                tryDownloadAttachments()
+                paintMessageDownload()
+            } else {
+                listener.onMultipleAttachmentMsgAction(MultiAttachmentMsgAction.ShowNotInternetMessage)
+            }
+        }
+    }
+
+    private fun paintMessageDownload() = binding.apply {
+        showViews(progressBarIndeterminate, imageButtonState)
     }
 
     private fun paintDownloadFiles() = msgAndAttachment.attachmentEntityList.apply {
@@ -105,6 +124,7 @@ class IncomingMultiAttachmentMsgViewHolder(
             viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
         }
     }
+
 
     private fun paintAttachments() {
 
@@ -244,4 +264,15 @@ class IncomingMultiAttachmentMsgViewHolder(
         showIconErrorMsg()
     }
 
+    private fun ConversationItemIncomingMessageMultiBinding.showIconErrorMsg() =
+        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(
+            0,
+            0,
+            R.drawable.ic_message_error,
+            0
+        )
+
+    private fun ConversationItemIncomingMessageMultiBinding.removeIconErrorMsg() {
+        textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
+    }
 }
