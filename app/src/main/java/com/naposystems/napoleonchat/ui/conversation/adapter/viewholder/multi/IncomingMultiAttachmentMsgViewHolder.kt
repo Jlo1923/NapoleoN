@@ -50,7 +50,7 @@ class IncomingMultiAttachmentMsgViewHolder(
 
     init {
         super.parentContainerMessage = binding.containerIncomingMessage
-//        super.progressBar = binding.progressBar
+//        super.progressBar = binding.progress`Bar
 //        super.progressBarIndeterminate = binding.progressBarIndeterminate
 //        super.imageButtonState = binding.imageButtonState
 //        super.textViewCountDown = binding.textViewCountDown
@@ -72,6 +72,7 @@ class IncomingMultiAttachmentMsgViewHolder(
         tryDownloadAttachments()
         paintDownloadFiles()
         paintMoreData(timeFormat)
+        paintMessageStatus()
     }
 
     private fun paintDownloadFiles() = msgAndAttachment.attachmentEntityList.apply {
@@ -222,5 +223,25 @@ class IncomingMultiAttachmentMsgViewHolder(
             showViews(viewFiveFiles)
             viewFiveFiles.bindAttachments(listElements, isStateError)
         }
+
+    private fun paintMessageStatus() = binding.apply {
+        when (msgAndAttachment.messageEntity.status) {
+            ERROR.status -> paintMessageError()
+            //SENDING.status -> paintMessageSending()
+            else -> paintMessageOk()
+        }
+    }
+
+    private fun paintMessageOk() = binding.apply {
+        hideViews(progressBarIndeterminate, imageButtonState)
+        removeIconErrorMsg()
+        //tryUploadAttachments()
+    }
+
+    private fun paintMessageError() = binding.apply {
+        showViews(imageButtonState)
+        hideViews(progressBarIndeterminate)
+        showIconErrorMsg()
+    }
 
 }
