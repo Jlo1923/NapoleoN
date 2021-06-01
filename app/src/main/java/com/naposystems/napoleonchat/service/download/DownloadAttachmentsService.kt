@@ -32,8 +32,8 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
 
     private lateinit var napoleonApplication: NapoleonApplication
     private val compositeDisposable = CompositeDisposable()
-    var attachmentList: MutableList<AttachmentEntity> = mutableListOf()
-    var currentAttachment: AttachmentEntity? = null
+    private var attachmentList: MutableList<AttachmentEntity> = mutableListOf()
+    private var currentAttachment: AttachmentEntity? = null
 
     override fun onCreate() {
         super.onCreate()
