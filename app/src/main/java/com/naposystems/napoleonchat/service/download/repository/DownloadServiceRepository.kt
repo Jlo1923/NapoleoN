@@ -47,7 +47,6 @@ class DownloadServiceRepository @Inject constructor(
                         saveFileLocally(attachmentEntity, fileName, body)
                     }
                 } else {
-                    Timber.e("Response failure")
                     updateAttachmentStatus(attachmentEntity, DOWNLOAD_CANCEL.status)
                     publishEventError(attachmentEntity)
                 }
@@ -100,10 +99,13 @@ class DownloadServiceRepository @Inject constructor(
                 }
             }
             outputStream.flush()
-            updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
+
+            attachment.thumbnailUri = file.toURI().toString()
+
             if (BuildConfig.ENCRYPT_API && attachment.type != GIF_NN.type) {
                 saveEncryptedFile(attachment)
             } else {
+                updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
                 publishEventTryNext()
             }
 
@@ -129,6 +131,7 @@ class DownloadServiceRepository @Inject constructor(
 
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
+        updateAttachmentStatus(attachmentEntity, DOWNLOAD_COMPLETE.status)
         publishEventTryNext()
     }
 

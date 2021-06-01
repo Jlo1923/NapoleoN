@@ -97,8 +97,8 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
             RxBus.listen(RxEvent.MultiDownloadTryNextAttachment::class.java)
                 .subscribe { handleTryNextAttachment() }
 
-        val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
-            .subscribe { handleUploadError() }
+        val disposableUploadError = RxBus.listen(RxEvent.MultiDownloadError::class.java)
+            .subscribe { stopService() }
 
         val disposableUploadProgress = RxBus.listen(RxEvent.MultiUploadProgress::class.java)
             .subscribe { handleUploadProgress(it) }
@@ -109,7 +109,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         compositeDisposable.apply {
             addAll(
                 disposableUploadStart,
-                //disposableUploadSuccess,
                 disposableUploadTryNext,
                 disposableUploadError,
                 disposableUploadProgress,
@@ -118,22 +117,13 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         }
     }
 
-    private fun handleDownloadSuccess() {
-        Timber.d("RxEvent.UploadSuccess")
-        stopService()
-    }
-
     private fun handleTryNextAttachment() {
         val nextAttachment = getNextAttachment()
         nextAttachment?.let {
             currentAttachment = it
             repository.downloadAttachment(it)
             showNotification(it)
-        } ?: run { handleDownloadSuccess() }
-    }
-
-    private fun handleUploadError() {
-        stopService()
+        } ?: run { stopService() }
     }
 
     private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) {
