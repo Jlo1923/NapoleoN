@@ -48,7 +48,12 @@ class ReceiverMultiAttachmentMsgView @JvmOverloads constructor(
     }
 
     private fun loadImageFromData() {
-        theAttachment?.let { loadImage() }
+        theAttachment?.body?.let { loadImage(it) } ?: run { showFalseView() }
+    }
+
+    private fun showFalseView() = viewBinding.apply {
+        imageViewAttachment.hide()
+        viewFalseImage.show()
     }
 
     fun defineListener(listener: MultiAttachmentMsgItemListener) {
@@ -73,16 +78,14 @@ class ReceiverMultiAttachmentMsgView @JvmOverloads constructor(
         listener.onMsgItemFileAction(MultiAttachmentMsgItemAction.RetryDownload(attachment))
     }
 
-    private fun loadImage() {
-        try {
-            viewBinding.apply {
-                Glide.with(root.context)
-                    .load(theAttachment?.body)
-                    .transform(*getBlurTransformation(root.context))
-                    .into(imageViewAttachment)
-            }
-        } catch (exception: Exception) {
-            Timber.e(exception)
+    private fun loadImage(body: String) {
+        viewBinding.apply {
+            imageViewAttachment.show()
+            viewFalseImage.hide()
+            Glide.with(root.context)
+                .load(body)
+                .transform(*getBlurTransformation(root.context))
+                .into(imageViewAttachment)
         }
     }
 

@@ -15,6 +15,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/view_false_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/quantum_grey"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.receiver.ViewAttachmentStatusReceiverCollage
         android:id="@+id/view_attachment_status"
         android:layout_width="0dp"

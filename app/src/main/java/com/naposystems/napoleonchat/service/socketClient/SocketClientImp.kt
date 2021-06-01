@@ -1093,7 +1093,7 @@ class SocketClientImp
                                 }?.let {
                                     syncManager.validateMessageType(
                                         it,
-                                        READED.status
+                                        Constants.MessageStatus.READED.status
                                     )
                                 }
 
