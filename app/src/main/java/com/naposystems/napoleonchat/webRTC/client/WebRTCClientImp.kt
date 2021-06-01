@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
@@ -76,7 +77,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
                 cancelCall()
             } else {
@@ -104,7 +105,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             disposeCall()
         }
 
@@ -856,9 +857,16 @@ class WebRTCClientImp
     }
 
     override fun playEndCall() {
-
-        handlerMediaPlayerNotification.playEndTone()
-
+        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone)
+        MediaPlayer().apply {
+            setDataSource(
+                context,
+                uri
+            )
+            this.isLooping = false
+            prepare()
+            start()
+        }
     }
 
     override fun playRingBackTone() {
@@ -1096,7 +1104,7 @@ class WebRTCClientImp
     override fun contactCancelCall() {
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             disposeCall()
         }
     }
@@ -1239,7 +1247,7 @@ class WebRTCClientImp
     override fun contactHasHangup() {
         NapoleonApplication.callModel.let { _ ->
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             disposeCall()
         }
     }
