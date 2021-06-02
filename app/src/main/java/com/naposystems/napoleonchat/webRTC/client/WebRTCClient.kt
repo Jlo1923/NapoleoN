@@ -47,9 +47,9 @@ interface WebRTCClient {
     fun switchCamera()
 
     //Ringtone
-    fun playRingtone()
+    fun playRingTone()
+    fun playBackTone()
     fun playEndCall()
-    fun playRingBackTone()
     fun stopRingAndVibrate()
 
     //Sensor Proximity

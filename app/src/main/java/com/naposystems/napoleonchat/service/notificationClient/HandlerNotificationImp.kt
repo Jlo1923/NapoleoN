@@ -235,7 +235,7 @@ class HandlerNotificationImp
 
         if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL && NapoleonApplication.isVisible.not()) {
             Timber.d("RINGTONE: PlayRingtone EN HANDLER NOTIFICATION")
-            handlerMediaPlayerNotification.playRingtone()
+            handlerMediaPlayerNotification.playRingTone()
         }
 
         return notificationBuilder.build()

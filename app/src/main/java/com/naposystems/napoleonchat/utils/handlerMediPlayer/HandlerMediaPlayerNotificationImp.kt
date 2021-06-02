@@ -18,10 +18,10 @@ class HandlerMediaPlayerNotificationImp
 
     enum class ActionPlay {
         ACTION_NONE,
-        ACTION_PLAY_RINGTONE,
-        ACTION_PLAY_ENDTONE,
+        ACTION_PLAY_RING_TONE,
+        ACTION_PLAY_END_TONE,
         ACTION_PLAY_BUSY_TONE,
-        ACTION_PLAY_RING_BACK
+        ACTION_PLAY_BACK_TONE
     }
 
     var mediaPlayer: MediaPlayer? = null
@@ -36,8 +36,7 @@ class HandlerMediaPlayerNotificationImp
         context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
-    override fun playRingtone() {
-
+    override fun playRingTone() {
         if (mediaPlayer != null)
             Timber.d("RINGTONE: playRingtone mediaPlayer. $mediaPlayer")
         else
@@ -47,12 +46,11 @@ class HandlerMediaPlayerNotificationImp
             Settings.System.DEFAULT_RINGTONE_URI,
             isLooping = true,
             needVibrate = true,
-            ActionPlay.ACTION_PLAY_RINGTONE
+            ActionPlay.ACTION_PLAY_RING_TONE
         )
     }
 
     override fun playEndTone() {
-
         if (mediaPlayer != null)
             Timber.d("RINGTONE: playEndTone mediaPlayer. $mediaPlayer")
         else
@@ -62,12 +60,11 @@ class HandlerMediaPlayerNotificationImp
             Uri.parse(stringResource + R.raw.end_call_tone),
             isLooping = false,
             needVibrate = false,
-            ActionPlay.ACTION_PLAY_ENDTONE
+            ActionPlay.ACTION_PLAY_END_TONE
         )
     }
 
-    override fun playRingBack() {
-
+    override fun playBackTone() {
         if (mediaPlayer != null)
             Timber.d("RINGTONE: playRingBack mediaPlayer. $mediaPlayer")
         else
@@ -77,12 +74,11 @@ class HandlerMediaPlayerNotificationImp
             Uri.parse(stringResource + R.raw.ringback_tone),
             isLooping = true,
             needVibrate = false,
-            ActionPlay.ACTION_PLAY_RING_BACK
+            ActionPlay.ACTION_PLAY_BACK_TONE
         )
     }
 
     override fun playBusyTone() {
-
         if (mediaPlayer != null)
             Timber.d("RINGTONE: playBusyTone mediaPlayer. $mediaPlayer")
         else
@@ -96,8 +92,7 @@ class HandlerMediaPlayerNotificationImp
         )
     }
 
-    override fun stopRingtone() {
-
+    override fun stopTone() {
         Timber.d("RINGTONE: stopRingtone")
         currentlyAction = ActionPlay.ACTION_NONE
         stopMedia()
@@ -122,13 +117,6 @@ class HandlerMediaPlayerNotificationImp
                     mediaPlayer = MediaPlayer()
 
                 mediaPlayer?.apply {
-                    //                    setAudioAttributes(
-                    //                        AudioAttributes
-                    //                            .Builder()
-                    //                            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-                    //                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    //                            .build()
-                    //                    )
                     setDataSource(
                         context,
                         uriSound
@@ -147,9 +135,7 @@ class HandlerMediaPlayerNotificationImp
                     } else {
                         vibrator?.vibrate(vibratePattern, 0)
                     }
-
             }
-
         } catch (e: Exception) {
             Timber.e(e)
         }

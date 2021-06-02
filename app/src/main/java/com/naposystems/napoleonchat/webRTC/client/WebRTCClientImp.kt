@@ -840,7 +840,7 @@ class WebRTCClientImp
     }
 
     //Ringtone
-    override fun playRingtone() {
+    override fun playRingTone() {
 
         mediaPlayerHasStopped = false
 
@@ -852,7 +852,7 @@ class WebRTCClientImp
 
         Timber.d("RINGTONE: PlayRingtone")
 
-        handlerMediaPlayerNotification.playRingtone()
+        handlerMediaPlayerNotification.playRingTone()
 
     }
 
@@ -869,7 +869,7 @@ class WebRTCClientImp
         }
     }
 
-    override fun playRingBackTone() {
+    override fun playBackTone() {
 
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
 
@@ -882,12 +882,12 @@ class WebRTCClientImp
         countDownRingCall.start()
 
         Timber.d("RINGTONE: playRingBack EN WEBRTCCLIENT")
-        handlerMediaPlayerNotification.playRingBack()
+        handlerMediaPlayerNotification.playBackTone()
 
     }
 
     override fun stopRingAndVibrate() {
-        handlerMediaPlayerNotification.stopRingtone()
+        handlerMediaPlayerNotification.stopTone()
     }
 
     //Proximity Sensor
@@ -966,7 +966,7 @@ class WebRTCClientImp
             KeyEvent.KEYCODE_VOLUME_DOWN,
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (NapoleonApplication.statusCall.isNoCall()) {
-                    handlerMediaPlayerNotification.stopRingtone()
+                    handlerMediaPlayerNotification.stopTone()
                     true
                 } else {
                     false

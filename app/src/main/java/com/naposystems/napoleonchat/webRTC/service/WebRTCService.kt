@@ -11,7 +11,6 @@ import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificati
 import com.naposystems.napoleonchat.service.notificationClient.HandlerNotificationImp
 import com.naposystems.napoleonchat.service.notificationClient.NotificationClient
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import com.naposystems.napoleonchat.utility.adapters.hasMicAndCameraPermission
 import com.naposystems.napoleonchat.utility.isConnectedCall
@@ -63,7 +62,7 @@ class WebRTCService : Service() {
 
         intent.action?.let { action ->
 
-            handlerMediaPlayerNotification.stopRingtone()
+            handlerMediaPlayerNotification.stopTone()
 
             Timber.d("LLAMADA PASO: ACTION $action")
 

@@ -153,9 +153,10 @@ class ConversationCallActivity :
             when (NapoleonApplication.callModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> {
                     if (isAnswerCall.not())
-                        webRTCClient.playRingtone()
+                        webRTCClient.playRingTone()
                 }
-                Constants.TypeCall.IS_OUTGOING_CALL -> webRTCClient.playRingBackTone()
+                Constants.TypeCall.IS_OUTGOING_CALL ->
+                    webRTCClient.playBackTone()
             }
 
         } else {
