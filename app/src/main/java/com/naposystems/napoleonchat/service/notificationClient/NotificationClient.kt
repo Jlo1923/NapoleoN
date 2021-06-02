@@ -9,16 +9,4 @@ interface NotificationClient {
         dataFromNotification: Map<String, String>,
         notification: RemoteMessage.Notification?
     )
-
-//    fun updateCallInProgress(channel: String, contactId: Int, isVideoCall: Boolean)
-//
-//    fun createNotificationCallBuilder(
-//        channel: String,
-//        contactId: Int,
-//        isVideoCall: Boolean,
-//        typeCall: Int,
-//        offer: String = ""
-//    ): Notification
-//
-//    fun stopMediaPlayer()
 }

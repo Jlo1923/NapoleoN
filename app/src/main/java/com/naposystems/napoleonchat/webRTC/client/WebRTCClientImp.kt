@@ -5,6 +5,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
@@ -76,10 +77,12 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            syncManager.sendMissedCall()
-            handlerMediaPlayerNotification.playEndTone()
-            disposeCall(TypeEndCallEnum.TYPE_CANCEL)
-
+            playEndCall()
+            if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+                cancelCall()
+            } else {
+                disposeCall()
+            }
         }
 
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -89,7 +92,9 @@ class WebRTCClientImp
         TimeUnit.SECONDS.toMillis(2),
         TimeUnit.SECONDS.toMillis(1)
     ) {
-        override fun onFinish() = Unit
+        override fun onFinish() {
+            disposeCall()
+        }
 
         override fun onTick(millisUntilFinished: Long) = Unit
     }
@@ -100,7 +105,7 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             disposeCall()
         }
 
@@ -572,13 +577,11 @@ class WebRTCClientImp
         }, mediaConstraints)
     }
 
-    override fun subscribeToPresenceChannel() {
+    override suspend fun subscribeToPresenceChannel() {
         NapoleonApplication.callModel?.let {
             if (it.mustSubscribeToPresenceChannel && it.channelName != "" && NapoleonApplication.statusCall.isNoCall()) {
                 Timber.d("LLAMADA PASO 4: SUSCRIBIRSE AL CANAL DE LLAMADAS")
-                GlobalScope.launch {
-                    socketClient.subscribeToPresenceChannel()
-                }
+                socketClient.subscribeToPresenceChannel()
             }
         }
     }
@@ -854,9 +857,16 @@ class WebRTCClientImp
     }
 
     override fun playEndCall() {
-
-        handlerMediaPlayerNotification.playEndTone()
-
+        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone)
+        MediaPlayer().apply {
+            setDataSource(
+                context,
+                uri
+            )
+            this.isLooping = false
+            prepare()
+            start()
+        }
     }
 
     override fun playRingBackTone() {
@@ -1074,28 +1084,36 @@ class WebRTCClientImp
         }
     }
 
-    override fun rejectCall() {
-        syncManager.rejectCall()
+    override fun listenerRejectCall() {
+        contactRejectCall()
     }
 
-    override fun rejectSecondCall(contactId: Int, channelName: String) {
-        syncManager.rejectCall(contactId, channelName)
+    override fun listenerCancelCall() {
+        contactCancelCall()
     }
 
     override fun contactRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
-            syncManager.sendMissedCall()
-            evenstFromWebRTCClientListener?.changeTextviewTitle(R.string.text_contact_is_busy)
+            evenstFromWebRTCClientListener?.showOccupiedTitle()
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
-            disposeCall()
+            syncManager.sendMissedCall()
         }
     }
 
     override fun contactCancelCall() {
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
+            disposeCall()
+        }
+    }
+
+    override fun cancelCall() {
+        NapoleonApplication.callModel?.let {
+            Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
+            syncManager.cancelCall()
+            syncManager.sendMissedCall()
             disposeCall()
         }
     }
@@ -1229,7 +1247,7 @@ class WebRTCClientImp
     override fun contactHasHangup() {
         NapoleonApplication.callModel.let { _ ->
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
-            handlerMediaPlayerNotification.playEndTone()
+            playEndCall()
             disposeCall()
         }
     }

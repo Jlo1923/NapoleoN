@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.webRTC.service
 
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import timber.log.Timber
@@ -8,7 +7,6 @@ import javax.inject.Inject
 
 class WebRTCServiceRepositoryImp
 @Inject constructor(
-    private val napoleonApi: NapoleonApi,
     private val webRTCClient: WebRTCClient,
 ) : WebRTCServiceRepository {
 
@@ -19,6 +17,13 @@ class WebRTCServiceRepositoryImp
         } else {
             webRTCClient.disposeCall(typeEndCall)
         }
+    }
 
+    override fun contactCancelCall() {
+        webRTCClient.contactCancelCall()
+    }
+
+    override fun contactRejectCall() {
+        webRTCClient.contactRejectCall()
     }
 }

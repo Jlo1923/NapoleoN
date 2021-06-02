@@ -15,8 +15,8 @@ interface EventsFromSocketClientListener {
     //endregion
 
     //region Handler Call
-    fun contactRejectCall()
-    fun contactCancelCall()
+    fun listenerRejectCall()
+    fun listenerCancelCall()
     //endregion
 
     //Contact change to video call

@@ -532,14 +532,11 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun rejectCall() {
-        GlobalScope.launch {
-            NapoleonApplication.callModel?.let { callModel ->
-                val rejectCallReqDTO = RejectCallReqDTO(
-                    contactId = callModel.contactId,
-                    channel = callModel.channelName
-                )
-                napoleonApi.rejectCall(rejectCallReqDTO)
-            }
+        NapoleonApplication.callModel?.let { callModel ->
+            rejectCall(
+                callModel.contactId,
+                callModel.channelName
+            )
         }
     }
 
