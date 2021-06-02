@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.multi
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -54,8 +55,14 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
         getContactFromExtras()
 
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
+
         setContentView(viewBinding.root)
     }
+
 
     override fun onStart() {
         super.onStart()

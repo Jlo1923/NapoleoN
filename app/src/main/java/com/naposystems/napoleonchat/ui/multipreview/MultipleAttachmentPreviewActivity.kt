@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.multipreview
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
@@ -75,6 +76,11 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
         viewModelItem = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentPreviewItemViewModel::class.java)
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
 
         lifecycle.addObserver(viewModel)
 
