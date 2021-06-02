@@ -17,17 +17,11 @@ interface WebRTCClient {
     var isBluetoothActive: Boolean
 
     fun reInit()
-
-    fun setEventsFromWebRTCClientListener(evenstFromWebRTCClientListener: EvenstFromWebRTCClientListener)
-
+    fun setEventsFromWebRTCClientListener(eventFromWebRtcClientListener: EventFromWebRtcClientListener)
     fun connectSocket()
-
     suspend fun subscribeToPresenceChannel()
-
     fun setOffer()
-
     fun createAnswer()
-
     fun startWebRTCService()
 
     //Change to video Call

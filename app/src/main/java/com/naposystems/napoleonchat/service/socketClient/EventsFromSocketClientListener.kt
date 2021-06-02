@@ -8,27 +8,25 @@ interface EventsFromSocketClientListener {
     fun itsSubscribedToPresenceChannelIncomingCall()
     fun itsSubscribedToPresenceChannelOutgoingCall()
 
-    //region Conection
+    //Conection
     fun iceCandidateReceived(iceCandidate: IceCandidate)
     fun offerReceived(sessionDescription: SessionDescription)
     fun answerReceived(sessionDescription: SessionDescription)
-    //endregion
 
-    //region Handler Call
+    //Handler Call
     fun listenerRejectCall()
     fun listenerCancelCall()
-    //endregion
 
-    //Contact change to video call
+    //VideoCall
     fun contactWantChangeToVideoCall()
     fun contactAcceptChangeToVideoCall()
     fun contactCancelChangeToVideoCall()
     fun contactCantChangeToVideoCall()
 
+    //Turn ON/OFF Camera
     fun toggleContactCamera(isVisible: Boolean)
 
     fun contactHasHangup()
-    //endregion
 
     fun processDisposeCall()
 
