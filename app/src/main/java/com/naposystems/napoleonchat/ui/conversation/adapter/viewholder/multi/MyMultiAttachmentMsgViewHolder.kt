@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
+import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR
@@ -66,7 +67,7 @@ class MyMultiAttachmentMsgViewHolder(
         msgAndAttachment = item
         configListenersViews()
         bindViewModel()
-        paintAttachments()
+        paintAttachments(item.messageEntity.status)
         paintUploadFiles()
         paintMoreData(timeFormat)
         paintMessageStatus()
@@ -76,6 +77,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintMessageStatus() = binding.apply {
         when (msgAndAttachment.messageEntity.status) {
             ERROR.status -> paintMessageError()
+            //SENDING.status -> paintMessageSending()
             else -> paintMessageOk()
         }
     }
@@ -84,7 +86,7 @@ class MyMultiAttachmentMsgViewHolder(
         binding.apply {
             hideViews(progressBarIndeterminate, imageButtonState)
             removeIconErrorMsg()
-            tryUploadAttachments()
+            //tryUploadAttachments()
         }
     }
 
@@ -92,63 +94,52 @@ class MyMultiAttachmentMsgViewHolder(
         textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
     }
 
-    private fun paintMessageSending() {
-        binding.apply {
-            showViews(progressBarIndeterminate, imageButtonState)
-        }
+    private fun paintMessageSending() = binding.apply {
+        showViews(progressBarIndeterminate, imageButtonState)
     }
 
-
-    private fun paintMessageError() {
-        binding.apply {
-            showViews(imageButtonState)
-            hideViews(progressBarIndeterminate)
-            showIconErrorMsg()
-        }
+    private fun paintMessageError() = binding.apply {
+        showViews(imageButtonState)
+        hideViews(progressBarIndeterminate)
+        showIconErrorMsg()
     }
 
-    private fun ConversationItemMyMessageMultiBinding.showIconErrorMsg() {
+    private fun ConversationItemMyMessageMultiBinding.showIconErrorMsg() =
         textViewMsgDate.setCompoundDrawablesWithIntrinsicBounds(
             0,
             0,
             R.drawable.ic_message_error,
             0
         )
-    }
 
-    private fun defineListeners() {
-        binding.apply {
-            imageButtonState.setOnClickListener {
-                listener.onMultipleAttachmentMsgAction(
-                    MultiAttachmentMsgAction.SendMessageToRemote(
-                        msgAndAttachment.messageEntity,
-                        msgAndAttachment.attachmentEntityList
-                    )
+    private fun defineListeners() = binding.apply {
+        imageButtonState.setOnClickListener {
+            val attachmentsToSendRemote =
+                msgAndAttachment.attachmentEntityList.filter { it.isError() }
+            listener.onMultipleAttachmentMsgAction(
+                MultiAttachmentMsgAction.SendMessageToRemote(
+                    msgAndAttachment.messageEntity, attachmentsToSendRemote
                 )
-                paintMessageSending()
-            }
+            )
+            paintMessageSending()
         }
     }
 
-    private fun paintMoreData(timeFormat: Int?) {
-        binding.apply {
-            textViewMsg.text = msgAndAttachment.messageEntity.body
-            textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
-            timeFormat?.let {
-                bindMessageDateSend(
-                    textViewMsgDate,
-                    msgAndAttachment.messageEntity.createdAt,
-                    it
-                )
-            }
+    private fun paintMoreData(timeFormat: Int?) = binding.apply {
+        textViewMsg.text = msgAndAttachment.messageEntity.body
+        textViewMsg.show(msgAndAttachment.messageEntity.body.isNotEmpty())
+        timeFormat?.let {
+            bindMessageDateSend(
+                textViewMsgDate,
+                msgAndAttachment.messageEntity.createdAt,
+                it
+            )
         }
     }
 
     private fun tryUploadAttachments() {
-        val attachmentsFilter = msgAndAttachment.attachmentEntityList.filter {
-            it.status == Constants.AttachmentStatus.UPLOAD_CANCEL.status ||
-                    it.status == Constants.AttachmentStatus.ERROR.status
-        }
+        val attachmentsFilter =
+            msgAndAttachment.attachmentEntityList.filter { it.isError() }
         if (attachmentsFilter.isNotEmpty()) {
             viewModel.retryUploadAllFiles(
                 attachmentsFilter,
@@ -158,15 +149,19 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun paintAttachments() {
+    private fun paintAttachments(messageStatus: Int) {
+
+        val isStateError =
+            messageStatus == com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR.status
+
         msgAndAttachment.attachmentEntityList.apply {
             when (this.size) {
-                1 -> showOneItem(this)
-                2 -> showTwoItems(this)
-                3 -> showThreeElements(this)
-                4 -> showFourItems(this)
-                5 -> showFiveItems(this)
-                else -> showFiveItems(this)
+                1 -> showOneItem(this, isStateError)
+                2 -> showTwoItems(this, isStateError)
+                3 -> showThreeElements(this, isStateError)
+                4 -> showFourItems(this, isStateError)
+                5 -> showFiveItems(this, isStateError)
+                else -> showFiveItems(this, isStateError)
             }
         }
     }
@@ -174,7 +169,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun paintUploadFiles() = msgAndAttachment.attachmentEntityList.apply {
         val countSent = this.filter { it.isSent() || it.isReceived() || it.isReaded() }
         if (countSent.size == this.size) {
-            binding.textViewCountFiles.hide()
+            binding.viewUploadAttachmentsIndicator.hide()
         } else {
             val data = Pair(countSent.size, this.size)
             showQuantity(data)
@@ -224,58 +219,69 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun handleActions(action: MultiAttachmentMsgEvent) {
         when (action) {
-            MultiAttachmentMsgEvent.HideQuantity -> binding.textViewCountFiles.hide()
+            MultiAttachmentMsgEvent.HideQuantity -> binding.viewUploadAttachmentsIndicator.hide()
             is MultiAttachmentMsgEvent.ShowQuantity -> showQuantity(action.data)
         }
     }
 
-    private fun handleState(state: MultiAttachmentMsgState) = when (state) {
-        is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
-        is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
-        is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
-        is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
-        is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
-    }
+//    private fun handleState(state: MultiAttachmentMsgState) = when (state) {
+//        is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
+//        is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
+//        is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
+//    }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
-        textViewCountFiles.show()
-        textViewCountFiles.text = "${data.first} / ${data.second}"
+        val data = UploadAttachmentsIndicatorModel(
+            msgAndAttachment.messageEntity.status,
+            data.first,
+            data.second
+        )
+        binding.viewUploadAttachmentsIndicator.apply {
+            show()
+            bindDataInfo(data)
+        }
     }
 
-    private fun showOneItem(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
-        showViews(viewOneFile)
+    private fun showOneItem(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewFiveFiles)
+            showViews(viewOneFile)
+            viewOneFile.bindAttachments(listElements, isStateError)
+        }
 
-        viewOneFile.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showTwoItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles, viewOneFile)
+            showViews(viewTwoFiles)
+            viewTwoFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showTwoItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewThreeFiles, viewFourFiles, viewFiveFiles, viewOneFile)
-        showViews(viewTwoFiles)
-        viewTwoFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showThreeElements(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles, viewOneFile)
+            showViews(viewThreeFiles)
+            viewThreeFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showThreeElements(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewFourFiles, viewFiveFiles, viewOneFile)
-        showViews(viewThreeFiles)
-        viewThreeFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showFourItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles, viewOneFile)
+            showViews(viewFourFiles)
+            viewFourFiles.bindAttachments(listElements, isStateError)
+        }
 
-    private fun showFourItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFiveFiles, viewOneFile)
-        showViews(viewFourFiles)
-        viewFourFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
-
-    private fun showFiveItems(listElements: List<AttachmentEntity>) = binding.apply {
-        currentAttachments = listElements
-        hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewOneFile)
-        showViews(viewFiveFiles)
-        viewFiveFiles.bindAttachments(listElements, msgAndAttachment.isMine())
-    }
+    private fun showFiveItems(listElements: List<AttachmentEntity>, isStateError: Boolean) =
+        binding.apply {
+            currentAttachments = listElements
+            hideViews(viewTwoFiles, viewThreeFiles, viewFourFiles, viewOneFile)
+            showViews(viewFiveFiles)
+            viewFiveFiles.bindAttachments(listElements, isStateError)
+        }
 
 }

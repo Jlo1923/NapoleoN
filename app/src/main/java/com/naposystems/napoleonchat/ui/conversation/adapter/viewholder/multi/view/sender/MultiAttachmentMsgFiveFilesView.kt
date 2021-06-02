@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view
+package com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender
 
 import android.content.Context
 import android.util.AttributeSet
@@ -26,21 +26,27 @@ class MultiAttachmentMsgFiveFilesView @JvmOverloads constructor(
 
     lateinit var listAttachments: List<AttachmentEntity>
 
-    fun bindAttachments(listAttachments: List<AttachmentEntity>, mine: Boolean) {
+    fun bindAttachments(
+        listAttachments: List<AttachmentEntity>,
+        isStateError: Boolean
+    ) {
         this.listAttachments = listAttachments
         viewBinding.apply {
+
             viewFileOne.defineListener(this@MultiAttachmentMsgFiveFilesView)
             viewFileTwo.defineListener(this@MultiAttachmentMsgFiveFilesView)
             viewFileThree.defineListener(this@MultiAttachmentMsgFiveFilesView)
             viewFileFour.defineListener(this@MultiAttachmentMsgFiveFilesView)
             viewFileFive.defineListener(this@MultiAttachmentMsgFiveFilesView)
 
-            viewFileOne.bindAttachment(listAttachments[0], 0, mine)
-            viewFileTwo.bindAttachment(listAttachments[1], 1, mine)
-            viewFileThree.bindAttachment(listAttachments[2], 2, mine)
-            viewFileFour.bindAttachment(listAttachments[3], 3, mine)
-            viewFileFive.bindAttachment(listAttachments[4], 4, mine)
+            viewFileOne.bindAttachment(listAttachments[0], 0, isStateError)
+            viewFileTwo.bindAttachment(listAttachments[1], 1, isStateError)
+            viewFileThree.bindAttachment(listAttachments[2], 2, isStateError)
+            viewFileFour.bindAttachment(listAttachments[3], 3, isStateError)
+            viewFileFive.bindAttachment(listAttachments[4], 4, isStateError)
+
         }
+
         validateMustShowMoreFiles()
         defineViewListeners()
     }

@@ -209,6 +209,14 @@ object Constants {
         RECORD_AUDIO(6)
     }
 
+    enum class MessageStatus(val status: Int) {
+        SENDING(1),
+        SENT(2),
+        UNREAD(3),
+        READED(4),
+        ERROR(5)
+    }
+
     enum class AttachmentStatus(val status: Int) {
         SENDING(1),
         SENT(2),
@@ -437,14 +445,6 @@ object Constants {
     enum class MessageEventType(val status: Int) {
         UNREAD(1),
         READ(2)
-    }
-
-    enum class MessageStatus(val status: Int) {
-        SENDING(1),
-        SENT(2),
-        UNREAD(3),
-        READED(4),
-        ERROR(5)
     }
 
     //Este estado es el usado en el Backend Para Recibido/Leido

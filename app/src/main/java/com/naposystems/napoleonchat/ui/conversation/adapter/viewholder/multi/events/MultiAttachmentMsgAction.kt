@@ -17,4 +17,6 @@ sealed class MultiAttachmentMsgAction {
         val attachments: List<AttachmentEntity?>
     ) : MultiAttachmentMsgAction()
 
+    object ShowNotInternetMessage : MultiAttachmentMsgAction()
+
 }

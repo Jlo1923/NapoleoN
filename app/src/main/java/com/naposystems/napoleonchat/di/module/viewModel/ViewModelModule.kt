@@ -22,7 +22,7 @@ import com.naposystems.napoleonchat.ui.editAccessPin.EditAccessPinViewModel
 import com.naposystems.napoleonchat.ui.enterPin.EnterPinViewModel
 import com.naposystems.napoleonchat.ui.home.HomeViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivityViewModel
-import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentViewModel
+import com.naposystems.napoleonchat.ui.multi.viewmodels.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.napoleonKeyboardGif.NapoleonKeyboardGifViewModel
@@ -40,7 +40,6 @@ import com.naposystems.napoleonchat.ui.register.validateNickname.ValidateNicknam
 import com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryAccountViewModel
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionViewModel
 import com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentViewDialogModel
 import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.ui.status.StatusViewModel
 import com.naposystems.napoleonchat.ui.subscription.SubscriptionViewModel

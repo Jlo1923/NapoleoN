@@ -5,6 +5,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.emojiKeyboard.Emoji
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import org.json.JSONObject
 import org.webrtc.IceCandidate
 import org.webrtc.SessionDescription
@@ -73,6 +74,7 @@ class RxEvent {
     data class MultiUploadSuccess(val attachmentEntity: AttachmentEntity)
 
     data class MultiUploadError(
+        val messageEntity: MessageEntity,
         val attachmentEntity: AttachmentEntity,
         val message: String,
         val cause: Exception? = null

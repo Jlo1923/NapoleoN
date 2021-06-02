@@ -38,7 +38,7 @@ fun ItemMessage.getMessageEntityForCreate(): MessageEntity {
         updatedAt = 0,
         createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
         isMine = Constants.IsMine.YES.value,
-        status = Constants.MessageStatus.SENDING.status,
+        status = Constants.MessageStatus.ERROR.status,
         numberAttachments = numberAttachments,
         messageType = Constants.MessageTextType.NORMAL.type,
         selfDestructionAt = selfDestructTime
@@ -89,8 +89,8 @@ fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(
         body = "",
         fileName = file.name,
         origin = Constants.AttachmentOrigin.GALLERY.origin,
-        thumbnailUri = "",
-        status = Constants.AttachmentStatus.SENDING.status,
+        thumbnailUri = contentUri?.toString() ?: "",
+        status = Constants.AttachmentStatus.ERROR.status,
         selfDestructionAt = selfDestruction,
         extension = this.getExtensionByType()
     )

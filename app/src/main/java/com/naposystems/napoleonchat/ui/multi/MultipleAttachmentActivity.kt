@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.fragments.MultipleAttachmentExitBottomSheetDialogFragment
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multi.viewmodels.MultipleAttachmentViewModel
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
 import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
@@ -28,7 +29,6 @@ import com.xwray.groupie.GroupieAdapter
 import com.xwray.groupie.Item
 import dagger.android.AndroidInjection
 import javax.inject.Inject
-
 
 class MultipleAttachmentActivity : AppCompatActivity() {
 
@@ -52,11 +52,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, viewModelFactory)
             .get(MultipleAttachmentViewModel::class.java)
 
-        intent.extras?.let {
-            if (it.containsKey(MULTI_EXTRA_CONTACT)) {
-                contact = it.getSerializable(MULTI_EXTRA_CONTACT) as ContactEntity
-            }
-        }
+        getContactFromExtras()
 
         setContentView(viewBinding.root)
     }
@@ -72,6 +68,22 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() = viewModel.handleBackAction()
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
+            when (resultCode) {
+                RESULT_OK -> handleResultOk(data)
+                RESULT_CANCELED -> handleResultCanceled(data)
+            }
+        }
+    }
+
+    private fun getContactFromExtras() = intent.extras?.let {
+        if (it.containsKey(MULTI_EXTRA_CONTACT)) {
+            contact = it.getSerializable(MULTI_EXTRA_CONTACT) as ContactEntity
+        }
+    }
 
     private fun bindViewModel() {
         viewModel.state.observe(this, { handleState(it) })
@@ -92,9 +104,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
     }
 
     private fun showConfirmDialogExit() {
-        val dialogForDelete = MultipleAttachmentExitBottomSheetDialogFragment {
-            finish()
-        }
+        val dialogForDelete = MultipleAttachmentExitBottomSheetDialogFragment { finish() }
         dialogForDelete.show(
             supportFragmentManager,
             "MultipleAttachmentExitBottomSheetDialogFragment"
@@ -110,22 +120,14 @@ class MultipleAttachmentActivity : AppCompatActivity() {
         startActivityForResult(intent, MULTI_ATTACHMENT_PREVIEW_INTENT)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == MULTI_ATTACHMENT_PREVIEW_INTENT) {
-            when (resultCode) {
-                RESULT_OK -> handleResultOk(data)
-                RESULT_CANCELED -> handleResultCanceled(data)
-            }
-        }
-    }
 
     private fun handleResultOk(data: Intent?) {
         data?.extras?.apply {
             val intentResult = Intent()
             val data = Bundle()
             val msg = this.getParcelable<MessageEntity>(EXTRA_MULTI_MSG_TO_SEND)
-            val attachments = this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
+            val attachments =
+                this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
             data.putParcelable(EXTRA_MULTI_MSG_TO_SEND, msg)
             data.putParcelableArrayList(EXTRA_MULTI_ATTACHMENTS_TO_SEND, ArrayList(attachments))
             intentResult.putExtras(data)

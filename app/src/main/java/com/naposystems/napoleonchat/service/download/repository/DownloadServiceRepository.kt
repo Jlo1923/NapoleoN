@@ -6,6 +6,7 @@ import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
@@ -13,10 +14,7 @@ import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.DOWNLOAD_
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.DOWNLOAD_COMPLETE
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType.*
 import com.naposystems.napoleonchat.utility.Constants.CacheDirectories.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.ResponseBody
 import timber.log.Timber
 import java.io.*
@@ -26,31 +24,35 @@ import javax.inject.Inject
 class DownloadServiceRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
-    private val attachmentLocalDataSource: AttachmentLocalDataSource
+    private val attachmentLocalDataSource: AttachmentLocalDataSource,
+    private val messageLocalDataSource: MessageLocalDataSource
 ) : IContractDownloadService.Repository {
 
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.IO)
     private var uploadJob: Job? = null
 
-    override fun downloadAttachment(attachment: AttachmentEntity) {
+    override fun downloadAttachment(attachmentEntity: AttachmentEntity) {
 
         uploadJob = coroutineScope.launch {
-            val fileName = "${System.currentTimeMillis()}.${attachment.extension}"
+            val fileName = "${System.currentTimeMillis()}.${attachmentEntity.extension}"
             try {
-                updateAttachmentStatus(attachment, Constants.AttachmentStatus.DOWNLOADING.status)
-                val response = napoleonApi.downloadFileByUrl(attachment.body)
+                updateAttachmentStatus(
+                    attachmentEntity,
+                    Constants.AttachmentStatus.DOWNLOADING.status
+                )
+                val response = napoleonApi.downloadFileByUrl(attachmentEntity.body)
                 if (response.isSuccessful) {
                     response.body()?.let { body ->
-                        saveFileLocally(attachment, fileName, body)
+                        saveFileLocally(attachmentEntity, fileName, body)
                     }
                 } else {
-                    Timber.e("Response failure")
-                    publishEventError(attachment)
+                    updateAttachmentStatus(attachmentEntity, DOWNLOAD_CANCEL.status)
+                    publishEventError(attachmentEntity)
                 }
             } catch (e: Exception) {
-                updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
-                publishEventError(attachment)
+                updateAttachmentStatus(attachmentEntity, DOWNLOAD_CANCEL.status)
+                publishEventError(attachmentEntity)
             }
         }
     }
@@ -97,10 +99,13 @@ class DownloadServiceRepository @Inject constructor(
                 }
             }
             outputStream.flush()
-            updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
+
+            attachment.thumbnailUri = file.toURI().toString()
+
             if (BuildConfig.ENCRYPT_API && attachment.type != GIF_NN.type) {
                 saveEncryptedFile(attachment)
             } else {
+                updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
                 publishEventTryNext()
             }
 
@@ -108,6 +113,7 @@ class DownloadServiceRepository @Inject constructor(
             updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
             publishEventError(attachment)
         } catch (e: IOException) {
+            updateAttachmentStatus(attachment, DOWNLOAD_CANCEL.status)
             publishEventError(attachment)
             Timber.d("Failed to save the file!")
         } finally {
@@ -125,6 +131,7 @@ class DownloadServiceRepository @Inject constructor(
 
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
+        updateAttachmentStatus(attachmentEntity, DOWNLOAD_COMPLETE.status)
         publishEventTryNext()
     }
 
@@ -147,8 +154,22 @@ class DownloadServiceRepository @Inject constructor(
 
     private fun publishEventTryNext() = RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
 
-    private fun publishEventError(attachment: AttachmentEntity) = RxBus.publish(
-        RxEvent.MultiDownloadError(attachment, "File not downloaded", null)
-    )
+    private fun publishEventError(attachment: AttachmentEntity) {
+        /**
+         * Si ha fallado, debemos tomar el attachment para consultar su mensaje padre
+         * Este mensaje padre debera ser marcado como error, para indiciar en la conversation que
+         * la descarga de uno o varios archivos de ese mensaje ha marcado ERROR
+         * Y la persona debera iniciar la descarga manualmente
+         */
+        GlobalScope.launch {
+            val message = messageLocalDataSource.getMessageById(attachment.messageId, false)
+            val theMsgParent = message?.messageEntity
+            theMsgParent?.let {
+                it.status = Constants.MessageStatus.ERROR.status
+                messageLocalDataSource.updateMessage(it)
+            }
+            RxBus.publish(RxEvent.MultiDownloadError(attachment, "File not downloaded", null))
+        }
+    }
 
 }

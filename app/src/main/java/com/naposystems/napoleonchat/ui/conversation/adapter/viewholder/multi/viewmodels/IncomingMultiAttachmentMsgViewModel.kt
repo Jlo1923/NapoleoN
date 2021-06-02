@@ -8,16 +8,11 @@ import androidx.lifecycle.*
 import com.naposystems.napoleonchat.service.download.DownloadAttachmentsService
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
-import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractIncomingMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.contract.IContractMyMultiAttachmentMsg
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class IncomingMultiAttachmentMsgViewModel @Inject constructor(
@@ -32,7 +27,7 @@ class IncomingMultiAttachmentMsgViewModel @Inject constructor(
     fun actions(): LiveData<MultiAttachmentMsgEvent> = actions
 
     override fun validateStatusAndQuantity(listAttachments: List<AttachmentEntity>) {
-        val countSent = listAttachments.filter { it.isDownloaded() }
+        val countSent = listAttachments.filter { it.isDownloadComplete() }
         if (countSent.size == listAttachments.size) {
             actions.value = MultiAttachmentMsgEvent.HideQuantity
         } else {

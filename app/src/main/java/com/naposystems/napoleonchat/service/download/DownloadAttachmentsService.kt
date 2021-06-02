@@ -10,7 +10,6 @@ import com.naposystems.napoleonchat.service.download.contract.IContractDownloadS
 import com.naposystems.napoleonchat.service.download.notification.NotificationDownloadClient
 import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
-import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.NOT_DOWNLOADED
 import dagger.android.support.DaggerApplication
 import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
@@ -33,8 +32,8 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
 
     private lateinit var napoleonApplication: NapoleonApplication
     private val compositeDisposable = CompositeDisposable()
-    var attachmentList: MutableList<AttachmentEntity> = mutableListOf()
-    var currentAttachment: AttachmentEntity? = null
+    private var attachmentList: MutableList<AttachmentEntity> = mutableListOf()
+    private var currentAttachment: AttachmentEntity? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -43,39 +42,38 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         subscribeRxEvents()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
+        getAttachmentFromExtras(intent)
+        getCommandAction(intent)
+        return START_NOT_STICKY
+    }
 
-        intent.extras?.let { bundle ->
-            val attachmentsIn =
-                bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
-            attachmentsIn.forEach { attachToAdd ->
-                val toAdd = attachmentList.firstOrNull() { attachInList ->
-                    attachInList.id == attachToAdd.id
-                }
-                if (toAdd == null) {
-                    attachmentList.add(attachToAdd)
-                }
+    private fun getAttachmentFromExtras(intent: Intent) = intent.extras?.let { bundle ->
+        val attachmentsIn =
+            bundle.getParcelableArrayList<AttachmentEntity>(ATTACHMENT_KEY) as List<AttachmentEntity>
+        attachmentsIn.forEach { attachToAdd ->
+            val toAdd = attachmentList.firstOrNull() { attachInList ->
+                attachInList.id == attachToAdd.id
             }
-            if (attachmentList.isNotEmpty()) {
+            if (toAdd == null) {
+                attachmentList.add(attachToAdd)
+            }
+            if (attachmentList.size == 1) {
                 handleTryNextAttachment()
             }
         }
+    }
 
-        intent.action?.let { action ->
-            Timber.d("onStartCommand action: $action")
-            if (action == ACTION_CANCEL_DOWNLOAD) {
-                repository.cancelDownload()
-                stopSelf()
-                stopForeground(true)
-            }
+    private fun getCommandAction(intent: Intent) = intent.action?.let { action ->
+        Timber.d("onStartCommand action: $action")
+        if (action == ACTION_CANCEL_DOWNLOAD) {
+            repository.cancelDownload()
+            stopSelf()
+            stopForeground(true)
         }
-
-        return START_NOT_STICKY
     }
 
     override fun showNotification(attachmentEntity: AttachmentEntity) {
@@ -99,8 +97,8 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
             RxBus.listen(RxEvent.MultiDownloadTryNextAttachment::class.java)
                 .subscribe { handleTryNextAttachment() }
 
-        val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
-            .subscribe { handleUploadError() }
+        val disposableUploadError = RxBus.listen(RxEvent.MultiDownloadError::class.java)
+            .subscribe { stopService() }
 
         val disposableUploadProgress = RxBus.listen(RxEvent.MultiUploadProgress::class.java)
             .subscribe { handleUploadProgress(it) }
@@ -111,7 +109,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         compositeDisposable.apply {
             addAll(
                 disposableUploadStart,
-                //disposableUploadSuccess,
                 disposableUploadTryNext,
                 disposableUploadError,
                 disposableUploadProgress,
@@ -120,25 +117,13 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
         }
     }
 
-    private fun handleDownloadSuccess() {
-        Timber.d("RxEvent.UploadSuccess")
-        /**
-         * Marcar el mensaje padre como recibido
-         */
-        stopService()
-    }
-
     private fun handleTryNextAttachment() {
         val nextAttachment = getNextAttachment()
         nextAttachment?.let {
             currentAttachment = it
             repository.downloadAttachment(it)
             showNotification(it)
-        } ?: run { handleDownloadSuccess() }
-    }
-
-    private fun handleUploadError() {
-        stopService()
+        } ?: run { stopService() }
     }
 
     private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) {
@@ -161,8 +146,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     }
 
     private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() {
-            it.status == NOT_DOWNLOADED.status
-        }
+        attachmentList.firstOrNull() { it.isNotDownloaded() || it.isDownloadCancel() }
 
 }

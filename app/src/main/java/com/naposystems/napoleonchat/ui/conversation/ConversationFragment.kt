@@ -2329,14 +2329,20 @@ class ConversationFragment
         when (action) {
             is OpenMultipleAttachmentPreview -> openMultipleAttachmentPreview(action)
             is SendMessageToRemote -> sendMessageAndAttachmentsToRemote(action)
+            MultiAttachmentMsgAction.ShowNotInternetMessage -> showNotInternetMessage()
         }
     }
 
+    private fun showNotInternetMessage() {
+        Utils.showToast(binding.root.context, getString(R.string.msg_not_connection))
+    }
+
     private fun sendMessageAndAttachmentsToRemote(action: SendMessageToRemote) {
-        viewModel.sendMessageToRemote(
-            action.messageEntity,
-            action.attachments
-        )
+        if (Utils.isInternetAvailable(binding.root.context)) {
+            viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
+        } else {
+            showNotInternetMessage()
+        }
     }
 
     /**

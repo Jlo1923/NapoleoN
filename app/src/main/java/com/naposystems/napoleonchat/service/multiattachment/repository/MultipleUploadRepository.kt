@@ -14,10 +14,8 @@ import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentType
-import com.naposystems.napoleonchat.utility.Constants.IsMine
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENDING
-import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
 import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
@@ -66,8 +64,9 @@ class MultipleUploadRepository @Inject constructor(
 
         uploadJob = coroutineScope.launch {
             try {
-                updateAttachment(attachmentEntity)
                 updateMessageStatus(messageEntity, SENDING.status)
+                currentAttachment.status = Constants.AttachmentStatus.SENDING.status
+                updateAttachment(currentAttachment)
                 publishEventStart()
                 val pairFiles = getDestFileForCompress(attachmentEntity)
                 compressVideo(attachmentEntity, pairFiles.first, pairFiles.second, this)
@@ -107,6 +106,20 @@ class MultipleUploadRepository @Inject constructor(
         }
     }
 
+    override fun verifyMustMarkMessageAsSent(messageEntity: MessageEntity) {
+        coroutineScope.launch {
+            val msgAndAttachments = msgDataSource.getMessageById(messageEntity.id, false)
+            msgAndAttachments?.let {
+                val attachmentsFilterBySend = it.attachmentEntityList.filter { it.isSent() }
+                if (attachmentsFilterBySend.size == it.messageEntity.numberAttachments) {
+                    val msgToUpdate = it.messageEntity.copy(status = MessageStatus.SENT.status)
+                    msgDataSource.updateMessage(msgToUpdate)
+                }
+            }
+            publishEventTryNext()
+        }
+    }
+
     private suspend fun handleVideoCompressResult(it: VideoCompressResult, job: Job) = when (it) {
         is VideoCompressResult.Start -> handleCompressStart()
         is VideoCompressResult.Success -> handleCompressSuccess(it, job)
@@ -121,13 +134,20 @@ class MultipleUploadRepository @Inject constructor(
             Timber.d("*Test: tmessages VideoCompressResult.Success")
 
             currentAttachment.apply {
-                if (it.srcFile.isFile && it.srcFile.exists() && !isCompressed && type == AttachmentType.VIDEO.type)
+                if (it.srcFile.isFile && it.srcFile.exists() && isCompressed.not() && type == AttachmentType.VIDEO.type) {
                     it.srcFile.delete()
+                }
+
                 fileName =
-                    if (type == AttachmentType.VIDEO.type) it.destFile.name else it.srcFile.name
+                    if (type == AttachmentType.VIDEO.type) {
+                        it.destFile.name
+                    } else {
+                        it.srcFile.name
+                    }
+
                 isCompressed = true
-                updateAttachment(this)
             }
+            updateAttachment(currentAttachment)
 
             currentAttachment.apply {
 
@@ -160,6 +180,7 @@ class MultipleUploadRepository @Inject constructor(
             }
         } catch (exception: Exception) {
             Timber.d("Ops error ")
+            handleExceptionInUploadAttachment()
         }
     }
 
@@ -181,42 +202,32 @@ class MultipleUploadRepository @Inject constructor(
     }
 
     private fun handleResponseSuccessful(response: Response<AttachmentResDTO>) {
-
-        currentMessage.apply {
-            status = if (currentMessage.isMine == IsMine.NO.value) UNREAD.status
-            else MessageStatus.SENT.status
-            updateMessage(currentMessage)
-        }
-
         response.body()?.let { attachmentResDTO ->
             currentAttachment.apply {
                 webId = attachmentResDTO.id
                 messageWebId = attachmentResDTO.messageId
                 body = attachmentResDTO.body
                 status = Constants.AttachmentStatus.SENT.status
-
-                updateAttachment(this)
-                if (BuildConfig.ENCRYPT_API && type != AttachmentType.GIF_NN.type) {
-                    saveEncryptedFile(this)
-                } else {
-                    publishEventTryNext()
-                }
+            }
+            updateAttachment(currentAttachment)
+            if (BuildConfig.ENCRYPT_API && currentAttachment.type != AttachmentType.GIF_NN.type) {
+                saveEncryptedFile(currentAttachment)
+            } else {
+                verifyMustMarkMessageAsSent(currentMessage)
             }
         }
-
     }
 
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
-        publishEventTryNext()
+        verifyMustMarkMessageAsSent(currentMessage)
     }
 
     private fun setStatusErrorMessageAndAttachment(
         messageEntity: MessageEntity,
         attachmentEntity: AttachmentEntity?
     ) {
-        messageEntity.status = MessageStatus.ERROR.status
-        updateMessage(messageEntity)
+        updateMessageStatus(messageEntity, MessageStatus.ERROR.status)
         attachmentEntity?.let {
             attachmentEntity.status = Constants.AttachmentStatus.ERROR.status
             updateAttachment(attachmentEntity)
@@ -285,7 +296,7 @@ class MultipleUploadRepository @Inject constructor(
 
     private fun updateMessageStatus(messageEntity: MessageEntity, status: Int) {
         messageEntity.status = status
-        updateMessage(messageEntity)
+        msgDataSource.updateMessage(messageEntity)
     }
 
     private fun handleMessageStatusError(messageEntity: MessageEntity) {
@@ -302,7 +313,7 @@ class MultipleUploadRepository @Inject constructor(
 
     private fun handleExceptionInUploadAttachment() {
         currentAttachment.apply {
-            status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
+            status = Constants.AttachmentStatus.ERROR.status
             updateAttachment(this)
         }
         currentMessage.apply {
@@ -325,7 +336,12 @@ class MultipleUploadRepository @Inject constructor(
     private fun publishEventStart() = RxBus.publish(RxEvent.MultiUploadStart(currentAttachment))
 
     private fun publishEventError() = RxBus.publish(
-        RxEvent.MultiUploadError(currentAttachment, "Algo ha salido mal", null)
+        RxEvent.MultiUploadError(
+            currentMessage,
+            currentAttachment,
+            "Algo ha salido mal",
+            null
+        )
     )
 
     private fun AttachmentEntity.publishEventProgress(

@@ -28,6 +28,8 @@ interface IContractMultipleUpload {
             destFile: File,
             job: CoroutineScope
         ): Flow<VideoCompressResult>
+
+        fun verifyMustMarkMessageAsSent(it: MessageEntity)
     }
 
 }

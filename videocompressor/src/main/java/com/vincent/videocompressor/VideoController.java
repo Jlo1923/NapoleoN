@@ -320,7 +320,6 @@ public class VideoController {
             }
         }
 
-
         File inputFile = new File(path);
         if (!inputFile.canRead()) {
             didWriteData(true, true);

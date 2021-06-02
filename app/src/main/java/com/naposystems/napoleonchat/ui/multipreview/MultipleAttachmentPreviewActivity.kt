@@ -241,8 +241,9 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     private fun handleState(state: MultipleAttachmentPreviewState) {
         when (state) {
             MultipleAttachmentPreviewState.Error -> TODO()
-            MultipleAttachmentPreviewState.Loading -> showLoading()
+            MultipleAttachmentPreviewState.Loading -> showLoading(true)
             is SuccessFilesAsPager -> showFilesAsPager(state)
+            MultipleAttachmentPreviewState.LoadingForSend -> showLoading(true)
         }
     }
 
@@ -263,9 +264,10 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     }
 
-    private fun showLoading() = viewBinding.apply {
+    private fun showLoading(showText: Boolean) = viewBinding.apply {
         progressLoader.show()
         hideViews(viewPagerAttachments, viewPreviewBottom, viewAttachmentOptions)
+        textLoading.show(showText)
     }
 
     private fun showPagerAndOptions() = viewBinding.apply {
@@ -284,10 +286,8 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             RemoveAttachInCreate -> showBottomDialogForRemove(getTextForDialogForRemoveAttach())
             RemoveAttachForReceiver -> showBottomDialogForRemove(getTextForDialogForReceiver())
             RemoveAttachForSender -> showBottomDialogForRemove(getTextForDialogForSender())
-            is ShowSelectFolderName -> TODO()
             is SelectItemInTabLayout -> selectElementInTabLayout(action.indexItem)
             is ShowSelfDestruction -> showSelfDestruction(action.selfDestruction)
-            is SendMessageToRemote -> sendMessageToRemote(action)
             is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
             is OnChangeSelfDestruction -> onChangeSelfDestruction(action)
             is ExitToConversationAndSendData -> exitToConversationAndSendData(action)
@@ -295,33 +295,33 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     }
 
     private fun exitToConversationAndSendData(action: ExitToConversationAndSendData) {
-
         val intentResult = Intent()
-        var data = Bundle().apply {
+        val data = Bundle().apply {
             putParcelable(EXTRA_MULTI_MSG_TO_SEND, action.messageEntity)
             putParcelableArrayList(EXTRA_MULTI_ATTACHMENTS_TO_SEND, ArrayList(action.attachments))
         }
         intentResult.putExtras(data)
         setResult(RESULT_OK, intentResult)
         finish()
-
     }
 
     private fun exitPreviewAndSendDeleteFiles(
         listFilesForRemoveInCreate: List<MultipleAttachmentFileItem>
     ) {
         val intentResult = Intent()
+
+        // TODO: validar cual dejar y cual quitar
         intentResult.putStringArrayListExtra(
             MULTI_EXTRA_FILES_DELETE,
             ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
         )
-
         intentResult.putExtras(Bundle().apply {
             this.putStringArrayList(
                 MULTI_EXTRA_FILES_DELETE,
                 ArrayList(listFilesForRemoveInCreate.map { it.id.toString() })
             )
         })
+
         setResult(RESULT_CANCELED, intentResult)
         finish()
     }
@@ -380,9 +380,6 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         )
     }
 
-    private fun sendMessageToRemote(action: SendMessageToRemote) =
-        viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
-
     private fun showSelfDestruction(selfDestruction: Int) {
         val iconSelfDestruction = getDrawableSelfDestruction(selfDestruction)
         viewBinding.viewAttachmentOptions.changeDrawableSelfDestructionOption(
@@ -393,13 +390,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     private fun exitToConversation() {
         val intentResult = Intent()
-        setResult(RESULT_OK, intent)
+        setResult(RESULT_OK, intentResult)
         finish()
     }
 
     private fun exitToMultiFolders() {
         val intentResult = Intent()
-        setResult(RESULT_CANCELED, intent)
+        setResult(RESULT_CANCELED, intentResult)
         finish()
     }
 

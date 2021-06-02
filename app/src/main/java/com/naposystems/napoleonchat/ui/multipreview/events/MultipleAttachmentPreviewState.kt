@@ -5,6 +5,7 @@ import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 sealed class MultipleAttachmentPreviewState {
 
     object Loading : MultipleAttachmentPreviewState()
+    object LoadingForSend : MultipleAttachmentPreviewState()
 
     class SuccessFilesAsPager(
         val listFiles: ArrayList<MultipleAttachmentFileItem>,

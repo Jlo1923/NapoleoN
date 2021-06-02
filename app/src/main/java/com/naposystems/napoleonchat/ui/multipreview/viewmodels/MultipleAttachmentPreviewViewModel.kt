@@ -27,6 +27,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.isVideo
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -116,50 +117,35 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun validateMustAttachmentMarkAsReaded(position: Int) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             if (listFiles.isNotEmpty()) {
                 if (listFiles[position].isVideo().not()) {
-                    val attachment = listFiles[position].messageAndAttachment?.attachment
-                    attachment?.let { attachment ->
-                        val msgAttachment = listFiles[position].messageAndAttachment
-                        msgAttachment?.let { itemMessage ->
-                            if (attachment.status != Constants.AttachmentStatus.READED.status
-                                && itemMessage.isMine == Constants.IsMine.NO.value
-                            ) {
-                                itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
-                                    itemMessage.attachment,
-                                    itemMessage.contactId
-                                )
-                            }
-                            repository.tryMarkMessageParentAsRead(attachment.webId)
-                        }
-                    }
+                    markAttachmentImageAsRead(position)
                 }
+            }
+        }
+    }
+
+    private suspend fun markAttachmentImageAsRead(position: Int) {
+        val attachment = listFiles[position].messageAndAttachment?.attachment
+        attachment?.let { attachment ->
+            val msgAttachment = listFiles[position].messageAndAttachment
+            msgAttachment?.let { itemMessage ->
+                if (attachment.status != Constants.AttachmentStatus.READED.status
+                    && itemMessage.isMine == Constants.IsMine.NO.value
+                ) {
+                    itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
+                        itemMessage.attachment,
+                        itemMessage.contactId
+                    )
+                }
+                repository.tryMarkMessageParentAsRead(attachment.webId)
             }
         }
     }
 
     fun setContact(contactEntity: ContactEntity) {
         this.contactEntity = contactEntity
-    }
-
-    fun sendMessageToRemote(
-        messageEntity: MessageEntity,
-        attachments: List<AttachmentEntity?>
-    ) {
-        if (messageEntity.mustSendToRemote()) {
-            viewModelScope.launch {
-                val messageResponse = repositoryMessages.sendMessage(messageEntity)
-                val attachmentsWithWebId =
-                    setMessageWebIdToAttachments(attachments, messageResponse)
-                repository.updateAttachments(attachmentsWithWebId)
-                messageResponse?.let { pairData ->
-                    pairData.first?.let { sendMessageToRemote(it, attachmentsWithWebId) }
-                }
-            }
-        } else {
-            initUploadServiceForSendFiles(messageEntity, attachments)
-        }
     }
 
     fun defineModeOnlyViewInConversation(modeOnlyView: Boolean, message: String?) {
@@ -204,7 +190,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     fun markAttachmentVideoAsRead(fileItem: MultipleAttachmentFileItem) {
-        viewModelScope.launch {
+        GlobalScope.launch {
             fileItem.messageAndAttachment?.let {
                 if (it.isMine == Constants.IsMine.NO.value) {
                     repository.sentAttachmentReaded(fileItem)
@@ -267,11 +253,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         }
     }
 
-    fun onChangeSelfDestruction(iconSelfDestruction: Int) {
-        contactEntity?.let {
-            actions.value =
-                MultipleAttachmentPreviewAction.OnChangeSelfDestruction(it.id, iconSelfDestruction)
-        }
+    fun onChangeSelfDestruction(iconSelfDestruction: Int) = contactEntity?.let {
+        actions.value =
+            MultipleAttachmentPreviewAction.OnChangeSelfDestruction(it.id, iconSelfDestruction)
     }
 
     private fun showFilesAsPager(indexToSelect: Int? = null) {
@@ -340,37 +324,19 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         return attachments
     }
 
-    private fun getItemMessageToSend(message: String): ItemMessage {
-        return ItemMessage(
-            messageString = message,
-            attachment = null,
-            numberAttachments = listFiles.size,
-            selfDestructTime = getHighestTimeInFiles(),
-            quote = "",
-            contact = contactEntity
-        )
-    }
+    private fun getItemMessageToSend(message: String): ItemMessage = ItemMessage(
+        messageString = message,
+        attachment = null,
+        numberAttachments = listFiles.size,
+        selfDestructTime = getHighestTimeInFiles(),
+        quote = "",
+        contact = contactEntity
+    )
 
     private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
 
     private fun loading() {
         _state.value = MultipleAttachmentPreviewState.Loading
-    }
-
-    private fun initUploadServiceForSendFiles(
-        messageEntity: MessageEntity,
-        attachments: List<AttachmentEntity?>
-    ) {
-        // we can create notification for upload attachments
-        // todo: mover esto a un activity para usar el context
-        val intent = Intent(context, MultipleUploadService::class.java).apply {
-            putExtras(Bundle().apply {
-                putParcelable(MESSAGE_KEY, messageEntity)
-                putParcelableArrayList(ATTACHMENT_KEY, ArrayList(attachments))
-            })
-        }
-        context.startService(intent)
-        actions.value = MultipleAttachmentPreviewAction.ExitToConversation
     }
 
     private fun createUriForFiles(filesWithoutUri: List<MultipleAttachmentFileItem>) {
