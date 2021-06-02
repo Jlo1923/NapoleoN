@@ -5,6 +5,7 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.contract.IContractDownloadService
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -25,7 +26,8 @@ class DownloadServiceRepository @Inject constructor(
     private val context: Context,
     private val napoleonApi: NapoleonApi,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
-    private val messageLocalDataSource: MessageLocalDataSource
+    private val messageLocalDataSource: MessageLocalDataSource,
+    private val syncManager: SyncManager
 ) : IContractDownloadService.Repository {
 
     private var viewModelJob = Job()
@@ -106,7 +108,7 @@ class DownloadServiceRepository @Inject constructor(
                 saveEncryptedFile(attachment)
             } else {
                 updateAttachmentStatus(attachment, DOWNLOAD_COMPLETE.status)
-                publishEventTryNext()
+                publishEventTryNext(attachment.webId)
             }
 
         } catch (e: CancellationException) {
@@ -132,7 +134,7 @@ class DownloadServiceRepository @Inject constructor(
     private fun saveEncryptedFile(attachmentEntity: AttachmentEntity) {
         FileManager.copyEncryptedFile(context, attachmentEntity)
         updateAttachmentStatus(attachmentEntity, DOWNLOAD_COMPLETE.status)
-        publishEventTryNext()
+        publishEventTryNext(attachmentEntity.webId)
     }
 
     private fun getFolderByAttachmentType(
@@ -152,7 +154,10 @@ class DownloadServiceRepository @Inject constructor(
         finalPercentage: Long
     ) = RxBus.publish(RxEvent.MultiDownloadProgress(attachment, finalPercentage.toFloat()))
 
-    private fun publishEventTryNext() = RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
+    private fun publishEventTryNext(webId: String) {
+        syncManager.tryMarkMessageParentAsReceived(listOf(webId))
+        RxBus.publish(RxEvent.MultiDownloadTryNextAttachment())
+    }
 
     private fun publishEventError(attachment: AttachmentEntity) {
         /**
