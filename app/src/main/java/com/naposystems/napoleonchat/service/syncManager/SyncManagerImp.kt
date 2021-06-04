@@ -799,8 +799,8 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReceived() }
-                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
+                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReceived() || it.isDownloadComplete() }
+                        if (filter.size == msgAndRelation.messageEntity.numberAttachments) {
                             updateMessagesStatus(
                                 listOf(msgAndRelation.messageEntity.webId),
                                 Constants.MessageStatus.UNREAD.status

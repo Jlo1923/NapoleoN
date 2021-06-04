@@ -972,7 +972,7 @@ class SocketClientImp
             if (listIdMsgs.isEmpty().not()) {
                 syncManager.updateMessagesStatus(
                     listIdMsgs,
-                    UNREAD.status
+                    Constants.MessageStatus.READED.status
                 )
             }
 

@@ -61,13 +61,9 @@ class HandlerNotificationImp
         notification: RemoteMessage.Notification?
     ): NotificationCompat.Builder {
 
-        val pendingIntent = createPendingIntent(
-            dataFromNotification
-        )
-
-        val iconBitmap = BitmapFactory.decodeResource(
-            context.resources, R.drawable.ic_notification_icon
-        )
+        val pendingIntent = createPendingIntent(dataFromNotification)
+        val iconBitmap =
+            BitmapFactory.decodeResource(context.resources, R.drawable.ic_notification_icon)
 
         val channelType =
             if (dataFromNotification.containsKey(Constants.NotificationKeys.CONTACT)) {
@@ -84,10 +80,7 @@ class HandlerNotificationImp
             }
 
 
-        val builder = NotificationCompat.Builder(
-            context,
-            channelType
-        )
+        val builder = NotificationCompat.Builder(context, channelType)
             .setContentTitle(notification?.title)
             .setContentText(notification?.body)
             .setNumber(0)

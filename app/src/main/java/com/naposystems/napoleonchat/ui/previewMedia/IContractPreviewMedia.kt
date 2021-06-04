@@ -14,7 +14,9 @@ interface IContractPreviewMedia {
     }
 
     interface Repository {
+
         suspend fun createTempFile(attachmentEntity: AttachmentEntity): File?
+
         suspend fun sentMessageReaded(messageAndAttachmentRelation: MessageAttachmentRelation)
 
         suspend fun sentAttachmentAsRead(

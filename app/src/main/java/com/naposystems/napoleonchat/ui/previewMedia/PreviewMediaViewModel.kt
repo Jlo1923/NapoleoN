@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
@@ -14,7 +15,8 @@ import java.io.File
 import javax.inject.Inject
 
 class PreviewMediaViewModel @Inject constructor(
-    private val repository: IContractPreviewMedia.Repository
+    private val repository: IContractPreviewMedia.Repository,
+    private val syncManager: SyncManager
 ) : ViewModel(), IContractPreviewMedia.ViewModel {
 
     private val _tempFile = MutableLiveData<File>()
@@ -32,6 +34,7 @@ class PreviewMediaViewModel @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             if (messageAndAttachmentRelation.messageEntity.isMine == Constants.IsMine.NO.value) {
                 repository.sentMessageReaded(messageAndAttachmentRelation)
+                syncManager.verifyMessagesRead()
             }
         }
     }

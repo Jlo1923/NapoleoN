@@ -26,7 +26,7 @@ class MultipleAttachmentFolderItemView(
     override fun bind(viewBinding: ItemViewMultipleAttachFolderBinding, position: Int) {
         binding = viewBinding
         loadInfoFolder()
-        loadImage()
+        loadImageForFolder()
     }
 
     private fun loadInfoFolder() {
@@ -35,7 +35,7 @@ class MultipleAttachmentFolderItemView(
         }
     }
 
-    private fun loadImage() {
+    private fun loadImageForFolder() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val uri =
