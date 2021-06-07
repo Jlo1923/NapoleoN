@@ -343,10 +343,10 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     }
 
     private fun getTextForDialogForRemoveAttach(): MultipleAttachmentRemoveItem {
-        val title = getString(R.string.multi_title_remove_file)
-        val message = getString(R.string.multi_msg_remove_file)
-        val option1 = getString(R.string.multi_button_accept)
-        val cancel = getString(R.string.multi_button_cancel)
+        val title = getString(R.string.text_delete_attachment_title)
+        val message = getString(R.string.text_delete_attachment)
+        val option1 = getString(R.string.text_accept)
+        val cancel = getString(R.string.text_cancel)
         return MultipleAttachmentRemoveItem(
             title = title,
             message = message,
@@ -357,10 +357,10 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     }
 
     private fun getTextForDialogForReceiver(): MultipleAttachmentRemoveItem {
-        val title = getString(R.string.multi_title_remove_file)
-        val message = getString(R.string.multi_msg_remove_file)
-        val option1 = getString(R.string.multi_button_remove_for_me)
-        val cancel = getString(R.string.multi_button_cancel)
+        val title = getString(R.string.text_delete_attachment_title)
+        val message = getString(R.string.text_delete_attachment)
+        val option1 = getString(R.string.multi_button_delete_for_me)
+        val cancel = getString(R.string.text_cancel)
         return MultipleAttachmentRemoveItem(
             title = title,
             message = message,
@@ -371,11 +371,11 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     }
 
     private fun getTextForDialogForSender(): MultipleAttachmentRemoveItem {
-        val title = getString(R.string.multi_title_remove_file)
-        val message = getString(R.string.multi_msg_remove_file)
-        val option1 = getString(R.string.multi_button_remove_for_me)
-        val option2 = getString(R.string.multi_button_remove_for_all)
-        val cancel = getString(R.string.multi_button_cancel)
+        val title = getString(R.string.text_delete_attachment_title)
+        val message = getString(R.string.text_delete_attachment)
+        val option1 = getString(R.string.multi_button_delete_for_me)
+        val option2 = getString(R.string.multi_button_delete_for_all)
+        val cancel = getString(R.string.text_cancel)
         return MultipleAttachmentRemoveItem(
             title = title,
             message = message,

@@ -9,5 +9,5 @@
     <string name="text_nickname_contain_at_least_one_number">El apodo debe contener al menos un número</string>
     <string name="text_nickname_not_contain_enough_char_and_number">El Apodo debe contener mínimo 3 caracteres y 1 número</string>
     <string name="text_nickname_contain_at_least_one_letter">El Apodo debe contener al menos una letra</string>
-    <string name="text_only_start_letter">El Apodo debe comenzar con una letra</string>
+    <string name="text_nickname_must_begin_with_a_letter">El Apodo debe comenzar con una letra</string>
 </resources>

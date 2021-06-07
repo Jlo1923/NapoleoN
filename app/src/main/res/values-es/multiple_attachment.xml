@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="multi_title_exit">Multiples adjuntos</string>
-    <string name="multi_title_exit_explain">¿Está seguro que desea cerrar la galería?</string>
-    <string name="multi_title_remove_file">Eliminar archivo</string>
+    <string name="text_delete_attachment_title">Eliminar adjunto</string>
+    <string name="text_delete_attachment">¿Desea eliminar el archivo seleccionado?</string>
+    <string name="text_limit_selected_attachments">No se pueden compartir más de 10 archivos multimedia.</string>
+    <string name="text_preparing_attachment">Preparando...</string>
+    <string name="text_want_close_the_gallery_desc">¿Está seguro que desea cerrar la galería?</string>
 
-    <string name="multi_msg_cannot_share_more_ten">No se pueden compartir más de 10 archivos multimedia.</string>
-    <string name="multi_msg_remove_file">¿Está seguro de eliminar el archivo multimedia?</string>
-    <string name="multi_msg_preparing_files">Preparando tus archivos para envio</string>
-
-    <string name="multi_button_accept">Aceptar</string>
-    <string name="multi_button_cancel">Cancelar</string>
-    <string name="multi_button_remove_for_me">Eliminar para mí</string>
-    <string name="multi_button_remove_for_all">Eliminar para todos</string>
+    <string name="multi_title_exit">Múltiples adjuntos</string>
     <string name="multi_button_delete_for_me">Eliminar para mí</string>
     <string name="multi_button_delete_for_all">Eliminar para todos</string>
-
     <string name="multi_max_files_from_outside">No puedes enviar mas de 10 archivos</string>
 
 

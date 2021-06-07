@@ -8,5 +8,5 @@
     <string name="text_nickname_contain_at_least_one_number">Es muss mindestens eine Zahl enthalten</string>
     <string name="text_nickname_not_contain_enough_char_and_number">Der Spitzname muss mindestens 3 Zeichen und 1 Nummer enthalten</string>
     <string name="text_nickname_contain_at_least_one_letter">Der Spitzname muss an dem mindestens einen Buchstaben enthält</string>
-    <string name="text_only_start_letter">Der Spitzname muss mit einem Buchstaben beginnen</string>
+    <string name="text_nickname_must_begin_with_a_letter">Der Spitzname muss mit einem Buchstaben beginnen</string>
 </resources>

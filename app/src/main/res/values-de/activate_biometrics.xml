@@ -4,4 +4,7 @@
     <string name="text_only_pin">Stift</string>
     <string name="text_pin_and_fingerprint">PIN + Fingerabdruck</string>
     <string name="text_pin_and_unlock_facial">PIN + Face entsperren</string>
+    <string name="text_title_dialog_biometrics">Anwendungssperre</string>
+    <string name="text_description_dialog_biometrics">Entsperren Sie die Anwendung, indem Sie sie mit der Biometrie eingeben</string>
+    <string name="text_unallocated_unlock">Dem Gerät ist keine biometrische Entsperrung zugeordnet</string>
 </resources>

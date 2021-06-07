@@ -19,13 +19,10 @@
     <string name="text_accept">Accept</string>
     <string name="text_cancel">Cancel</string>
     <string name="text_continue">Continue</string>
-    <string name="text_welcome">Welcome</string>
     <string name="text_next">Next</string>
     <string name="text_fail">Something went wrong, please try again</string>
     <string name="text_name">Name</string>
     <string name="text_nickname_with_asterisk">Nickname*</string>
-    <string name="text_status">Status</string>
-    <string name="text_blocked_contacts">Blocked contacts</string>
     <string name="label_edit_photo">Edit photo</string>
     <string name="label_edit_cover">Edit banner</string>
     <string name="text_edit">Edit</string>
@@ -33,14 +30,6 @@
     <string name="text_search">Search</string>
     <string name="text_add_contact">Add contact</string>
     <string name="text_finish">Finish</string>
-    <string name="text_gallery">Gallery</string>
-    <string name="text_camera">Camera</string>
-    <string name="text_location">Location</string>
-    <string name="text_audio">Audio</string>
-    <string name="text_video">Video</string>
-    <string name="text_photo">Photo</string>
-    <string name="text_gif">Gif</string>
-    <string name="text_document">Document</string>
     <string name="text_error_connection">There is no Internet connection. Try again later</string>
     <string name="text_register">Register</string>
     <string name="text_answer">Answer</string>
@@ -59,8 +48,6 @@
         <item quantity="other">%d selected</item>
     </plurals>
     <string name="text_title_delete_conversation">Delete conversation</string>
-    <string name="text_block_contact">Block contact</string>
-    <string name="text_unblock_contact">Unblock Contact</string>
     <string name="text_attachment_document_name">Document.%1$s</string>
     <string name="text_status_limit">4 custom states are allowed; Removes one previously stored to add new one</string>
     <string name="text_alert_failure">Warning</string>
@@ -80,22 +67,16 @@
     <string name="text_yesterday">Yesterday</string>
     <string name="text_close">Close</string>
     <string name="text_confirm">Confirm</string>
-    <string name="text_hang_up_call">Hang up</string>
-    <string name="text_answer_call">Answer</string>
     <string name="text_update_title">A new version of NapoleoN is available</string>
     <string name="text_update_message">Version %1$s is now available on the Play Store</string>
     <string name="text_update">Update</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN needs access to the camera and microphone to make and receive calls</string>
-    <string name="text_twentyfour_hours">24 hours</string>
     <string name="text_access">ACCESS</string>
     <integer name="location_empty_state_contacts">4</integer>
     <string name="text_yes">Yes</string>
     <string name="text_no">No</string>
     <string name="text_empty_state_search_contacts">Your search yielded no results</string>
-    <string name="text_contact">CONTACT</string>
     <string name="text_error_updating_language">An error occurred changing language, please try again</string>
-    <string name="text_emptystate_search_friends_title">Search for your friends by nickname and communicate</string>
-    <string name="text_date_today">Today</string>
     <string name="text_title_attach_doc">Attached document</string>
     <string name="text_attch_doc_not_allowed">The selected file is not allowed</string>
     <string name="text_attch_doc_size_exceed">The selected file exceeds the allowed size (100MB)</string>
@@ -104,9 +85,43 @@
     <string name="text_count_messages">Messages</string>
     <string name="text_sending_file">Sending file</string>
     <string name="text_sending_file_multiple">Sending multiples files</string>
-
     <string name="text_downloading_file">Donwloading files</string>
     <string name="text_downloading_file_multiple">Donwloading multiple files</string>
-
     <string name="text_activated">activated</string>
+    <string name="msg_not_connection">You must have a connection for this process</string>
+
+    <!--    Landing-->
+    <string name="text_welcome">Welcome</string>
+
+    <!--    Profile-->
+    <string name="text_status">Status</string>
+    <string name="text_blocked_contacts">Blocked contacts</string>
+
+    <!--    menu Attachment-->
+    <string name="text_gallery">Gallery</string>
+    <string name="text_camera">Camera</string>
+    <string name="text_location">Location</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Photo</string>
+    <string name="text_gif">Gif</string>
+    <string name="text_document">Document</string>
+
+    <!--    Contacts-->
+    <string name="text_block_contact">Block contact</string>
+    <string name="text_unblock_contact">Unblock Contact</string>
+
+    <!--    Conversation -->
+    <string name="text_hang_up_call">Hang up</string>
+    <string name="text_answer_call">Answer</string>
+    <string name="text_date_today">Today</string>
+
+    <!--    Time format-->
+    <string name="text_twentyfour_hours">24 hours</string>
+
+    <!--    Contact-->
+    <string name="text_contact">CONTACT</string>
+
+    <!--    Empty State-->
+    <string name="text_emptystate_search_friends_title">Search for your friends by nickname and communicate</string>
 </resources>

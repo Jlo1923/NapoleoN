@@ -4,4 +4,7 @@
     <string name="text_only_pin">perno</string>
     <string name="text_pin_and_fingerprint">Pin + impronta digitale</string>
     <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
+    <string name="text_title_dialog_biometrics">Blocco dell\'applicazione</string>
+    <string name="text_description_dialog_biometrics">Sblocca l\'applicazione accedendo con il biometrico</string>
+    <string name="text_unallocated_unlock">Al dispositivo non è assegnato uno sblocco biometrico</string>
 </resources>

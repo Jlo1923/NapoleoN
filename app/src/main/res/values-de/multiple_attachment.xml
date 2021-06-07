@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_delete_attachment_title">Anhang entfernen</string>
+    <string name="text_delete_attachment">Um die ausgewählte Datei zu löschen?</string>
+    <string name="text_limit_selected_attachments">Sie können nicht mehr als 10 Multimedia-Dateien teilen.</string>
+    <string name="text_preparing_attachment">Vorbereitung...</string>
+    <string name="text_want_close_the_gallery_desc">Sind Sie sicher, dass Sie die Galerie schließen möchten?</string>
+
+    <string name="multi_title_exit">Mehrere Anlagen</string>
+    <string name="multi_button_delete_for_me">Löschen für mich</string>
+    <string name="multi_button_delete_for_all">Alles löschen</string>
+    <string name="multi_max_files_from_outside">Sie können nicht mehr als 10 Dateien senden</string>
+
+
+</resources>
