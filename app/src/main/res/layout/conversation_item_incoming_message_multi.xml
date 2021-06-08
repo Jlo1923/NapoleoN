@@ -60,7 +60,7 @@
 
         <TextView
             android:id="@+id/textView_msg"
-            style="@style/TextAppearance.AppCompat.Caption"
+            style="@style/MyMessageTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -93,6 +93,7 @@
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/imageButton_state"
         style="@style/ButtonState"
+        android:rotation="180"
         android:src="@drawable/ic_file_upload_black"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/container_message"

@@ -115,6 +115,7 @@ class HomeFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
+        validateMustGoToContacts()
     }
 
     override fun onCreateView(
@@ -314,7 +315,6 @@ class HomeFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        validateMustGoToContacts()
     }
 
     private fun validateMustGoToContacts() {

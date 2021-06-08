@@ -338,12 +338,30 @@ class MessageLocalDataSourceImp @Inject constructor(
             .map { listMessageRelations: List<MessageAttachmentRelation> ->
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
-                        messageAndAttachmentRelation.messagesUnReads =
-                            messageAndAttachmentRelation.contact?.id?.let {
-                                messageDao.countUnreadByContactId(
-                                    it
-                                )
+                        val unReadMsgs = messageAndAttachmentRelation.contact?.id?.let {
+                            messageDao.countUnreadByContactId(it)
+                        } ?: run { 0 }
+
+                        val unreadAttachments = messageAndAttachmentRelation.contact?.id?.let {
+                            val msgsByContact = messageDao.getMessagesByContact(it)
+                            var countAttachmentsUnread = 0
+                            msgsByContact.forEach { msgAndRelation ->
+                                if (msgAndRelation.messageEntity.numberAttachments > 1) {
+                                    val numberAttachments =
+                                        msgAndRelation.messageEntity.numberAttachments
+                                    val attachmentsRead =
+                                        msgAndRelation.attachmentEntityList.count {
+                                            it.status == Constants.AttachmentStatus.READED.status
+                                        }
+                                    countAttachmentsUnread += (numberAttachments - attachmentsRead)
+                                }
                             }
+                            countAttachmentsUnread
+                        } ?: run { 0 }
+
+                        messageAndAttachmentRelation.messagesUnReads =
+                            unReadMsgs + unreadAttachments
+
                         with(messageAndAttachmentRelation.messageEntity) {
                             this.let {
                                 it.body = it.getBody(cryptoMessage)
