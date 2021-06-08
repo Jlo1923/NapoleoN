@@ -278,6 +278,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     private fun showPagerAndOptions() = viewBinding.apply {
         progressLoader.hide()
+        textLoading.hide()
         showViews(viewPagerAttachments, viewPreviewBottom, viewAttachmentOptions)
     }
 
