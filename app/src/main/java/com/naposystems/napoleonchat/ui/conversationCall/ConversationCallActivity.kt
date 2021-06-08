@@ -34,14 +34,14 @@ import com.naposystems.napoleonchat.webRTC.client.EventFromWebRtcClientListener
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
 import dagger.android.AndroidInjection
-import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 class ConversationCallActivity :
-    AppCompatActivity(), EventFromWebRtcClientListener {
+    AppCompatActivity(),
+    EventFromWebRtcClientListener {
 
     companion object {
 

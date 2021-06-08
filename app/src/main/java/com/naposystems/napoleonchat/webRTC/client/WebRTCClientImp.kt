@@ -200,7 +200,7 @@ class WebRTCClientImp
     //endregion
 
     init {
-        Timber.d("LLAMADA PASO: EN WEBRTCLIENT")
+        Timber.d("LLAMADA PASO: EN WEBRTCCLIENT")
         reInit()
         subscribeToRXEvents()
         socketClient.setEventsFromSocketClientListener(this)
@@ -562,8 +562,9 @@ class WebRTCClientImp
     }
 
     override fun playEndCall() {
-        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
-        MediaPlayer().apply  {
+        val uri =
+            Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
+        MediaPlayer().apply {
             setDataSource(
                 context,
                 uri
