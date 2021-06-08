@@ -12,6 +12,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -32,6 +33,7 @@ import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import com.naposystems.napoleonchat.webRTC.client.EventFromWebRtcClientListener
 import com.naposystems.napoleonchat.webRTC.client.WebRTCClient
 import com.naposystems.napoleonchat.webRTC.service.WebRTCService
+import dagger.android.AndroidInjection
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,7 +41,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class ConversationCallActivity :
-    DaggerAppCompatActivity(), EventFromWebRtcClientListener {
+    AppCompatActivity(), EventFromWebRtcClientListener {
 
     companion object {
 
@@ -75,6 +77,8 @@ class ConversationCallActivity :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        AndroidInjection.inject(this)
 
         Timber.d("LLAMADA PASO 1: MOSTRANDO ACTIVIDAD LLAMADA")
 

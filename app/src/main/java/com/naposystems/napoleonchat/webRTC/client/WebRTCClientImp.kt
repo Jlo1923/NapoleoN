@@ -562,8 +562,8 @@ class WebRTCClientImp
     }
 
     override fun playEndCall() {
-        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone)
-        MediaPlayer().apply {
+        val uri = Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
+        MediaPlayer().apply  {
             setDataSource(
                 context,
                 uri
