@@ -489,6 +489,7 @@ class WebRTCClientImp
     }
 
     //Camera
+    //previousState es el estado anterior de la camara, tener cuidado con eso
     override fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean) {
         if (NapoleonApplication.callModel?.isVideoCall == true) {
 
