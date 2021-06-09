@@ -38,7 +38,7 @@ fun ItemMessage.getMessageEntityForCreate(): MessageEntity {
         updatedAt = 0,
         createdAt = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt(),
         isMine = Constants.IsMine.YES.value,
-        status = Constants.MessageStatus.ERROR.status,
+        status = Constants.MessageStatus.SENDING.status,
         numberAttachments = numberAttachments,
         messageType = Constants.MessageTextType.NORMAL.type,
         selfDestructionAt = selfDestructTime

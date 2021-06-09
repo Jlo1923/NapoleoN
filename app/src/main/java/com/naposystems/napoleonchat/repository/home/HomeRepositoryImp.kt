@@ -14,8 +14,12 @@ import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipReque
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
+import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -76,14 +80,59 @@ class HomeRepositoryImp @Inject constructor(
                             insertQuote(messageRes, messageId.toInt())
                         }
 
-                        attachmentLocalDataSource.insertAttachments(
-                            AttachmentResDTO.toListConversationAttachment(
-                                messageId.toInt(),
-                                messageRes.attachments
-                            )
+                        handlerAttachments(
+                            messageRes.attachments,
+                            message.id,
+                            message.contactId
                         )
                     }
                 }
+            }
+        }
+    }
+
+    @Synchronized
+    suspend fun handlerAttachments(
+        attachments: List<AttachmentResDTO>,
+        messageId: Int,
+        contactId: Int
+    ) {
+        val listAttachments = AttachmentResDTO.toListConversationAttachment(
+            messageId,
+            attachments
+        )
+
+        /**
+         * Solo hacemos insersion de attachments sino existe
+         * por medio de su id
+         */
+        listAttachments.forEach { attachment ->
+            attachmentLocalDataSource.apply {
+                if (this.existAttachmentByWebId(attachment.webId).not()) {
+                    this.insertAttachments(listOf(attachment))
+                }
+
+                val listUniqueAttachment = MessageDTO(
+                    id = attachment.webId,
+                    type = Constants.MessageType.ATTACHMENT.type,
+                    user = contactId,
+                    status = Constants.StatusMustBe.RECEIVED.status
+                )
+                notifyMessageReceivedRemote(MessagesReqDTO(listOf(listUniqueAttachment)))
+            }
+        }
+    }
+
+    fun notifyMessageReceivedRemote(messagesReqDTO: MessagesReqDTO) {
+
+        Timber.d("**Paso 9: Proceso consumir recibido del item $messagesReqDTO")
+
+        GlobalScope.launch {
+            try {
+                Timber.d("**Paso 9.1: Proceso consumir recibido del item $messagesReqDTO")
+                napoleonApi.notifyMessageReceived(messagesReqDTO)
+            } catch (e: Exception) {
+                Timber.e(e)
             }
         }
     }

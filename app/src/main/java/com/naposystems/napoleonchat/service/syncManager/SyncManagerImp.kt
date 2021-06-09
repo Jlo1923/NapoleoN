@@ -118,10 +118,14 @@ class SyncManagerImp @Inject constructor(
             if (messageRes.quoted.isNotEmpty())
                 insertQuote(messageRes.quoted, messageId.toInt())
 
-            handlerAttachments(messageRes.attachments, messageId.toInt())
+            handlerAttachments(messageRes.attachments, messageId.toInt(), message.contactId)
 
         } else {
-            handlerAttachments(messageRes.attachments, databaseMessage.messageEntity.id)
+            handlerAttachments(
+                messageRes.attachments,
+                databaseMessage.messageEntity.id,
+                databaseMessage.messageEntity.contactId
+            )
         }
 
     }
@@ -129,7 +133,8 @@ class SyncManagerImp @Inject constructor(
     @Synchronized
     suspend fun handlerAttachments(
         attachments: List<AttachmentResDTO>,
-        messageId: Int
+        messageId: Int,
+        contactId: Int
     ) {
         val listAttachments = AttachmentResDTO.toListConversationAttachment(
             messageId,
@@ -145,6 +150,14 @@ class SyncManagerImp @Inject constructor(
                 if (this.existAttachmentByWebId(attachment.webId).not()) {
                     this.insertAttachments(listOf(attachment))
                 }
+
+                val listUniqueAttachment = MessageDTO(
+                    id = attachment.webId,
+                    type = Constants.MessageType.ATTACHMENT.type,
+                    user = contactId,
+                    status = StatusMustBe.RECEIVED.status
+                )
+                notifyMessageReceivedRemote(MessagesReqDTO(listOf(listUniqueAttachment)))
             }
         }
     }
@@ -155,20 +168,24 @@ class SyncManagerImp @Inject constructor(
         val listMessagesNotify: MutableList<MessageAttachmentRelation> = mutableListOf()
 
         listMessages.forEach { messsageRes ->
+
             messsageRes.id.let { messageIdWeb ->
 
                 val messageAttachmentRelation =
                     messageLocalDataSource.getMessageByWebId(messageIdWeb, false)
 
-                if (messageAttachmentRelation != null)
-                    listMessagesNotify.add(messageAttachmentRelation)
+                if (messageAttachmentRelation != null) {
+                    if (messageAttachmentRelation.messageEntity.numberAttachments <= 1) {
+                        listMessagesNotify.add(messageAttachmentRelation)
+                    }
+                }
             }
         }
 
         val listMessagesReceived =
             listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED)
 
-        notifyMessageReceived(listMessagesReceived)
+        notifyMessageReceivedRemote(listMessagesReceived)
 
         getMessagesSocketListener?.emitSocketClientConversation(listMessagesReceived)
 
@@ -436,7 +453,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun notifyMessageReceived(messagesReqDTO: MessagesReqDTO) {
+    override fun notifyMessageReceivedRemote(messagesReqDTO: MessagesReqDTO) {
 
         Timber.d("**Paso 9: Proceso consumir recibido del item $messagesReqDTO")
 
@@ -799,7 +816,8 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReceived() || it.isDownloadComplete() }
+                        val filter =
+                            msgAndRelation.attachmentEntityList.filter { it.isReceived() || it.isDownloadComplete() }
                         if (filter.size == msgAndRelation.messageEntity.numberAttachments) {
                             updateMessagesStatus(
                                 listOf(msgAndRelation.messageEntity.webId),

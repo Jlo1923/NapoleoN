@@ -79,6 +79,7 @@ class SocketClientImp
 
     // TODO: move that tan pronto como sea posible
     private val queueNewMessageDataEventRes = LinkedList<NewMessageDataEventRes>()
+    private val queueNewMessageAllData = LinkedList<NewMessageDataEventRes>()
 
     companion object {
         const val HANGUP_CALL = 2
@@ -626,12 +627,19 @@ class SocketClientImp
         // la validacion de ningun ambiente sin cifrar lo que dificultad la validacion de los metodos desde el servidor
 
         pusher.getPrivateChannel(privateGeneralChannelName)
+            .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
+                SubscriptionEventListener {}
+            )
+
+        pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.NEW_MESSAGE.event,
+
                 object : PrivateChannelEventListener {
+
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("Pusher: listenNewMessage:${event?.data}")
                         if (NapoleonApplication.isVisible) {
-                            handleEventData(event)
+                            handleNewMessageEventData(event)
                             Timber.d("Pusher: appVisible")
                         }
                     }
@@ -642,10 +650,11 @@ class SocketClientImp
                     ) = Unit
 
                     override fun onSubscriptionSucceeded(channelName: String?) = Unit
+
                 })
     }
 
-    private fun handleEventData(event: PusherEvent?) {
+    private fun handleNewMessageEventData(event: PusherEvent?) {
         try {
 
             //TODO: Refactorizar este metodo para que pueda ser utilizado tanto por SocketClient como
@@ -660,16 +669,17 @@ class SocketClientImp
                 dataEvent?.data?.let { newMessageDataEventRes ->
 
                     Timber.d("syncManager.insertNewMessage")
-                    /**
-                     * Ojo con esto
-                     */
+
                     if (queueNewMessageDataEventRes.isEmpty()) {
                         queueNewMessageDataEventRes.add(newMessageDataEventRes)
-                        tryHandleNextItemInQueue()
+                        queueNewMessageAllData.add(newMessageDataEventRes)
+                        tryHandlerNextItemNewMessageInQueue()
                     } else {
-                        queueNewMessageDataEventRes.add(newMessageDataEventRes)
+                        if (queueNewMessageAllData.contains(queueNewMessageDataEventRes).not()) {
+                            queueNewMessageDataEventRes.add(newMessageDataEventRes)
+                            queueNewMessageAllData.add(newMessageDataEventRes)
+                        }
                     }
-                    //syncManager.insertNewMessage(newMessageDataEventRes)
 
                     val messageString: String = if (BuildConfig.ENCRYPT_API) {
                         cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
@@ -677,14 +687,13 @@ class SocketClientImp
                         newMessageDataEventRes.message
                     }
 
-                    val jsonAdapterMessage =
-                        moshi.adapter(NewMessageEventMessageRes::class.java)
+                    val jsonAdapterMessage = moshi.adapter(NewMessageEventMessageRes::class.java)
 
                     jsonAdapterMessage.fromJson(messageString)?.let { messageModel ->
                         if (mustEmitClientConversationByContactId(messageModel)) {
                             val listMessagesToReceived =
                                 listOf(messageModel).toMessagesReqDTO(RECEIVED)
-                            syncManager.notifyMessageReceived(listMessagesToReceived)
+                            syncManager.notifyMessageReceivedRemote(listMessagesToReceived)
                             emitClientConversation(listMessagesToReceived)
                         }
                     }
@@ -695,7 +704,8 @@ class SocketClientImp
         }
     }
 
-    private fun tryHandleNextItemInQueue() {
+    private fun tryHandlerNextItemNewMessageInQueue() {
+
         GlobalScope.launch {
 
             val element = if (queueNewMessageDataEventRes.isEmpty().not()) {
@@ -725,11 +735,13 @@ class SocketClientImp
                         insertNewMessageAndAttachmentLocally(element)
                     }
                     queueNewMessageDataEventRes.poll()
-                    tryHandleNextItemInQueue()
+                    tryHandlerNextItemNewMessageInQueue()
                 } catch (exception: Exception) {
                     Timber.d("syncManager.insertNewMessage")
                     exception.printStackTrace()
                 }
+            } ?: run {
+                queueNewMessageDataEventRes.clear()
             }
         }
     }
@@ -758,18 +770,27 @@ class SocketClientImp
                     idMessage,
                     newMessageEventMessageRes.attachments
                 )
-            attachmentLocalDataSource.insertAttachments(listAttachments)
 
-            val listMessagesToReceived =
-                listOf(newMessageEventMessageRes).toMessagesReqDTO(RECEIVED)
+            listAttachments.forEach {
+                val theAttach = attachmentLocalDataSource.getAttachmentByWebId(it.webId)
+                if (theAttach == null) {
+                    attachmentLocalDataSource.insertAttachments(listAttachments)
 
-            syncManager.notifyMessageReceived(listMessagesToReceived)
-            emitClientConversation(listMessagesToReceived)
+                    val listMessagesToReceived =
+                        listOf(newMessageEventMessageRes).toMessagesReqDTO(RECEIVED)
 
-            //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
-            // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+                    syncManager.notifyMessageReceivedRemote(listMessagesToReceived)
+                    emitClientConversation(listMessagesToReceived)
 
-            RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
+                    //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
+                    // en el SocketClientImp se hace la emisión por tanto este proceso deberia hacerse allá
+
+                    RxBus.publish(RxEvent.NewMessageEventForCounter(newMessageDataEventRes.contactId))
+                }
+
+            }
+
+
         }
     }
 
@@ -777,7 +798,9 @@ class SocketClientImp
     private suspend fun insertNewMessageAndAttachmentLocally(
         newMessageDataEventRes: NewMessageDataEventRes
     ) {
+
         getContacts()
+
         val newMessageEventData = if (BuildConfig.ENCRYPT_API) {
             cryptoMessage.decryptMessageBody(newMessageDataEventRes.message)
         } else {
@@ -788,12 +811,14 @@ class SocketClientImp
             Moshi.Builder().build().adapter(NewMessageEventMessageRes::class.java)
 
         jsonAdapter.fromJson(newMessageEventData)?.let { newMessageEventMessageRes ->
+
             val message = newMessageEventMessageRes.toMessageEntity(Constants.IsMine.NO.value)
             val messageId = messageLocalDataSource.insertMessage(message)
             Log.i("JkDev", "Insertamos attachment desde creacion: $messageId")
             if (newMessageEventMessageRes.quoted.isNotEmpty()) {
                 insertQuote(newMessageEventMessageRes.quoted, messageId.toInt())
             }
+
             val listAttachments =
                 NewMessageEventAttachmentRes.toListConversationAttachment(
                     messageId.toInt(),
@@ -804,7 +829,7 @@ class SocketClientImp
             val listMessagesToReceived =
                 listOf(newMessageEventMessageRes).toMessagesReqDTO(RECEIVED)
 
-            syncManager.notifyMessageReceived(listMessagesToReceived)
+            syncManager.notifyMessageReceivedRemote(listMessagesToReceived)
             emitClientConversation(listMessagesToReceived)
 
             //TODO: JuankDev12 tambien hay que emitir por sokect aqui solo esta emitiendo por notificacion
@@ -887,6 +912,7 @@ class SocketClientImp
             .bind(Constants.SocketListenEvents.NOTIFY_MESSAGES_RECEIVED.event,
 
                 object : PrivateChannelEventListener {
+
                     override fun onEvent(event: PusherEvent?) {
                         Timber.d("NotifyMessagesReceived: ${event?.data}")
                         event?.data?.let { messagesReceivedResDto ->
@@ -899,9 +925,7 @@ class SocketClientImp
                         e: java.lang.Exception?
                     ) = Unit
 
-                    override fun onSubscriptionSucceeded(
-                        channelName: String?
-                    ) = Unit
+                    override fun onSubscriptionSucceeded(channelName: String?) = Unit
 
                 })
     }
@@ -914,9 +938,9 @@ class SocketClientImp
 
         dataDataEvent?.data?.let { messagesResDTO ->
 
-            val listIdMsgs = messagesResDTO.extractIdsMessages()
-            if (listIdMsgs.isEmpty().not()) {
-                syncManager.updateMessagesStatus(listIdMsgs, UNREAD.status)
+            val listIdMessages = messagesResDTO.extractIdsMessages()
+            if (listIdMessages.isNotEmpty()) {
+                syncManager.updateMessagesStatus(listIdMessages, UNREAD.status)
             }
 
             val idsAttachments = messagesResDTO.extractIdsAttachments()
@@ -924,13 +948,10 @@ class SocketClientImp
                 val ids = idsAttachments.filter { syncManager.existAttachmentById(it) }
                 if (ids.isNotEmpty()) {
                     syncManager.updateAttachmentsStatus(ids, AttachmentStatus.RECEIVED.status)
-                }
-
-                /**
-                 * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
-                 * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
-                 */
-                if (ids.isNotEmpty()) {
+                    /**
+                     * Debemos consultar cuantos attachments tiene marcados como recibidos, si tiene todos
+                     * como recibidos, marcamos el mensaje como recibido y update selfdestruction time
+                     */
                     syncManager.tryMarkMessageParentAsReceived(ids)
                 }
             }
@@ -1019,6 +1040,7 @@ class SocketClientImp
         pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName)
             .bind(Constants.SocketEmitTriggers.CLIENT_CONVERSATION.trigger,
                 object : PrivateChannelEventListener {
+
                     override fun onEvent(event: PusherEvent?) {
                         try {
                             event?.data?.let { messagesResDTO ->
@@ -1037,10 +1059,7 @@ class SocketClientImp
                                 }
 
                                 //Seccion Actualizar MESSAGE UNREAD
-                                messages?.filter {
-                                    it.status == Constants.MessageEventType.UNREAD.status &&
-                                            it.type == Constants.MessageType.TEXT.type
-                                }?.map {
+                                messages?.filter { it.isUnread() && it.isTypeText() }?.map {
                                     it.id
                                 }?.let {
                                     if (it.isNotEmpty()) {
@@ -1080,10 +1099,12 @@ class SocketClientImp
                                 }?.map {
                                     it.id
                                 }?.let {
-                                    syncManager.updateAttachmentsStatus(
-                                        it,
-                                        AttachmentStatus.RECEIVED.status
-                                    )
+                                    if (it.isNotEmpty()) {
+                                        syncManager.updateAttachmentsStatus(
+                                            it,
+                                            AttachmentStatus.RECEIVED.status
+                                        )
+                                    }
                                 }
 
                                 //Seccion Actualizar ATTACHMENT READED
@@ -1093,10 +1114,12 @@ class SocketClientImp
                                 }?.map {
                                     it.id
                                 }?.let {
-                                    syncManager.validateMessageType(
-                                        it,
-                                        Constants.MessageStatus.READED.status
-                                    )
+                                    if (it.isNotEmpty()) {
+                                        syncManager.validateMessageType(
+                                            it,
+                                            Constants.MessageStatus.READED.status
+                                        )
+                                    }
                                 }
 
                             }
