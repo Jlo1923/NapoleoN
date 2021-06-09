@@ -18,6 +18,7 @@ interface EventFromWebRtcClientListener {
     fun showOccupiedTitle()
     fun showFinishingTitle()
     fun enableControls()
+    fun handlerActiveCall()
     fun showRemoteVideo()
     fun changeTextviewTitle(stringResourceId: Int)
     fun toggleLocalRenderVisibility(visibility: Int)

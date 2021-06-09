@@ -37,7 +37,7 @@ interface WebRTCClient {
     fun renderRemoteVideo()
 
     //Camera
-    fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
+    fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean = false)
     fun switchCamera()
 
     //Ringtone

@@ -234,9 +234,7 @@ class WebRTCClientImp
             } catch (e: Exception) {
                 Timber.e("iceCandidatesCaller")
             }
-
             callTime = 0
-
 //            isActiveCall = false
             isHideVideo = false
             contactCameraIsVisible = false
@@ -460,24 +458,20 @@ class WebRTCClientImp
             localVideoTrack?.addSink(localSurfaceViewRenderer)
         }
 
-        videoCapturerAndroid?.startCapture(640, 480, 30)
+        videoCapturerAndroid?.startCapture(640, 480, 15)
 
     }
 
     override fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
         localSurfaceViewRenderer = surfaceViewRenderer
-        Timber.d("Aqui hago pausa")
     }
 
     override fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
         remoteSurfaceViewRenderer = surfaceViewRenderer
-        Timber.d("Aqui hago pausa")
     }
 
     override fun renderRemoteVideo() {
-
         try {
-
             stopProximitySensor()
 
             if (isBluetoothAvailable) {
@@ -488,60 +482,45 @@ class WebRTCClientImp
 
             remoteMediaStream.videoTracks.first()?.addSink(remoteSurfaceViewRenderer)
 
-            eventFromWebRtcClientListener?.showRemoteVideo()
-
         } catch (e: Exception) {
             Timber.d("NO Got Remote Stream")
             Timber.e(e)
         }
-
     }
 
     //Camera
-    override fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean) {
-
+    override fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean) {
         if (NapoleonApplication.callModel?.isVideoCall == true) {
 
-            isHideVideo = checked
-
-            if (checked) {
-
+            if (previousState) {
                 videoCapturerAndroid?.stopCapture()
-
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_OFF_CAMERA
                     )
                 }
-
                 eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.INVISIBLE)
-
             } else {
-
-                videoCapturerAndroid?.startCapture(640, 480, 30)
-
-
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_ON_CAMERA
                     )
                 }
-
                 eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.VISIBLE)
-
             }
 
-        }
+            if (itsFromBackPressed && previousState) {
+                localMediaStream.removeTrack(localVideoTrack)
+            }
 
-        if (itsFromBackPressed) {
-            videoCapturerAndroid?.stopCapture()
-            localMediaStream.removeTrack(localVideoTrack)
+            isHideVideo = if (itsFromBackPressed) false else previousState
+
         }
     }
 
     override fun switchCamera() {
-        val videoCapturer = videoCapturerAndroid as CameraVideoCapturer
-        videoCapturer.switchCamera(null)
+        val cameraVideoCapturer = videoCapturerAndroid as CameraVideoCapturer
+        cameraVideoCapturer.switchCamera(null)
     }
 
     //Ringtone
@@ -732,7 +711,7 @@ class WebRTCClientImp
                         socketClient.disconnectSocket()
                     } else {
                         Timber.d("LLAMADA PASO 3: unsubscribe presence DISPOSE CALL")
-                        callModel.channelName?.let {
+                        callModel.channelName.let {
                             socketClient.unSubscribePresenceChannel()
                         }
                     }
@@ -779,9 +758,9 @@ class WebRTCClientImp
         }
     }
 
-    //endregion
+//endregion
 
-    //region Metodos privados
+//region Metodos privados
 
     private fun subscribeToRXEvents() {
         val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
@@ -1120,6 +1099,7 @@ class WebRTCClientImp
 
         eventFromWebRtcClientListener?.enableControls()
 
+        eventFromWebRtcClientListener?.handlerActiveCall()
 
         if (callTime == 0L)
             callTimerHandler.postDelayed(
@@ -1147,7 +1127,7 @@ class WebRTCClientImp
         }
     }
 
-    //endregion
+//endregion
 
     //region Implementation EventsFromSocketClientListener
     override fun itsSubscribedToPresenceChannelOutgoingCall() {
@@ -1265,12 +1245,16 @@ class WebRTCClientImp
     }
 
     //Turn ON/OFF Camera
-    override fun toggleContactCamera(contactCameraIsVisible: Boolean) {
+    override fun toggleContactCamera(isVisible: Boolean) {
         NapoleonApplication.callModel.let { callModel ->
             if (callModel?.channelName != "") {
-                this.contactCameraIsVisible = contactCameraIsVisible
-                eventFromWebRtcClientListener?.toggleContactCamera(if (contactCameraIsVisible.not()) View.VISIBLE else View.INVISIBLE)
-
+                this.contactCameraIsVisible = isVisible
+                if (isVisible.not()) {
+                    eventFromWebRtcClientListener?.toggleContactCamera(View.VISIBLE)
+                } else {
+                    eventFromWebRtcClientListener?.toggleContactCamera(View.INVISIBLE)
+                    initSurfaceRenders()
+                }
             }
         }
     }
@@ -1319,7 +1303,7 @@ class WebRTCClientImp
 
     }
 
-    //endregion
+//endregion
 
     //region Implementation BluetoothStateManager.BluetoothStateListener
     override fun onBluetoothStateChanged(isBluetoothAvailable: Boolean) {
@@ -1351,6 +1335,6 @@ class WebRTCClientImp
         }
         eventFromWebRtcClientListener?.toggleBluetoothButtonVisibility(isBluetoothAvailable)
     }
-    //endregion
+//endregion
 
 }
