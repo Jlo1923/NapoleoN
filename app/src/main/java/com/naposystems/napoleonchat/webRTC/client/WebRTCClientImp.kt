@@ -410,19 +410,13 @@ class WebRTCClientImp
 
     //Video
     override fun initSurfaceRenders() {
-
         localSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
         localSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-
         remoteSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
         remoteSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-
         localSurfaceViewRenderer?.setMirror(true)
-
         remoteSurfaceViewRenderer?.setMirror(false)
-
         startCaptureVideo()
-
     }
 
     override fun startCaptureVideo() {
@@ -489,7 +483,7 @@ class WebRTCClientImp
     }
 
     //Camera
-    //previousState es el estado anterior de la camara, tener cuidado con eso
+    //previousState es el estado anterior de la vista, tener cuidado con eso
     override fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean) {
         if (NapoleonApplication.callModel?.isVideoCall == true) {
 
@@ -693,8 +687,8 @@ class WebRTCClientImp
 
                 disposingCall = true
 
-                typeEndCall?.let { typeEndCall ->
-                    when (typeEndCall) {
+                typeEndCall?.let {
+                    when (it) {
                         TypeEndCallEnum.TYPE_CANCEL -> {
                             syncManager.cancelCall()
                         }
@@ -878,24 +872,21 @@ class WebRTCClientImp
                         Timber.d("LLAMADA PASO: onAddTrack RTPRECEIVERS $rtpReceiver")
                         Timber.d("LLAMADA PASO: onAddTrack MEDIASTREAMS $mediaStreams")
 
-                        if (mediaStreams.isNotEmpty()) {
+                        if (mediaStreams.isNotEmpty() && NapoleonApplication.callModel?.isVideoCall == true) {
 
-                            if (NapoleonApplication.callModel?.isVideoCall == true) {
+                            Timber.d("LLAMADA PASO: onAddTrack NapoleonApplication.callModel?.isVideoCall")
 
-                                Timber.d("LLAMADA PASO: onAddTrack NapoleonApplication.callModel?.isVideoCall")
+                            remoteMediaStream = mediaStreams.first()
 
-                                remoteMediaStream = mediaStreams.first()
+                            if (mediaStreams.first().videoTracks.isNotEmpty() && NapoleonApplication.statusCall.isConnectedCall()) {
 
-                                if (mediaStreams.first().videoTracks.isNotEmpty() && NapoleonApplication.statusCall.isConnectedCall()) {
+                                remoteMediaStream.videoTracks.first()
+                                    ?.addSink(remoteSurfaceViewRenderer)
 
-                                    remoteMediaStream.videoTracks.first()
-                                        ?.addSink(remoteSurfaceViewRenderer)
+                                peerConnection?.addStream(mediaStreams.first())
 
-                                    peerConnection?.addStream(mediaStreams.first())
+                                renderRemoteVideo()
 
-                                    renderRemoteVideo()
-
-                                }
                             }
                         }
                     }
@@ -1261,7 +1252,7 @@ class WebRTCClientImp
     }
 
     override fun contactHasHangup() {
-        NapoleonApplication.callModel.let { _ ->
+        NapoleonApplication.callModel.let {
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
             playEndCall()
             disposeCall()
@@ -1307,10 +1298,10 @@ class WebRTCClientImp
 //endregion
 
     //region Implementation BluetoothStateManager.BluetoothStateListener
-    override fun onBluetoothStateChanged(isBluetoothAvailable: Boolean) {
-        Timber.d("onBluetoothStateChanged: $isBluetoothAvailable")
+    override fun onBluetoothStateChanged(available: Boolean) {
+        Timber.d("onBluetoothStateChanged: $available")
 
-        this.isBluetoothAvailable = isBluetoothAvailable
+        this.isBluetoothAvailable = available
 
         if (isFirstTimeBluetoothAvailable.not() && isHeadsetConnected.not()) {
             Timber.d("isFirstTimeBluetoothAvailableeeee")
@@ -1318,23 +1309,22 @@ class WebRTCClientImp
             audioManager.startBluetoothSco()
             audioManager.isBluetoothScoOn = true
             audioManager.isSpeakerphoneOn = false
-//            stopProximitySensor()
         }
 
-        if (isBluetoothAvailable && NapoleonApplication.callModel?.isVideoCall == true && isBluetoothStopped) {
+        if (available && NapoleonApplication.callModel?.isVideoCall == true && isBluetoothStopped) {
             Timber.d("onBluetoothStateChanged 2do")
             audioManager.isSpeakerphoneOn = true
         }
 
-        if (isBluetoothAvailable && NapoleonApplication.callModel?.isVideoCall == false) {
+        if (available && NapoleonApplication.callModel?.isVideoCall == false) {
             stopProximitySensor()
         }
 
-        if (isBluetoothAvailable.not() && isHeadsetConnected) {
+        if (available.not() && isHeadsetConnected) {
             Timber.d("onBluetoothStateChanged 3ero")
             audioManager.isSpeakerphoneOn = false
         }
-        eventFromWebRtcClientListener?.toggleBluetoothButtonVisibility(isBluetoothAvailable)
+        eventFromWebRtcClientListener?.toggleBluetoothButtonVisibility(available)
     }
 //endregion
 

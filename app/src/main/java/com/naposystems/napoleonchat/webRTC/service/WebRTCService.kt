@@ -191,11 +191,6 @@ class WebRTCService : Service() {
 
             if (callModel.channelName != "" && callModel.contactId > 0 && this.hasMicAndCameraPermission()) {
 
-//                callModel.typeCall = if (callModel.offer != "")
-//                    Constants.TypeCall.IS_INCOMING_CALL
-//                else
-//                    Constants.TypeCall.IS_OUTGOING_CALL
-
                 val notification = handlerNotification.createNotificationCallBuilder()
 
                 startForeground(HandlerNotificationImp.NOTIFICATION_CALL_ACTIVE, notification)

@@ -157,14 +157,16 @@ class ConversationCallActivity :
     }
 
     override fun onStart() {
-
+        Timber.d("LLAMADA PASO: onStart")
         if (NapoleonApplication.callModel?.isVideoCall == true)
             initSurfaceRenders()
 
         if (NapoleonApplication.statusCall.isNoCall()) {
             when (NapoleonApplication.callModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> {
-                    if (isAnswerCall.not())
+                    if (isAnswerCall)
+                        answerCall()
+                    else
                         webRTCClient.playRingTone()
                 }
                 Constants.TypeCall.IS_OUTGOING_CALL ->
@@ -263,7 +265,7 @@ class ConversationCallActivity :
                     if (extras.getBoolean(ACTION_ANSWER_CALL, false)) {
                         isAnswerCall = true
                         Timber.d("LLAMADA PASO: LLAMADA ENTRANTE RESPONDIENDO LLAMADA")
-                        answerCall()
+//                        answerCall()
                     }
                 }
                 if (extras.getBoolean(ACTION_RETURN_CALL, true)) {
