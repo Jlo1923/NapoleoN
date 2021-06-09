@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.source.remote.dto.messagesReceived
 
+import com.naposystems.napoleonchat.utility.Constants
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -56,4 +57,13 @@ data class MessageDTO(
     @Json(name = "type") val type: Int,
     @Json(name = "user") val user: Int?,
     @Json(name = "status") val status: Int?
-)
+) {
+    fun isUnread(): Boolean {
+        return this.status == Constants.MessageEventType.UNREAD.status
+    }
+
+    fun isTypeText(): Boolean {
+        return this.type == Constants.MessageType.TEXT.type
+    }
+
+}

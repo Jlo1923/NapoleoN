@@ -30,6 +30,7 @@ interface IContractMultipleUpload {
         ): Flow<VideoCompressResult>
 
         fun verifyMustMarkMessageAsSent(it: MessageEntity)
+        
     }
 
 }

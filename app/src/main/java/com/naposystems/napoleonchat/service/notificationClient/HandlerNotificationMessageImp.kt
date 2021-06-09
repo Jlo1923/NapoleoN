@@ -141,7 +141,7 @@ class HandlerNotificationMessageImp
         jsonAdapterMessage.fromJson(messageString)
             ?.let { messageModel ->
                 val listMessagesToReceived = listOf(messageModel).toMessagesReqDTO(RECEIVED)
-                syncManager.notifyMessageReceived(listMessagesToReceived)
+                syncManager.notifyMessageReceivedRemote(listMessagesToReceived)
                 socketClient.emitClientConversation(listMessagesToReceived)
             }
     }
