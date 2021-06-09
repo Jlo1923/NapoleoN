@@ -1,6 +1,6 @@
 package com.naposystems.napoleonchat.webRTC.client
 
-interface EvenstFromWebRTCClientListener {
+interface EventFromWebRtcClientListener {
 
     //Turn ON/OFF Camera
     fun toggleContactCamera(visibility: Int)
@@ -18,6 +18,7 @@ interface EvenstFromWebRTCClientListener {
     fun showOccupiedTitle()
     fun showFinishingTitle()
     fun enableControls()
+    fun handlerActiveCall()
     fun showRemoteVideo()
     fun changeTextviewTitle(stringResourceId: Int)
     fun toggleLocalRenderVisibility(visibility: Int)

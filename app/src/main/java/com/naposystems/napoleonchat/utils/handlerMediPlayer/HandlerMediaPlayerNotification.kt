@@ -2,14 +2,14 @@ package com.naposystems.napoleonchat.utils.handlerMediPlayer
 
 interface HandlerMediaPlayerNotification {
 
-    fun playRingtone()
+    fun playRingTone()
 
     fun playEndTone()
 
-    fun playRingBack()
+    fun playBackTone()
 
     fun playBusyTone()
 
-    fun stopRingtone()
+    fun stopTone()
 
 }

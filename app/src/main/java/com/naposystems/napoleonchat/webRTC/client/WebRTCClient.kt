@@ -17,17 +17,11 @@ interface WebRTCClient {
     var isBluetoothActive: Boolean
 
     fun reInit()
-
-    fun setEventsFromWebRTCClientListener(evenstFromWebRTCClientListener: EvenstFromWebRTCClientListener)
-
+    fun setEventsFromWebRTCClientListener(eventFromWebRtcClientListener: EventFromWebRtcClientListener)
     fun connectSocket()
-
     suspend fun subscribeToPresenceChannel()
-
     fun setOffer()
-
     fun createAnswer()
-
     fun startWebRTCService()
 
     //Change to video Call
@@ -43,13 +37,13 @@ interface WebRTCClient {
     fun renderRemoteVideo()
 
     //Camera
-    fun toggleVideo(checked: Boolean, itsFromBackPressed: Boolean = false)
+    fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean = false)
     fun switchCamera()
 
     //Ringtone
-    fun playRingtone()
+    fun playRingTone()
+    fun playBackTone()
     fun playEndCall()
-    fun playRingBackTone()
     fun stopRingAndVibrate()
 
     //Sensor Proximity
