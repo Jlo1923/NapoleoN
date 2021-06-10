@@ -95,12 +95,24 @@ class IncomingMultiAttachmentMsgViewHolder(
     }
 
     private fun paintDownloadFiles() = msgAndAttachment.apply {
-        val countSent = this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
-        if (countSent.size == this.messageEntity.numberAttachments) {
-            binding.viewDownloadAttachmentsIndicator.hide()
+        if (this.messageEntity.isReceived()) {
+            val countSent =
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
+            if (countSent.size == this.attachmentEntityList.size) {
+                binding.viewDownloadAttachmentsIndicator.hide()
+            } else {
+                val data = Pair(countSent.size, this.attachmentEntityList.size)
+                showQuantity(data)
+            }
         } else {
-            val data = Pair(countSent.size, this.messageEntity.numberAttachments)
-            showQuantity(data)
+            val countSent =
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
+            if (countSent.size == this.messageEntity.numberAttachments) {
+                binding.viewDownloadAttachmentsIndicator.hide()
+            } else {
+                val data = Pair(countSent.size, this.messageEntity.numberAttachments)
+                showQuantity(data)
+            }
         }
     }
 

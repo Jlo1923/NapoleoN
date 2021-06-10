@@ -497,20 +497,30 @@ class SyncManagerImp @Inject constructor(
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful) {
                 response.body()?.messagesId.let {
-                    it?.let {
-                        messageLocalDataSource.deleteMessagesByWebId(
-                            it
-                        )
-                    }
+                    it?.let { messageLocalDataSource.deleteMessagesByWebId(it) }
                 }
 
                 response.body()?.attachmentsId.let {
-                    it?.let {
-                        attachmentLocalDataSource.deletedAttachments(
-                            it
-                        )
+                    it?.let { listIds ->
+                        if (listIds.isNotEmpty()) {
+                            attachmentLocalDataSource.deletedAttachments(listIds)
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun decreaseAmountAttachments(attachmentWebId: String) {
+        val theAttachment =
+            attachmentLocalDataSource.getAttachmentByWebId(attachmentWebId)
+        theAttachment?.let {
+            val msg =
+                messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
+            msg?.messageEntity?.let { messageEntity ->
+                val msgCopy =
+                    messageEntity.copy(numberAttachments = messageEntity.numberAttachments - 1)
+                messageLocalDataSource.updateMessage(msgCopy)
             }
         }
     }

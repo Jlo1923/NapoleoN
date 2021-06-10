@@ -1,14 +1,9 @@
 package com.naposystems.napoleonchat.ui.multipreview.viewmodels
 
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService
-import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.ATTACHMENT_KEY
-import com.naposystems.napoleonchat.service.multiattachment.MultipleUploadService.Companion.MESSAGE_KEY
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity

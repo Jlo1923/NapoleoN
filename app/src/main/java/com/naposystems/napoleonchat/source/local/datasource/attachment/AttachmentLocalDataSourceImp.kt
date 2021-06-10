@@ -151,11 +151,16 @@ class AttachmentLocalDataSourceImp @Inject constructor(
         /**
          * Al eliminar los attachments, debemos validar si el mensaje se queda sin attachments
          * de ser asi, eliminamos el mensaje
+         * De no ser asi, actualizamos su numberAttachments
          */
         val messageParent = messageDao.getMessageByWebId(messageWebId)
         messageParent?.let {
             if (it.attachmentEntityList.isEmpty() && it.messageEntity.numberAttachments > 0) {
                 messageDao.deleteMessagesByWebId(it.messageEntity.webId)
+            } else {
+                val newNumberAttachments = it.messageEntity.numberAttachments - 1
+                val msgCopy = it.messageEntity.copy(numberAttachments = newNumberAttachments)
+                messageDao.updateMessage(msgCopy)
             }
         }
 
