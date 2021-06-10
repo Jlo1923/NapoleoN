@@ -67,7 +67,7 @@
             android:layout_marginEnd="@dimen/small_margin"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="2"
+            android:maxLines="5"
             android:padding="@dimen/x_small_padding"
             tools:text="EL mensaje del mensaje"
             tools:visibility="visible" />
@@ -83,7 +83,6 @@
             android:drawablePadding="@dimen/l_small_padding"
             android:ellipsize="end"
             android:gravity="center"
-            android:maxLines="2"
             android:padding="@dimen/x_small_padding"
             android:visibility="gone"
             tools:text="12:05"
