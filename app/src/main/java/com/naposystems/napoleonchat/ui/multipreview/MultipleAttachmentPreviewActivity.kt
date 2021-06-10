@@ -258,13 +258,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         adapter = MultipleAttachmentFragmentAdapter(this, state.listFiles)
         configureTabsAndViewPager(state.listFiles)
         addListenerToPager()
-        viewBinding.viewPreviewBottom.postDelayed(
-            { extractSelectedIndex() }, 250
-        )
-
         state.indexToSelect?.let {
             viewBinding.viewPreviewBottom.postDelayed(
-                { selectElementInTabLayout(it) }, 300
+                { selectElementInTabLayout(it) }, 200
+            )
+        } ?: run {
+            viewBinding.viewPreviewBottom.postDelayed(
+                { extractSelectedIndex() }, 200
             )
         }
 
