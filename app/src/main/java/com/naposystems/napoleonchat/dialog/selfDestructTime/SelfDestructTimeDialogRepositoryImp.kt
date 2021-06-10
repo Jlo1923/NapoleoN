@@ -15,6 +15,7 @@ import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.WAS_IN_PREVIEW
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.extras.IDS_TO_DELETE
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
@@ -102,7 +103,7 @@ class SelfDestructTimeDialogRepositoryImp @Inject constructor(
 
     override fun saveDeleteFilesInCache(toList: List<MultipleAttachmentFileItem>) {
         val map = toList.map { it.id.toString() }
-        sharedPreferencesManager.putStringSet("IDS_TO_DELETE", map.toSet())
+        sharedPreferencesManager.putStringSet(IDS_TO_DELETE, map.toSet())
     }
 
     override fun updateAttachments(attachmentsWithWebId: List<AttachmentEntity?>) {

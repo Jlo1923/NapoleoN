@@ -5,6 +5,7 @@ import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFileItemView
 import com.naposystems.napoleonchat.ui.multi.views.itemview.MultipleAttachmentFolderItemView
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.extras.IDS_TO_DELETE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -47,7 +48,7 @@ class MultipleAttachmentRepository @Inject constructor(
     }
 
     override fun getStringSetForDelete(): Set<String> {
-        val setToReturn = sharedPreferencesManager.getStringSetOrEmpty("IDS_TO_DELETE")
+        val setToReturn = sharedPreferencesManager.getStringSetOrEmpty(IDS_TO_DELETE)
         sharedPreferencesManager.removeSetIdsToRemove()
         return setToReturn
     }

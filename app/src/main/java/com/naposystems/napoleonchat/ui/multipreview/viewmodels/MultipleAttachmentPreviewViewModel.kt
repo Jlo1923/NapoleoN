@@ -103,9 +103,9 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     fun onDeleteElementInCreating(selectedIndexToDelete: Int) {
         removeFileFromListAndShowListInPager(selectedIndexToDelete)
         if (isTheLastFile()) {
-            exitPreview()
-        } else {
-            //selectItemInTabLayoutByIndex(selectedIndexToDelete)
+            repository.saveDeleteFilesInCache(listFilesForRemoveInCreate.toList())
+            actions.value =
+                MultipleAttachmentPreviewAction.ExitAndSendDeleteFiles(listFilesForRemoveInCreate.toList())
         }
     }
 
