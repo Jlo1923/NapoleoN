@@ -2,7 +2,7 @@
 final String REGION = "us-west-2"
 
 node('master') {
-    stage("Cleaning existing resources"){
+    stage("Cleaning existing resources") {
         def newVersionName = params.VersionName
         def environment = params.Environment
         def recentChangeEs = params.recentChangeEs
@@ -10,9 +10,9 @@ node('master') {
         def deployToStore = params.DeployToStore
         def currentVersionName
         cleanWs()
-    }
-    if(environment == "prod"){
-        input 'This build will be affect production env, you want to continue?'
+        if (environment == "prod") {
+            input 'This build will be affect production env, you want to continue?'
+        }
     }
 
     stage("Setup"){
