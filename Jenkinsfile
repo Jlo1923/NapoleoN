@@ -2,14 +2,15 @@
 final String REGION = "us-west-2"
 
 node('master') {
+    def newVersionName = params.VersionName
+    def environment = params.Environment
+    def recentChangeEs = params.recentChangeEs
+    def recentChangeEn = params.recentChangeEn
+    def deployToStore = params.DeployToStore
+    def currentVersionName
+    def branch = "${env.BRANCH_NAME}"
+
     stage("Cleaning existing resources") {
-        def newVersionName = params.VersionName
-        def environment = params.Environment
-        def recentChangeEs = params.recentChangeEs
-        def recentChangeEn = params.recentChangeEn
-        def deployToStore = params.DeployToStore
-        def currentVersionName
-        branch = "${env.BRANCH_NAME}"
         cleanWs()
         if ("${environment}" == "prod") {
             input 'This build will be affect production env, you want to continue?'
