@@ -10,7 +10,7 @@ node('master') {
         def deployToStore = params.DeployToStore
         def currentVersionName
         cleanWs()
-        if (environment == "prod") {
+        if ("${environment}" == "prod") {
             input 'This build will be affect production env, you want to continue?'
         }
     }
@@ -61,7 +61,7 @@ node('master') {
         }
     }
 
-    if (deployToStore == true) {
+    if ("${deployToStore}" == true) {
         stage("Upload to Play Store") {
             androidApkUpload googleCredentialsId: "Google-Play", filesPattern: "app/build/outputs/bundle/${environment}/*.aab", trackName: "internal", releaseName: "${finalVersionName}", rolloutPercentage: "100", inAppUpdatePriority: "5",
                     recentChangeList: [
