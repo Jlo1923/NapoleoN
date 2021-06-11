@@ -7,6 +7,7 @@ node('master') {
         def environment = params.Environment
         def recentChangeEs = params.recentChangeEs
         def recentChangeEn = params.recentChangeEn
+        def deployToStore = params.DeployToStore
         def currentVersionName
         cleanWs()
     }
@@ -30,7 +31,6 @@ node('master') {
     }
 
     stage("Generating version") {
-
         currentVersionName = sh(script: "cat app/build.gradle | grep \"versionName\" | sed 's/\"//g' | sed 's/versionName//g'", returnStdout: true).trim()
         if (params.VersionName?.trim()) {
             newVersionName = "${params.VersionName}"
@@ -61,31 +61,33 @@ node('master') {
         }
     }
 
-    stage("Upload to Play Store") {
-        androidApkUpload googleCredentialsId: "Google-Play", filesPattern: "app/build/outputs/bundle/${environment}/*.aab", trackName: "internal", releaseName: "${finalVersionName}", rolloutPercentage: "100", inAppUpdatePriority: "5",
-                recentChangeList: [
-                        [language: "en-US", text: "${recentChangeEs}."],
-                        [language: "es-ES", text: "${recentChangeEn}."]
-                ]
-    }
+    if (deployToStore == true) {
+        stage("Upload to Play Store") {
+            androidApkUpload googleCredentialsId: "Google-Play", filesPattern: "app/build/outputs/bundle/${environment}/*.aab", trackName: "internal", releaseName: "${finalVersionName}", rolloutPercentage: "100", inAppUpdatePriority: "5",
+                    recentChangeList: [
+                            [language: "en-US", text: "${recentChangeEs}."],
+                            [language: "es-ES", text: "${recentChangeEn}."]
+                    ]
+        }
 
-    stage("Increasing version") {
-        withCredentials([usernamePassword(credentialsId: 'jenkinsbitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh("git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android.git")
-            sh("cd nuevo-napoleon-secret-chat-android")
-            sh("git checkout development")
-            sh("sed -i 's/versionCode ${currentVersionCode}/versionCode ${newVersionCode}/g' app/build.gradle")
-            sh("sed -i 's/${currentVersionName}/${finalVersionName}/g' app/build.gradle")
-            sh("git add app/build.gradle")
-            sh("git commit -a -m \"Increasing-version-to-${newVersionCode}\"")
-            sh("git push")
+
+        stage("Increasing version") {
+            withCredentials([usernamePassword(credentialsId: 'jenkinsbitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                sh("git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@bitbucket.org/napoteam/nuevo-napoleon-secret-chat-android.git")
+                sh("cd nuevo-napoleon-secret-chat-android")
+                sh("git checkout development")
+                sh("sed -i 's/versionCode ${currentVersionCode}/versionCode ${newVersionCode}/g' app/build.gradle")
+                sh("sed -i 's/${currentVersionName}/${finalVersionName}/g' app/build.gradle")
+                sh("git add app/build.gradle")
+                sh("git commit -a -m \"Increasing-version-to-${newVersionCode}\"")
+                sh("git push")
+            }
+        }
+
+        stage("Slack notification") {
+            HORA = sh(script: "date +%T", returnStdout: true).trim();
+            slackSend(botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${finalVersionName}* con código de version *${newVersionCode}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
         }
     }
-
-    stage("Slack notification"){
-        HORA = sh(script:"date +%T", returnStdout: true).trim();
-        slackSend (botUser: true, color: '#A4C639', channel: "desarrollo", tokenCredentialId: 'slack-token', message: "nuevo-napoleon-secret-chat-android ha actualizado al VersionName *${finalVersionName}* con código de version *${newVersionCode}* en el build ${env.BUILD_NUMBER} hoy a las ${HORA}. ${env.BUILD_URL}")
-    }
-
     cleanWs()
 }
