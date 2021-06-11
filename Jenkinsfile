@@ -21,6 +21,7 @@ node('master') {
         checkout scm
         gitCommitMessage = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim().replaceAll(" ", "-").replaceAll("/", "-").replaceAll(":", "-").replaceAll("_", "-").replaceAll("\\(.*?\\)", "").replaceAll("\n", "").replaceAll("\r", "").trim()
     }
+    echo "deploy to store value is ${deployToStore}"
 
     if(gitCommitMessage.contains("Increasing-version-to")){
         echo "Increased version build finishing early"
