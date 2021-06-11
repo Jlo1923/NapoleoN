@@ -90,7 +90,7 @@ fun MultipleAttachmentFileItem.toAttachmentEntityWithFile(
         fileName = file.name,
         origin = Constants.AttachmentOrigin.GALLERY.origin,
         thumbnailUri = contentUri?.toString() ?: "",
-        status = Constants.AttachmentStatus.ERROR.status,
+        status = Constants.AttachmentStatus.UPLOAD_CANCEL.status,
         selfDestructionAt = selfDestruction,
         extension = this.getExtensionByType()
     )

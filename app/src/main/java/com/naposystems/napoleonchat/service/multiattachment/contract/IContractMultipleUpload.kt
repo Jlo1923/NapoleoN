@@ -18,8 +18,6 @@ interface IContractMultipleUpload {
 
         fun cancelUpload()
 
-        fun updateAttachment(attachmentEntity: AttachmentEntity)
-
         fun updateMessage(messageEntity: MessageEntity)
 
         suspend fun compressVideo(
@@ -29,8 +27,19 @@ interface IContractMultipleUpload {
             job: CoroutineScope
         ): Flow<VideoCompressResult>
 
-        fun verifyMustMarkMessageAsSent(it: MessageEntity)
-        
+        /**
+         *
+         * Antes de tomar un nuevo attachment, debemos validar el padre del attachment que estabamos tratando
+         * debemos validar si todos los attachments del mensaje padre fueron tratados como SENT
+         * de ser asi, el mensaje padre debemos marcarlos como SENT
+         *
+         */
+        fun verifyMustMarkMessageAsSent()
+
+        fun updateAttachment(attachmentEntity: AttachmentEntity)
+
+        fun tryMarkAttachmentsInMessageAsError(messageEntity: MessageEntity)
+
     }
 
 }
