@@ -9,6 +9,7 @@ node('master') {
         def recentChangeEn = params.recentChangeEn
         def deployToStore = params.DeployToStore
         def currentVersionName
+        branch = "${env.BRANCH_NAME}"
         cleanWs()
         if ("${environment}" == "prod") {
             input 'This build will be affect production env, you want to continue?'
@@ -45,7 +46,7 @@ node('master') {
         } else {
             newVersionCode = currentVersionCode + 1
         }
-        finalVersionName = "1.1.${newVersionCode}-${newVersionName}"
+        finalVersionName = "1.1.${newVersionCode}-${newVersionName}-${branch}"
         sh("sed -i 's/versionCode ${currentVersionCode}/versionCode ${newVersionCode}/g' app/build.gradle")
         sh("sed -i 's/${currentVersionName}/${finalVersionName}/g' app/build.gradle")
     }
