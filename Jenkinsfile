@@ -27,6 +27,11 @@ node('master') {
         currentBuild.result = "ABORTED"
         return
     }
+    if("${deployToStore}" == "null"){
+        echo "Aborting build early"
+        currentBuild.result = "ABORTED"
+        return
+    }
 
     stage("Downloading JKS"){
         withAWS(region:"${REGION}") {
@@ -74,7 +79,6 @@ node('master') {
                             [language: "es-ES", text: "${recentChangeEn}."]
                     ]
         }
-
 
         stage("Increasing version") {
             withCredentials([usernamePassword(credentialsId: 'jenkinsbitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
