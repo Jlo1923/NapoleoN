@@ -29,7 +29,10 @@ node('master') {
     }
 
     stage("Downloading JKS"){
-        s3Download(file:'app/pepito.jks', bucket:'critical-resources', path:'pepito.jks', force:true)
+        withAWS(region:"${REGION}") {
+            sh(script: "/usr/local/bin/aws s3 cp s3://critical-resources/pepito.jks app/pepito.jks")
+            //s3Download(file: 'app/pepito.jks', bucket: 'critical-resources', path: 'pepito.jks', force: true)
+        }
     }
 
     stage("Generating version") {
