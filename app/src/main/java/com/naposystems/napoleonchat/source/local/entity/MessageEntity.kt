@@ -83,5 +83,6 @@ data class MessageEntity(
     }
 
     fun isReceived() = status == Constants.MessageStatus.UNREAD.status
+    fun isRead() = status == Constants.MessageStatus.READED.status
 
 }

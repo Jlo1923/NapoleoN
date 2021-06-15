@@ -75,7 +75,7 @@ class MultipleAttachmentPreviewImageFragment(
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
-                Constants.AttachmentStatus.READED.status -> onModeReaded(it)
+                Constants.AttachmentStatus.READED.status -> onModeRead(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
                 else -> hideStatus()
             }
@@ -109,7 +109,7 @@ class MultipleAttachmentPreviewImageFragment(
         configTimer(attachmentEntity)
     }
 
-    private fun onModeReaded(attachmentEntity: AttachmentEntity) {
+    private fun onModeRead(attachmentEntity: AttachmentEntity) {
         binding.apply {
             imageViewStatus.show()
             frameStatus.show()
@@ -141,48 +141,37 @@ class MultipleAttachmentPreviewImageFragment(
     }
 
     private fun showTimer(endTime: Int, attachmentEntity: AttachmentEntity) {
-        val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
-        val remainingTime = endTime - currentTime
 
-        countDownTimer = object : CountDownTimer(
-            TimeUnit.SECONDS.toMillis(endTime.toLong()) - System.currentTimeMillis(),
-            1
-        ) {
-            override fun onFinish() {
-                listener?.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
-            }
+        val remainingTime = TimeUnit.SECONDS.toMillis(endTime.toLong()) - System.currentTimeMillis()
+
+        countDownTimer = object : CountDownTimer(remainingTime, 1) {
 
             override fun onTick(millisUntilFinished: Long) {
                 val text = Utils.getTimeWithDays(millisUntilFinished, showHours = true)
                 binding.textTimeAutodestruction.text = text
             }
+
+            override fun onFinish() {
+                listener?.deleteAttachmentByDestructionTime(attachmentEntity.webId, position)
+            }
+
         }
-        binding.textTimeAutodestruction.show()
+
         countDownTimer?.start()
+        binding.textTimeAutodestruction.show()
 
     }
 
-    private fun loadImageFromBody() {
-        try {
-            binding.apply {
-                Glide.with(root.context)
-                    .load(file.messageAndAttachment?.attachment?.body)
-                    .into(imagePreview)
-            }
-        } catch (exception: Exception) {
-
-        }
+    private fun loadImageFromBody() = binding.apply {
+        Glide.with(root.context)
+            .load(file.messageAndAttachment?.attachment?.body)
+            .into(imagePreview)
     }
 
-    private fun loadImage() {
-        try {
-            binding.apply {
-                Glide.with(root.context).load(file.contentUri)
-                    .into(imagePreview)
-            }
-        } catch (exception: Exception) {
-
-        }
+    private fun loadImage() = binding.apply {
+        Glide.with(root.context)
+            .load(file.contentUri)
+            .into(imagePreview)
     }
 
     fun setListener(listener: MultipleAttachmentPreviewListener) {
@@ -192,6 +181,7 @@ class MultipleAttachmentPreviewImageFragment(
     override fun onPause() {
         super.onPause()
         binding.apply { imagePreview.fitToScreen() }
+        countDownTimer?.cancel()
     }
 
 }

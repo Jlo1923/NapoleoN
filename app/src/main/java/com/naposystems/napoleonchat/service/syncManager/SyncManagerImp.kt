@@ -850,6 +850,9 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    /**
+     * Debemos validar que no este marcado como leido
+     */
     override fun tryMarkMessageParentAsRead(idsAttachments: List<String>) {
         GlobalScope.launch(Dispatchers.IO) {
             idsAttachments.forEach { idAttachmentString ->
@@ -858,26 +861,33 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReaded() }
-                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
-                            updateMessagesStatus(
-                                listOf(msgAndRelation.messageEntity.webId),
-                                Constants.AttachmentStatus.READED.status
-                            )
-
-                            val messageDTO = MessageDTO(
-                                id = msgAndRelation.messageEntity.webId,
-                                type = Constants.MessageType.TEXT.type,
-                                user = msgAndRelation.messageEntity.contactId,
-                                status = StatusMustBe.READED.status
-                            )
-                            val list = MessagesReqDTO(listOf(messageDTO))
-                            napoleonApi.sendMessagesRead(list)
+                        if (msgAndRelation.messageEntity.isRead().not()) {
+                            val filter =
+                                msgAndRelation.attachmentEntityList.filter { it.isReaded() }
+                            if (filter.size == msgAndRelation.attachmentEntityList.size) {
+                                setMsgReadLocallyAndRemotely(msgAndRelation)
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private suspend fun setMsgReadLocallyAndRemotely(msgAndRelation: MessageAttachmentRelation) {
+        updateMessagesStatus(
+            listOf(msgAndRelation.messageEntity.webId),
+            READED.status
+        )
+
+        val messageDTO = MessageDTO(
+            id = msgAndRelation.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = msgAndRelation.messageEntity.contactId,
+            status = StatusMustBe.READED.status
+        )
+        val list = MessagesReqDTO(listOf(messageDTO))
+        napoleonApi.sendMessagesRead(list)
     }
 
 //

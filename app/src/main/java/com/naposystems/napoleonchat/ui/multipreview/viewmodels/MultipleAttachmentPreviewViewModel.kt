@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPre
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState.SuccessFilesAsPager
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
 import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import com.naposystems.napoleonchat.utility.Utils
@@ -106,13 +107,12 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun loadSelfDestructionTimeByIndex(position: Int) {
         if (modeOnlyView.not()) {
-            actions.value =
-                MultipleAttachmentPreviewAction.ShowSelfDestruction(listFiles[position].selfDestruction)
+            actions.value = ShowSelfDestruction(listFiles[position].selfDestruction)
         }
     }
 
     fun validateMustAttachmentMarkAsReaded(position: Int) {
-        GlobalScope.launch {
+        viewModelScope.launch {
             if (listFiles.isNotEmpty()) {
                 if (listFiles[position].isVideo().not()) {
                     markAttachmentImageAsRead(position)
@@ -126,8 +126,8 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         attachment?.let { attachment ->
             val msgAttachment = listFiles[position].messageAndAttachment
             msgAttachment?.let { itemMessage ->
-                if (attachment.status != Constants.AttachmentStatus.READED.status
-                    && itemMessage.isMine == Constants.IsMine.NO.value
+                if (attachment.isReaded()
+                        .not() && itemMessage.isMine == Constants.IsMine.NO.value
                 ) {
                     itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
                         itemMessage.attachment,
