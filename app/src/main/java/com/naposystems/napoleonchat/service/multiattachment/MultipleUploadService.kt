@@ -51,27 +51,12 @@ class MultipleUploadService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun getCommandAction(intent: Intent) = intent.action?.let { action ->
-        Timber.d("onStartCommand action: $action")
-        if (action == ACTION_CANCEL_UPLOAD) {
-            repository.cancelUpload()
-            stopService()
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
-    private fun handleTryNextAttachment() {
-        /**
-         * Antes de tomar un nuevo attachment, debemos validar el padre del attachment que estabamos tratando
-         * debemos validar si todos los attachments del mensaje padre fueron tratados como SENT
-         * de ser asi, el mensaje padre debemos marcarlos como SENT
-         */
-        val nextAttachment = getNextAttachmentForTryUpload()
-        nextAttachment?.let { pair ->
-            currentMessagePairData = pair
-            pair.first?.let { repository.uploadAttachment(pair.second, it) }
-            showNotification(pair)
-        } ?: run { handleUploadSuccess() }
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 
     private fun getMessageAndAttachmentsFromExtras(intent: Intent) = intent.extras?.let { bundle ->
         val message = bundle.getParcelable(MESSAGE_KEY) as MessageEntity?
@@ -92,77 +77,50 @@ class MultipleUploadService : Service() {
         val forList = attachmentsIn.map { Pair(message, it) }.toList()
         forList.forEach {
             if (attachmentList.contains(it).not()) {
-                it.second.status = Constants.AttachmentStatus.ERROR.status
+                it.second.status = Constants.AttachmentStatus.UPLOAD_CANCEL.status
                 repository.updateAttachment(it.second)
                 attachmentList.add(it)
             }
         }
     }
 
-    private fun getNextAttachmentForTryUpload(): Pair<MessageEntity?, AttachmentEntity>? {
-        return attachmentList.firstOrNull() {
+    private fun getCommandAction(intent: Intent) = intent.action?.let { action ->
+        Timber.d("onStartCommand action: $action")
+        if (action == ACTION_CANCEL_UPLOAD) {
+            repository.cancelUpload()
+            stopService()
+        }
+    }
+
+    private fun handleTryNextAttachment() {
+        val nextAttachment = attachmentList.firstOrNull() {
             it.second.isCancelUpload() || it.second.isError()
         }
+        nextAttachment?.let { pair ->
+            currentMessagePairData = pair
+            pair.first?.let { repository.uploadAttachment(pair.second, it) }
+            showNotification(pair)
+        } ?: run { stopService() }
     }
 
     private fun showNotification(pair: Pair<MessageEntity?, AttachmentEntity>) {
-        pair.first?.let {
+        pair.first?.let { messageEntity ->
             val notification =
-                notificationUploadService.createUploadNotification(applicationContext, it.id)
-            Timber.d("notificationId: ${it.id}")
-            startForeground(it.id, notification)
+                notificationUploadService.createUploadNotification(
+                    applicationContext,
+                    messageEntity.id
+                )
+            Timber.d("notificationId: ${messageEntity.id}")
+            startForeground(messageEntity.id, notification)
         }
     }
 
-    private fun subscribeRxEvents() {
-
-        val disposableUploadStart = RxBus.listen(RxEvent.MultiUploadStart::class.java)
-            .subscribe { Timber.d("RxEvent.UploadStart") }
-
-        val disposableUploadSuccess = RxBus.listen(RxEvent.MultiUploadSuccess::class.java)
-            .subscribe { handleUploadSuccess() }
-
-        val disposableUploadTryNext = RxBus.listen(RxEvent.MultiUploadTryNextAttachment::class.java)
-            .subscribe { handleTryNextAttachment() }
-
-        val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
-            .subscribe { handleUploadError() }
-
-        val disposableUploadProgress = RxBus.listen(RxEvent.MultiUploadProgress::class.java)
-            .subscribe { handleUploadProgress(it) }
-
-        val disposableCompressProgress = RxBus.listen(RxEvent.MultiCompressProgress::class.java)
-            .subscribe { }
-
-        compositeDisposable.apply {
-            addAll(
-                disposableUploadStart,
-                disposableUploadSuccess,
-                disposableUploadTryNext,
-                disposableUploadError,
-                disposableUploadProgress,
-                disposableCompressProgress
-            )
-        }
-    }
-
-    private fun handleUploadSuccess() {
-        Timber.d("RxEvent.UploadSuccess")
-        stopService()
-    }
-
-    private fun handleUploadError() {
-        Timber.d("RxEvent.UploadError")
-        stopService()
-    }
-
-    private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) {
+    private fun handleUploadProgress(event: RxEvent.MultiUploadProgress) =
         currentMessagePairData?.first?.let {
             notificationUploadService.updateUploadNotificationProgress(
                 PROGRESS_MAX, event.progress.toInt(), it.id
             )
         }
-    }
 
     private fun stopService() {
         currentMessagePairData?.first?.let {
@@ -173,11 +131,39 @@ class MultipleUploadService : Service() {
         compositeDisposable.dispose()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
+    private fun subscribeRxEvents() {
+
+        val disposableUploadStart = RxBus.listen(RxEvent.MultiUploadStart::class.java)
+            .subscribe { Timber.d("RxEvent.UploadStart") }
+
+        //val disposableUploadSuccess = RxBus.listen(RxEvent.MultiUploadSuccess::class.java)
+        //    .subscribe { stopService() }
+
+        val disposableUploadTryNext = RxBus.listen(RxEvent.MultiUploadTryNextAttachment::class.java)
+            .subscribe { handleTryNextAttachment() }
+
+        val disposableUploadError = RxBus.listen(RxEvent.MultiUploadError::class.java)
+            .subscribe { handleMultiUploadError() }
+
+        val disposableUploadProgress = RxBus.listen(RxEvent.MultiUploadProgress::class.java)
+            .subscribe { handleUploadProgress(it) }
+
+        val disposableCompressProgress = RxBus.listen(RxEvent.MultiCompressProgress::class.java)
+            .subscribe { }
+
+        compositeDisposable.apply {
+            addAll(
+                disposableUploadStart,
+                //disposableUploadSuccess,
+                disposableUploadTryNext,
+                disposableUploadError,
+                disposableUploadProgress,
+                disposableCompressProgress
+            )
+        }
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    private fun handleMultiUploadError() =
+        currentMessagePairData?.first?.let { repository.tryMarkAttachmentsInMessageAsError(it) }
 
 }

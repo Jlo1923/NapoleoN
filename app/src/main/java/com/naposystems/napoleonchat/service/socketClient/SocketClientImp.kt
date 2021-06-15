@@ -627,11 +627,6 @@ class SocketClientImp
         // la validacion de ningun ambiente sin cifrar lo que dificultad la validacion de los metodos desde el servidor
 
         pusher.getPrivateChannel(privateGeneralChannelName)
-            .unbind(Constants.SocketListenEvents.NEW_MESSAGE.event,
-                SubscriptionEventListener {}
-            )
-
-        pusher.getPrivateChannel(privateGeneralChannelName)
             .bind(Constants.SocketListenEvents.NEW_MESSAGE.event,
 
                 object : PrivateChannelEventListener {

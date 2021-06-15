@@ -47,8 +47,12 @@ class ReceiverMultiAttachmentMsgView @JvmOverloads constructor(
         }
     }
 
-    private fun loadImageFromData() {
-        theAttachment?.thumbnailUri?.let { loadImage(it) } ?: run { showFalseView() }
+    private fun loadImageFromData() = theAttachment?.thumbnailUri?.let {
+        if (it.isNotEmpty()) {
+            loadImage(it)
+        } else {
+            showFalseView()
+        }
     }
 
     private fun showFalseView() = viewBinding.apply {
