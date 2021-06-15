@@ -19,6 +19,7 @@ class PhoneStateBroadcastReceiver : BroadcastReceiver() {
 
         val telephonyManager =
             context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
         telephonyManager.listen(
             CustomPhoneStateListener(context, sharedPreferencesManager),
             PhoneStateListener.LISTEN_CALL_STATE
