@@ -25,13 +25,19 @@ import kotlinx.android.parcel.Parcelize
             childColumns = [DBConstants.Attachment.COLUMN_MESSAGE_ID],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    //TODO: Quitar comentario al agregar el index
+//    indices = [androidx.room.Index(
+//        value = [DBConstants.Attachment.COLUMN_UUID],
+//        unique = true
+//    )]
 )
 data class AttachmentEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_ID) var id: Int,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_MESSAGE_ID) var messageId: Int,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_WEB_ID) var webId: String,
+    @ColumnInfo(name = DBConstants.Attachment.COLUMN_UUID) val uuid: String?,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_MESSAGE_WEB_ID) var messageWebId: String,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_TYPE) val type: String,
     @ColumnInfo(name = DBConstants.Attachment.COLUMN_BODY) var body: String,
@@ -83,7 +89,7 @@ data class AttachmentEntity(
     fun isSent(): Boolean = status == AttachmentStatus.SENT.status
     fun isSending(): Boolean = status == AttachmentStatus.SENDING.status
     fun isReceived(): Boolean = status == AttachmentStatus.RECEIVED.status
-    fun isReaded(): Boolean = status == AttachmentStatus.READED.status
+    fun isRead(): Boolean = status == AttachmentStatus.READED.status
     fun isDownloadComplete(): Boolean = status == AttachmentStatus.DOWNLOAD_COMPLETE.status
     fun isCancelUpload(): Boolean = status == AttachmentStatus.UPLOAD_CANCEL.status
     fun isError(): Boolean = status == AttachmentStatus.ERROR.status

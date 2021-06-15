@@ -143,31 +143,31 @@ fun List<MessageAttachmentRelation>.toMessagesReqDTOFromRelation(
 
     return MessagesReqDTO(messages)
 }
+//
+//fun List<MessageAttachmentRelation>.toMessageResDto(mustStatus: Constants.StatusMustBe): List<MessageDTO> {
+//    return map {
+//        MessageDTO(
+//            id = it.messageEntity.webId,
+//            type = Constants.MessageType.TEXT.type,
+//            user = it.contact?.let { contactEntity -> contactEntity.id }?.run { 0 },
+//            status = mustStatus.status
+//        )
+//    }
+//}
 
-fun List<MessageAttachmentRelation>.toMessageResDto(mustStatus: Constants.StatusMustBe): List<MessageDTO> {
-    return map {
-        MessageDTO(
-            id = it.messageEntity.webId,
-            type = Constants.MessageType.TEXT.type,
-            user = it.contact?.let { it.id }?.run { 0 },
-            status = mustStatus.status
-        )
-    }
-}
-
-fun AttachmentEntity.toAttachmentResDTO(): AttachmentResDTO {
-    return AttachmentResDTO(
-        messageId = this.messageId.toString(),
-        body = this.body,
-        type = this.type,
-        width = 0,
-        height = 0,
-        extension = this.extension,
-        id = this.webId,
-        duration = this.duration,
-        destroy = this.selfDestructionAt.toString()
-    )
-}
+//fun AttachmentEntity.toAttachmentResDTO(): AttachmentResDTO {
+//    return AttachmentResDTO(
+//        messageId = this.messageId.toString(),
+//        body = this.body,
+//        type = this.type,
+//        width = 0,
+//        height = 0,
+//        extension = this.extension,
+//        id = this.webId,
+//        duration = this.duration,
+//        destroy = this.selfDestructionAt.toString()
+//    )
+//}
 
 fun mappingMessagesDto(
     attachment: NewMessageEventAttachmentRes,

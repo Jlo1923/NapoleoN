@@ -37,6 +37,7 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -270,6 +271,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
                                         messageId = 0,
                                         webId = "",
                                         messageWebId = "",
+                                        uuid = UUID.randomUUID().toString(),
                                         type = Constants.AttachmentType.IMAGE.type,
                                         body = "",
                                         fileName = photoFileCompress.name,
@@ -388,6 +390,7 @@ class ConversationCameraFragment : BaseFragment(), CustomVerticalSeekBar.Listene
                             messageId = 0,
                             webId = "",
                             messageWebId = "",
+                            uuid = UUID.randomUUID().toString(),
                             type = Constants.AttachmentType.VIDEO.type,
                             body = "",
                             fileName = videoFile.name,

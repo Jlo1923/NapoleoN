@@ -24,6 +24,7 @@ import com.naposystems.napoleonchat.utility.FileManager
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import kotlinx.coroutines.launch
 import java.io.FileInputStream
+import java.util.*
 
 
 class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks<Cursor> {
@@ -85,6 +86,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                         messageId = 0,
                         webId = "",
                         messageWebId = "",
+                        uuid = UUID.randomUUID().toString(),
                         type = Constants.AttachmentType.DOCUMENT.type,
                         body = "",
                         fileName = fileSelected.name,

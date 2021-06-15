@@ -36,6 +36,7 @@ import retrofit2.Response
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.*
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -155,6 +156,7 @@ class MultipleUploadRepository @Inject constructor(
                 val requestBodyType = createPartFromString(type)
                 val requestBodyDuration = createPartFromString(duration.toString())
                 val requestBodyDestroy = createPartFromString(this.selfDestructionAt.toString())
+                val requestBodyUuid = createPartFromString(uuid ?: UUID.randomUUID().toString())
 
                 val requestBodyFilePart = createPartFromFile(
                     this, job,
@@ -169,7 +171,8 @@ class MultipleUploadRepository @Inject constructor(
                     attachmentType = requestBodyType,
                     duration = requestBodyDuration,
                     destroy = requestBodyDestroy,
-                    file = requestBodyFilePart
+                    uuid = requestBodyUuid,
+                    file = requestBodyFilePart,
                 )
 
                 if (response.isSuccessful) {

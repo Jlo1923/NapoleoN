@@ -17,6 +17,7 @@ import com.naposystems.napoleonchat.ui.napoleonKeyboardStickerPage.adapter.Napol
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.ConversationSharedViewModel
 import java.io.File
+import java.util.*
 
 class NapoleonKeyboardStickerPageFragment : Fragment() {
 
@@ -73,6 +74,7 @@ class NapoleonKeyboardStickerPageFragment : Fragment() {
                                 messageId = 0,
                                 webId = "",
                                 messageWebId = "",
+                                uuid = UUID.randomUUID().toString(),
                                 type = Constants.AttachmentType.GIF_NN.type,
                                 body = "",
                                 fileName = file.name,

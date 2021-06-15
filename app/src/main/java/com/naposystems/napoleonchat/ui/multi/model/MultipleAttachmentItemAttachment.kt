@@ -1,7 +1,5 @@
 package com.naposystems.napoleonchat.ui.multi.model
 
-import android.net.Uri
-import android.os.Parcel
 import android.os.Parcelable
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import kotlinx.android.parcel.Parcelize
@@ -10,6 +8,7 @@ import kotlinx.android.parcel.Parcelize
 data class MultipleAttachmentItemAttachment(
     val fileName: String,
     val status: Int,
+    val uuid: String,
     val webId: String,
     val extension: String = "",
     val type: String,
@@ -21,6 +20,7 @@ data class MultipleAttachmentItemAttachment(
         messageId = 0,
         webId = this.webId,
         messageWebId = "",
+        uuid = this.uuid,
         type = this.type,
         body = "",
         fileName = this.fileName,

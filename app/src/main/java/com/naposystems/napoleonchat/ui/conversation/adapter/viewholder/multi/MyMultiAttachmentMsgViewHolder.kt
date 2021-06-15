@@ -15,14 +15,11 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.eve
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgEvent
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgItemAction.*
-import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.events.MultiAttachmentMsgState
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgItemListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.listener.MultiAttachmentMsgListener
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.view.sender.UploadAttachmentsIndicatorModel
 import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.viewmodels.MyMultiAttachmentMsgViewModel
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR
-import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENDING
 import com.naposystems.napoleonchat.utility.extensions.*
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 
@@ -167,7 +164,7 @@ class MyMultiAttachmentMsgViewHolder(
     }
 
     private fun paintUploadFiles() = msgAndAttachment.attachmentEntityList.apply {
-        val countSent = this.filter { it.isSent() || it.isReceived() || it.isReaded() }
+        val countSent = this.filter { it.isSent() || it.isReceived() || it.isRead() }
         if (countSent.size == this.size) {
             binding.viewUploadAttachmentsIndicator.hide()
         } else {

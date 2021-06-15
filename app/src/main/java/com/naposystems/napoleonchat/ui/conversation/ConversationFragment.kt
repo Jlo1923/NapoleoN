@@ -1037,6 +1037,7 @@ class ConversationFragment
                 messageId = 0,
                 webId = "",
                 messageWebId = "",
+                uuid = UUID.randomUUID().toString(),
                 type = Constants.AttachmentType.AUDIO.type,
                 body = "",
                 fileName = file.name,

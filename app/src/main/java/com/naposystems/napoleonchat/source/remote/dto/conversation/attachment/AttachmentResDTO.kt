@@ -9,12 +9,13 @@ import com.squareup.moshi.JsonClass
 data class AttachmentResDTO(
     @Json(name = "message_id") val messageId: String,
     @Json(name = "body") val body: String,
+    @Json(name = "uuid_sender") val uuidSender: String,
     @Json(name = "type") val type: String,
     @Json(name = "width") val width: Int,
     @Json(name = "height") val height: Int,
     @Json(name = "ext") val extension: String,
     @Json(name = "id") val id: String,
-    @Json(name = "duration") val duration: Long,
+    @Json(name = "duration") val duration: Float,
     @Json(name = "destroy") val destroy: String
 ) {
     companion object {
@@ -31,6 +32,7 @@ data class AttachmentResDTO(
                     messageId = conversationId,
                     webId = attachmentDTO.id,
                     messageWebId = attachmentDTO.messageId,
+                    uuid = attachmentDTO.uuidSender,
                     type = attachmentDTO.type,
                     body = attachmentDTO.body,
                     fileName = "",
@@ -39,7 +41,7 @@ data class AttachmentResDTO(
                     status = Constants.AttachmentStatus.NOT_DOWNLOADED.status,
                     selfDestructionAt = attachmentDTO.destroy.toInt(),
                     extension = attachmentDTO.extension,
-                    duration = attachmentDTO.duration
+                    duration = attachmentDTO.duration.toLong()
                 )
 
                 mutableList.add(attachment)

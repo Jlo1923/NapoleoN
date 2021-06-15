@@ -80,7 +80,7 @@ class HomeViewModel
 
     fun resetDuplicates() {
         viewModelScope.launch {
-            repository.deleteDuplicatesMessages()
+            repository.deleteDuplicates()
             repository.addUUID()
         }
     }
