@@ -56,6 +56,7 @@ data class MessageAttachmentRelation(
         if (messageEntity != other.messageEntity) return false
         if (attachmentEntityList != other.attachmentEntityList) return false
         if (quoteEntity != other.quoteEntity) return false
+        if (messagesUnReads != other.messagesUnReads) return false
 
         return true
     }

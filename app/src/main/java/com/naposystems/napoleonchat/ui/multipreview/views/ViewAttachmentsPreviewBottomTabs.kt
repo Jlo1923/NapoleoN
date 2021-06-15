@@ -53,7 +53,7 @@ class ViewAttachmentsPreviewBottomTabs @JvmOverloads constructor(
     fun setMessage(message: String) = viewBinding.apply { textMessage.text = message }
 
     fun showTextByPosition(position: Int) = viewBinding.apply {
-        textMessage.show(position == 0)
-        if (textMessage.text.toString().isEmpty()) textMessage.hide()
+        scrollText.show(position == 0)
+        if (textMessage.text.toString().isEmpty()) scrollText.hide()
     }
 }

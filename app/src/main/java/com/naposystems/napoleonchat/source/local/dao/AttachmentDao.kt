@@ -106,5 +106,4 @@ interface AttachmentDao {
     )
     fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
 
-
 }

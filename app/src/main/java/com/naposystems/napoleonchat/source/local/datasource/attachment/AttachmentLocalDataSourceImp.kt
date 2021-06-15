@@ -1,12 +1,15 @@
 package com.naposystems.napoleonchat.source.local.datasource.attachment
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.naposystems.napoleonchat.source.local.dao.AttachmentDao
 import com.naposystems.napoleonchat.source.local.dao.ContactDao
 import com.naposystems.napoleonchat.source.local.dao.MessageDao
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.TimeUnit
@@ -15,53 +18,42 @@ import javax.inject.Inject
 class AttachmentLocalDataSourceImp @Inject constructor(
     private val attachmentDao: AttachmentDao,
     private val contactDao: ContactDao,
+    private val preferencesManager: SharedPreferencesManager,
     private val messageDao: MessageDao,
     private val context: Context
 ) : AttachmentLocalDataSource {
 
-    override fun existAttachmentByWebId(webId: String): Boolean {
-        return attachmentDao.existAttachmentByWebId(webId) != null
-    }
+    override fun existAttachmentByWebId(webId: String): Boolean =
+        attachmentDao.existAttachmentByWebId(webId) != null
 
-    override fun existAttachmentById(id: String): Boolean {
-        return attachmentDao.existAttachmentById(id) != null
-    }
+    override fun existAttachmentById(id: String): Boolean =
+        attachmentDao.existAttachmentById(id) != null
 
     override suspend fun getAttachmentByWebId(
         webId: String
-    ): AttachmentEntity? {
-        return attachmentDao.getAttachmentByWebId(webId)
-    }
+    ): AttachmentEntity? = attachmentDao.getAttachmentByWebId(webId)
 
     override fun getAttachmentByWebIdLiveData(
         webId: String
-    ): LiveData<AttachmentEntity?> {
-        return attachmentDao.getAttachmentByWebIdLiveData(webId)
-    }
+    ): LiveData<AttachmentEntity?> = attachmentDao.getAttachmentByWebIdLiveData(webId)
 
-    override fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity> {
-        return attachmentDao.getAttachmentsSelfDestructionExpired()
-    }
+    override fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity> =
+        attachmentDao.getAttachmentsSelfDestructionExpired()
 
-    override fun insertAttachment(attachmentEntity: AttachmentEntity): Long {
-        return attachmentDao.insertAttachment(attachmentEntity)
-    }
+    override fun insertAttachment(attachmentEntity: AttachmentEntity): Long =
+        attachmentDao.insertAttachment(attachmentEntity)
 
-    override fun insertAttachments(listAttachmentEntity: List<AttachmentEntity>): List<Long> {
-        return attachmentDao.insertAttachments(listAttachmentEntity)
-    }
+    override fun insertAttachments(listAttachmentEntity: List<AttachmentEntity>): List<Long> =
+        attachmentDao.insertAttachments(listAttachmentEntity)
 
-    override fun updateAttachment(attachmentEntity: AttachmentEntity) {
+    override fun updateAttachment(attachmentEntity: AttachmentEntity) =
         attachmentDao.updateAttachment(attachmentEntity)
-    }
 
-    override suspend fun suspendUpdateAttachment(attachmentEntity: AttachmentEntity) {
+    override suspend fun suspendUpdateAttachment(attachmentEntity: AttachmentEntity) =
         attachmentDao.suspendUpdateAttachment(attachmentEntity)
-    }
 
-    override fun updateAttachmentStatus(webId: String, state: Int) {
+    override fun updateAttachmentStatus(webId: String, state: Int) =
         attachmentDao.updateAttachmentState(webId, state)
-    }
 
     override suspend fun updateAttachmentStatus(attachmentsWebIds: List<String>, status: Int) {
 
@@ -151,13 +143,37 @@ class AttachmentLocalDataSourceImp @Inject constructor(
         /**
          * Al eliminar los attachments, debemos validar si el mensaje se queda sin attachments
          * de ser asi, eliminamos el mensaje
+         * De no ser asi, actualizamos su numberAttachments
          */
         val messageParent = messageDao.getMessageByWebId(messageWebId)
         messageParent?.let {
             if (it.attachmentEntityList.isEmpty() && it.messageEntity.numberAttachments > 0) {
                 messageDao.deleteMessagesByWebId(it.messageEntity.webId)
+            } else {
+                val newNumberAttachments = it.messageEntity.numberAttachments - 1
+                val msgCopy = it.messageEntity.copy(numberAttachments = newNumberAttachments)
+                messageDao.updateMessage(msgCopy)
             }
         }
+
+    }
+
+    override fun markAttachmentAsError(
+        attachmentEntity: AttachmentEntity
+    ) {
+
+        preferencesManager.putInt("$attachmentEntity.id", attachmentEntity.id)
+
+        val selfDestructTime = preferencesManager.getInt(PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT)
+        val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
+        attachmentEntity.apply {
+            updatedAt = currentTime
+            selfDestructionAt = selfDestructTime
+            totalSelfDestructionAt =
+                currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+        }
+
+        updateAttachment(attachmentEntity)
 
     }
 

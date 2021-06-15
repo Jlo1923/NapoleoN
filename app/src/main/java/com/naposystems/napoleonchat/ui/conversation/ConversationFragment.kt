@@ -409,7 +409,12 @@ class ConversationFragment
 
         binding.textViewReturnCall.setSafeOnClickListener {
             Timber.d("startCallActivity returnCall ConversationFragment")
-            val intent = Intent(context, ConversationCallActivity::class.java)
+            val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putBoolean(ConversationCallActivity.ACTION_RETURN_CALL, true)
+                })
+            }
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
 

@@ -100,6 +100,8 @@ class ConversationAdapter(
                 oldItem.messageEntity.id == newItem.messageEntity.id &&
                         oldItem.messageEntity.status == newItem.messageEntity.status &&
                         oldItem.messageEntity.isSelected == newItem.messageEntity.isSelected &&
+                        oldItem.messageEntity.numberAttachments == newItem.messageEntity.numberAttachments &&
+                        oldItem.attachmentEntityList.size == newItem.attachmentEntityList.size &&
                         oldFirstAttachmentEntity?.status == newFirstAttachmentEntity?.status
             }
         }

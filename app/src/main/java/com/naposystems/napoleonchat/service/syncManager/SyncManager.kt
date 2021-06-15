@@ -9,7 +9,7 @@ interface SyncManager {
 
     fun insertMessage(messageString: String)
 
-    fun notifyMessageReceived(messageId: MessagesReqDTO)
+    fun notifyMessageReceivedRemote(messageId: MessagesReqDTO)
 
     fun notifyMessagesReaded()
 

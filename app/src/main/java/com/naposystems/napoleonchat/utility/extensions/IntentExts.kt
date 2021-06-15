@@ -24,7 +24,8 @@ private fun Intent.isTypeVideo(): Boolean =
     type?.startsWith("video/") ?: kotlin.run { false }
 
 private fun Intent.isTypeAny(): Boolean =
-    type?.startsWith("\\*/") ?: kotlin.run { false }
+    type?.startsWith("*") ?: kotlin.run { false }
+
 
 fun Intent.getUriListFromExtra(): List<Uri> {
     val uris = getParcelableArrayListExtra<Parcelable>(Intent.EXTRA_STREAM)

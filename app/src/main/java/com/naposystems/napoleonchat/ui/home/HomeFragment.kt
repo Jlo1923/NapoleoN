@@ -23,6 +23,8 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
+import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.model.FriendShipRequest
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -30,8 +32,6 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
-import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
-import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -115,6 +115,7 @@ class HomeFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
+        validateMustGoToContacts()
     }
 
     override fun onCreateView(
@@ -168,7 +169,12 @@ class HomeFragment : BaseFragment() {
 
         binding.textViewReturnCall.setOnClickListener {
             Timber.d("startCallActivity returnCall HomeFragment")
-            val intent = Intent(context, ConversationCallActivity::class.java)
+            val intent = Intent(context, ConversationCallActivity::class.java).apply {
+                putExtras(Bundle().apply {
+                    putBoolean(ConversationCallActivity.ACTION_RETURN_CALL, true)
+                })
+            }
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
 
@@ -312,14 +318,15 @@ class HomeFragment : BaseFragment() {
         (activity as MainActivity).getUser()
     }
 
-    override fun onStart() {
-        super.onStart()
-        validateMustGoToContacts()
-    }
-
     private fun validateMustGoToContacts() {
         val uris = homeViewModel.getPendingUris()
         if (uris.isEmpty().not()) {
+
+            /**
+             * Solo podemos ir a contactos una sola vez, si se devuelve ya se pierden los archivos
+             * seleccionados previamente desde afuera
+             */
+            homeViewModel.removePendingUris()
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToContactsFragment()
             )

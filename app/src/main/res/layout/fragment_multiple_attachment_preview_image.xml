@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/xx_large_margin"
-        android:layout_marginEnd="@dimen/small_margin"
+        android:layout_marginEnd="@dimen/normal_margin"
         android:padding="@dimen/x_small_padding"
         android:text="12:12"
         android:visibility="gone"
@@ -33,12 +33,12 @@
         android:id="@+id/frame_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/small_margin"
-        android:layout_marginBottom="@dimen/xxx_large_margin"
+        android:layout_marginStart="@dimen/small_margin"
         android:background="@drawable/bg_black_transparent_circle"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/text_time_autodestruction"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_time_autodestruction"
         tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatImageView

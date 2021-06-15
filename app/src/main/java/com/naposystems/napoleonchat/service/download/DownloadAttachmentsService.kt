@@ -146,6 +146,6 @@ class DownloadAttachmentsService : Service(), IContractDownloadService.Service {
     }
 
     private fun getNextAttachment(): AttachmentEntity? =
-        attachmentList.firstOrNull() { it.isNotDownloaded() || it.isDownloadCancel() }
+        attachmentList.firstOrNull() { it.isNotDownloaded() || it.isDownloadCancel()  }
 
 }

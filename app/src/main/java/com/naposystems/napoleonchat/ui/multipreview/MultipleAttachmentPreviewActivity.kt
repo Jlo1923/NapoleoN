@@ -66,6 +66,8 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     private var adapter: MultipleAttachmentFragmentAdapter? = null
 
+    private var viewFirsAttachment = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         AndroidInjection.inject(this)
@@ -258,13 +260,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         adapter = MultipleAttachmentFragmentAdapter(this, state.listFiles)
         configureTabsAndViewPager(state.listFiles)
         addListenerToPager()
-        viewBinding.viewPreviewBottom.postDelayed(
-            { extractSelectedIndex() }, 250
-        )
-
         state.indexToSelect?.let {
             viewBinding.viewPreviewBottom.postDelayed(
-                { selectElementInTabLayout(it) }, 300
+                { selectElementInTabLayout(it) }, 200
+            )
+        } ?: run {
+            viewBinding.viewPreviewBottom.postDelayed(
+                { extractSelectedIndex() }, 200
             )
         }
 
@@ -278,6 +280,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     private fun showPagerAndOptions() = viewBinding.apply {
         progressLoader.hide()
+        textLoading.hide()
         showViews(viewPagerAttachments, viewPreviewBottom, viewAttachmentOptions)
     }
 
@@ -410,12 +413,15 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
     private fun selectElementInTabLayout(indexItem: Int) =
         viewBinding.viewPreviewBottom.getTabLayout().apply {
-            val indexSelect =
-                if (viewBinding.viewPreviewBottom.getTabLayout().tabCount == indexItem) {
-                    indexItem - 1
-                } else {
-                    indexItem
-                }
+            val indexSelect = if (tabCount == indexItem) {
+                indexItem - 1
+            } else {
+                indexItem
+            }
+
+            // Si el index es 0, marcamos el flag para que pueda marcar como leido
+            viewFirsAttachment = true
+
             selectTab(getTabAt(indexSelect))
         }
 
@@ -439,8 +445,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             override fun onTabUnselected(tab: TabLayout.Tab) =
                 (tab.customView as ViewMultipleAttachmentTabView).selected(false)
 
-            override fun onTabReselected(tab: TabLayout.Tab) {
-            }
+            override fun onTabReselected(tab: TabLayout.Tab) {}
 
         })
 
@@ -451,10 +456,8 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    viewModel.apply {
-                        loadSelfDestructionTimeByIndex(position)
-                        validateMustAttachmentMarkAsReaded(position)
-                    }
+                    viewModel.loadSelfDestructionTimeByIndex(position)
+                    viewModel.validateMustAttachmentMarkAsReaded(position)
                     viewBinding.apply { viewPreviewBottom.showTextByPosition(position) }
                 }
 

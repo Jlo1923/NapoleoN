@@ -30,4 +30,16 @@ interface AttachmentLocalDataSource {
 
     fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
 
+    /**
+     * Metodo que se encarga de setear un attachment como error, usualmente se usa cuando estamos
+     * enviando varios archivos por medio de un multi Attachment
+     *
+     * Toma una copia del tiempo de autodeetruccion
+     * setea el tiempo de autodestruccion por error
+     * y Actualiza el attachment
+     *
+     * @param attachmentEntity: the Attachment
+     */
+    fun markAttachmentAsError(attachmentEntity: AttachmentEntity)
+
 }
