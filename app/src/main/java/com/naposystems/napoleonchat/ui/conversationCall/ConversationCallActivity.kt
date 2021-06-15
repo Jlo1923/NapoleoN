@@ -263,13 +263,12 @@ class ConversationCallActivity :
                     Timber.d("LLAMADA PASO: LLAMADA ENTRANTE SETEANDO OFERTA")
                     webRTCClient.setOffer()
                     if (extras.getBoolean(ACTION_ANSWER_CALL, false)) {
+                        Timber.d("LLAMADA PASO: Seteando isAnswerCall")
                         isAnswerCall = true
-                        Timber.d("LLAMADA PASO: LLAMADA ENTRANTE RESPONDIENDO LLAMADA")
-//                        answerCall()
                     }
                 }
                 if (extras.getBoolean(ACTION_RETURN_CALL, true)) {
-                    Timber.d("LLAMADA PASO: REGRESANDO A LLAMAda")
+                    Timber.d("LLAMADA PASO: Seteando isReturnCall")
                     isReturnCall = true
                 }
             }
