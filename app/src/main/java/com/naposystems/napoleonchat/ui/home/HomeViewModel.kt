@@ -203,4 +203,6 @@ class HomeViewModel
         val listUris = listString?.map { Uri.parse(it) }
         return listUris ?: emptyList()
     }
+
+    fun removePendingUris() = sharedPreferencesManager.puStringSet(URIS_CACHE, emptyList())
 }

@@ -166,7 +166,8 @@ interface MessageDao {
     @Query(
         " SELECT COUNT(CASE WHEN status=3 then 1 end)" +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id"
+                " WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id " +
+                " AND ${DBConstants.Message.COLUMN_NUMBER_ATTACHMENTS} <= 1"
     )
     suspend fun countUnreadByContactId(id: Int): Int
 

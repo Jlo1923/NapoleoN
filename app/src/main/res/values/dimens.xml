@@ -23,6 +23,7 @@
     <dimen name="x_large_margin">32dp</dimen>
     <dimen name="xx_large_margin">64dp</dimen>
     <dimen name="xxx_large_margin">102dp</dimen>
+    <dimen name="xxxx_large_margin">144dp</dimen>
     <dimen name="elevation">4dp</dimen>
     <dimen name="height_editText_enter_code">70dp</dimen>
     <dimen name="text_size_editText_enter_code">24sp</dimen>

@@ -47,8 +47,12 @@ class ReceiverMultiAttachmentMsgView @JvmOverloads constructor(
         }
     }
 
-    private fun loadImageFromData() {
-        theAttachment?.body?.let { loadImage(it) } ?: run { showFalseView() }
+    private fun loadImageFromData() = theAttachment?.thumbnailUri?.let {
+        if (it.isNotEmpty()) {
+            loadImage(it)
+        } else {
+            showFalseView()
+        }
     }
 
     private fun showFalseView() = viewBinding.apply {
@@ -78,12 +82,12 @@ class ReceiverMultiAttachmentMsgView @JvmOverloads constructor(
         listener.onMsgItemFileAction(MultiAttachmentMsgItemAction.RetryDownload(attachment))
     }
 
-    private fun loadImage(body: String) {
+    private fun loadImage(uri: String) {
         viewBinding.apply {
             imageViewAttachment.show()
             viewFalseImage.hide()
             Glide.with(root.context)
-                .load(body)
+                .load(uri)
                 .transform(*getBlurTransformation(root.context))
                 .into(imageViewAttachment)
         }

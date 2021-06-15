@@ -100,6 +100,8 @@ class ConversationAdapter(
                 oldItem.messageEntity.id == newItem.messageEntity.id &&
                         oldItem.messageEntity.status == newItem.messageEntity.status &&
                         oldItem.messageEntity.isSelected == newItem.messageEntity.isSelected &&
+                        oldItem.messageEntity.numberAttachments == newItem.messageEntity.numberAttachments &&
+                        oldItem.attachmentEntityList.size == newItem.attachmentEntityList.size &&
                         oldFirstAttachmentEntity?.status == newFirstAttachmentEntity?.status
             }
         }
@@ -289,7 +291,7 @@ class ConversationAdapter(
                      * Con un solo attachment
                      * Con varios Attachments
                      */
-                    when (conversation.attachmentEntityList.size) {
+                    when (conversation.messageEntity.numberAttachments) {
                         0 -> getItemTypeForNoAttachments(conversation)
                         1 -> getItemTypeForOneAttachment(conversation)
                         else -> getItemForTwoOrMoreAttachments(conversation)
@@ -318,13 +320,13 @@ class ConversationAdapter(
     private fun getItemTypeForOneAttachment(conversation: MessageAttachmentRelation): Int {
         return when (conversation.attachmentEntityList[0].type) {
             Constants.AttachmentType.IMAGE.type -> {
-                if (conversation.isMine()) TYPE_MY_MULTI_ATTACHMENT else TYPE_INCOMING_MULTI_ATTACHMENT
+                if (conversation.isMine()) TYPE_MY_MESSAGE_IMAGE else TYPE_INCOMING_MESSAGE_IMAGE
             }
             Constants.AttachmentType.AUDIO.type -> {
                 if (conversation.isMine()) TYPE_MY_MESSAGE_AUDIO else TYPE_INCOMING_MESSAGE_AUDIO
             }
             Constants.AttachmentType.VIDEO.type -> {
-                if (conversation.isMine()) TYPE_MY_MULTI_ATTACHMENT else TYPE_INCOMING_MULTI_ATTACHMENT
+                if (conversation.isMine()) TYPE_MY_MESSAGE_VIDEO else TYPE_INCOMING_MESSAGE_VIDEO
             }
             Constants.AttachmentType.DOCUMENT.type -> {
                 if (conversation.isMine()) TYPE_MY_MESSAGE_DOCUMENT else TYPE_INCOMING_MESSAGE_DOCUMENT

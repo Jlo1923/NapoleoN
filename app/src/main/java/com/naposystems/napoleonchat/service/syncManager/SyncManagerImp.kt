@@ -118,10 +118,14 @@ class SyncManagerImp @Inject constructor(
             if (messageRes.quoted.isNotEmpty())
                 insertQuote(messageRes.quoted, messageId.toInt())
 
-            handlerAttachments(messageRes.attachments, messageId.toInt())
+            handlerAttachments(messageRes.attachments, messageId.toInt(), message.contactId)
 
         } else {
-            handlerAttachments(messageRes.attachments, databaseMessage.messageEntity.id)
+            handlerAttachments(
+                messageRes.attachments,
+                databaseMessage.messageEntity.id,
+                databaseMessage.messageEntity.contactId
+            )
         }
 
     }
@@ -129,7 +133,8 @@ class SyncManagerImp @Inject constructor(
     @Synchronized
     suspend fun handlerAttachments(
         attachments: List<AttachmentResDTO>,
-        messageId: Int
+        messageId: Int,
+        contactId: Int
     ) {
         val listAttachments = AttachmentResDTO.toListConversationAttachment(
             messageId,
@@ -145,6 +150,14 @@ class SyncManagerImp @Inject constructor(
                 if (this.existAttachmentByWebId(attachment.webId).not()) {
                     this.insertAttachments(listOf(attachment))
                 }
+
+                val listUniqueAttachment = MessageDTO(
+                    id = attachment.webId,
+                    type = Constants.MessageType.ATTACHMENT.type,
+                    user = contactId,
+                    status = StatusMustBe.RECEIVED.status
+                )
+                notifyMessageReceivedRemote(MessagesReqDTO(listOf(listUniqueAttachment)))
             }
         }
     }
@@ -155,20 +168,24 @@ class SyncManagerImp @Inject constructor(
         val listMessagesNotify: MutableList<MessageAttachmentRelation> = mutableListOf()
 
         listMessages.forEach { messsageRes ->
+
             messsageRes.id.let { messageIdWeb ->
 
                 val messageAttachmentRelation =
                     messageLocalDataSource.getMessageByWebId(messageIdWeb, false)
 
-                if (messageAttachmentRelation != null)
-                    listMessagesNotify.add(messageAttachmentRelation)
+                if (messageAttachmentRelation != null) {
+                    if (messageAttachmentRelation.messageEntity.numberAttachments <= 1) {
+                        listMessagesNotify.add(messageAttachmentRelation)
+                    }
+                }
             }
         }
 
         val listMessagesReceived =
             listMessagesNotify.toMessagesReqDTOFromRelation(StatusMustBe.RECEIVED)
 
-        notifyMessageReceived(listMessagesReceived)
+        notifyMessageReceivedRemote(listMessagesReceived)
 
         getMessagesSocketListener?.emitSocketClientConversation(listMessagesReceived)
 
@@ -436,7 +453,7 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun notifyMessageReceived(messagesReqDTO: MessagesReqDTO) {
+    override fun notifyMessageReceivedRemote(messagesReqDTO: MessagesReqDTO) {
 
         Timber.d("**Paso 9: Proceso consumir recibido del item $messagesReqDTO")
 
@@ -480,20 +497,30 @@ class SyncManagerImp @Inject constructor(
             val response = napoleonApi.getDeletedMessages()
             if (response.isSuccessful) {
                 response.body()?.messagesId.let {
-                    it?.let {
-                        messageLocalDataSource.deleteMessagesByWebId(
-                            it
-                        )
-                    }
+                    it?.let { messageLocalDataSource.deleteMessagesByWebId(it) }
                 }
 
                 response.body()?.attachmentsId.let {
-                    it?.let {
-                        attachmentLocalDataSource.deletedAttachments(
-                            it
-                        )
+                    it?.let { listIds ->
+                        if (listIds.isNotEmpty()) {
+                            attachmentLocalDataSource.deletedAttachments(listIds)
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun decreaseAmountAttachments(attachmentWebId: String) {
+        val theAttachment =
+            attachmentLocalDataSource.getAttachmentByWebId(attachmentWebId)
+        theAttachment?.let {
+            val msg =
+                messageLocalDataSource.getMessageByWebId(it.messageWebId, false)
+            msg?.messageEntity?.let { messageEntity ->
+                val msgCopy =
+                    messageEntity.copy(numberAttachments = messageEntity.numberAttachments - 1)
+                messageLocalDataSource.updateMessage(msgCopy)
             }
         }
     }
@@ -799,8 +826,9 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter { it.isReceived() }
-                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
+                        val filter =
+                            msgAndRelation.attachmentEntityList.filter { it.isReceived() || it.isDownloadComplete() }
+                        if (filter.size == msgAndRelation.messageEntity.numberAttachments) {
                             updateMessagesStatus(
                                 listOf(msgAndRelation.messageEntity.webId),
                                 Constants.MessageStatus.UNREAD.status
@@ -822,6 +850,9 @@ class SyncManagerImp @Inject constructor(
         }
     }
 
+    /**
+     * Debemos validar que no este marcado como leido
+     */
     override fun tryMarkMessageParentAsRead(idsAttachments: List<String>) {
         GlobalScope.launch(Dispatchers.IO) {
             idsAttachments.forEach { idAttachmentString ->
@@ -830,26 +861,33 @@ class SyncManagerImp @Inject constructor(
                     val theMsg =
                         messageLocalDataSource.getMessageByWebId(attachment.messageWebId, false)
                     theMsg?.let { msgAndRelation ->
-                        val filter = msgAndRelation.attachmentEntityList.filter { it.isRead() }
-                        if (filter.size == msgAndRelation.attachmentEntityList.size) {
-                            updateMessagesStatus(
-                                listOf(msgAndRelation.messageEntity.webId),
-                                Constants.AttachmentStatus.READED.status
-                            )
-
-                            val messageDTO = MessageDTO(
-                                id = msgAndRelation.messageEntity.webId,
-                                type = Constants.MessageType.TEXT.type,
-                                user = msgAndRelation.messageEntity.contactId,
-                                status = StatusMustBe.READED.status
-                            )
-                            val list = MessagesReqDTO(listOf(messageDTO))
-                            napoleonApi.sendMessagesRead(list)
+                        if (msgAndRelation.messageEntity.isRead().not()) {
+                            val filter =
+                                msgAndRelation.attachmentEntityList.filter { it.isRead() }
+                            if (filter.size == msgAndRelation.attachmentEntityList.size) {
+                                setMsgReadLocallyAndRemotely(msgAndRelation)
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    private suspend fun setMsgReadLocallyAndRemotely(msgAndRelation: MessageAttachmentRelation) {
+        updateMessagesStatus(
+            listOf(msgAndRelation.messageEntity.webId),
+            READED.status
+        )
+
+        val messageDTO = MessageDTO(
+            id = msgAndRelation.messageEntity.webId,
+            type = Constants.MessageType.TEXT.type,
+            user = msgAndRelation.messageEntity.contactId,
+            status = StatusMustBe.READED.status
+        )
+        val list = MessagesReqDTO(listOf(messageDTO))
+        napoleonApi.sendMessagesRead(list)
     }
 
 //

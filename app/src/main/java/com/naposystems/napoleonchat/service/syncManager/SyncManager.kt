@@ -9,7 +9,7 @@ interface SyncManager {
 
     fun insertMessage(messageString: String)
 
-    fun notifyMessageReceived(messageId: MessagesReqDTO)
+    fun notifyMessageReceivedRemote(messageId: MessagesReqDTO)
 
     fun notifyMessagesReaded()
 
@@ -55,8 +55,6 @@ interface SyncManager {
     fun existAttachmentById(it: String): Boolean
 
     fun setGetMessagesSocketListener(getMessagesSocketListener: GetMessagesSocketListener)
-
-
 
     fun tryMarkMessageParentAsReceived(idsAttachments: List<String>)
 

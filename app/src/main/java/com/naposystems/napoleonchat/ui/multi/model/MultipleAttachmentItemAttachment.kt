@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.ui.multi.model
 
 import android.os.Parcelable
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -34,5 +35,7 @@ data class MultipleAttachmentItemAttachment(
         totalSelfDestructionAt = 0,
         updatedAt = 0
     )
+
+    fun isReaded() = status == Constants.AttachmentStatus.READED.status
 }
 

@@ -14,6 +14,7 @@ interface HandlerNotificationChannel {
     fun getChannelSound(channelType: Int, contactId: Int?, contactNick: String?): Uri?
 
     fun getChannelType(notificationType: Int): String
+
     fun getChannelType(notificationType: Int, contactId: Int): String
 
     fun updateChannel(uri: Uri?, channelType: Int, contactId: Int?, contactNick: String?)

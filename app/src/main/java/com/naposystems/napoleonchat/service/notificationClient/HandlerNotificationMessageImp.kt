@@ -17,7 +17,9 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.MESSAGE
 import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.MESSAGE_ID
+import com.naposystems.napoleonchat.utility.Constants.NotificationKeys.SILENCE
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.Utils
 import com.squareup.moshi.JsonAdapter
@@ -70,9 +72,7 @@ class HandlerNotificationMessageImp
             processQueueMessagesNotifications()
         } else {
             Timber.d("LLAMADA PASO 3: HANDLER MESSAGE")
-            GlobalScope.launch {
-                socketClient.connectSocket()
-            }
+            GlobalScope.launch { socketClient.connectSocket() }
             listenConnectChannel()
         }
     }
@@ -112,13 +112,13 @@ class HandlerNotificationMessageImp
             queueDataNotifications.removeFirst()
             queueNotifications.removeFirst()
 
-            if (itemDataNotification.containsKey(Constants.NotificationKeys.MESSAGE)) {
+            if (itemDataNotification.containsKey(MESSAGE)) {
                 handlerTextMessage(itemDataNotification)
             } else {
                 syncManager.getMyMessages(null)
             }
 
-            if (!itemDataNotification.getValue(Constants.NotificationKeys.SILENCE).toBoolean()) {
+            if (itemDataNotification.getValue(SILENCE).toBoolean().not()) {
                 Timber.d("**Paso 10: No Silenciado")
                 processNotification(itemDataNotification, itemNotification)
             }
@@ -128,9 +128,9 @@ class HandlerNotificationMessageImp
 
     private fun handlerTextMessage(itemDataNotification: Map<String, String>) {
         val messageString: String = if (BuildConfig.ENCRYPT_API) {
-            cryptoMessage.decryptMessageBody(itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE))
+            cryptoMessage.decryptMessageBody(itemDataNotification.getValue(MESSAGE))
         } else {
-            itemDataNotification.getValue(Constants.NotificationKeys.MESSAGE)
+            itemDataNotification.getValue(MESSAGE)
         }
 
         syncManager.insertMessage(messageString)
@@ -141,7 +141,7 @@ class HandlerNotificationMessageImp
         jsonAdapterMessage.fromJson(messageString)
             ?.let { messageModel ->
                 val listMessagesToReceived = listOf(messageModel).toMessagesReqDTO(RECEIVED)
-                syncManager.notifyMessageReceived(listMessagesToReceived)
+                syncManager.notifyMessageReceivedRemote(listMessagesToReceived)
                 socketClient.emitClientConversation(listMessagesToReceived)
             }
     }

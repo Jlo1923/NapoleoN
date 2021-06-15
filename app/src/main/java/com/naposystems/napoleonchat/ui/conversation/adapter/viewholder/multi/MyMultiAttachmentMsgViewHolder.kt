@@ -136,7 +136,7 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun tryUploadAttachments() {
         val attachmentsFilter =
-            msgAndAttachment.attachmentEntityList.filter { it.isError() }
+            msgAndAttachment.attachmentEntityList.filter { it.isError() || it.isSending()}
         if (attachmentsFilter.isNotEmpty()) {
             viewModel.retryUploadAllFiles(
                 attachmentsFilter,
@@ -148,8 +148,7 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun paintAttachments(messageStatus: Int) {
 
-        val isStateError =
-            messageStatus == com.naposystems.napoleonchat.utility.Constants.MessageStatus.ERROR.status
+        val isStateError = messageStatus == ERROR.status
 
         msgAndAttachment.attachmentEntityList.apply {
             when (this.size) {
@@ -220,14 +219,6 @@ class MyMultiAttachmentMsgViewHolder(
             is MultiAttachmentMsgEvent.ShowQuantity -> showQuantity(action.data)
         }
     }
-
-//    private fun handleState(state: MultiAttachmentMsgState) = when (state) {
-//        is MultiAttachmentMsgState.ShowTwoItem -> showTwoItems(state.listElements)
-//        is MultiAttachmentMsgState.ShowThreeItem -> showThreeElements(state.listElements)
-//        is MultiAttachmentMsgState.ShowFourItem -> showFourItems(state.listElements)
-//        is MultiAttachmentMsgState.ShowFiveItem -> showFiveItems(state.listElements)
-//        is MultiAttachmentMsgState.ShowMoreItem -> showFiveItems(state.listElements)
-//    }
 
     private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
         val data = UploadAttachmentsIndicatorModel(

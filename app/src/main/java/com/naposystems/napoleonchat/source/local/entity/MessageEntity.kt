@@ -82,4 +82,7 @@ data class MessageEntity(
                 && webId.isEmpty()
     }
 
+    fun isReceived() = status == Constants.MessageStatus.UNREAD.status
+    fun isRead() = status == Constants.MessageStatus.READED.status
+
 }

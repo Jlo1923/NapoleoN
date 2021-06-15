@@ -94,13 +94,25 @@ class IncomingMultiAttachmentMsgViewHolder(
         showViews(progressBarIndeterminate, imageButtonState)
     }
 
-    private fun paintDownloadFiles() = msgAndAttachment.attachmentEntityList.apply {
-        val countSent = this.filter { it.isDownloadComplete() || it.isReceived() || it.isRead() }
-        if (countSent.size == this.size) {
-            binding.viewDownloadAttachmentsIndicator.hide()
+    private fun paintDownloadFiles() = msgAndAttachment.apply {
+        if (this.messageEntity.isReceived()) {
+            val countSent =
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isRead() }
+            if (countSent.size == this.attachmentEntityList.size) {
+                binding.viewDownloadAttachmentsIndicator.hide()
+            } else {
+                val data = Pair(countSent.size, this.attachmentEntityList.size)
+                showQuantity(data)
+            }
         } else {
-            val data = Pair(countSent.size, this.size)
-            showQuantity(data)
+            val countSent =
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isRead() }
+            if (countSent.size == this.messageEntity.numberAttachments) {
+                binding.viewDownloadAttachmentsIndicator.hide()
+            } else {
+                val data = Pair(countSent.size, this.messageEntity.numberAttachments)
+                showQuantity(data)
+            }
         }
     }
 
@@ -124,7 +136,6 @@ class IncomingMultiAttachmentMsgViewHolder(
             viewModel.retryDownloadAllFiles(attachmentsFilter, binding.root.context)
         }
     }
-
 
     private fun paintAttachments() {
 

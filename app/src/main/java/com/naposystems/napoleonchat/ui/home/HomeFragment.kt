@@ -115,6 +115,7 @@ class HomeFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
+        validateMustGoToContacts()
     }
 
     override fun onCreateView(
@@ -317,14 +318,15 @@ class HomeFragment : BaseFragment() {
         (activity as MainActivity).getUser()
     }
 
-    override fun onStart() {
-        super.onStart()
-        validateMustGoToContacts()
-    }
-
     private fun validateMustGoToContacts() {
         val uris = homeViewModel.getPendingUris()
         if (uris.isEmpty().not()) {
+
+            /**
+             * Solo podemos ir a contactos una sola vez, si se devuelve ya se pierden los archivos
+             * seleccionados previamente desde afuera
+             */
+            homeViewModel.removePendingUris()
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToContactsFragment()
             )
