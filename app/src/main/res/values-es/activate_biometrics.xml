@@ -4,4 +4,7 @@
     <string name="text_only_pin">Pin</string>
     <string name="text_pin_and_fingerprint">Pin + Huella dactilar</string>
     <string name="text_pin_and_unlock_facial">Pin + Desbloqueo facial</string>
+    <string name="text_title_dialog_biometrics">Bloqueo de la aplicación</string>
+    <string name="text_description_dialog_biometrics">Desbloquee la aplicación ingresando con el biometrico</string>
+    <string name="text_unallocated_unlock">El dispositivo no tiene asignado un desbloqueo biométrico</string>
 </resources>

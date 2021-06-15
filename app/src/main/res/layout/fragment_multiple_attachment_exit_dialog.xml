@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/normal_margin"
-        android:text="@string/multi_title_exit_explain"
+        android:text="@string/text_want_close_the_gallery_desc"
         android:textAppearance="@style/BodyTextView.message"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_title" />
@@ -36,7 +36,7 @@
         android:layout_marginTop="@dimen/large_margin"
         android:layout_marginEnd="@dimen/normal_margin"
         android:padding="@dimen/small_padding"
-        android:text="@string/multi_button_accept"
+        android:text="@string/text_accept"
         android:textAppearance="@style/AppPrimaryButtonText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_message" />
@@ -48,7 +48,7 @@
         android:layout_marginTop="@dimen/normal_margin"
         android:layout_marginEnd="@dimen/normal_margin"
         android:padding="@dimen/small_padding"
-        android:text="@string/multi_button_cancel"
+        android:text="@string/text_cancel"
         android:textAppearance="@style/AppPrimaryButtonText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

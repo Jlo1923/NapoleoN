@@ -38,7 +38,7 @@ class FieldsValidator {
                     return false
                 }
                 (!textContainLetter(nickname.substring(0, 1))) -> {
-                    textInputLayout.error = context.getString(R.string.text_only_start_letter)
+                    textInputLayout.error = context.getString(R.string.text_nickname_must_begin_with_a_letter)
                     return false
                 }
                 (nickname.length < 4) -> {

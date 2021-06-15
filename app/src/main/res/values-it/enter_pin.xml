@@ -5,7 +5,5 @@
     <string name="text_pin_unlock_time">Sblocca tempo</string>
     <string name="text_pin_unlock_note">Hai superato il numero di tentativi consentiti, quindi abbiamo bloccato il tuo account per un po \'.</string>
     <string name="text_pin_enter">Inserisci il PIN</string>
-    <string name="text_title_dialog_biometrics">Blocco dell\'applicazione</string>
-    <string name="text_description_dialog_biometrics">Sblocca l\'applicazione accedendo con il biometrico</string>
-    <string name="text_unallocated_unlock">Al dispositivo non è assegnato uno sblocco biometrico</string>
+
 </resources>
