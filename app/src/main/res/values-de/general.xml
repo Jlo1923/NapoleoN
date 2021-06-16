@@ -3,13 +3,10 @@
     <string name="text_accept">Akzeptieren</string>
     <string name="text_cancel">Stornieren</string>
     <string name="text_continue">Weiter</string>Información
-    <string name="text_welcome">Herzlich willkommen</string>
     <string name="text_next">Weiter</string>
     <string name="text_fail">Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
     <string name="text_name">Vorname</string>
     <string name="text_nickname_with_asterisk">Spitzname*</string>
-    <string name="text_status">Zustand</string>
-    <string name="text_blocked_contacts">Blockierte Kontakte</string>
     <string name="label_edit_photo">Foto bearbeiten</string>
     <string name="label_edit_cover">Banner bearbeiten</string>
     <string name="text_edit">Bearbeiten</string>
@@ -21,14 +18,6 @@
     <string name="text_register">Registrieren Sie sich</string>
     <string name="text_answer">Antwort</string>
     <string name="text_error">Error</string>
-    <string name="text_gallery">Galerie</string>
-    <string name="text_camera">Kamera</string>
-    <string name="text_location">Standort</string>
-    <string name="text_audio">Audio</string>
-    <string name="text_video">Video</string>
-    <string name="text_photo">Foto</string>
-    <string name="text_gif">Gif</string>
-    <string name="text_document">Dokument</string>
     <string name="text_add">Hinzufügen</string>
     <string name="text_sent">Gesendet</string>
     <string name="text_refuse">Ablehnen</string>
@@ -37,8 +26,6 @@
     <string name="text_title_delete_conversation">Konversation löschen</string>
     <string name="text_mute_conversation">Gespräch stumm schalten</string>
     <string name="text_unmuted_conversation">Ungedämpftes Gespräch</string>
-    <string name="text_block_contact">Kontakt blockieren</string>
-    <string name="text_unblock_contact">Kontakt entsperren</string>
     <string name="text_field_cannot_be_empty">Das Feld darf nicht leer sein</string>
     <string name="text_send_to">Schicken %1$s</string>
     <string name="text_error_playing_audio">Ein Fehler ist auf das Spiel Audio aufgetreten</string>
@@ -62,26 +49,59 @@
     <string name="text_yesterday">Gestern</string>
     <string name="text_close">Schließen</string>
     <string name="text_confirm">Confirm</string>
-    <string name="text_hang_up_call">Auflegen</string>
-    <string name="text_answer_call">Antworten</string>
     <string name="text_update_title">Eine neue Version von NapoleoN ist verfügbar</string>
     <string name="text_update_message">Version %1$s ist jetzt im Play Store erhältlich</string>
     <string name="text_update">Aktualisieren</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN muss Zugriff auf die Kamera und das Mikrofon um Anrufe tätigen und empfangen</string>
-    <string name="text_twentyfour_hours">24 Stunden</string>
     <string name="text_access">ZUGRIFF</string>
     <string name="text_yes">Ja</string>
     <string name="text_no">Nein</string>
     <string name="text_empty_state_search_contacts">Ihre Suche ergab keine Ergebnisse</string>
-    <string name="text_contact">KONTAKT</string>
     <string name="text_error_updating_language">Ein Fehler ist aufgetreten Sprache zu ändern, versuchen Sie es erneut</string>
-    <string name="text_emptystate_search_friends_title">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
-    <string name="text_date_today">Heute</string>
     <string name="text_title_attach_doc">Anhang</string>
     <string name="text_attch_doc_not_allowed">Die ausgewählte Datei nicht erlaubt ist</string>
     <string name="text_attch_doc_size_exceed">Die ausgewählte Datei überschreitet die zulässige Größe (100MB)</string>
     <string name="text_reject">Ablehnen</string>
     <string name="text_count_messages">Beiträge</string>
     <string name="text_sending_file">Senden Datei</string>
+    <string name="text_sending_file_multiple">Senden mehrerer Dateien</string>
+    <string name="text_downloading_file">Dateien herunterladen</string>
+    <string name="text_downloading_file_multiple">Laden Sie mehrere Dateien herunter</string>
     <string name="text_activated">aktiviert</string>
+    <string name="msg_not_connection">Sie müssen eine Verbindung für diesen Prozess haben</string>
+
+    <!--    Landing-->
+    <string name="text_welcome">Herzlich willkommen</string>
+
+    <!--    Profile-->
+    <string name="text_status">Zustand</string>
+    <string name="text_blocked_contacts">Blockierte Kontakte</string>
+
+    <!--    menu Attachment-->
+    <string name="text_gallery">Galerie</string>
+    <string name="text_camera">Kamera</string>
+    <string name="text_location">Standort</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Foto</string>
+    <string name="text_gif">Gif</string>
+    <string name="text_document">Dokument</string>
+
+    <!--    Contacts-->
+    <string name="text_block_contact">Kontakt blockieren</string>
+    <string name="text_unblock_contact">Kontakt entsperren</string>
+
+    <!--    Conversation -->
+    <string name="text_hang_up_call">Auflegen</string>
+    <string name="text_answer_call">Antworten</string>
+    <string name="text_date_today">Heute</string>
+
+    <!--    Time format-->
+    <string name="text_twentyfour_hours">24 Stunden</string>
+
+    <!--    Contact-->
+    <string name="text_contact">KONTAKT</string>
+
+    <!--    Empty State-->
+    <string name="text_emptystate_search_friends_title">Suchen Sie Ihren Freunden von Nickname und kommunizieren</string>
 </resources>

@@ -3,13 +3,10 @@
     <string name="text_accept">Accettare</string>
     <string name="text_cancel">Cancellare</string>
     <string name="text_continue">Continuare</string>
-    <string name="text_welcome">Benvenuto</string>
     <string name="text_next">Seguente</string>
     <string name="text_fail">Qualcosa è andato storto, per favore riprova</string>
     <string name="text_name">Nome</string>
     <string name="text_nickname_with_asterisk">Soprannome*</string>
-    <string name="text_status">Stato</string>
-    <string name="text_blocked_contacts">Contatti bloccati</string>
     <string name="label_edit_photo">Modifica foto</string>
     <string name="label_edit_cover">Modifica banner</string>
     <string name="text_edit">Modifica</string>
@@ -21,14 +18,6 @@
     <string name="text_register">Record</string>
     <string name="text_answer">risposta</string>
     <string name="text_error">Error</string>
-    <string name="text_gallery">Galleria</string>
-    <string name="text_camera">Fotocamera</string>
-    <string name="text_location">Posizione</string>
-    <string name="text_audio">Audio</string>
-    <string name="text_video">Video</string>
-    <string name="text_photo">Foto</string>
-    <string name="text_gif">Gif</string>
-    <string name="text_document">Documento</string>
     <string name="text_add">Aggiungere</string>
     <string name="text_sent">Inviato</string>
     <string name="text_refuse">Rifiutare</string>
@@ -37,8 +26,6 @@
     <string name="text_title_delete_conversation">Elimina la conversazione</string>
     <string name="text_mute_conversation">Conversazione muta</string>
     <string name="text_unmuted_conversation">Conversazione silenziosa</string>
-    <string name="text_block_contact">Blocca contatto</string>
-    <string name="text_unblock_contact">Sblocca contatto</string>
     <string name="text_field_cannot_be_empty">Il campo non può essere vuoto</string>
     <string name="text_send_to">Invia ad %1$s</string>
     <string name="text_error_playing_audio">Un errore si è verificato per l\'audio gioco</string>
@@ -62,26 +49,59 @@
     <string name="text_yesterday">Ieri</string>
     <string name="text_close">Vicino</string>
     <string name="text_confirm">Conferma</string>
-    <string name="text_hang_up_call">Appendere</string>
-    <string name="text_answer_call">Risposta</string>
     <string name="text_update_title">Una nuova versione di Napoleone è disponibile</string>
     <string name="text_update_message">Version (%1$s) è ora disponibile su Play Store</string>
     <string name="text_update">Aggiornare</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN ha bisogno di accedere alla videocamera e microfono per effettuare e ricevere chiamate</string>
-    <string name="text_twentyfour_hours">24 ore</string>
     <string name="text_access">ACCESSO</string>
     <string name="text_yes">Sì</string>
     <string name="text_no">No</string>
     <string name="text_empty_state_search_contacts">La tua ricerca non ha prodotto risultati</string>
-    <string name="text_contact">CONTATTO</string>
     <string name="text_error_updating_language">Verificato un errore durante la modifica lingua, riprova</string>
-    <string name="text_emptystate_search_friends_title">Cerca i tuoi amici nickname e comunicare</string>
-    <string name="text_date_today">Oggi</string>
     <string name="text_title_attach_doc">Documento allegato</string>
     <string name="text_attch_doc_not_allowed">Il file selezionato non è consentito</string>
     <string name="text_attch_doc_size_exceed">Il file selezionato supera la dimensione consentita (100MB)</string>
     <string name="text_reject">Per rifiutare</string>
     <string name="text_count_messages">Messaggi</string>
     <string name="text_sending_file">File di Invio</string>
+    <string name="text_sending_file_multiple">Invio di più file</string>
+    <string name="text_downloading_file">Scaricare files</string>
+    <string name="text_downloading_file_multiple">Scarica diversi file.</string>
     <string name="text_activated">attivato</string>
+    <string name="msg_not_connection">Devi avere una connessione per questo processo</string>
+
+    <!--    Landing-->
+    <string name="text_welcome">Benvenuto</string>
+
+    <!--    Profile-->
+    <string name="text_status">Stato</string>
+    <string name="text_blocked_contacts">Contatti bloccati</string>
+
+    <!--    menu Attachment-->
+    <string name="text_gallery">Galleria</string>
+    <string name="text_camera">Fotocamera</string>
+    <string name="text_location">Posizione</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Foto</string>
+    <string name="text_gif">Gif</string>
+    <string name="text_document">Documento</string>
+
+    <!--    Contacts-->
+    <string name="text_block_contact">Blocca contatto</string>
+    <string name="text_unblock_contact">Sblocca contatto</string>
+
+    <!--    Conversation -->
+    <string name="text_hang_up_call">Appendere</string>
+    <string name="text_answer_call">Risposta</string>
+    <string name="text_date_today">Oggi</string>
+
+    <!--    Time format-->
+    <string name="text_twentyfour_hours">24 ore</string>
+
+    <!--    Contact-->
+    <string name="text_contact">CONTATTO</string>
+
+    <!--    Empty State-->
+    <string name="text_emptystate_search_friends_title">Cerca i tuoi amici nickname e comunicare</string>
 </resources>

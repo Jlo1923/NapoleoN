@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_delete_attachment_title">Supprimer l\'attachement</string>
+    <string name="text_delete_attachment">Pour supprimer le fichier sélectionné?</string>
+    <string name="text_limit_selected_attachments">Vous ne pouvez pas partager plus de 10 fichiers multimédias.</string>
+    <string name="text_preparing_attachment">En train de préparer...</string>
+    <string name="text_want_close_the_gallery_desc">Etes-vous sûr de vouloir fermer la galerie?</string>
+
+    <string name="multi_title_exit">Plusieurs pièces jointes</string>
+    <string name="multi_button_delete_for_me">Supprimer pour moi</string>
+    <string name="multi_button_delete_for_all">Supprimer tous</string>
+    <string name="multi_max_files_from_outside">Vous ne pouvez pas envoyer plus de 10 fichiers</string>
+
+</resources>

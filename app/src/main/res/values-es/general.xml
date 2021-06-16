@@ -12,6 +12,7 @@
     <string name="text_fail">Algo ha salido mal, por favor intente nuevamente</string>
     <string name="text_status">Estado</string>
     <string name="text_blocked_contacts">Contactos bloqueados</string>
+    <string name="text_fail">Algo ha salido mal, por favor inténte nuevamente</string>
     <string name="label_edit_photo">Editar foto</string>
     <string name="label_edit_cover">Editar banner</string>
     <string name="text_share_android">Compartir</string>
@@ -19,14 +20,6 @@
     <string name="text_add_contact">Agregar contacto</string>
     <string name="text_register">Registrar</string>
     <string name="text_finish">Finalizar</string>
-    <string name="text_gallery">Galería</string>
-    <string name="text_camera">Cámara</string>
-    <string name="text_location">Ubicación</string>
-    <string name="text_audio">Audio</string>
-    <string name="text_video">Video</string>
-    <string name="text_photo">Foto</string>
-    <string name="text_gif">Gif</string>
-    <string name="text_document">Documento</string>
     <string name="text_answer">Respuesta</string>
     <string name="text_error">Error</string>
     <string name="text_add">Agregar</string>
@@ -43,8 +36,6 @@
         <item quantity="other">%d seleccionados</item>
     </plurals>
     <string name="text_title_delete_conversation">Eliminar conversación</string>
-    <string name="text_block_contact">Bloquear contacto</string>
-    <string name="text_unblock_contact">Desbloquear Contacto</string>
     <string name="text_attachment_document_name">Documento.%1$s</string>
     <string name="text_alert_failure">Advertencia</string>
     <string name="text_status_limit">Se permiten 4 estados personalizados; Elimina uno previamente almacenado para agregar uno nuevo</string>
@@ -61,21 +52,17 @@
     <string name="text_yesterday">Ayer</string>
     <string name="text_close">Cerrar</string>
     <string name="text_confirm">Confirmar</string>
-    <string name="text_hang_up_call">Colgar</string>
-    <string name="text_answer_call">Contestar</string>
     <string name="text_update_title">Una nueva versión de Napoleón está disponible</string>
     <string name="text_update_message">La versión %1$s ahora está disponible en la Play Store</string>
     <string name="text_update">Actualizar</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN necesita aceso a la cámara y micrófono para hacer y recibir llamadas</string>
     <string name="text_explanation_camera_to_receive_calls">NapoleoN necesita acceso a la cámara y micrófono para hacer y recibir llamadas</string>
     <string name="text_twentyfour_hours">24 horas</string>
     <string name="text_access">ACCESO</string>
     <string name="text_yes">Si</string>
     <string name="text_no">No</string>
     <string name="text_empty_state_search_contacts">Tu búsqueda no produjo resultado</string>
-    <string name="text_contact">CONTACTO</string>
     <string name="text_error_updating_language">Ha ocurrido un error al cambiar idioma, por favor inténtelo nuevamente</string>
-    <string name="text_emptystate_search_friends_title">Busca a tus amigos por apodo y comunícate</string>
-    <string name="text_date_today">Hoy</string>
     <string name="text_title_attach_doc">Documento adjunto</string>
     <string name="text_attch_doc_not_allowed">El archivo seleccionado no es permitido</string>
     <string name="text_attch_doc_size_exceed">El archivo seleccionado excede el tamaño permitido (100MB)</string>
@@ -84,4 +71,43 @@
     <string name="text_sending_file">Enviando archivo</string>
     <string name="text_sending_file_multiple">Enviando múltiples archivos</string>
     <string name="text_activated">Activado</string>
+    <string name="text_sending_file_multiple">Enviando multiples archivos</string>
+    <string name="text_downloading_file">Descarga de archivos</string>
+    <string name="text_downloading_file_multiple">Descarga de varios archivos</string>
+    <string name="text_activated">activado</string>
+    <string name="msg_not_connection">Debes tener conexión para este proceso</string>
+
+<!--    Landing-->
+    <string name="text_welcome">Bienvenido</string>
+    <!--    Profile-->
+    <string name="text_status">Estado</string>
+    <string name="text_blocked_contacts">Contactos bloqueados</string>
+
+<!--    menu Attachment-->
+    <string name="text_gallery">Galería</string>
+    <string name="text_camera">Cámara</string>
+    <string name="text_location">Ubicación</string>
+    <string name="text_audio">Audio</string>
+    <string name="text_video">Video</string>
+    <string name="text_photo">Foto</string>
+    <string name="text_gif">Gif</string>
+    <string name="text_document">Documento</string>
+
+<!--    Contacts-->
+    <string name="text_block_contact">Bloquear contacto</string>
+    <string name="text_unblock_contact">Desbloquear Contacto</string>
+
+<!--    Conversation -->
+    <string name="text_hang_up_call">Colgar</string>
+    <string name="text_answer_call">Contestar</string>
+    <string name="text_date_today">Hoy</string>
+
+<!--    Time format-->
+    <string name="text_twentyfour_hours">24 horas</string>
+
+<!--    Contact-->
+    <string name="text_contact">CONTACTO</string>
+
+<!--    Empty State-->
+    <string name="text_emptystate_search_friends_title">Busca a tus amigos por apodo y comunícate</string>
 </resources>

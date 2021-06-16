@@ -156,7 +156,7 @@ class MultipleAttachmentActivity : AppCompatActivity() {
 
     private fun showMaxFilesAttached() {
         viewBinding.root.context.apply {
-            showToast(this, getString(R.string.multi_msg_cannot_share_more_ten))
+            showToast(this, getString(R.string.text_limit_selected_attachments))
         }
     }
 

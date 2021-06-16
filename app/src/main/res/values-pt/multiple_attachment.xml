@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="text_delete_attachment_title">Fixação remover</string>
+    <string name="text_delete_attachment">Para excluir o arquivo selecionado?</string>
+    <string name="text_limit_selected_attachments">Você não pode compartilhar mais de 10 arquivos multimídia.</string>
+    <string name="text_preparing_attachment">Preparando...</string>
+    <string name="text_want_close_the_gallery_desc">Tem certeza de que quer encerrar a galeria?</string>
+
+    <string name="multi_title_exit">Vários anexos</string>
+    <string name="multi_button_delete_for_me">Excluir para mim</string>
+    <string name="multi_button_delete_for_all">Apagar tudo</string>
+    <string name="multi_max_files_from_outside">Você não pode enviar mais de 10 arquivos</string>
+
+</resources>

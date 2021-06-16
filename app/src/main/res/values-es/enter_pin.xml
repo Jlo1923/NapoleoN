@@ -5,7 +5,5 @@
     <string name="text_pin_unlock_time">Tiempo para desbloqueo</string>
     <string name="text_pin_unlock_note">Superaste el número de intentos permitidos, por eso hemos bloqueado el ingreso a tu cuenta por un tiempo.</string>
     <string name="text_pin_enter">Ingresar PIN</string>
-    <string name="text_title_dialog_biometrics">Bloqueo de la aplicación</string>
-    <string name="text_description_dialog_biometrics">Desbloquee la aplicación ingresando con el biometrico</string>
-    <string name="text_unallocated_unlock">El dispositivo no tiene asignado un desbloqueo biométrico</string>
+
 </resources>

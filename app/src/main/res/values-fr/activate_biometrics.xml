@@ -4,4 +4,7 @@
     <string name="text_only_pin">Épingle</string>
     <string name="text_pin_and_fingerprint">Broche + empreinte digitale</string>
     <string name="text_pin_and_unlock_facial">Pin + Face Unlock</string>
+    <string name="text_title_dialog_biometrics">Verrouillage d\'application</string>
+    <string name="text_description_dialog_biometrics">Déverrouillez l\'application en entrant avec le biométrique</string>
+    <string name="text_unallocated_unlock">Aucun déverrouillage biométrique n\'est attribué à l\'appareil</string>
 </resources>
