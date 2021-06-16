@@ -6,8 +6,12 @@ import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.MessageStatus
 import kotlinx.android.parcel.Parcelize
 
+/**
+ * El [status] hace referencia al enumerable [MessageStatus]
+ */
 @Parcelize
 @Entity(
     tableName = DBConstants.Message.TABLE_NAME_MESSAGE,

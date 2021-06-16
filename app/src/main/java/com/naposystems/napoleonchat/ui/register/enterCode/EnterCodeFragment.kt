@@ -19,6 +19,7 @@ import dagger.android.support.DaggerFragment
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+//TODO: Revisar error aqui al registrar sesion
 class EnterCodeFragment :
     DaggerFragment(), EnterCodeWidget.OnEventListener,
     NumericKeyboardCustomView.OnEventListener {
