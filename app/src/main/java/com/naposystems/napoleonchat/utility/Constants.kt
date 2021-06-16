@@ -173,6 +173,7 @@ object Constants {
 
         const val URIS_CACHE = "URIS_CACHE"
         const val WAS_IN_PREVIEW = "WAS_IN_PREVIEW"
+        const val NAV_TO_CONTACTS = "NAV_TO_CONTACTS"
 
 
         //endregion

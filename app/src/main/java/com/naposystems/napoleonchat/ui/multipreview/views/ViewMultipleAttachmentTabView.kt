@@ -1,112 +1,67 @@
 package com.naposystems.napoleonchat.ui.multipreview.views
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ViewMultipleAttachmentTabBinding
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
+import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemMessage
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.extensions.getBlurTransformation
-import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.isVideo
 import com.naposystems.napoleonchat.utility.extensions.show
 
+@SuppressLint("ViewConstructor")
 class ViewMultipleAttachmentTabView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyle: Int = 0,
-    val viewModel: MultipleAttachmentPreviewItemViewModel
-) : FrameLayout(context, attrs, defStyle), LifecycleOwner {
-
-    private val registry: LifecycleRegistry = LifecycleRegistry(this)
+    defStyle: Int = 0
+) : FrameLayout(context, attrs, defStyle) {
 
     private val binding: ViewMultipleAttachmentTabBinding by lazy {
-        ViewMultipleAttachmentTabBinding.inflate(
-            LayoutInflater.from(context), this, true
-        )
-    }
-
-    private fun loadImage(file: MultipleAttachmentFileItem) {
-
-        if (file.messageAndAttachment == null) {
-            binding.apply {
-                Glide.with(root.context)
-                    .load(file.contentUri)
-                    .into(imageFolderThumbnail)
-            }
-        } else {
-            binding.apply {
-                Glide.with(root.context)
-                    .load(file.messageAndAttachment.attachment.body)
-                    .transform(*getBlurTransformation(root.context))
-                    .into(imageFolderThumbnail)
-            }
-        }
+        ViewMultipleAttachmentTabBinding.inflate(LayoutInflater.from(context), this, true)
     }
 
     fun bindFile(file: MultipleAttachmentFileItem) {
         loadImage(file)
-        checksVideo(file)
-        file.messageAndAttachment?.let {
-            viewModel.setAttachmentAndLaunchLiveData(it.attachment.webId)
-            bindViewModel()
-        }
-    }
-
-    private fun bindViewModel() {
-        viewModel.attachment.observe(this, Observer {
-            handleAttachment(it)
-        })
-    }
-
-    private fun handleAttachment(theAttachment: AttachmentEntity?) {
-        theAttachment?.let {
-            when (it.status) {
-                Constants.AttachmentStatus.RECEIVED.status,
-                Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived()
-                Constants.AttachmentStatus.READED.status -> onModeReaded()
-                else -> hideStatus()
-            }
-        }
-    }
-
-    private fun hideStatus() = binding.apply {
-        imageViewStatus.hide()
-    }
-
-    private fun onModeReceived() = binding.apply {
-        imageViewStatus.show()
-        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
-    }
-
-    private fun onModeReaded() = binding.apply {
-        imageViewStatus.show()
-        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+        showViewIfIsVideo(file)
     }
 
     fun selected(isSelected: Boolean) {
         val resources = binding.root.context.resources
         val selectStroke = resources.getDimension(R.dimen.multiple_attachment_tab_select_stroke)
-        val unSelectStroke =
-            resources.getDimension(R.dimen.multiple_attachment_tab_un_select_stroke)
+        val dimen = R.dimen.multiple_attachment_tab_un_select_stroke
+        val unSelectStroke = resources.getDimension(dimen)
         val strokeWidth = if (isSelected) selectStroke else unSelectStroke
         binding.cardView.strokeWidth = strokeWidth.toInt()
     }
 
-    private fun checksVideo(file: MultipleAttachmentFileItem) =
+    private fun showViewIfIsVideo(file: MultipleAttachmentFileItem) =
         binding.layoutVideo.show(file.isVideo())
 
-    override fun getLifecycle(): Lifecycle {
-        return registry
+    private fun loadImage(file: MultipleAttachmentFileItem) =
+        if (file.messageAndAttachment == null) {
+            loadImageFromUri(file)
+        } else {
+            loadImageFromThumbnailUri(file.messageAndAttachment)
+        }
+
+    private fun loadImageFromThumbnailUri(messageAndAttachment: MultipleAttachmentItemMessage) =
+        binding.apply {
+            Glide.with(root.context)
+                .load(messageAndAttachment.attachment.thumbnailUri)
+                .transform(*getBlurTransformation(root.context))
+                .into(imageFolderThumbnail)
+        }
+
+    private fun loadImageFromUri(file: MultipleAttachmentFileItem) = binding.apply {
+        Glide.with(root.context)
+            .load(file.contentUri)
+            .into(imageFolderThumbnail)
     }
 
 }

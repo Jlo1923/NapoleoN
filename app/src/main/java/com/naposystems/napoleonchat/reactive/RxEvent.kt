@@ -80,6 +80,8 @@ class RxEvent {
         val cause: Exception? = null
     )
 
+    class ExitOfService
+
     data class MultiCompressProgress(
         val attachmentEntity: AttachmentEntity,
         val progress: Float
