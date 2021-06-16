@@ -319,14 +319,13 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun validateMustGoToContacts() {
-        val uris = homeViewModel.getPendingUris()
-        if (uris.isEmpty().not()) {
-
+        val mustGoToContacts = homeViewModel.isMarkGoToContacts()
+        if (mustGoToContacts) {
             /**
              * Solo podemos ir a contactos una sola vez, si se devuelve ya se pierden los archivos
              * seleccionados previamente desde afuera
              */
-            homeViewModel.removePendingUris()
+            homeViewModel.markGoToContacts()
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToContactsFragment()
             )

@@ -102,14 +102,13 @@ class MultipleAttachmentPreviewVideoFragment(
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         file.messageAndAttachment?.let {
             viewModel.setAttachmentAndLaunchLiveData(it.attachment.webId)
             bindViewModel()
         }
     }
-
 
     private fun hidePlayerOptions() = binding.apply {
         viewVideoController.hide()

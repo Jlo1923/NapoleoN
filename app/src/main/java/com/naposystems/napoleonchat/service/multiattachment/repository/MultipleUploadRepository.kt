@@ -71,7 +71,7 @@ class MultipleUploadRepository @Inject constructor(
                 compressVideo(attachmentEntity, pairFiles.first, pairFiles.second, this)
                     .collect { handleVideoCompressResult(it, this as Job) }
             } catch (exception: Exception) {
-                handleExceptionInUploadAttachment()
+                publishEventError()
             }
         }
     }
@@ -119,12 +119,13 @@ class MultipleUploadRepository @Inject constructor(
     override fun tryMarkAttachmentsInMessageAsError(messageEntity: MessageEntity) {
         GlobalScope.launch {
             val msgAndRelation = msgDataSource.getMessageById(messageEntity.id, false)
-            msgAndRelation?.let {
-                val attachmentsInCancelUpload = it.attachmentEntityList.filter {
-                    it.isCancelUpload()
+            msgAndRelation?.let {msgAndRelation ->
+                val attachmentsInCancelUpload = msgAndRelation.attachmentEntityList.filter {
+                    it.isCancelUpload() || it.isSending()
                 }
                 attachmentsInCancelUpload.forEach { markAttachmentAsError(it) }
-                publishEventError()
+                updateMessageStatus(msgAndRelation.messageEntity, MessageStatus.ERROR.status)
+                publishExitService()
             }
         }
     }
@@ -133,14 +134,13 @@ class MultipleUploadRepository @Inject constructor(
         is VideoCompressResult.Start -> handleCompressStart()
         is VideoCompressResult.Success -> handleCompressSuccess(it, job)
         is VideoCompressResult.Progress -> handleCompressProgress(it)
-        is VideoCompressResult.Fail -> handleCompressFailure()
+        is VideoCompressResult.Fail -> publishEventError()
     }
 
     private fun handleCompressStart() = Timber.d("*Test: tmessages VideoCompressResult.Start")
 
     private suspend fun handleCompressSuccess(it: VideoCompressResult.Success, job: Job) {
         try {
-            Timber.d("*Test: tmessages VideoCompressResult.Success")
 
             currentAttachment.apply {
                 if (it.srcFile.isFile && it.srcFile.exists() && isCompressed.not() && type == AttachmentType.VIDEO.type) {
@@ -182,32 +182,21 @@ class MultipleUploadRepository @Inject constructor(
                 )
 
                 if (response.isSuccessful) {
+                    currentAttachment.status = Constants.AttachmentStatus.SENT.status
+                    updateAttachment(currentAttachment)
                     handleResponseSuccessful(response)
                 } else {
-                    handleResponseFailure()
+                    publishEventError()
                 }
             }
         } catch (exception: Exception) {
-            Timber.d("Ops error ")
-            handleExceptionInUploadAttachment()
+            publishEventError()
         }
     }
 
     private fun handleCompressProgress(it: VideoCompressResult.Progress) {
         Timber.d("VideoCompressResult.Progress ${it.progress}")
         //currentAttachment.publishEventProgress(it.progress)
-    }
-
-    private fun handleCompressFailure() {
-        setStatusErrorMessageAndAttachment(currentMessage, currentAttachment)
-        publishEventError()
-        Timber.d("offer(UploadResult.Error(attachment, \"Algo ha salido mal\", null))")
-    }
-
-    private fun handleResponseFailure() {
-        setStatusErrorMessageAndAttachment(currentMessage, currentAttachment)
-        publishEventError()
-        Timber.d("offer(UploadResult.Error(attachment, \"Algo ha salido mal\", null))")
     }
 
     private fun handleResponseSuccessful(response: Response<AttachmentResDTO>) {
@@ -304,20 +293,15 @@ class MultipleUploadRepository @Inject constructor(
 
     private fun updateMessageStatus(messageEntity: MessageEntity, status: Int) {
         messageEntity.status = status
-
-    }
-
-    private fun handleExceptionInUploadAttachment() {
-        markAttachmentAsError(currentAttachment)
-        publishEventError()
+        updateMessage(messageEntity)
     }
 
     /**
      * Si ha fallado la subida, debemos actualizar el tiempo de destruccion del attachmente
      * debemos poner el valor por defecto seleccionado para mensajes de error
      */
-    private fun markAttachmentAsError(attachmentEntity: AttachmentEntity) = attachmentEntity.apply {
-        attachmentDataSource.markAttachmentAsError(this)
+    private suspend fun markAttachmentAsError(attachmentEntity: AttachmentEntity) {
+        attachmentDataSource.markAttachmentAsError(attachmentEntity)
     }
 
     private fun publishEventTryNext() = RxBus.publish(RxEvent.MultiUploadTryNextAttachment())
@@ -332,6 +316,8 @@ class MultipleUploadRepository @Inject constructor(
             null
         )
     )
+
+    private fun publishExitService() = RxBus.publish(RxEvent.ExitOfService())
 
     private fun AttachmentEntity.publishEventProgress(
         progress: Float

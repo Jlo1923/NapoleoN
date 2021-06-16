@@ -40,6 +40,6 @@ interface AttachmentLocalDataSource {
      *
      * @param attachmentEntity: the Attachment
      */
-    fun markAttachmentAsError(attachmentEntity: AttachmentEntity)
+    suspend fun markAttachmentAsError(attachmentEntity: AttachmentEntity)
 
 }

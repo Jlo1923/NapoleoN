@@ -11,6 +11,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.UserEntity
 import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipRequestReceivedDTO
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.NAV_TO_CONTACTS
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import kotlinx.coroutines.launch
@@ -205,4 +206,9 @@ class HomeViewModel
     }
 
     fun removePendingUris() = sharedPreferencesManager.puStringSet(URIS_CACHE, emptyList())
+
+    fun markGoToContacts() = sharedPreferencesManager.putBoolean(NAV_TO_CONTACTS, false)
+
+    fun isMarkGoToContacts() = sharedPreferencesManager.getBoolean(NAV_TO_CONTACTS, false)
+
 }

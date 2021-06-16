@@ -149,7 +149,7 @@ class ConversationFragment
     /*@Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle*/
 
-    private val viewModel: ConversationViewModel by viewModels {
+    private val conversationViewModel: ConversationViewModel by viewModels {
         viewModelFactory
     }
     private val selfDestructTimeViewModel: SelfDestructTimeDialogViewModel by viewModels {
@@ -388,8 +388,8 @@ class ConversationFragment
         binding.buttonCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
             this.verifyCameraAndMicPermissionForCall {
-                viewModel.setIsVideoCall(false)
-                viewModel.callContact()
+                conversationViewModel.setIsVideoCall(false)
+                conversationViewModel.callContact()
                 binding.buttonCall.isEnabled = false
                 binding.buttonVideoCall.isEnabled = false
             }
@@ -399,8 +399,8 @@ class ConversationFragment
         binding.buttonVideoCall.setSafeOnClickListener {
 //            if (checkBatteryOptimized()) {
             this.verifyCameraAndMicPermissionForCall {
-                viewModel.setIsVideoCall(true)
-                viewModel.callContact()
+                conversationViewModel.setIsVideoCall(true)
+                conversationViewModel.callContact()
                 binding.buttonCall.isEnabled = false
                 binding.buttonVideoCall.isEnabled = false
             }
@@ -475,7 +475,7 @@ class ConversationFragment
             verifyCameraAndMicPermission {
                 findNavController().navigate(
                     ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                        viewModel.getUser().id,
+                        conversationViewModel.getUser().id,
                         args.contact.id,
                         binding.inputPanel.getWebIdQuote(),
                         Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
@@ -521,7 +521,7 @@ class ConversationFragment
                     this@ConversationFragment.verifyCameraAndMicPermission {
                         findNavController().navigate(
                             ConversationFragmentDirections.actionConversationFragmentToConversationCameraFragment(
-                                viewModel.getUser().id,
+                                conversationViewModel.getUser().id,
                                 args.contact.id,
                                 binding.inputPanel.getWebIdQuote(),
                                 Constants.LocationImageSelectorBottomSheet.CONVERSATION.location,
@@ -655,7 +655,7 @@ class ConversationFragment
         sharedViewModel.hasAudioSendClicked.observe(requireActivity(), Observer {
             if (it == true) {
                 sharedViewModel.getAudiosSelected().forEach { mediaStoreAudio ->
-                    viewModel.saveMessageWithAudioAttachment(
+                    conversationViewModel.saveMessageWithAudioAttachment(
                         mediaStoreAudio,
                         obtainTimeSelfDestruct(),
                         binding.inputPanel.getWebIdQuote()
@@ -668,7 +668,7 @@ class ConversationFragment
             if (attachment != null) {
                 val quote = binding.inputPanel.getQuote()
                 sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
-                viewModel.saveMessageAndAttachment(
+                conversationViewModel.saveMessageAndAttachment(
                     ItemMessage(
                         messageString = sharedViewModel.getMessage() ?: "",
                         attachment = attachment,
@@ -684,7 +684,7 @@ class ConversationFragment
             attachments?.forEach {
                 val quote = binding.inputPanel.getQuote()
                 sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
-                viewModel.saveMessageAndAttachment(
+                conversationViewModel.saveMessageAndAttachment(
                     ItemMessage(
                         sharedViewModel.getMessage() ?: "",
                         it,
@@ -730,15 +730,17 @@ class ConversationFragment
     override fun onStart() {
         super.onStart()
         validateMustGoToPreviewAttachmentsFromOutside()
+        conversationViewModel.verifyMessagesReceived()
+        conversationViewModel.verifyMessagesRead()
     }
 
     private fun validateMustGoToPreviewAttachmentsFromOutside() {
-        val uris = viewModel.getPendingUris()
+        val uris = conversationViewModel.getPendingUris()
         if (uris.isEmpty().not()) {
             if (uris.size <= 10) {
                 handleIntentExtrasDataForMultiple(uris)
             } else {
-                viewModel.removePendingUris()
+                conversationViewModel.removePendingUris()
                 showToast(binding.root.context, getString(R.string.multi_max_files_from_outside))
                 activity?.finish()
             }
@@ -746,7 +748,7 @@ class ConversationFragment
     }
 
     private fun handleIntentExtrasDataForMultiple(uris: List<Uri>) {
-        viewModel.removePendingUris()
+        conversationViewModel.removePendingUris()
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         val listElements = uris.map {
             val mimeType = binding.root.context.contentResolver.getType(it)
@@ -772,7 +774,7 @@ class ConversationFragment
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
 
-        binding.viewModel = viewModel
+        binding.viewModel = conversationViewModel
 
         NapoleonApplication.currentConversationContactId = args.contact.id
 
@@ -780,13 +782,13 @@ class ConversationFragment
 
         contactProfileSharedViewModel.getLocalContact(args.contact.id)
 
-        viewModel.setContact(args.contact)
+        conversationViewModel.setContact(args.contact)
 
-        viewModel.getLocalMessages()
+        conversationViewModel.getLocalMessages()
 
-        viewModel.getMessagesSelected(args.contact.id)
+        conversationViewModel.getMessagesSelected(args.contact.id)
 
-        viewModel.getMessageNotSent(args.contact.id)
+        conversationViewModel.getMessageNotSent(args.contact.id)
 
         selfDestructTimeViewModel.getSelfDestructTimeByContact(args.contact.id)
 
@@ -815,14 +817,14 @@ class ConversationFragment
 
         observeResponseDeleteLocalMessages()
 
-        viewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
+        conversationViewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
             if (!channel.isNullOrEmpty()) {
                 Timber.d("startCallActivity contactCalledSuccessfully")
 
                 NapoleonApplication.callModel = CallModel(
                     contactId = args.contact.id,
                     channelName = channel,
-                    isVideoCall = viewModel.isVideoCall(),
+                    isVideoCall = conversationViewModel.isVideoCall(),
                     typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
                     mustSubscribeToPresenceChannel = true
                 )
@@ -833,8 +835,8 @@ class ConversationFragment
                     R.anim.slide_in_up,
                     R.anim.slide_out_down
                 )
-                viewModel.resetContactCalledSuccessfully()
-                viewModel.resetIsVideoCall()
+                conversationViewModel.resetContactCalledSuccessfully()
+                conversationViewModel.resetIsVideoCall()
                 binding.buttonCall.isEnabled = true
                 binding.buttonVideoCall.isEnabled = true
             } else {
@@ -843,7 +845,7 @@ class ConversationFragment
             }
         })
 
-        viewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
             binding.recyclerViewConversation.post {
                 when (it) {
                     is DownloadAttachmentResult.Start -> {
@@ -858,7 +860,7 @@ class ConversationFragment
                     is DownloadAttachmentResult.Error -> {
                         it.attachmentEntity.status =
                             Constants.AttachmentStatus.DOWNLOAD_ERROR.status
-                        viewModel.updateAttachment(
+                        conversationViewModel.updateAttachment(
                             it.attachmentEntity
                         )
                         Timber.d("Error")
@@ -874,7 +876,7 @@ class ConversationFragment
             }
         })
 
-        viewModel.stateMessage.observe(viewLifecycleOwner, {
+        conversationViewModel.stateMessage.observe(viewLifecycleOwner, {
             if (it != null) {
                 Timber.d("--- State ${it}")
                 when (it) {
@@ -900,13 +902,13 @@ class ConversationFragment
             }
         })
 
-        viewModel.documentCopied.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.documentCopied.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 val quote = binding.inputPanel.getQuote()
                 sharedViewModel.setQuoteWebId(quote?.messageEntity?.webId ?: "")
                 val attachment = it.toAttachmentEntityDocument()
 
-                viewModel.saveMessageAndAttachment(
+                conversationViewModel.saveMessageAndAttachment(
                     ItemMessage(
                         attachment = attachment,
                         numberAttachments = 1,
@@ -914,16 +916,16 @@ class ConversationFragment
                         quote = sharedViewModel.getQuoteWebId() ?: ""
                     )
                 )
-                viewModel.resetDocumentCopied()
+                conversationViewModel.resetDocumentCopied()
                 binding.inputPanel.closeQuote()
             }
         })
 
-        viewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.noInternetConnection.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 handlerDialog.alertDialogInformative(
                     getString(R.string.text_alert_failure),
-                    getString(if (viewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
+                    getString(if (conversationViewModel.isVideoCall()) R.string.text_video_call_not_internet_connection else R.string.text_call_not_internet_connection),
                     true,
                     requireContext(),
                     R.string.text_close
@@ -936,16 +938,16 @@ class ConversationFragment
             binding.buttonVideoCall.isEnabled = true
         })
 
-        viewModel.newMessageSend.observe(viewLifecycleOwner, Observer { newMessage ->
+        conversationViewModel.newMessageSend.observe(viewLifecycleOwner, Observer { newMessage ->
             if (newMessage == true) {
                 binding.inputPanel.post {
                     binding.inputPanel.clearTextEditText()
                 }
-                viewModel.resetNewMessage()
+                conversationViewModel.resetNewMessage()
             }
         })
 
-        viewModel.messageNotSentEntity.observe(viewLifecycleOwner) {
+        conversationViewModel.messageNotSentEntity.observe(viewLifecycleOwner) {
             if (it != null) {
                 binding.inputPanel.getEditText().setText(it.message)
             }
@@ -1051,7 +1053,7 @@ class ConversationFragment
             isRecordingAudio = false
             stopRecording()
 
-            viewModel.saveMessageAndAttachment(
+            conversationViewModel.saveMessageAndAttachment(
                 ItemMessage(
                     attachment = attachment,
                     numberAttachments = 1,
@@ -1063,7 +1065,7 @@ class ConversationFragment
     }
 
     private fun observeResponseDeleteLocalMessages() {
-        viewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.responseDeleteLocalMessages.observe(viewLifecycleOwner, Observer {
             if (it && actionMode.mode != null) {
                 actionMode.mode!!.finish()
             }
@@ -1071,10 +1073,10 @@ class ConversationFragment
     }
 
     private fun observeStringsCopy() {
-        viewModel.stringsCopy.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.stringsCopy.observe(viewLifecycleOwner, Observer {
             if (it.count() == 1) {
-                copyDataInClipboard(viewModel.parsingListByTextBlock(it))
-                viewModel.resetListStringCopy()
+                copyDataInClipboard(conversationViewModel.parsingListByTextBlock(it))
+                conversationViewModel.resetListStringCopy()
                 Toast.makeText(context, R.string.text_message_copied, Toast.LENGTH_LONG).show()
                 actionMode.mode!!.finish()
             }
@@ -1091,7 +1093,7 @@ class ConversationFragment
     }
 
     private fun observeMessageMessages() {
-        viewModel.messageMessagesRelation.observe(viewLifecycleOwner, Observer { conversationList ->
+        conversationViewModel.messageMessagesRelation.observe(viewLifecycleOwner, Observer { conversationList ->
             if (conversationList.isNotEmpty()) {
                 conversationAdapter.submitList(conversationList) {
                     if (enterConversation) {
@@ -1103,7 +1105,7 @@ class ConversationFragment
                 }
                 //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
-                viewModel.sendTextMessagesRead()
+                conversationViewModel.sendTextMessagesRead()
             } else conversationAdapter.submitList(conversationList)
         })
     }
@@ -1259,7 +1261,7 @@ class ConversationFragment
     }
 
     private fun observeDeleteMessagesForAllWsError() {
-        viewModel.deleteMessagesForAllWsError.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.deleteMessagesForAllWsError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 showSnackbar(it)
             }
@@ -1267,7 +1269,7 @@ class ConversationFragment
     }
 
     private fun observeWebServiceError() {
-        viewModel.webServiceError.observe(viewLifecycleOwner, Observer {
+        conversationViewModel.webServiceError.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()) {
                 showSnackbar(it)
             }
@@ -1275,7 +1277,7 @@ class ConversationFragment
     }
 
     private fun observeMessagesSelected() {
-        viewModel.messagesSelected.observe(
+        conversationViewModel.messagesSelected.observe(
             viewLifecycleOwner, Observer { listMessageAndAttachment ->
 
                 val quantityMessagesOtherUser = listMessageAndAttachment.filter {
@@ -1540,7 +1542,7 @@ class ConversationFragment
                 this.getParcelableArrayList<AttachmentEntity>(EXTRA_MULTI_ATTACHMENTS_TO_SEND)
 
             ifNotNull(msg, attachments) { msg, attachments ->
-                viewModel.sendMessageToRemote(msg, attachments)
+                conversationViewModel.sendMessageToRemote(msg, attachments)
             }
 
         }
@@ -1592,7 +1594,7 @@ class ConversationFragment
                     }
                 } else {
                     Timber.d("DocumentAttachment $mimeType, $size")
-                    viewModel.sendDocumentAttachment(uri)
+                    conversationViewModel.sendDocumentAttachment(uri)
                 }
             }
         }
@@ -1647,7 +1649,7 @@ class ConversationFragment
     }
 
     private fun setConversationBackground() {
-        val chatBackgroundFileName = viewModel.getUser().chatBackground
+        val chatBackgroundFileName = conversationViewModel.getUser().chatBackground
         context?.let { context ->
             if (chatBackgroundFileName.isNotEmpty()) {
                 val uri = Utils.getFileUri(
@@ -1729,7 +1731,7 @@ class ConversationFragment
     private fun setupActionMode() {
         actionMode = ActionModeMenu(
             clickCopy = {
-                viewModel.copyMessagesSelected(args.contact.id)
+                conversationViewModel.copyMessagesSelected(args.contact.id)
             },
             clickDelete = { moreMessagesOtherContact ->
                 if (moreMessagesOtherContact) {
@@ -1745,7 +1747,7 @@ class ConversationFragment
     }
 
     private fun dialogWithNeutralButton(status: Int) {
-        viewModel.messagesSelected.value?.let { messagesSelected ->
+        conversationViewModel.messagesSelected.value?.let { messagesSelected ->
             handlerDialog.alertDialogWithNeutralButton(
                 R.string.text_delete_messages,
                 false, requireContext(),
@@ -1755,26 +1757,26 @@ class ConversationFragment
                 clickTopButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            viewModel.deleteMessagesSelected(args.contact.id, messagesSelected)
+                            conversationViewModel.deleteMessagesSelected(args.contact.id, messagesSelected)
                         }
                         Constants.DeleteMessages.BY_UNREADS.option -> {
-                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
                         }
                         Constants.DeleteMessages.BY_UNRECEIVED.option -> {
-                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
                         }
                     }
                 },
                 clickDownButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            viewModel.deleteMessagesForAll(args.contact.id, messagesSelected)
+                            conversationViewModel.deleteMessagesForAll(args.contact.id, messagesSelected)
                         }
                         Constants.DeleteMessages.BY_UNREADS.option -> {
-                            viewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForAll(args.contact.id, status)
                         }
                         Constants.DeleteMessages.BY_UNRECEIVED.option -> {
-                            viewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForAll(args.contact.id, status)
                         }
                     }
                 }
@@ -1783,7 +1785,7 @@ class ConversationFragment
     }
 
     private fun dialogWithoutNeutralButton(status: Int) {
-        viewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
+        conversationViewModel.messagesSelected.value?.let { listMessagesAndAttachments ->
             handlerDialog.alertDialogWithoutNeutralButton(
                 R.string.text_delete_messages,
                 false,
@@ -1794,13 +1796,13 @@ class ConversationFragment
                 clickPositiveButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            viewModel.deleteMessagesSelected(
+                            conversationViewModel.deleteMessagesSelected(
                                 args.contact.id,
                                 listMessagesAndAttachments
                             )
                         }
                         Constants.DeleteMessages.BY_FAILED.option -> {
-                            viewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
                         }
                     }
                 }, clickNegativeButton = {}
@@ -1871,11 +1873,11 @@ class ConversationFragment
     }
 
     private fun updateStateSelectionMessage(item: MessageEntity) {
-        viewModel.updateStateSelectionMessage(args.contact.id, item.id, item.isSelected)
+        conversationViewModel.updateStateSelectionMessage(args.contact.id, item.id, item.isSelected)
     }
 
     private fun cleanSelectionMessages() {
-        viewModel.cleanSelectionMessages(args.contact.id)
+        conversationViewModel.cleanSelectionMessages(args.contact.id)
     }
 
     private fun openAttachmentDocument(attachmentEntity: AttachmentEntity) {
@@ -1974,14 +1976,14 @@ class ConversationFragment
 
     @InternalCoroutinesApi
     override fun onPause() {
-        viewModel.sendMessageRead(mediaPlayerManager.getMessageId(), "")
+        conversationViewModel.sendMessageRead(mediaPlayerManager.getMessageId(), "")
         if (binding.inputPanel.getEditText().text.toString().trim() != "") {
-            viewModel.insertMessageNotSent(
+            conversationViewModel.insertMessageNotSent(
                 binding.inputPanel.getEditText().text.toString(),
                 args.contact.id
             )
         } else {
-            viewModel.deleteMessageNotSent(args.contact.id)
+            conversationViewModel.deleteMessageNotSent(args.contact.id)
         }
         super.onPause()
         mediaPlayerManager.unregisterProximityListener()
@@ -2163,7 +2165,7 @@ class ConversationFragment
 
                 val quote = binding.inputPanel.getQuote()
 
-                viewModel.saveMessageLocally(
+                conversationViewModel.saveMessageLocally(
                     binding.inputPanel.getEditText().text.toString().trim(),
                     obtainTimeSelfDestruct(),
                     quote?.messageEntity?.webId ?: ""
@@ -2198,7 +2200,7 @@ class ConversationFragment
     override fun messageToEliminate(item: MessageAttachmentRelation) {
         val messages = arrayListOf<MessageAttachmentRelation>()
         messages.add(item)
-        viewModel.deleteMessagesSelected(args.contact.id, messages)
+        conversationViewModel.deleteMessagesSelected(args.contact.id, messages)
     }
 
     override fun errorPlayingAudio() {
@@ -2215,7 +2217,7 @@ class ConversationFragment
 
             if (firstAttachment.type == Constants.AttachmentType.DOCUMENT.type) {
                 if (item.messageEntity.status == Constants.MessageStatus.UNREAD.status && item.messageEntity.isMine == Constants.IsMine.NO.value) {
-                    viewModel.sendMessageRead(item)
+                    conversationViewModel.sendMessageRead(item)
                 }
                 openAttachmentDocument(firstAttachment)
             } else {
@@ -2231,7 +2233,7 @@ class ConversationFragment
         messageAndAttachmentRelation: MessageAttachmentRelation,
         itemPosition: Int?
     ) {
-        val position = viewModel.getMessagePosition(messageAndAttachmentRelation)
+        val position = conversationViewModel.getMessagePosition(messageAndAttachmentRelation)
 
         if (position != -1) {
             binding.recyclerViewConversation.apply {
@@ -2257,7 +2259,7 @@ class ConversationFragment
     ) {
         Timber.d("downloadAttachment")
         if (itemPosition != null && messageAndAttachmentRelation.getFirstAttachment() != null) {
-            viewModel.downloadAttachment(messageAndAttachmentRelation, itemPosition)
+            conversationViewModel.downloadAttachment(messageAndAttachmentRelation, itemPosition)
         }
     }
 
@@ -2265,16 +2267,16 @@ class ConversationFragment
         attachmentEntity: AttachmentEntity,
         messageEntity: MessageEntity
     ) {
-        viewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
+        conversationViewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
     }
 
     override fun updateAttachmentState(attachmentEntity: AttachmentEntity) {
-        viewModel.updateAttachment(attachmentEntity)
+        conversationViewModel.updateAttachment(attachmentEntity)
     }
 
     override fun sendMessageRead(messageAndAttachmentRelation: MessageAttachmentRelation) {
         Timber.d("sendMessageRead")
-        viewModel.sendMessageRead(messageAndAttachmentRelation)
+        conversationViewModel.sendMessageRead(messageAndAttachmentRelation)
     }
 
     override fun sendMessageRead(
@@ -2283,7 +2285,7 @@ class ConversationFragment
         isComplete: Boolean,
         position: Int
     ) {
-        viewModel.sendMessageRead(messageId, webId)
+        conversationViewModel.sendMessageRead(messageId, webId)
 
         if (isComplete) {
             conversationAdapter.checkIfNextIsAudio(messageId)
@@ -2291,7 +2293,7 @@ class ConversationFragment
     }
 
     override fun reSendMessage(messageEntity: MessageEntity) {
-        viewModel.reSendMessage(messageEntity, obtainTimeSelfDestruct())
+        conversationViewModel.reSendMessage(messageEntity, obtainTimeSelfDestruct())
     }
 
     override fun scrollToNextAudio(nextPosition: Int) {
@@ -2316,7 +2318,7 @@ class ConversationFragment
     }
 
     override fun updateMessageState(messageEntity: MessageEntity) {
-        viewModel.updateMessage(messageEntity)
+        conversationViewModel.updateMessage(messageEntity)
     }
 
     private fun showCase() {
@@ -2344,7 +2346,7 @@ class ConversationFragment
 
     private fun sendMessageAndAttachmentsToRemote(action: SendMessageToRemote) {
         if (Utils.isInternetAvailable(binding.root.context)) {
-            viewModel.sendMessageToRemote(action.messageEntity, action.attachments)
+            conversationViewModel.sendMessageToRemote(action.messageEntity, action.attachments)
         } else {
             showNotInternetMessage()
         }

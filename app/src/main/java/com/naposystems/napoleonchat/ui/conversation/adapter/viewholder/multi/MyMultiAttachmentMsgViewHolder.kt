@@ -139,7 +139,7 @@ class MyMultiAttachmentMsgViewHolder(
 
     private fun tryUploadAttachments() {
         val attachmentsFilter =
-            msgAndAttachment.attachmentEntityList.filter { it.isError() || it.isSending()}
+            msgAndAttachment.attachmentEntityList.filter { it.isError() || it.isCancelUpload() }
         if (attachmentsFilter.isNotEmpty()) {
             viewModel.retryUploadAllFiles(
                 attachmentsFilter,

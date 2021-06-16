@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.utility.extensions
 
+import androidx.core.net.toUri
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
 import com.naposystems.napoleonchat.model.MediaStoreAudio
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -123,7 +124,8 @@ fun getMultipleAttachmentFileItemFromAttachmentAndMsg(
         extension = attachmentEntity.extension,
         body = attachmentEntity.body,
         type = attachmentEntity.type,
-        totalSelfDestructionAt = attachmentEntity.totalSelfDestructionAt.toLong()
+        totalSelfDestructionAt = attachmentEntity.totalSelfDestructionAt.toLong(),
+        thumbnailUri = attachmentEntity.thumbnailUri.toUri()
     )
     val message = MultipleAttachmentItemMessage(
         attachment = attachment,

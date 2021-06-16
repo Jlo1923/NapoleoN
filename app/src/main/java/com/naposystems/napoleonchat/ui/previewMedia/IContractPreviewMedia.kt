@@ -24,5 +24,9 @@ interface IContractPreviewMedia {
             contactId: Int
         ): Boolean
 
+        suspend fun getAttachmentById(webId: String): AttachmentEntity?
+
+        fun removePendingUris()
+
     }
 }
