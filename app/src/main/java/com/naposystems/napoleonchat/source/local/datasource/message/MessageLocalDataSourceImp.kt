@@ -431,11 +431,20 @@ class MessageLocalDataSourceImp @Inject constructor(
     }
 
     //Función para limpiar la conversación de mensajes exitosos duplicados
-    override suspend fun deleteDuplicatesMessages() {
-        return messageDao.deleteDuplicatesMessages()
+    override suspend fun deleteDuplicateMessage() {
+        return messageDao.deleteDuplicateMessage()
     }
 
-    override suspend fun addUUID() {
-        return messageDao.addUUID()
+    override suspend fun addUUIDMessage() {
+        return messageDao.addUUIDMessage()
+    }
+
+    //Función para limpiar la conversación de attachment exitosos duplicados
+    override suspend fun deleteDuplicateAttachment() {
+        return messageDao.deleteDuplicateAttachment()
+    }
+
+    override suspend fun addUUIDAttachment() {
+        return messageDao.addUUIDAttachment()
     }
 }

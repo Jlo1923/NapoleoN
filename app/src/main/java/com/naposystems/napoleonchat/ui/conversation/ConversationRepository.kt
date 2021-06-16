@@ -48,8 +48,10 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import timber.log.Timber
 import java.io.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ConversationRepository @Inject constructor(
     private val context: Context,
@@ -140,6 +142,10 @@ class ConversationRepository @Inject constructor(
                             val requestBodyType = createPartFromString(attachmentEntity.type)
                             val requestBodyDuration =
                                 createPartFromString(attachmentEntity.duration.toString())
+                            val requestBodyUuid =
+                                createPartFromString(
+                                    attachmentEntity.uuid ?: UUID.randomUUID().toString()
+                                )
 
                             val requestBodyFilePart =
                                 createPartFromFile(
@@ -161,6 +167,7 @@ class ConversationRepository @Inject constructor(
                                 attachmentType = requestBodyType,
                                 duration = requestBodyDuration,
                                 destroy = null,
+                                uuid = requestBodyUuid,
                                 file = requestBodyFilePart
                             )
 

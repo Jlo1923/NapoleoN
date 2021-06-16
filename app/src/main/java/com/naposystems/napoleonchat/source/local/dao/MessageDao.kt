@@ -2,12 +2,10 @@ package com.naposystems.napoleonchat.source.local.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.google.android.material.circularreveal.CircularRevealHelper
 import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -232,11 +230,19 @@ interface MessageDao {
     )
     suspend fun updateSelfDestructTimeByMessages(selfDestructTime: Int, webId: String, status: Int)
 
+    //TODO: Pasar el estado de fallido a una constante
     @Query(
         "UPDATE ${DBConstants.Message.TABLE_NAME_MESSAGE} SET ${DBConstants.Message.COLUMN_UUID} = hex(randomblob(16))" +
-                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL AND ${DBConstants.Message.COLUMN_STATUS} != 5"
+                " WHERE ${DBConstants.Message.COLUMN_UUID} IS NULL"
     )
-    suspend fun addUUID()
+    suspend fun addUUIDMessage()
+
+    //TODO: Revisar el estado fallido de un attachment
+    @Query(
+        "UPDATE ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} SET ${DBConstants.Attachment.COLUMN_UUID} = hex(randomblob(16))" +
+                " WHERE ${DBConstants.Attachment.COLUMN_UUID} IS NULL"
+    )
+    suspend fun addUUIDAttachment()
     //endregion
 
     //region Consultas DELETE
@@ -296,8 +302,16 @@ interface MessageDao {
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) "
     )
-    suspend fun deleteDuplicatesMessages()
+    suspend fun deleteDuplicateMessage()
 
-
+    //TODO: Verificar el estado de los mensajes
+    @Query(
+        " DELETE FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                " WHERE  ${DBConstants.Attachment.COLUMN_STATUS} != 3  AND ${DBConstants.Attachment.COLUMN_ID} NOT IN ( " +
+                " SELECT MIN(${DBConstants.Attachment.COLUMN_ID}) ${DBConstants.Attachment.COLUMN_ID} " +
+                " FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
+                " GROUP BY ${DBConstants.Attachment.COLUMN_WEB_ID}) "
+    )
+    suspend fun deleteDuplicateAttachment()
     //endregion
 }

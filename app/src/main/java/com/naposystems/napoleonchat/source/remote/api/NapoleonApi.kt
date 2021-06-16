@@ -158,6 +158,7 @@ interface NapoleonApi {
         @Part("type") attachmentType: RequestBody,
         @Part("duration") duration: RequestBody,
         @Part("destroy") destroy: RequestBody?,
+        @Part("uuid_sender") uuid: RequestBody?,
         @Part file: MultipartBody.Part
     ): Response<AttachmentResDTO>
 
@@ -168,6 +169,7 @@ interface NapoleonApi {
         @Part("quoted") quoted: RequestBody,
         @Part("body") body: RequestBody,
         @Part("type_attachment") attachmentType: RequestBody,
+        @Part("uuid_sender") uuid: RequestBody?,
         @Part files: List<MultipartBody.Part>
     ): Response<MessageResDTO>
 

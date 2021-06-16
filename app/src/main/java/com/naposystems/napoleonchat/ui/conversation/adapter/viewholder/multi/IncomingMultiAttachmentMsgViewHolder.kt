@@ -97,7 +97,7 @@ class IncomingMultiAttachmentMsgViewHolder(
     private fun paintDownloadFiles() = msgAndAttachment.apply {
         if (this.messageEntity.isReceived()) {
             val countSent =
-                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isRead() }
             if (countSent.size == this.attachmentEntityList.size) {
                 binding.viewDownloadAttachmentsIndicator.hide()
             } else {
@@ -106,7 +106,7 @@ class IncomingMultiAttachmentMsgViewHolder(
             }
         } else {
             val countSent =
-                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isReaded() }
+                this.attachmentEntityList.filter { it.isDownloadComplete() || it.isReceived() || it.isRead() }
             if (countSent.size == this.messageEntity.numberAttachments) {
                 binding.viewDownloadAttachmentsIndicator.hide()
             } else {

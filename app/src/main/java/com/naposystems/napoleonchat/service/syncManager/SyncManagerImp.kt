@@ -863,7 +863,7 @@ class SyncManagerImp @Inject constructor(
                     theMsg?.let { msgAndRelation ->
                         if (msgAndRelation.messageEntity.isRead().not()) {
                             val filter =
-                                msgAndRelation.attachmentEntityList.filter { it.isReaded() }
+                                msgAndRelation.attachmentEntityList.filter { it.isRead() }
                             if (filter.size == msgAndRelation.attachmentEntityList.size) {
                                 setMsgReadLocallyAndRemotely(msgAndRelation)
                             }

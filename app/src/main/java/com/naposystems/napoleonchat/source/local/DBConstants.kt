@@ -73,6 +73,7 @@ object DBConstants {
         const val COLUMN_ID = "id"
         const val COLUMN_MESSAGE_ID = "message_id"
         const val COLUMN_WEB_ID = "web_id"
+        const val COLUMN_UUID = "uuid"
         const val COLUMN_MESSAGE_WEB_ID = "message_web_id"
         const val COLUMN_TYPE = "type"
         const val COLUMN_BODY = "body"

@@ -44,7 +44,7 @@ interface HomeRepository {
 
     fun setDialogSubscription()
 
-    suspend fun deleteDuplicatesMessages()
+    suspend fun deleteDuplicates()
 
     suspend fun addUUID()
 

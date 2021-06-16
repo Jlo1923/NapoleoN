@@ -2,7 +2,6 @@ package com.naposystems.napoleonchat.source.remote.dto.conversation.message
 
 import com.naposystems.napoleonchat.source.remote.dto.conversation.attachment.AttachmentResDTO
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.IsMine.NO
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.SENDING
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
@@ -15,7 +14,7 @@ MessageResDTO(
     @Json(name = "id")
     val id: String,
     @Json(name = "uuid_sender")
-    val webUuid: String,
+    val uuidSender: String,
     @Json(name = "body")
     val body: String,
     @Json(name = "quoted")
@@ -50,7 +49,7 @@ MessageResDTO(
             return MessageEntity(
                 id = messageEntity?.id ?: 0,
                 webId = messageResDTO.id,
-                uuid = messageResDTO.webUuid,
+                uuid = messageResDTO.uuidSender,
                 body = messageEntity?.body ?: messageResDTO.body,
                 quoted = messageResDTO.quoted,
                 contactId = if (isMine == NO.value) messageResDTO.userAddressee else messageResDTO.userDestination,

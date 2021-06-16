@@ -3,14 +3,17 @@ package com.naposystems.napoleonchat.service.uploadService
 import android.content.Context
 import android.webkit.MimeTypeMap
 import com.naposystems.napoleonchat.BuildConfig
-import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
-import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
-import com.naposystems.napoleonchat.source.local.entity.MessageEntity
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
-import com.naposystems.napoleonchat.utility.*
+import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
+import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
+import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.FileManager
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.webService.ProgressRequestBody
 import com.vincent.videocompressor.VideoCompressK
 import com.vincent.videocompressor.VideoCompressResult
@@ -26,6 +29,7 @@ import okhttp3.RequestBody
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -91,6 +95,10 @@ class UploadServiceRepository @Inject constructor(
                                 val requestBodyType = createPartFromString(attachmentEntity.type)
                                 val requestBodyDuration =
                                     createPartFromString(attachmentEntity.duration.toString())
+                                val requestBodyUuid =
+                                    createPartFromString(
+                                        attachmentEntity.uuid ?: UUID.randomUUID().toString()
+                                    )
 
                                 val requestBodyFilePart =
                                     createPartFromFile(
@@ -113,6 +121,7 @@ class UploadServiceRepository @Inject constructor(
                                     attachmentType = requestBodyType,
                                     duration = requestBodyDuration,
                                     destroy = null,
+                                    uuid = requestBodyUuid,
                                     file = requestBodyFilePart
                                 )
 
@@ -140,7 +149,10 @@ class UploadServiceRepository @Inject constructor(
                                     RxBus.publish(RxEvent.UploadSuccess(attachmentEntity))
                                     Timber.d("offer(UploadResult.Success(attachment))")
                                 } else {
-                                    setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
+                                    setStatusErrorMessageAndAttachment(
+                                        messageEntity,
+                                        attachmentEntity
+                                    )
                                     //offer(UploadResult.Error(attachment, "Algo ha salido mal", null))
                                     RxBus.publish(
                                         RxEvent.UploadError(
@@ -155,7 +167,12 @@ class UploadServiceRepository @Inject constructor(
                             is VideoCompressResult.Progress -> {
                                 Timber.d("VideoCompressResult.Progress ${it.progress}")
                                 //offer(UploadResult.CompressProgress(attachment, it.progress, this))
-                                RxBus.publish(RxEvent.CompressProgress(attachmentEntity, it.progress))
+                                RxBus.publish(
+                                    RxEvent.CompressProgress(
+                                        attachmentEntity,
+                                        it.progress
+                                    )
+                                )
                             }
                             is VideoCompressResult.Fail -> {
                                 setStatusErrorMessageAndAttachment(messageEntity, attachmentEntity)
@@ -301,7 +318,10 @@ class UploadServiceRepository @Inject constructor(
         FileManager.copyEncryptedFile(context, attachmentEntity)
     }
 
-    private fun setStatusErrorMessageAndAttachment(messageEntity: MessageEntity, attachmentEntity: AttachmentEntity?) {
+    private fun setStatusErrorMessageAndAttachment(
+        messageEntity: MessageEntity,
+        attachmentEntity: AttachmentEntity?
+    ) {
         messageEntity.status = Constants.MessageStatus.ERROR.status
         updateMessage(messageEntity)
         attachmentEntity?.let {

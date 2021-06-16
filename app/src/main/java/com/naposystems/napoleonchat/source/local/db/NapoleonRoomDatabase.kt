@@ -17,7 +17,7 @@ import com.naposystems.napoleonchat.source.local.entity.*
         QuoteEntity::class,
         MessageNotSentEntity::class
     ],
-    version = 4
+    version = 5
 )
 abstract class NapoleonRoomDatabase : RoomDatabase() {
 
@@ -83,6 +83,21 @@ abstract class NapoleonRoomDatabase : RoomDatabase() {
 
             }
         }
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("ALTER TABLE attachment ADD COLUMN 'uuid' TEXT DEFAULT NULL")
+
+            }
+        }
+        //TODO: Quitar comentario al agregar el index
+//        val MIGRATION_5_6 = object : Migration(5, 6) {
+//            override fun migrate(database: SupportSQLiteDatabase) {
+//
+//                database.execSQL("CREATE UNIQUE INDEX index_attachment_uuid ON message ( 'uuid' );")
+//
+//            }
+//        }
     }
 
 }

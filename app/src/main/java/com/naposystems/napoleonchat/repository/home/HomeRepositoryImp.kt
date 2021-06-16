@@ -280,12 +280,14 @@ class HomeRepositoryImp @Inject constructor(
         )
     }
 
-    override suspend fun deleteDuplicatesMessages() {
-        messageLocalDataSource.deleteDuplicatesMessages()
+    override suspend fun deleteDuplicates() {
+        messageLocalDataSource.deleteDuplicateMessage()
+        messageLocalDataSource.deleteDuplicateAttachment()
     }
 
     override suspend fun addUUID() {
-        messageLocalDataSource.addUUID()
+        messageLocalDataSource.addUUIDMessage()
+        messageLocalDataSource.addUUIDAttachment()
     }
 
     override fun verifyMessagesReceived() {

@@ -51,7 +51,7 @@
     <string name="text_update_title">Una nueva versión de Napoleón está disponible</string>
     <string name="text_update_message">La versión %1$s ahora está disponible en la Play Store</string>
     <string name="text_update">Actualizar</string>
-    <string name="text_explanation_camera_to_receive_calls">NapoleoN necesita aceso a la cámara y micrófono para hacer y recibir llamadas</string>
+    <string name="text_explanation_camera_to_receive_calls">NapoleoN necesita acceso a la cámara y micrófono para hacer y recibir llamadas</string>
     <string name="text_access">ACCESO</string>
     <string name="text_yes">Si</string>
     <string name="text_no">No</string>
@@ -63,19 +63,19 @@
     <string name="text_reject">Rechazar</string>
     <string name="text_count_messages">Mensajes</string>
     <string name="text_sending_file">Enviando archivo</string>
-    <string name="text_sending_file_multiple">Enviando multiples archivos</string>
+    <string name="text_sending_file_multiple">Enviando múltiples archivos</string>
+    <string name="text_activated">Activado</string>
     <string name="text_downloading_file">Descarga de archivos</string>
     <string name="text_downloading_file_multiple">Descarga de varios archivos</string>
-    <string name="text_activated">activado</string>
     <string name="msg_not_connection">Debes tener conexión para este proceso</string>
 
-<!--    Landing-->
+    <!--    Landing-->
     <string name="text_welcome">Bienvenido</string>
     <!--    Profile-->
     <string name="text_status">Estado</string>
     <string name="text_blocked_contacts">Contactos bloqueados</string>
 
-<!--    menu Attachment-->
+    <!--    menu Attachment-->
     <string name="text_gallery">Galería</string>
     <string name="text_camera">Cámara</string>
     <string name="text_location">Ubicación</string>
@@ -85,21 +85,21 @@
     <string name="text_gif">Gif</string>
     <string name="text_document">Documento</string>
 
-<!--    Contacts-->
+    <!--    Contacts-->
     <string name="text_block_contact">Bloquear contacto</string>
     <string name="text_unblock_contact">Desbloquear Contacto</string>
 
-<!--    Conversation -->
+    <!--    Conversation -->
     <string name="text_hang_up_call">Colgar</string>
     <string name="text_answer_call">Contestar</string>
     <string name="text_date_today">Hoy</string>
 
-<!--    Time format-->
+    <!--    Time format-->
     <string name="text_twentyfour_hours">24 horas</string>
 
-<!--    Contact-->
+    <!--    Contact-->
     <string name="text_contact">CONTACTO</string>
 
-<!--    Empty State-->
+    <!--    Empty State-->
     <string name="text_emptystate_search_friends_title">Busca a tus amigos por apodo y comunícate</string>
 </resources>

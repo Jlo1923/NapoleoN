@@ -26,6 +26,7 @@ class RoomModule {
                     NapoleonRoomDatabase.MIGRATION_1_2,
                     NapoleonRoomDatabase.MIGRATION_2_3,
                     NapoleonRoomDatabase.MIGRATION_3_4,
+                    NapoleonRoomDatabase.MIGRATION_4_5,
 
                 )
                 .addCallback(object : RoomDatabase.Callback() {

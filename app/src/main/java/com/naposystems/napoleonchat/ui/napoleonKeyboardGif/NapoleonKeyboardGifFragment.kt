@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.utility.sharedViewModels.conversation.Conver
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 class NapoleonKeyboardGifFragment : Fragment() {
@@ -97,6 +98,7 @@ class NapoleonKeyboardGifFragment : Fragment() {
                         messageId = 0,
                         webId = "",
                         messageWebId = "",
+                        uuid = UUID.randomUUID().toString(),
                         type = Constants.AttachmentType.GIF.type,
                         body = "",
                         fileName = it.fileName,

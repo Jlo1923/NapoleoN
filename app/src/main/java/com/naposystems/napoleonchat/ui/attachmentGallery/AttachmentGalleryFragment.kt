@@ -33,6 +33,7 @@ import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileInputStream
+import java.util.*
 import javax.inject.Inject
 
 class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<Cursor>,
@@ -133,6 +134,7 @@ class AttachmentGalleryFragment : BaseFragment(), LoaderManager.LoaderCallbacks<
                                     messageId = 0,
                                     webId = "",
                                     messageWebId = "",
+                                    uuid = UUID.randomUUID().toString(),
                                     type = galleryItem.attachmentType,
                                     body = "",
                                     fileName = attachmentSelected.name,
