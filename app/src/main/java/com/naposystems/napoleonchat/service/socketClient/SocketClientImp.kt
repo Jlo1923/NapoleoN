@@ -243,19 +243,13 @@ class SocketClientImp
                     }
                 )
 
-            } else {
-
-                Timber.d("LLAMADA PASO 5: CANAL PREVIO EXISTENTE")
-
-                unSubscribePresenceChannel()
-
-                subscribeToPresenceChannel()
-
             }
-
-
+//            else {
+//                Timber.d("LLAMADA PASO 5: CANAL PREVIO EXISTENTE")
+//                unSubscribePresenceChannel()
+//                subscribeToPresenceChannel()
+//            }
         }
-
     }
 
     override fun disconnectSocket() {
