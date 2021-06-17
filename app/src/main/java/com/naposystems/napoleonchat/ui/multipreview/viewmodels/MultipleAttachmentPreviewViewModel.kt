@@ -132,7 +132,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
                     val attachmentFromLocal =
                         repositoryPreviewMedia.getAttachmentById(itemMessage.attachment.webId)
                     attachmentFromLocal?.let {
-                        val mustMarkAsRead = it.isReaded()
+                        val mustMarkAsRead = it.isRead()
                             .not() && itemMessage.isMine == Constants.IsMine.NO.value
                         if (mustMarkAsRead) {
                             repositoryPreviewMedia.sentAttachmentAsRead(
