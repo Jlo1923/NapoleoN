@@ -136,9 +136,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     override fun deleteAttachmentByDestructionTime(
         attachmentWebId: String,
         position: Int
-    ) {
-        viewModel.deleteAttachmentByDestructionTime(attachmentWebId, position)
-    }
+    ) = viewModel.deleteAttachmentByDestructionTime(attachmentWebId, position)
 
     private fun onChangeSelfDestruction(action: MultipleAttachmentPreviewAction.OnChangeSelfDestruction) {
         val dialog = SelfDestructTimeDialogFragment.newInstance(
