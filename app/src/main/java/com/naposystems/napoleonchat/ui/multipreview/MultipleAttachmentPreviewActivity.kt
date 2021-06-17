@@ -59,14 +59,11 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var viewModel: MultipleAttachmentPreviewViewModel
-
     private lateinit var viewModelItem: MultipleAttachmentPreviewItemViewModel
-
     private lateinit var viewBinding: ActivityMultipleAttachmentPreviewBinding
-
     private var adapter: MultipleAttachmentFragmentAdapter? = null
 
-    private var viewFirsAttachment = false
+    private var mustRejectMarkAsReadTheFirstAttachment = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -93,6 +90,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
         bindViewModel()
+        validateMustRejectMarkAsReadTheFirstAttachment()
         extractContactFromExtras()
         extractFilesFromExtras()
         extractIsModeViewInConversation()
@@ -182,6 +180,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         viewModel.defineModeOnlyViewInConversation(modeOnlyView, message)
     }
 
+    private fun validateMustRejectMarkAsReadTheFirstAttachment() = intent.extras?.let { bundle ->
+        if (bundle.containsKey(MULTI_SELECTED)) {
+            val index = bundle.getInt(MULTI_SELECTED)
+            mustRejectMarkAsReadTheFirstAttachment = index != 0
+        }
+    }
+
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
         if (bundle.containsKey(MULTI_SELECTED)) {
             val index = bundle.getInt(MULTI_SELECTED)
@@ -258,10 +263,16 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         configureTabsAndViewPager(state.listFiles)
         addListenerToPager()
         state.indexToSelect?.let {
+            /**
+             * por aca entra cuando se ha hecho proceso de eliminacion dentro del preview
+             */
             viewBinding.viewPreviewBottom.postDelayed(
                 { selectElementInTabLayout(it) }, 200
             )
         } ?: run {
+            /**
+             * Por aca entra cuando desde el collage han seleccionado una posicion
+             */
             viewBinding.viewPreviewBottom.postDelayed(
                 { extractSelectedIndex() }, 200
             )
@@ -415,10 +426,6 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             } else {
                 indexItem
             }
-
-            // Si el index es 0, marcamos el flag para que pueda marcar como leido
-            viewFirsAttachment = true
-
             selectTab(getTabAt(indexSelect))
         }
 
@@ -454,7 +461,15 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     viewModel.loadSelfDestructionTimeByIndex(position)
-                    viewModel.validateMustAttachmentMarkAsReaded(position)
+                    if (position == 0) {
+                        if (mustRejectMarkAsReadTheFirstAttachment.not()) {
+                            viewModel.validateMustAttachmentMarkAsReaded(position)
+                        } else {
+                            mustRejectMarkAsReadTheFirstAttachment = false
+                        }
+                    } else {
+                        viewModel.validateMustAttachmentMarkAsReaded(position)
+                    }
                     viewBinding.apply { viewPreviewBottom.showTextByPosition(position) }
                 }
 
