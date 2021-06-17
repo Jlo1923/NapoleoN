@@ -389,17 +389,12 @@ class WebRTCClientImp
     }
 
     override fun meAcceptChangeToVideoCall() {
-
         NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-
         NapoleonApplication.callModel?.isVideoCall = true
-
         socketClient.emitClientCall(
             SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
         )
-
-        eventFromWebRtcClientListener?.changeTextviewTitle(R.string.text_encrypted_video_call)
-
+        eventFromWebRtcClientListener?.showTypeCallTitle()
     }
 
     override fun meCancelChangeToVideoCall() {
@@ -494,14 +489,14 @@ class WebRTCClientImp
                         SocketClientImp.CONTACT_TURN_OFF_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.INVISIBLE)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = true)
             } else {
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_ON_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.VISIBLE)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = false)
             }
 
             if (itsFromBackPressed && previousState) {
@@ -698,7 +693,7 @@ class WebRTCClientImp
                     }
                 }
 
-                eventFromWebRtcClientListener?.showFinishingTitle()
+                eventFromWebRtcClientListener?.showFinishingCall()
 
                 NapoleonApplication.callModel?.let { callModel ->
                     if (callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
@@ -738,7 +733,7 @@ class WebRTCClientImp
 
     override fun contactRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
-            eventFromWebRtcClientListener?.showOccupiedTitle()
+            eventFromWebRtcClientListener?.showOccupiedCall()
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
             syncManager.sendMissedCall()
@@ -907,7 +902,7 @@ class WebRTCClientImp
                             }
 
                             PeerConnection.IceConnectionState.DISCONNECTED -> {
-                                eventFromWebRtcClientListener?.showReConnectingTitle()
+                                eventFromWebRtcClientListener?.showReConnectingCall()
                                 countDownReconnecting.start()
                             }
 

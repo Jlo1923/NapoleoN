@@ -90,18 +90,15 @@ class ConversationCallActivity :
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_call)
 
         when (NapoleonApplication.statusCall) {
-
             StatusCallEnum.STATUS_NO_CALL -> {
                 Timber.d("LLAMADA PASO 1: reinicia valores")
                 webRTCClient.reInit()
             }
-
             StatusCallEnum.STATUS_CONNECTED_CALL -> {
                 Timber.d("LLAMADA PASO 1: volviendo de una llamada previamente conectada")
                 showTimer()
                 enableControls()
             }
-
         }
 
         webRTCClient.setEventsFromWebRTCClientListener(this)
@@ -128,8 +125,8 @@ class ConversationCallActivity :
                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 )
             }
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+        } catch (ex: Exception) {
+            Timber.e(ex.message.toString())
         }
 
         with(window) {
@@ -272,8 +269,8 @@ class ConversationCallActivity :
                     isReturnCall = true
                 }
             }
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+        } catch (ex: Exception) {
+            Timber.e(ex.message.toString())
         }
     }
 
@@ -417,17 +414,12 @@ class ConversationCallActivity :
                 R.string.text_cancel,
                 clickPositiveButton = {
 
-                    NapoleonApplication.callModel?.typeCall =
-                        Constants.TypeCall.IS_INCOMING_CALL
-
-                    NapoleonApplication.callModel?.isVideoCall = true
-
                     initSurfaceRenders()
+
+//                    handlerActiveCall()
 
                     webRTCClient.meAcceptChangeToVideoCall()
 
-                    binding.textViewTitle.text =
-                        getString(R.string.text_encrypted_video_call)
                 }, clickNegativeButton = {
                     webRTCClient.meCancelChangeToVideoCall()
                 }
@@ -436,19 +428,19 @@ class ConversationCallActivity :
     }
 
     override fun contactAcceptChangeToVideoCall() {
+
+        initSurfaceRenders()
+
+//        handlerActiveCall()
+
 //        try {
 //            with(window) {
 //                addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 //            }
 //        } catch (ex: Exception) {
-//            Timber.e(ex.localizedMessage.toString())
+//            Timber.e(ex.message.toString())
 //        }
 
-        NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
-
-        NapoleonApplication.callModel?.isVideoCall = true
-
-        initSurfaceRenders()
     }
 
     override fun contactCancelChangeToVideoCall() {
@@ -482,7 +474,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun showReConnectingTitle() {
+    override fun showReConnectingCall() {
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
@@ -490,7 +482,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun showOccupiedTitle() {
+    override fun showOccupiedCall() {
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
@@ -499,7 +491,7 @@ class ConversationCallActivity :
         }
     }
 
-    override fun showFinishingTitle() {
+    override fun showFinishingCall() {
         runOnUiThread {
             binding.textViewCalling.visibility = View.VISIBLE
             binding.textViewCallDuration.visibility = View.GONE
@@ -556,24 +548,27 @@ class ConversationCallActivity :
         }
     }
 
-    override fun changeTextviewTitle(stringResourceId: Int) {
+    override fun showTypeCallTitle() {
         try {
             runOnUiThread {
-                binding.textViewTitle.text =
-                    getString(
-                        stringResourceId,
-                        this.getString(R.string.label_nickname, contact?.getNickName())
-                    )
+                NapoleonApplication.callModel?.let {
+                    if (it.isVideoCall)
+                        binding.textViewTitle.text =
+                            getString(R.string.text_encrypted_video_call)
+                    else
+                        binding.textViewTitle.text =
+                            getString(R.string.text_encrypted_call)
+                }
             }
-        } catch (e: Exception) {
-            Timber.e(e.localizedMessage)
+        } catch (ex: Exception) {
+            Timber.e(ex.message.toString())
         }
     }
 
-    override fun toggleLocalRenderVisibility(visibility: Int) {
-        runOnUiThread(Runnable {
-            binding.localSurfaceRender.visibility = visibility
-        })
+    override fun toggleLocalRenderVisibility(visibility: Boolean) {
+        runOnUiThread {
+            binding.localSurfaceRender.visibility = if (visibility) View.VISIBLE else View.INVISIBLE
+        }
     }
 
     override fun toggleBluetoothButtonVisibility(isVisible: Boolean) {
