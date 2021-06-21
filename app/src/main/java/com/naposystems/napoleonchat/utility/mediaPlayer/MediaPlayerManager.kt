@@ -251,7 +251,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                 if (wakeLock.isHeld) {
                     wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                 }
-                if (mediaPlayer.isPlaying) {
+                if (mediaPlayer.isPlaying && currentMessageId != mPreviousMessageId) {
                     mediaPlayer.playWhenReady = false
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                     mListener?.onPauseAudio(currentMessageId)
