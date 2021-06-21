@@ -236,11 +236,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                             mImageButtonSpeed?.setImageResource(R.drawable.ic_baseline_1x_circle_outline)
                             TWO_X_SPEED
                         }
-                        mHandler.removeCallbacks(mRunnable)
-                        mediaPlayer.stop()
-                        mediaPlayer.release()
-                        this.mediaPlayer = null
-                        playAudio(progress = progress.toInt(), isEarpiece = true)
+
                     } catch (e: IOException) {
                         Timber.e(e)
                     }
@@ -250,16 +246,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                 isProximitySensorActive = false
                 if (wakeLock.isHeld) {
                     wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
-                }
-                if (mediaPlayer.isPlaying) {
-                    mediaPlayer.playWhenReady = false
-                    changeIconPlayPause(R.drawable.ic_baseline_play_circle)
-                    mListener?.onPauseAudio(currentMessageId)
-                    mHandler.removeCallbacks(mRunnable)
-                    Timber.d("*TestProximity: unregisterProximityListener")
-                    RxBus.publish(
-                        RxEvent.StateFlag(Constants.StateFlag.OFF.state)
-                    )
                 }
             }
         }
@@ -370,7 +356,8 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
                     audioAttributes = AudioAttributes.Builder()
                         .setContentType(if (isProximitySensorActive) C.CONTENT_TYPE_SPEECH else C.CONTENT_TYPE_MUSIC)
-                        .setUsage(if (isProximitySensorActive) C.USAGE_VOICE_COMMUNICATION else C.USAGE_MEDIA)
+//                        .setUsage(if (isProximitySensorActive) C.USAGE_VOICE_COMMUNICATION else C.USAGE_MEDIA)
+                        .setUsage( C.USAGE_MEDIA)
                         .build()
 
                     audioManagerCompat.requestCallAudioFocus()
@@ -436,7 +423,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                                     Timber.i("Conver onComplete")
                                     mSeekBar?.progress = 0
                                     mSensorManager.unregisterListener(this@MediaPlayerManager)
-                                    if (wakeLock.isHeld) {
+                                    if (wakeLock.isHeld && !isProximitySensorActive) {
                                         wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                                     }
                                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
