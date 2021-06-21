@@ -15,20 +15,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/false_view" />
 
-    <TextView
-        android:id="@+id/text_time_autodestruction"
-        style="@style/TextCountDownSelfDestruct"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/xx_large_margin"
-        android:layout_marginEnd="@dimen/normal_margin"
-        android:padding="@dimen/x_small_padding"
-        android:text="12:12"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
-
     <ImageButton
         android:id="@+id/image_button_play"
         android:layout_width="wrap_content"
@@ -63,16 +49,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/text_time_autodestruction"
+        style="@style/TextCountDownSelfDestruct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/normal_margin"
+        android:padding="@dimen/x_small_padding"
+        android:text="12:12"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/frame_status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/frame_status"
+        tools:visibility="visible" />
+
     <FrameLayout
         android:id="@+id/frame_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/xx_large_margin"
         android:background="@drawable/bg_black_transparent_circle"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/text_time_autodestruction"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_time_autodestruction"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatImageView
