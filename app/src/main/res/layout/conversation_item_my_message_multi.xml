@@ -65,7 +65,6 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/small_margin"
             android:gravity="end"
-            android:maxLines="5"
             android:padding="@dimen/x_small_padding"
             tools:text="EL mensaje del mensaje jhcebwjhbc ehjb cjehbw"
             tools:visibility="visible" />
