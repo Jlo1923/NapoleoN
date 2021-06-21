@@ -412,13 +412,9 @@ class ConversationCallActivity :
                 R.string.text_accept,
                 R.string.text_cancel,
                 clickPositiveButton = {
-
                     initSurfaceRenders()
-
-//                    handlerActiveCall()
-
                     webRTCClient.meAcceptChangeToVideoCall()
-
+                    handlerActiveCall()
                 }, clickNegativeButton = {
                     webRTCClient.meCancelChangeToVideoCall()
                 }
@@ -430,7 +426,7 @@ class ConversationCallActivity :
 
         initSurfaceRenders()
 
-//        handlerActiveCall()
+        handlerActiveCall()
 
 //        try {
 //            with(window) {
