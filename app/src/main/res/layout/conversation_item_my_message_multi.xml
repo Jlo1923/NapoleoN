@@ -61,14 +61,13 @@
         <TextView
             android:id="@+id/textView_msg"
             style="@style/MyMessageTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:layout_marginEnd="@dimen/small_margin"
-            android:ellipsize="end"
+            android:gravity="end"
             android:maxLines="5"
             android:padding="@dimen/x_small_padding"
-            tools:text="EL mensaje del mensaje"
+            tools:text="EL mensaje del mensaje jhcebwjhbc ehjb cjehbw"
             tools:visibility="visible" />
 
         <TextView

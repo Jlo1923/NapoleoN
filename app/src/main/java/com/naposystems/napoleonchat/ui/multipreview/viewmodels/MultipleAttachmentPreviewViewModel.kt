@@ -122,21 +122,31 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     }
 
     private suspend fun markAttachmentImageAsRead(position: Int) {
-        val attachment = listFiles[position].messageAndAttachment?.attachment
-        attachment?.let { attachment ->
-            val msgAttachment = listFiles[position].messageAndAttachment
-            msgAttachment?.let { itemMessage ->
-                if (attachment.isReaded()
-                        .not() && itemMessage.isMine == Constants.IsMine.NO.value
-                ) {
-                    itemMessage.isRead = repositoryPreviewMedia.sentAttachmentAsRead(
-                        itemMessage.attachment,
-                        itemMessage.contactId
-                    )
+
+        viewModelScope.launch {
+            val attachment = listFiles[position].messageAndAttachment?.attachment
+            attachment?.let { attachment ->
+                val msgAttachment = listFiles[position].messageAndAttachment
+                // TODO: mejorar esto en un proximo PR
+                msgAttachment?.let { itemMessage ->
+                    val attachmentFromLocal =
+                        repositoryPreviewMedia.getAttachmentById(itemMessage.attachment.webId)
+                    attachmentFromLocal?.let {
+                        val mustMarkAsRead = it.isRead()
+                            .not() && itemMessage.isMine == Constants.IsMine.NO.value
+                        if (mustMarkAsRead) {
+                            repositoryPreviewMedia.sentAttachmentAsRead(
+                                itemMessage.attachment,
+                                itemMessage.contactId
+                            )
+                            repository.tryMarkMessageParentAsRead(attachment.webId)
+                        }
+                    }
+
                 }
-                repository.tryMarkMessageParentAsRead(attachment.webId)
             }
         }
+
     }
 
     fun setContact(contactEntity: ContactEntity) {
@@ -240,6 +250,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     fun validateExitInCreateMode() {
         if (listFilesForRemoveInCreate.isEmpty()) {
+            repositoryPreviewMedia.removePendingUris()
             exitPreview()
         } else {
             repository.saveDeleteFilesInCache(listFilesForRemoveInCreate.toList())

@@ -24,6 +24,7 @@ import com.naposystems.napoleonchat.ui.conversation.model.ItemMessageWithMsgEnti
 import com.naposystems.napoleonchat.ui.conversation.model.toItemMessageWithMsgEntity
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
+import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.Utils.Companion.compareDurationAttachmentWithSelfAutoDestructionInSeconds
@@ -50,7 +51,8 @@ class ConversationViewModel @Inject constructor(
     private val repository: IContractConversation.Repository,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val repositoryMessages: IContractMultipleAttachmentPreview.Repository,
-    private val repositorySelfDestruction: SelfDestructTimeDialogRepository
+    private val repositorySelfDestruction: SelfDestructTimeDialogRepository,
+    private val syncManager: SyncManager,
 ) : ViewModel(), IContractConversation.ViewModel {
 
     private lateinit var userEntity: UserEntity
@@ -755,6 +757,14 @@ class ConversationViewModel @Inject constructor(
             }
         }
         return attachments
+    }
+
+    fun verifyMessagesReceived() {
+        syncManager.verifyMessagesReceived()
+    }
+
+    fun verifyMessagesRead() {
+        syncManager.verifyMessagesRead()
     }
 
     //endregion

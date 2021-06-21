@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.repository.previewMedia
 
 import android.content.Context
-import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.message.MessageLocalDataSource
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -13,6 +12,7 @@ import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessageDTO
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentItemAttachment
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class PreviewMediaRepository @Inject constructor(
     private val napoleonApi: NapoleonApi,
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
-    private val syncManager: SyncManager
+    private val sharedPreferencesManager: SharedPreferencesManager
 ) :
     IContractPreviewMedia.Repository {
 
@@ -91,6 +91,14 @@ class PreviewMediaRepository @Inject constructor(
             Timber.e(ex)
             return false
         }
+    }
+
+    override suspend fun getAttachmentById(webId: String): AttachmentEntity? {
+        return attachmentLocalDataSource.getAttachmentByWebId(webId)
+    }
+
+    override fun removePendingUris() {
+        sharedPreferencesManager.puStringSet(Constants.SharedPreferences.URIS_CACHE, emptyList())
     }
 
     private fun createObjectForApi(

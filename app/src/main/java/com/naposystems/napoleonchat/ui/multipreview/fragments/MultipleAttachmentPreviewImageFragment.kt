@@ -20,6 +20,7 @@ import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
+import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -57,7 +58,10 @@ class MultipleAttachmentPreviewImageFragment(
         } else {
             loadImageFromBody()
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         file.messageAndAttachment?.let {
             viewModel.setAttachmentAndLaunchLiveData(it.attachment.webId)
             bindViewModel()
@@ -82,48 +86,37 @@ class MultipleAttachmentPreviewImageFragment(
         }
     }
 
-    private fun hideStatus() {
-        binding.apply {
-            imageViewStatus.hide()
-            frameStatus.hide()
+    private fun hideStatus() = binding.apply {
+        imageViewStatus.hide()
+        frameStatus.hide()
+    }
+
+    private fun onModeWhite() = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
+    }
+
+    private fun onModeReceived(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
+        if (file.messageAndAttachment?.isMine == 0) {
+            hideViews(imageViewStatus, frameStatus)
         }
     }
 
-    private fun onModeWhite() {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
-        }
-    }
-
-    private fun onModeReceived(attachmentEntity: AttachmentEntity) {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
-            if (file.messageAndAttachment?.isMine == 0) {
-                hideViews(imageViewStatus, frameStatus)
-            }
-        }
-        configTimer(attachmentEntity)
-    }
-
-    private fun onModeRead(attachmentEntity: AttachmentEntity) {
-        binding.apply {
-            imageViewStatus.show()
-            frameStatus.show()
-            if (file.messageAndAttachment?.isMine == 1) { // is Mine
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
-            } else {
-                imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
-            }
+    private fun onModeRead(attachmentEntity: AttachmentEntity) = binding.apply {
+        showViews(imageViewStatus, frameStatus)
+        if (file.messageAndAttachment?.isMine == 1) { // is Mine
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_readed))
+        } else {
+            imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
         }
         configTimer(attachmentEntity)
     }
 
     private fun configTimer(attachmentEntity: AttachmentEntity) {
-
         countDownTimer?.cancel()
         val endTime = attachmentEntity.totalSelfDestructionAt
         when {

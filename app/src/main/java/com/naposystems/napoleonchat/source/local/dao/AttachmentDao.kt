@@ -48,6 +48,9 @@ interface AttachmentDao {
     @Query("SELECT * FROM  ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} =:id")
     suspend fun getAttachmentByWebId(id: String): AttachmentEntity?
 
+    @Query("SELECT * FROM  ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} WHERE ${DBConstants.Attachment.COLUMN_ID} =:id")
+    suspend fun getAttachmentById(id: String): AttachmentEntity?
+
     @Query(
         "SELECT * " +
                 "FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
@@ -105,5 +108,6 @@ interface AttachmentDao {
                 "AND ${DBConstants.Attachment.COLUMN_TOTAL_SELF_DESTRUCTION_AT} < strftime('%s','now')"
     )
     fun getAttachmentsSelfDestructionExpired(): List<AttachmentEntity>
+
 
 }

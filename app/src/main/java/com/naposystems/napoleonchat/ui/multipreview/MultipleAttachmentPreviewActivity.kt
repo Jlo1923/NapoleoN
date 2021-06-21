@@ -206,10 +206,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
                 viewPreviewBottom.getTabLayout(),
                 viewPagerAttachments
             ) { tab, position ->
-                val view = ViewMultipleAttachmentTabView(
-                    viewBinding.root.context,
-                    viewModel = viewModelItem
-                )
+                val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
                 view.bindFile(it[position])
                 view.selected(position == 0)
                 tab.customView = view

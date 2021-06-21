@@ -199,21 +199,16 @@ class SyncManagerImp @Inject constructor(
 
                 if (response.isSuccessful) {
 
-                    response.body()?.messagesId.let {
-                        it?.let {
-                            messageLocalDataSource.updateMessageStatus(
-                                it,
-                                Constants.MessageStatus.UNREAD.status
-                            )
-                        }
-                    }
+                    response.body()?.let { handleMessagesReceived(it) }
 
                     response.body()?.attachmentsId.let {
                         it?.let {
-                            attachmentLocalDataSource.updateAttachmentStatus(
-                                it,
-                                Constants.AttachmentStatus.NOT_DOWNLOADED.status
-                            )
+                            if (it.isNotEmpty()) {
+                                attachmentLocalDataSource.updateAttachmentStatus(
+                                    it,
+                                    Constants.AttachmentStatus.RECEIVED.status
+                                )
+                            }
                         }
                     }
 
@@ -221,6 +216,26 @@ class SyncManagerImp @Inject constructor(
             } catch (e: java.lang.Exception) {
                 Timber.e(e.localizedMessage)
             }
+        }
+    }
+
+    private suspend fun handleMessagesReceived(data: MessageAndAttachmentResDTO) {
+        if (data.messagesId.isNotEmpty()) {
+            /**
+             * debemos validar los attachments del mensaje padre, como lo vamos a marcar como recibidos
+             * tomamos todos los attachments y los marcamos
+             */
+            data.messagesId.forEach {
+                val message = messageLocalDataSource.getMessageByWebId(it, false)
+                val webIds = message?.attachmentEntityList?.map { it.webId }
+                webIds?.let {
+                    attachmentLocalDataSource.updateAttachmentStatus(
+                        it,
+                        Constants.AttachmentStatus.RECEIVED.status
+                    )
+                }
+            }
+            messageLocalDataSource.updateMessageStatus(data.messagesId, READED.status)
         }
     }
 

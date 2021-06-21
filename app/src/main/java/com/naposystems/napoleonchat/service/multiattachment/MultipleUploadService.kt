@@ -151,6 +151,9 @@ class MultipleUploadService : Service() {
         val disposableCompressProgress = RxBus.listen(RxEvent.MultiCompressProgress::class.java)
             .subscribe { }
 
+        val disposableExitService = RxBus.listen(RxEvent.ExitOfService::class.java)
+            .subscribe {stopService() }
+
         compositeDisposable.apply {
             addAll(
                 disposableUploadStart,
@@ -158,7 +161,8 @@ class MultipleUploadService : Service() {
                 disposableUploadTryNext,
                 disposableUploadError,
                 disposableUploadProgress,
-                disposableCompressProgress
+                disposableCompressProgress,
+                disposableExitService
             )
         }
     }

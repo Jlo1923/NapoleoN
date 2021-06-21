@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.multi.model
 
+import android.net.Uri
 import android.os.Parcelable
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.Constants
@@ -14,7 +15,8 @@ data class MultipleAttachmentItemAttachment(
     val extension: String = "",
     val type: String,
     var body: String,
-    var totalSelfDestructionAt: Long
+    var totalSelfDestructionAt: Long,
+    var thumbnailUri: Uri
 ) : Parcelable {
     fun toAttachmentEntity(): AttachmentEntity = AttachmentEntity(
         id = 0,

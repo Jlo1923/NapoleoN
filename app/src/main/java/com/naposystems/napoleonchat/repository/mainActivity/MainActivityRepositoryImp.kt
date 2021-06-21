@@ -86,8 +86,9 @@ class MainActivityRepositoryImp @Inject constructor(
 //            socketClient.disconnectSocket()
     }
 
-    override  fun addUriListToCache(listOf: List<Uri>) {
+    override fun addUriListToCache(listOf: List<Uri>) {
         sharedPreferencesManager.puStringSet(URIS_CACHE, listOf)
+        sharedPreferencesManager.putBoolean(Constants.SharedPreferences.NAV_TO_CONTACTS, true)
     }
 
     fun getPendingUris(): List<Uri> {

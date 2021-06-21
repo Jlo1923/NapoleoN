@@ -158,7 +158,7 @@ class AttachmentLocalDataSourceImp @Inject constructor(
 
     }
 
-    override fun markAttachmentAsError(
+    override suspend fun markAttachmentAsError(
         attachmentEntity: AttachmentEntity
     ) {
 
@@ -166,15 +166,20 @@ class AttachmentLocalDataSourceImp @Inject constructor(
 
         val selfDestructTime = preferencesManager.getInt(PREF_MESSAGE_SELF_DESTRUCT_TIME_NOT_SENT)
         val currentTime = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()).toInt()
-        attachmentEntity.apply {
-            updatedAt = currentTime
-            selfDestructionAt = selfDestructTime
-            totalSelfDestructionAt =
-                currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+
+        val attachmentInDb = attachmentDao.getAttachmentById(attachmentEntity.id.toString())
+
+        attachmentInDb?.let {
+            if (it.isSent().not()) {
+                it.updatedAt = currentTime
+                //it.selfDestructionAt = selfDestructTime
+                it.totalSelfDestructionAt =
+                    currentTime.plus(Utils.convertItemOfTimeInSecondsByError(selfDestructTime))
+                it.status = Constants.AttachmentStatus.ERROR.status
+
+                updateAttachment(it)
+            }
         }
-
-        updateAttachment(attachmentEntity)
-
     }
 
 }
