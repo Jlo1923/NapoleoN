@@ -970,29 +970,21 @@ class WebRTCClientImp
         }
 
         peerConnection?.createOffer(object : CustomSdpObserver("Local offer") {
-
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
-
                 super.onCreateSuccess(sessionDescription)
-
                 Timber.d("LLAMADA PASO: OFERTA CREADA SETEANDOLA")
-
                 peerConnection?.setLocalDescription(
                     (CustomSdpObserver("Local offer")),
                     sessionDescription
                 )
                 if (NapoleonApplication.statusCall.isNoCall()) {
                     Timber.d("LLAMADA PASO 10.1: Llamada no activa consume api")
-
                     NapoleonApplication.callModel?.let {
                         it.offer = sessionDescription.toJSONObject().toString()
                     }
-
                     syncManager.callContact()
-
                 } else {
                     Timber.d("LLAMADA PASO 10.2: Emite llamar")
-
                     NapoleonApplication.callModel?.channelName?.let {
                         socketClient.emitClientCall(
                             jsonObject = sessionDescription.toJSONObject()
@@ -1000,7 +992,6 @@ class WebRTCClientImp
                     }
                 }
             }
-
         }, mediaConstraints)
     }
 
@@ -1030,26 +1021,17 @@ class WebRTCClientImp
 
     //Audio
     private fun createLocalAudioTrack() {
-
         val audioConstraints = MediaConstraints()
-
         val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
-
         localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
-
         localAudioTrack?.setEnabled(true)
-
         localMediaStream = peerConnectionFactory.createLocalMediaStream("localMediaStream")
-
         localMediaStream.addTrack(localAudioTrack)
-
     }
 
     //Camera
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
-
         val deviceNames = enumerator.deviceNames
-
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
                 val videoCapturer = enumerator.createCapturer(deviceName, null)
@@ -1058,7 +1040,6 @@ class WebRTCClientImp
                 }
             }
         }
-
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName).not()) {
                 Timber.d("Creating other camera capturer.")
