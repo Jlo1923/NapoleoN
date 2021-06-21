@@ -381,7 +381,6 @@ class ConversationCallActivity :
             }
         }
         webRTCClient.playEndCall()
-        webRTCClient.disposeCall()
     }
 
     private fun initSurfaceRenders() {

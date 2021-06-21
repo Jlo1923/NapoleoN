@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.webRTC.client
 
+import android.media.MediaPlayer
 import android.widget.TextView
 import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import org.webrtc.SurfaceViewRenderer
@@ -43,7 +44,7 @@ interface WebRTCClient {
     //Ringtone
     fun playRingTone()
     fun playBackTone()
-    fun playEndCall()
+    fun playEndCall(cancelCall: Boolean = false)
     fun stopRingAndVibrate()
 
     //Sensor Proximity

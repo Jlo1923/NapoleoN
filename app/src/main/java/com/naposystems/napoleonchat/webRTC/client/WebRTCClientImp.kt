@@ -39,6 +39,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+
 //TODO: Refactorizar esta clase e independizar la conexion del WebRTC, con los contadores y los manejadores de notificacion
 class WebRTCClientImp
 @Inject constructor(
@@ -77,11 +78,11 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            playEndCall()
+
             if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-                cancelCall()
+                playEndCall(cancelCall = true)
             } else {
-                disposeCall()
+                playEndCall()
             }
         }
 
@@ -108,7 +109,6 @@ class WebRTCClientImp
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
             playEndCall()
-            disposeCall()
         }
 
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -530,17 +530,26 @@ class WebRTCClientImp
 
     }
 
-    override fun playEndCall() {
-        val uri =
-            Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
-        MediaPlayer().apply {
-            setDataSource(
-                context,
-                uri
-            )
-            this.isLooping = false
-            prepare()
-            start()
+    override fun playEndCall(cancelCall: Boolean) {
+        try {
+            eventFromWebRtcClientListener?.showFinishingCall()
+            MediaPlayer().apply {
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
+                )
+                this.isLooping = false
+                setOnCompletionListener { if (cancelCall) cancelCall() else disposeCall() }
+                prepare()
+                start()
+            }
+
+        } catch (ex: Exception) {
+            Timber.e(ex.message.toString())
+            if (cancelCall)
+                cancelCall()
+            else
+                disposeCall()
         }
     }
 
@@ -693,8 +702,6 @@ class WebRTCClientImp
                     }
                 }
 
-                eventFromWebRtcClientListener?.showFinishingCall()
-
                 NapoleonApplication.callModel?.let { callModel ->
                     if (callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
                         Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
@@ -744,7 +751,6 @@ class WebRTCClientImp
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
             playEndCall()
-            disposeCall()
         }
     }
 
@@ -1250,7 +1256,6 @@ class WebRTCClientImp
         NapoleonApplication.callModel.let {
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
             playEndCall()
-            disposeCall()
         }
     }
 
