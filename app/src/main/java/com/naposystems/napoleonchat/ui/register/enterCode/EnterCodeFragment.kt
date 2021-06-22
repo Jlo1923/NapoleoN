@@ -47,10 +47,16 @@ class EnterCodeFragment :
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         //Bindeo del fragmento
         _binding = EnterCodeFragmentBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.enterCodeWidget.setListener(this)
         binding.numericKeyboard.setListener(this)
@@ -63,8 +69,6 @@ class EnterCodeFragment :
         binding.buttonCodeForwarding.setOnClickListener {
             viewModel.codeForwarding()
         }
-
-        return binding.root
     }
 
     override fun onDestroyView() {

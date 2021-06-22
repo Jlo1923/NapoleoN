@@ -71,6 +71,8 @@ class WebRTCClientImp
 
     private var callTimerRunnable = Runnable { startCallTimer() }
 
+    private lateinit var mediaPlayer: MediaPlayer
+
     //Tiempo de Repique
     private var countDownRingCall: CountDownTimer = object : CountDownTimer(
         TimeUnit.SECONDS.toMillis(30),
@@ -78,10 +80,11 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-
             if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
+                Timber.d("LLAMADA PASO: PLAYENDCALL CANCELCALL TRUE")
                 playEndCall(cancelCall = true)
             } else {
+                Timber.d("LLAMADA PASO: PLAYENDCALL")
                 playEndCall()
             }
         }
@@ -533,15 +536,26 @@ class WebRTCClientImp
     override fun playEndCall(cancelCall: Boolean) {
         try {
             eventFromWebRtcClientListener?.showFinishingCall()
-            MediaPlayer().apply {
+            mediaPlayer = MediaPlayer().apply {
                 setDataSource(
                     context,
                     Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
                 )
                 this.isLooping = false
-                setOnCompletionListener { if (cancelCall) cancelCall() else disposeCall() }
                 prepare()
                 start()
+                setOnCompletionListener {
+                    Timber.d("LLAMADA PASO: FINALIZO PLAYENDCALL")
+                    if (cancelCall) {
+                        Timber.d("LLAMADA PASO: FINALIZO PLAYENDCALL CANCELCALL")
+                        cancelCall()
+                    } else {
+                        Timber.d("LLAMADA PASO: FINALIZO PLAYENDCALL DISPOSECALL")
+                        disposeCall()
+                    }
+                    stop()
+                    release()
+                }
             }
 
         } catch (ex: Exception) {
@@ -682,9 +696,7 @@ class WebRTCClientImp
     }
 
     override fun disposeCall(typeEndCall: TypeEndCallEnum?) {
-
         Timber.d("LLAMADA PASO: DISPOSE CALL")
-
         try {
 
             if (disposingCall.not()) {
