@@ -242,13 +242,7 @@ class SocketClientImp
                         override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                     }
                 )
-
             }
-//            else {
-//                Timber.d("LLAMADA PASO 5: CANAL PREVIO EXISTENTE")
-//                unSubscribePresenceChannel()
-//                subscribeToPresenceChannel()
-//            }
         }
     }
 
@@ -1302,7 +1296,7 @@ class SocketClientImp
 
                                 if (eventType != null) {
 
-                                    Timber.d("LLAMADA PASO: Llega el evento de llamada ${eventType}")
+                                    Timber.d("LLAMADA PASO: Llega el evento de llamada $eventType")
 
                                     when (eventType) {
 

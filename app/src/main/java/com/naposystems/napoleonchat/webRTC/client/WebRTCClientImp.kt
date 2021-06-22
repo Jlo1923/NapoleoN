@@ -39,6 +39,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+
 //TODO: Refactorizar esta clase e independizar la conexion del WebRTC, con los contadores y los manejadores de notificacion
 class WebRTCClientImp
 @Inject constructor(
@@ -77,11 +78,11 @@ class WebRTCClientImp
     ) {
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RING")
-            playEndCall()
+
             if (NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_OUTGOING_CALL) {
-                cancelCall()
+                playEndCall(cancelCall = true)
             } else {
-                disposeCall()
+                playEndCall()
             }
         }
 
@@ -108,7 +109,6 @@ class WebRTCClientImp
         override fun onFinish() {
             Timber.d("LLAMADA PASO: COUNTDOWN RECONNECTING FINISH")
             playEndCall()
-            disposeCall()
         }
 
         override fun onTick(millisUntilFinished: Long) = Unit
@@ -389,17 +389,12 @@ class WebRTCClientImp
     }
 
     override fun meAcceptChangeToVideoCall() {
-
         NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_INCOMING_CALL
-
         NapoleonApplication.callModel?.isVideoCall = true
-
         socketClient.emitClientCall(
             SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
         )
-
-        eventFromWebRtcClientListener?.changeTextviewTitle(R.string.text_encrypted_video_call)
-
+        eventFromWebRtcClientListener?.showTypeCallTitle()
     }
 
     override fun meCancelChangeToVideoCall() {
@@ -494,14 +489,14 @@ class WebRTCClientImp
                         SocketClientImp.CONTACT_TURN_OFF_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.INVISIBLE)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = true)
             } else {
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_ON_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(View.VISIBLE)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = false)
             }
 
             if (itsFromBackPressed && previousState) {
@@ -535,17 +530,26 @@ class WebRTCClientImp
 
     }
 
-    override fun playEndCall() {
-        val uri =
-            Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
-        MediaPlayer().apply {
-            setDataSource(
-                context,
-                uri
-            )
-            this.isLooping = false
-            prepare()
-            start()
+    override fun playEndCall(cancelCall: Boolean) {
+        try {
+            eventFromWebRtcClientListener?.showFinishingCall()
+            MediaPlayer().apply {
+                setDataSource(
+                    context,
+                    Uri.parse("android.resource://" + context.packageName + "/" + R.raw.end_call_tone_new)
+                )
+                this.isLooping = false
+                setOnCompletionListener { if (cancelCall) cancelCall() else disposeCall() }
+                prepare()
+                start()
+            }
+
+        } catch (ex: Exception) {
+            Timber.e(ex.message.toString())
+            if (cancelCall)
+                cancelCall()
+            else
+                disposeCall()
         }
     }
 
@@ -698,8 +702,6 @@ class WebRTCClientImp
                     }
                 }
 
-                eventFromWebRtcClientListener?.showFinishingTitle()
-
                 NapoleonApplication.callModel?.let { callModel ->
                     if (callModel.isFromClosedApp == Constants.FromClosedApp.YES) {
                         Timber.d("LLAMADA PASO 3: DISCONNECT SOCKET DISPOSE CALL")
@@ -738,7 +740,7 @@ class WebRTCClientImp
 
     override fun contactRejectCall() {
         NapoleonApplication.callModel?.channelName?.let {
-            eventFromWebRtcClientListener?.showOccupiedTitle()
+            eventFromWebRtcClientListener?.showOccupiedCall()
             countDownEndCallBusy.start()
             handlerMediaPlayerNotification.playBusyTone()
             syncManager.sendMissedCall()
@@ -749,7 +751,6 @@ class WebRTCClientImp
         NapoleonApplication.callModel?.let {
             Timber.e("LLAMADA PASO: CONTACT CANCEL CALL")
             playEndCall()
-            disposeCall()
         }
     }
 
@@ -907,7 +908,7 @@ class WebRTCClientImp
                             }
 
                             PeerConnection.IceConnectionState.DISCONNECTED -> {
-                                eventFromWebRtcClientListener?.showReConnectingTitle()
+                                eventFromWebRtcClientListener?.showReConnectingCall()
                                 countDownReconnecting.start()
                             }
 
@@ -969,29 +970,21 @@ class WebRTCClientImp
         }
 
         peerConnection?.createOffer(object : CustomSdpObserver("Local offer") {
-
             override fun onCreateSuccess(sessionDescription: SessionDescription) {
-
                 super.onCreateSuccess(sessionDescription)
-
                 Timber.d("LLAMADA PASO: OFERTA CREADA SETEANDOLA")
-
                 peerConnection?.setLocalDescription(
                     (CustomSdpObserver("Local offer")),
                     sessionDescription
                 )
                 if (NapoleonApplication.statusCall.isNoCall()) {
                     Timber.d("LLAMADA PASO 10.1: Llamada no activa consume api")
-
                     NapoleonApplication.callModel?.let {
                         it.offer = sessionDescription.toJSONObject().toString()
                     }
-
                     syncManager.callContact()
-
                 } else {
                     Timber.d("LLAMADA PASO 10.2: Emite llamar")
-
                     NapoleonApplication.callModel?.channelName?.let {
                         socketClient.emitClientCall(
                             jsonObject = sessionDescription.toJSONObject()
@@ -999,7 +992,6 @@ class WebRTCClientImp
                     }
                 }
             }
-
         }, mediaConstraints)
     }
 
@@ -1029,26 +1021,17 @@ class WebRTCClientImp
 
     //Audio
     private fun createLocalAudioTrack() {
-
         val audioConstraints = MediaConstraints()
-
         val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
-
         localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
-
         localAudioTrack?.setEnabled(true)
-
         localMediaStream = peerConnectionFactory.createLocalMediaStream("localMediaStream")
-
         localMediaStream.addTrack(localAudioTrack)
-
     }
 
     //Camera
     private fun createCameraCapturer(enumerator: CameraEnumerator): VideoCapturer? {
-
         val deviceNames = enumerator.deviceNames
-
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName)) {
                 val videoCapturer = enumerator.createCapturer(deviceName, null)
@@ -1057,7 +1040,6 @@ class WebRTCClientImp
                 }
             }
         }
-
         for (deviceName in deviceNames) {
             if (enumerator.isFrontFacing(deviceName).not()) {
                 Timber.d("Creating other camera capturer.")
@@ -1255,7 +1237,6 @@ class WebRTCClientImp
         NapoleonApplication.callModel.let {
             Timber.d("LLAMADA PASO: CONTACT HAS HANGUP")
             playEndCall()
-            disposeCall()
         }
     }
 

@@ -37,11 +37,6 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun playRingTone() {
-        if (mediaPlayer != null)
-            Timber.d("RINGTONE: playRingtone mediaPlayer. $mediaPlayer")
-        else
-            Timber.d("RINGTONE: playRingtone mediaPlayer. NO INICIALIZADO")
-
         playMedia(
             Settings.System.DEFAULT_RINGTONE_URI,
             isLooping = true,
@@ -51,11 +46,6 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun playEndTone() {
-        if (mediaPlayer != null)
-            Timber.d("RINGTONE: playEndTone mediaPlayer. $mediaPlayer")
-        else
-            Timber.d("RINGTONE: playEndTone mediaPlayer. NO INICIALIZADO")
-
         playMedia(
             Uri.parse(stringResource + R.raw.end_call_tone),
             isLooping = false,
@@ -65,11 +55,6 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun playBackTone() {
-        if (mediaPlayer != null)
-            Timber.d("RINGTONE: playRingBack mediaPlayer. $mediaPlayer")
-        else
-            Timber.d("RINGTONE: playRingBack mediaPlayer. NO INICIALIZADO")
-
         playMedia(
             Uri.parse(stringResource + R.raw.ringback_tone),
             isLooping = true,
@@ -79,11 +64,6 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun playBusyTone() {
-        if (mediaPlayer != null)
-            Timber.d("RINGTONE: playBusyTone mediaPlayer. $mediaPlayer")
-        else
-            Timber.d("RINGTONE: playBusyTone mediaPlayer. NO INICIALIZADO")
-
         playMedia(
             Uri.parse(stringResource + R.raw.busy_tone),
             isLooping = true,
@@ -93,7 +73,6 @@ class HandlerMediaPlayerNotificationImp
     }
 
     override fun stopTone() {
-        Timber.d("RINGTONE: stopRingtone")
         currentlyAction = ActionPlay.ACTION_NONE
         stopMedia()
     }
