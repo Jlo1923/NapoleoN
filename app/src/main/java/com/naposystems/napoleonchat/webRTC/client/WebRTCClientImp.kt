@@ -408,13 +408,17 @@ class WebRTCClientImp
 
     //Video
     override fun initSurfaceRenders() {
-        localSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
-        localSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-        remoteSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
-        remoteSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-        localSurfaceViewRenderer?.setMirror(true)
-        remoteSurfaceViewRenderer?.setMirror(false)
-        startCaptureVideo()
+        try {
+            localSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
+            localSurfaceViewRenderer?.setZOrderMediaOverlay(true)
+            remoteSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
+            remoteSurfaceViewRenderer?.setZOrderMediaOverlay(true)
+            localSurfaceViewRenderer?.setMirror(true)
+            remoteSurfaceViewRenderer?.setMirror(false)
+            startCaptureVideo()
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
     }
 
     override fun startCaptureVideo() {
