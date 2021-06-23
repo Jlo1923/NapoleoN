@@ -179,10 +179,25 @@ class ConversationCallActivity :
         super.onStart()
     }
 
+    //    @Synchronized
+    private fun initSurfaceRenders() {
+        Timber.d("LLAMADA PASO: INICIANDO LAS SUPERFICIES DE RENDERIZADO")
+        runOnUiThread {
+            webRTCClient.initSurfaceRenders(
+                localSurface = binding.localSurfaceRender,
+                remoteSurface = binding.remoteSurfaceRender
+            )
+            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id)
+                binding.viewSwitcher.showNext()
+        }
+    }
+
+    //    @Synchronized
     override fun handlerActiveCall() {
         webRTCClient.setTextViewCallDuration(binding.textViewCallDuration)
         Timber.d("LLAMADA PASO: : LLAMADA ACTIVA")
         if (NapoleonApplication.callModel?.isVideoCall == true) {
+            Timber.d("LLAMADA PASO: : handlerActiveCall RENDER REMOTE VIDEO")
             webRTCClient.renderRemoteVideo()
             showRemoteVideo()
             binding.localSurfaceRender.isVisible = webRTCClient.isHideVideo.not()
@@ -193,6 +208,52 @@ class ConversationCallActivity :
         binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
         binding.imageButtonToggleVideo.setChecked(webRTCClient.isHideVideo, false)
         binding.imageButtonBluetooth.setChecked(webRTCClient.isBluetoothActive, false)
+    }
+
+    override fun showRemoteVideo() {
+        runOnUiThread {
+
+            binding.isVideoCall = NapoleonApplication.callModel?.isVideoCall
+
+            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
+                binding.viewSwitcher.showNext()
+            }
+
+            // Creamos la transición
+            val transition = ChangeBounds().apply {
+                interpolator = AnticipateOvershootInterpolator(1.0f)
+                duration = 1200
+            }
+            // Aplicamos la transición al padre
+            TransitionManager.beginDelayedTransition(binding.containerVideoCall, transition)
+
+            // Obtenemos el id del elemento a modificar
+            val id = binding.localSurfaceRender.id
+
+            ConstraintSet().apply {
+                // clonamos el constrainSet del padre del elemento que vamos a modificar
+                clone(binding.containerVideoCall)
+                // Cambiamos el margen
+                setMargin(
+                    id,
+                    ConstraintSet.END,
+                    Utils.dpToPx(this@ConversationCallActivity, 16f)
+                )
+                setMargin(
+                    id,
+                    ConstraintSet.BOTTOM,
+                    Utils.dpToPx(this@ConversationCallActivity, 76f)
+                )
+                // Cambiamos su tamaño
+                constrainPercentWidth(id, 0.3f)
+                constrainPercentHeight(id, 0.3f)
+                // Quitamos el constraint que tiene
+                clear(id, ConstraintSet.TOP)
+                clear(id, ConstraintSet.START)
+                // Aplicamos los constraint al padre
+                applyTo(binding.containerVideoCall)
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -383,17 +444,6 @@ class ConversationCallActivity :
         webRTCClient.playEndCall()
     }
 
-    private fun initSurfaceRenders() {
-        Timber.d("LLAMADA PASO: INICIANDO LAS SUPERFICIES DE RENDERIZADO")
-        runOnUiThread {
-            webRTCClient.setLocalVideoView(binding.localSurfaceRender)
-            webRTCClient.setRemoteVideoView(binding.remoteSurfaceRender)
-            webRTCClient.initSurfaceRenders()
-            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id)
-                binding.viewSwitcher.showNext()
-        }
-    }
-
     //region Implementation WebRTCClient.WebRTCClientListener
     override fun toggleContactCamera(visibility: Int) {
         runOnUiThread {
@@ -499,47 +549,6 @@ class ConversationCallActivity :
             binding.containerControls.visibility = View.VISIBLE
             binding.viewBottomSeparator.visibility = View.VISIBLE
             binding.fabAnswer.visibility = View.GONE
-        }
-    }
-
-    override fun showRemoteVideo() {
-        runOnUiThread {
-            NapoleonApplication.callModel?.isVideoCall = true
-            binding.isVideoCall = true
-            if (binding.viewSwitcher.nextView.id == binding.containerVideoCall.id) {
-                binding.viewSwitcher.showNext()
-            }
-
-            val constraintSet = ConstraintSet()
-
-            // clonamos el constrainSet del padre del elemento que vamos a modificar
-            constraintSet.clone(binding.containerVideoCall)
-
-            // Obtenemos el id del elemento a modificar
-            val id = binding.localSurfaceRender.id
-
-            // Cambiamos el margen
-            constraintSet.setMargin(id, ConstraintSet.END, Utils.dpToPx(this, 16f))
-            constraintSet.setMargin(id, ConstraintSet.BOTTOM, Utils.dpToPx(this, 76f))
-
-            // Cambiamos su tamaño
-            constraintSet.constrainPercentWidth(id, 0.3f)
-            constraintSet.constrainPercentHeight(id, 0.3f)
-
-            // Quitamos el constraint que tiene
-            constraintSet.clear(id, ConstraintSet.TOP)
-            constraintSet.clear(id, ConstraintSet.START)
-
-            // Creamos la transición
-            val transition = ChangeBounds()
-            transition.interpolator = AnticipateOvershootInterpolator(1.0f)
-            transition.duration = 1200
-
-            // Aplicamos la transición al padre
-            TransitionManager.beginDelayedTransition(binding.containerVideoCall, transition)
-
-            // Aplicamos los constraint al padre
-            constraintSet.applyTo(binding.containerVideoCall)
         }
     }
 

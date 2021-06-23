@@ -258,7 +258,12 @@ class WebRTCClientImp
 
             mediaConstraints = null
 
-            remoteSurfaceViewRenderer = null
+            try {
+                remoteSurfaceViewRenderer?.release()
+                remoteSurfaceViewRenderer = null
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT remoteSurfaceViewRenderer ${e.localizedMessage}")
+            }
 
             try {
                 if (::remoteMediaStream.isInitialized)
@@ -267,7 +272,12 @@ class WebRTCClientImp
                 Timber.e("LLAMADA PASO: REINIT remoteMediaStream ${e.localizedMessage}")
             }
 
-            localSurfaceViewRenderer = null
+            try {
+                localSurfaceViewRenderer?.release()
+                localSurfaceViewRenderer = null
+            } catch (e: java.lang.Exception) {
+                Timber.e("LLAMADA PASO: REINIT localSurfaceViewRenderer ${e.localizedMessage}")
+            }
 
             localAudioTrack = null
 
@@ -407,18 +417,29 @@ class WebRTCClientImp
     }
 
     //Video
-    override fun initSurfaceRenders() {
-        try {
-            localSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
-            localSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-            remoteSurfaceViewRenderer?.init(eglBase.eglBaseContext, null)
-            remoteSurfaceViewRenderer?.setZOrderMediaOverlay(true)
-            localSurfaceViewRenderer?.setMirror(true)
-            remoteSurfaceViewRenderer?.setMirror(false)
-            startCaptureVideo()
-        } catch (ex: Exception) {
-            Timber.e(ex)
+    override fun initSurfaceRenders(
+        localSurface: SurfaceViewRenderer?,
+        remoteSurface: SurfaceViewRenderer?
+    ) {
+
+        if (localSurface != null && localSurfaceViewRenderer == null) {
+            localSurfaceViewRenderer = localSurface
+            localSurfaceViewRenderer?.apply {
+                init(eglBase.eglBaseContext, null)
+                setZOrderMediaOverlay(true)
+                setMirror(true)
+            }
         }
+
+        if (remoteSurface != null && remoteSurfaceViewRenderer == null) {
+            remoteSurfaceViewRenderer = remoteSurface
+            remoteSurfaceViewRenderer?.apply {
+                init(eglBase.eglBaseContext, null)
+                setZOrderMediaOverlay(true)
+                setMirror(false)
+            }
+        }
+        startCaptureVideo()
     }
 
     override fun startCaptureVideo() {
@@ -458,14 +479,6 @@ class WebRTCClientImp
 
     }
 
-    override fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
-        localSurfaceViewRenderer = surfaceViewRenderer
-    }
-
-    override fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer) {
-        remoteSurfaceViewRenderer = surfaceViewRenderer
-    }
-
     override fun renderRemoteVideo() {
         try {
             stopProximitySensor()
@@ -476,6 +489,7 @@ class WebRTCClientImp
                 audioManager.isSpeakerphoneOn = this.isHeadsetConnected.not()
             }
 
+            Timber.d("LLAMADA PASO: REMOTE MEDIA STREAM: AGREGADO REMOTE SURFACEVIEWRENDERER EN RENDERREMOTEVIDEO")
             remoteMediaStream.videoTracks.first()?.addSink(remoteSurfaceViewRenderer)
 
         } catch (e: Exception) {
@@ -488,30 +502,22 @@ class WebRTCClientImp
     //previousState es el estado anterior de la vista, tener cuidado con eso
     override fun toggleVideo(previousState: Boolean, itsFromBackPressed: Boolean) {
         if (NapoleonApplication.callModel?.isVideoCall == true) {
-
             if (previousState) {
-                videoCapturerAndroid?.stopCapture()
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_OFF_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = true)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = false)
             } else {
                 NapoleonApplication.callModel?.channelName?.let {
                     socketClient.emitClientCall(
                         SocketClientImp.CONTACT_TURN_ON_CAMERA
                     )
                 }
-                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = false)
+                eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = true)
             }
-
-            if (itsFromBackPressed && previousState) {
-                localMediaStream.removeTrack(localVideoTrack)
-            }
-
             isHideVideo = if (itsFromBackPressed) false else previousState
-
         }
     }
 
@@ -833,6 +839,7 @@ class WebRTCClientImp
         }
     }
 
+    @Synchronized
     private fun createPeerConnection() {
 
         Timber.d("LLAMADA PASO 3: CREANDO PEERCONNECTION")
@@ -893,17 +900,19 @@ class WebRTCClientImp
 
                             Timber.d("LLAMADA PASO: onAddTrack NapoleonApplication.callModel?.isVideoCall")
 
+                            Timber.d("LLAMADA PASO: REMOTE MEDIA STREAM: INICIALIZADO")
                             remoteMediaStream = mediaStreams.first()
 
                             if (mediaStreams.first().videoTracks.isNotEmpty() && NapoleonApplication.statusCall.isConnectedCall()) {
 
+                                Timber.d("LLAMADA PASO: REMOTE MEDIA STREAM: AGREGADO REMOTE SURFACEVIEWRENDERER")
                                 remoteMediaStream.videoTracks.first()
                                     ?.addSink(remoteSurfaceViewRenderer)
 
                                 peerConnection?.addStream(mediaStreams.first())
 
+                                Timber.d("LLAMADA PASO: : createPeerConnection RENDER REMOTE VIDEO")
                                 renderRemoteVideo()
-
                             }
                         }
                     }
@@ -1041,6 +1050,7 @@ class WebRTCClientImp
         val audioSource: AudioSource = peerConnectionFactory.createAudioSource(audioConstraints)
         localAudioTrack = peerConnectionFactory.createAudioTrack("localAudioTrack1", audioSource)
         localAudioTrack?.setEnabled(true)
+        Timber.d("LOCAL MEDIA STREAM: INICIALIZADO")
         localMediaStream = peerConnectionFactory.createLocalMediaStream("localMediaStream")
         localMediaStream.addTrack(localAudioTrack)
     }
@@ -1108,9 +1118,10 @@ class WebRTCClientImp
             eventFromWebRtcClientListener?.toggleCheckedSpeaker(false)
         }
 
-        if (NapoleonApplication.callModel?.isVideoCall == true) {
-            renderRemoteVideo()
-        }
+//        if (NapoleonApplication.callModel?.isVideoCall == true) {
+//            Timber.d("LLAMADA PASO: : connectCall RENDER REMOTE VIDEO")
+//            renderRemoteVideo()
+//        }
 
         if ((NapoleonApplication.callModel?.isVideoCall == false && isBluetoothActive) || isHeadsetConnected) {
             stopProximitySensor()
@@ -1243,7 +1254,7 @@ class WebRTCClientImp
                     eventFromWebRtcClientListener?.toggleContactCamera(View.VISIBLE)
                 } else {
                     eventFromWebRtcClientListener?.toggleContactCamera(View.INVISIBLE)
-                    initSurfaceRenders()
+//                    initSurfaceRenders()
                 }
             }
         }

@@ -1,6 +1,5 @@
 package com.naposystems.napoleonchat.webRTC.client
 
-import android.media.MediaPlayer
 import android.widget.TextView
 import com.naposystems.napoleonchat.utility.TypeEndCallEnum
 import org.webrtc.SurfaceViewRenderer
@@ -31,10 +30,12 @@ interface WebRTCClient {
     fun meCancelChangeToVideoCall()
 
     //Video
-    fun initSurfaceRenders()
+    fun initSurfaceRenders(
+        localSurface: SurfaceViewRenderer? = null,
+        remoteSurface: SurfaceViewRenderer? = null
+    )
+
     fun startCaptureVideo()
-    fun setLocalVideoView(surfaceViewRenderer: SurfaceViewRenderer)
-    fun setRemoteVideoView(surfaceViewRenderer: SurfaceViewRenderer)
     fun renderRemoteVideo()
 
     //Camera
