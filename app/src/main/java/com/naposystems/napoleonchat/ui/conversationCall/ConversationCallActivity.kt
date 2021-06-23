@@ -171,7 +171,7 @@ class ConversationCallActivity :
             }
         } else {
             handlerActiveCall()
-            if (NapoleonApplication.callModel?.isVideoCall == true && isReturnCall) {
+            if (NapoleonApplication.callModel?.isVideoCall == true) {
                 webRTCClient.toggleVideo(previousState = false)
                 isReturnCall = false
                 try {

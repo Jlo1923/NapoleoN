@@ -470,6 +470,7 @@ class WebRTCClientImp
             localVideoTrack =
                 peerConnectionFactory.createVideoTrack("localVideoTrack1", localVideoSource)
 
+            Timber.d("LLAMADA PASO: LOCAL MEDIA STREAM: AGREGADO REMOTE SURFACEVIEWRENDERER EN RENDERREMOTEVIDEO")
             localMediaStream.addTrack(localVideoTrack)
 
             localVideoTrack?.addSink(localSurfaceViewRenderer)
@@ -599,7 +600,7 @@ class WebRTCClientImp
     //Proximity Sensor
     override fun startProximitySensor() {
         if (wakeLock.isHeld.not()) {
-            wakeLock.acquire()
+            wakeLock.acquire(10*60*1000L /*10 minutes*/)
         }
 
     }
