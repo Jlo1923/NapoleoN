@@ -33,7 +33,6 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventAttachmentRes
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventMessageRes
 import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.Constants.MessageStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe
 import com.naposystems.napoleonchat.utility.Utils
 import com.squareup.moshi.JsonAdapter
@@ -235,7 +234,10 @@ class SyncManagerImp @Inject constructor(
                     )
                 }
             }
-            messageLocalDataSource.updateMessageStatus(data.messagesId, READED.status)
+            messageLocalDataSource.updateMessageStatus(
+                data.messagesId,
+                Constants.MessageStatus.UNREAD.status
+            )
         }
     }
 
@@ -259,7 +261,7 @@ class SyncManagerImp @Inject constructor(
     private suspend fun handleDataAttachmentsRead(it: MessageAndAttachmentResDTO) {
         if (it.attachmentsId.isEmpty().not()) {
             attachmentLocalDataSource.updateAttachmentStatus(
-                it.attachmentsId, READED.status
+                it.attachmentsId, Constants.MessageStatus.READED.status
             )
         }
     }
@@ -281,7 +283,7 @@ class SyncManagerImp @Inject constructor(
                     )
                 }
             }
-            messageLocalDataSource.updateMessageStatus(data.messagesId, READED.status)
+            messageLocalDataSource.updateMessageStatus(data.messagesId, Constants.MessageStatus.READED.status)
         }
     }
 
@@ -756,7 +758,7 @@ class SyncManagerImp @Inject constructor(
                     if (response.isSuccessful) {
                         messageLocalDataSource.updateMessageStatus(
                             messagesReqDTO.messages.map { it.id },
-                            READED.status
+                            Constants.MessageStatus.READED.status
                         )
                     }
                 } catch (ex: Exception) {
@@ -894,7 +896,7 @@ class SyncManagerImp @Inject constructor(
     private suspend fun setMsgReadLocallyAndRemotely(msgAndRelation: MessageAttachmentRelation) {
         updateMessagesStatus(
             listOf(msgAndRelation.messageEntity.webId),
-            READED.status
+            Constants.MessageStatus.READED.status
         )
 
         val messageDTO = MessageDTO(
