@@ -553,6 +553,7 @@ class SyncManagerImp @Inject constructor(
 
     override fun sendMissedCall() {
         //TODO: Revisar tiempo de autodestruccion de este mensaje
+        Timber.d("LLAMADA PASO: SENDMISSEDCALL SYNCMANAGER")
         GlobalScope.launch {
             try {
                 NapoleonApplication.callModel?.let { callModel ->
@@ -593,6 +594,7 @@ class SyncManagerImp @Inject constructor(
     }
 
     override fun cancelCall() {
+        Timber.d("LLAMADA PASO: CANCELCALL SYNCMANAGER")
         GlobalScope.launch {
             NapoleonApplication.callModel?.let { callModel ->
                 val cancelCallReqDTO = CancelCallReqDTO(
