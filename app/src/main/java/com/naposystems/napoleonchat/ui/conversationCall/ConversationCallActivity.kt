@@ -174,6 +174,13 @@ class ConversationCallActivity :
             if (NapoleonApplication.callModel?.isVideoCall == true && isReturnCall) {
                 webRTCClient.toggleVideo(previousState = false)
                 isReturnCall = false
+                try {
+                    with(window) {
+                        addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    }
+                } catch (ex: Exception) {
+                    Timber.e(ex.message.toString())
+                }
             }
         }
         super.onStart()

@@ -481,8 +481,6 @@ class WebRTCClientImp
 
     override fun renderRemoteVideo() {
         try {
-            stopProximitySensor()
-
             if (isBluetoothAvailable) {
                 audioManager.isSpeakerphoneOn = false
             } else {
@@ -1118,12 +1116,10 @@ class WebRTCClientImp
             eventFromWebRtcClientListener?.toggleCheckedSpeaker(false)
         }
 
-//        if (NapoleonApplication.callModel?.isVideoCall == true) {
-//            Timber.d("LLAMADA PASO: : connectCall RENDER REMOTE VIDEO")
-//            renderRemoteVideo()
-//        }
-
-        if ((NapoleonApplication.callModel?.isVideoCall == false && isBluetoothActive) || isHeadsetConnected) {
+        if ((NapoleonApplication.callModel?.isVideoCall == false && isBluetoothActive) ||
+            isHeadsetConnected ||
+            NapoleonApplication.callModel?.isVideoCall == true
+        ) {
             stopProximitySensor()
         }
     }
