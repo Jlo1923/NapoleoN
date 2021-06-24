@@ -276,6 +276,7 @@ class MessageLocalDataSourceImp @Inject constructor(
         messagesWebIds: List<String>,
         status: Int
     ) {
+        Timber.d("updateMessageStatus status: $status")
         messagesWebIds.forEach { messageWebId ->
             val message = getMessageByWebId(messageWebId, false)
 

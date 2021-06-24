@@ -79,10 +79,9 @@ class HomeRepositoryImp @Inject constructor(
                         if (messageRes.quoted.isNotEmpty()) {
                             insertQuote(messageRes, messageId.toInt())
                         }
-
                         handlerAttachments(
                             messageRes.attachments,
-                            message.id,
+                            messageId.toInt(),
                             message.contactId
                         )
                     }
