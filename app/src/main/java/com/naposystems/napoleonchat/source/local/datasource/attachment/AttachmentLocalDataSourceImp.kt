@@ -150,7 +150,12 @@ class AttachmentLocalDataSourceImp @Inject constructor(
             if (it.attachmentEntityList.isEmpty() && it.messageEntity.numberAttachments > 0) {
                 messageDao.deleteMessagesByWebId(it.messageEntity.webId)
             } else {
-                val newNumberAttachments = it.messageEntity.numberAttachments - 1
+                var newNumberAttachments = it.messageEntity.numberAttachments - 1
+
+                //esto para evitar que se incremente en -1 el numberAttachments en el mensaje de bienvenida
+                if(it.messageEntity.messageType == Constants.MessageTextType.NEW_CONTACT.type)
+                    newNumberAttachments = 0
+
                 val msgCopy = it.messageEntity.copy(numberAttachments = newNumberAttachments)
                 messageDao.updateMessage(msgCopy)
             }
