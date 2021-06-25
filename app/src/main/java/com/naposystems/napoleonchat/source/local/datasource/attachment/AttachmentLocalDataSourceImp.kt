@@ -153,7 +153,8 @@ class AttachmentLocalDataSourceImp @Inject constructor(
                 var newNumberAttachments = it.messageEntity.numberAttachments - 1
 
                 //esto para evitar que se incremente en -1 el numberAttachments en el mensaje de bienvenida
-                if(it.messageEntity.messageType == Constants.MessageTextType.NEW_CONTACT.type)
+                //Y para los mensajes no enviados(falla)
+                if (it.messageEntity.messageType == Constants.MessageTextType.NEW_CONTACT.type || it.messageEntity.status == Constants.MessageStatus.ERROR.status)
                     newNumberAttachments = 0
 
                 val msgCopy = it.messageEntity.copy(numberAttachments = newNumberAttachments)
