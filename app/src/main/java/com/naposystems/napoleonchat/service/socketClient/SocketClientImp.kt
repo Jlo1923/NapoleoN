@@ -195,41 +195,7 @@ class SocketClientImp
                         ) = Unit
 
                         override fun onSubscriptionSucceeded(channelName: String) {
-
-                            Timber.d("LLAMADA PASO 2: SUSCRIPCION LLAMADAS SUCCESS")
-
-                            listenCallEvents(channelName)
-
-                            Timber.d("LLAMADA PASO 2: ${NapoleonApplication.statusCall}")
-
-                            if (NapoleonApplication.statusCall.isNoCall()) {
-
-                                Timber.d("LLAMADA PASO 2: NO Esta en llamada")
-
-                                when (callModel.typeCall) {
-
-                                    Constants.TypeCall.IS_INCOMING_CALL -> {
-
-                                        Timber.d("LLAMADA PASO 2: Llamada entrante")
-
-                                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-
-                                            pusher.getPresenceChannel(callModel.channelName).users.forEach {
-                                                Timber.d("LLAMADA PASO User: ${it.id} ${it.info}")
-                                            }
-
-                                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
-
-                                            eventsFromSocketClientListener.itsSubscribedToPresenceChannelIncomingCall()
-                                        }
-                                    }
-
-                                    Constants.TypeCall.IS_OUTGOING_CALL -> {
-                                        Timber.d("LLAMADA PASO 2: Llamada saliente")
-                                        eventsFromSocketClientListener.itsSubscribedToPresenceChannelOutgoingCall()
-                                    }
-                                }
-                            }
+                            handlerSubscriptionPresenceSuccess()
                         }
 
                         override fun onUsersInformationReceived(
@@ -242,6 +208,51 @@ class SocketClientImp
                         override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                     }
                 )
+            } else if (pusher.getPresenceChannel(callModel.channelName).isSubscribed) {
+                handlerSubscriptionPresenceSuccess()
+            } else {
+                //TODO: Nothing
+            }
+        }
+    }
+
+    private fun handlerSubscriptionPresenceSuccess() {
+
+        NapoleonApplication.callModel?.let { callModel ->
+
+            Timber.d("LLAMADA PASO 2: SUSCRIPCION LLAMADAS SUCCESS")
+
+            listenCallEvents(callModel.channelName)
+
+            Timber.d("LLAMADA PASO 2: ${NapoleonApplication.statusCall}")
+
+            if (NapoleonApplication.statusCall.isNoCall()) {
+
+                Timber.d("LLAMADA PASO 2: NO Esta en llamada")
+
+                when (callModel.typeCall) {
+
+                    Constants.TypeCall.IS_INCOMING_CALL -> {
+
+                        Timber.d("LLAMADA PASO 2: Llamada entrante")
+
+                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
+
+                            pusher.getPresenceChannel(callModel.channelName).users.forEach {
+                                Timber.d("LLAMADA PASO User: ${it.id} ${it.info}")
+                            }
+
+                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
+
+                            eventsFromSocketClientListener.itsSubscribedToPresenceChannelIncomingCall()
+                        }
+                    }
+
+                    Constants.TypeCall.IS_OUTGOING_CALL -> {
+                        Timber.d("LLAMADA PASO 2: Llamada saliente")
+                        eventsFromSocketClientListener.itsSubscribedToPresenceChannelOutgoingCall()
+                    }
+                }
             }
         }
     }

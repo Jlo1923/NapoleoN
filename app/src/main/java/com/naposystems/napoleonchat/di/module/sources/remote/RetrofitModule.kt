@@ -50,7 +50,7 @@ class RetrofitModule {
         sharedPreferencesManager: SharedPreferencesManager
     ): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
-            .readTimeout(15, TimeUnit.MINUTES)
+             .readTimeout(15, TimeUnit.MINUTES)
             .protocols(listOf(Protocol.HTTP_2, Protocol.HTTP_1_1))
             .connectTimeout(15, TimeUnit.MINUTES)
 
