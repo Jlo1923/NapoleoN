@@ -4,10 +4,11 @@ import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.crypto.Crypto
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants
+import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.LocaleHelper
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
-import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.utility.mediaPlayer.IContractMediaPlayer
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerGalleryManager
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -26,16 +27,16 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 val NO_ENCRYPT_REQUESTS: Array<String> = arrayOf(
-    Constants.NapoleonApi.GENERATE_CODE,
-    Constants.NapoleonApi.VERIFICATE_CODE,
-    Constants.NapoleonApi.VALIDATE_NICKNAME,
-    Constants.NapoleonApi.CREATE_ACCOUNT,
-    Constants.NapoleonApi.GET_RECOVERY_QUESTIONS,
-    Constants.NapoleonApi.SEND_ANSWERS,
-    Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT,
-    Constants.NapoleonApi.GET_QUESTIONS_OLD_USER,
-    Constants.NapoleonApi.VALIDATE_PASSWORD_OLD_ACCOUNT,
-    Constants.NapoleonApi.VALIDATE_ANSWERS_OLD_USER
+    ApiConstants.GENERATE_CODE,
+    ApiConstants.VERIFICATE_CODE,
+    ApiConstants.VALIDATE_NICKNAME,
+    ApiConstants.CREATE_ACCOUNT,
+    ApiConstants.GET_RECOVERY_QUESTIONS,
+    ApiConstants.SEND_ANSWERS,
+    ApiConstants.SEND_MESSAGE_ATTACHMENT,
+    ApiConstants.GET_QUESTIONS_OLD_USER,
+    ApiConstants.VALIDATE_PASSWORD_OLD_ACCOUNT,
+    ApiConstants.VALIDATE_ANSWERS_OLD_USER
 )
 
 @Module
@@ -147,7 +148,7 @@ class RetrofitModule {
             val originalUrl = original.url()
             val algo = BuildConfig.BASE_URL + it
 
-            if (algo == BuildConfig.BASE_URL + Constants.NapoleonApi.GET_RECOVERY_QUESTIONS || algo == BuildConfig.BASE_URL + Constants.NapoleonApi.GET_QUESTIONS_OLD_USER) {
+            if (algo == BuildConfig.BASE_URL + ApiConstants.GET_RECOVERY_QUESTIONS || algo == BuildConfig.BASE_URL + ApiConstants.GET_QUESTIONS_OLD_USER) {
 
                 var pathSegments = ""
 
@@ -199,7 +200,7 @@ class RetrofitModule {
         return if (original.url().host() != BuildConfig.HOST_URL) {
             chain.proceed(request.build())
         } else if (BuildConfig.ENCRYPT_API && !isNotEncryptedRequest ||
-            BuildConfig.BASE_URL + Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT == original.url()
+            BuildConfig.BASE_URL + ApiConstants.SEND_MESSAGE_ATTACHMENT == original.url()
                 .uri().toString()
         ) {
             try {
@@ -260,7 +261,7 @@ class RetrofitModule {
     @Singleton
     fun provideMediaPlayerGalleryManager(
         context: Context,
-    ) : MediaPlayerGalleryManager {
+    ): MediaPlayerGalleryManager {
         return MediaPlayerGalleryManager(
             context
         )
@@ -271,7 +272,7 @@ class RetrofitModule {
     @Singleton
     fun provideMediaPlayerManager(
         context: Context,
-    ) : IContractMediaPlayer {
+    ): IContractMediaPlayer {
         return MediaPlayerManager(
             context
         )

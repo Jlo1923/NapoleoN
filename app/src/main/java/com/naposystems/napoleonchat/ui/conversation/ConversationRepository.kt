@@ -645,7 +645,7 @@ class ConversationRepository @Inject constructor(
                             }
                             Constants.AttachmentType.DOCUMENT.type -> {
                                 folder =
-                                    Constants.CacheDirectories.DOCUMENTOS.folder
+                                    Constants.CacheDirectories.DOCUMENTS.folder
                             }
                             Constants.AttachmentType.GIF.type -> {
                                 folder = Constants.CacheDirectories.GIFS.folder
@@ -794,7 +794,7 @@ class ConversationRepository @Inject constructor(
                             FileManager.copyFile(
                                 context,
                                 inputStream,
-                                Constants.CacheDirectories.DOCUMENTOS.folder,
+                                Constants.CacheDirectories.DOCUMENTS.folder,
                                 "${System.currentTimeMillis()}.$extension"
                             )
                         } else {

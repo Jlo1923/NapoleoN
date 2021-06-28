@@ -131,7 +131,7 @@ class FileManager {
                         folder = VIDEOS.folder
                     }
                     DOCUMENT.type -> {
-                        folder = DOCUMENTOS.folder
+                        folder = DOCUMENTS.folder
                     }
                     GIF.type -> {
                         folder = GIFS.folder
@@ -191,7 +191,7 @@ class FileManager {
                 IMAGE.type -> IMAGES.folder
                 AUDIO.type -> AUDIOS.folder
                 VIDEO.type -> VIDEOS.folder
-                DOCUMENT.type -> DOCUMENTOS.folder
+                DOCUMENT.type -> DOCUMENTS.folder
                 GIF.type, GIF_NN.type -> GIFS.folder
                 LOCATION.type -> IMAGES.folder
                 else -> throw IllegalArgumentException("El archivo a enviar no tiene un tipo")

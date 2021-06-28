@@ -35,7 +35,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
-import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED
+import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
@@ -109,9 +109,9 @@ class SocketClientImp
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
                 pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
             else
-                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+                Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_NOT_CONNECTED.status
         else
-            Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+            Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_NOT_CONNECTED.status
     }
 
     override suspend fun connectSocket() {
@@ -459,7 +459,7 @@ class SocketClientImp
     }
 
     override fun isConnected(): Boolean =
-        getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKECT_CHANNEL_STATUS_CONNECTED.status
+        getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKET_CHANNEL_STATUS_CONNECTED.status
 
     //endregion
 

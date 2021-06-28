@@ -77,7 +77,7 @@ class AttachmentDocumentFragment : ListFragment(), LoaderManager.LoaderCallbacks
                     val fileSelected = FileManager.copyFile(
                         requireContext(),
                         fileInputStream,
-                        Constants.CacheDirectories.DOCUMENTOS.folder,
+                        Constants.CacheDirectories.DOCUMENTS.folder,
                         "${System.currentTimeMillis()}.$extension"
                     )
 
