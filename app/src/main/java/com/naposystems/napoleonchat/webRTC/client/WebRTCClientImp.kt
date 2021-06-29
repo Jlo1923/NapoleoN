@@ -388,7 +388,6 @@ class WebRTCClientImp
             socketClient.emitClientCall(
                 SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
             )
-            stopProximitySensor()
         }
     }
 
@@ -764,7 +763,6 @@ class WebRTCClientImp
         val disposableHeadsetState = RxBus.listen(RxEvent.HeadsetState::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-
                 when (it.state) {
                     Constants.HeadsetState.PLUGGED.state -> handlerHeadsetPlugged()
                     Constants.HeadsetState.UNPLUGGED.state -> handlerHeadsetUnplugged()
@@ -780,7 +778,6 @@ class WebRTCClientImp
                         eventFromWebRtcClientListener?.hangUpFromNotification()
                     }
                 }
-
         disposable.add(disposableHeadsetState)
         disposable.add(disposableHangupByNotification)
     }
@@ -804,7 +801,6 @@ class WebRTCClientImp
     private fun handlerHeadsetUnplugged() {
         isHeadsetConnected = false
         Timber.d("Headset unplugged")
-
         if (NapoleonApplication.callModel?.isVideoCall == true) {
             if (isBluetoothAvailable) {
                 audioManager.isSpeakerphoneOn = false
@@ -812,7 +808,6 @@ class WebRTCClientImp
             } else {
                 audioManager.isSpeakerphoneOn = true
             }
-
         } else if (isSpeakerOn().not()) {
             startProximitySensor()
         }
@@ -824,7 +819,6 @@ class WebRTCClientImp
         Timber.d("LLAMADA PASO 3: CREANDO PEERCONNECTION")
 
         try {
-
             if (peerConnection != null) {
                 try {
                     Timber.d("LLAMADA PASO 3: NULLEANDO PEERCONNECTION")
@@ -1114,9 +1108,7 @@ class WebRTCClientImp
     }
 
     override fun itsSubscribedToPresenceChannelIncomingCall() {
-
         Timber.d("LLAMADA PASO: Inicia el servicio WebRTC desde itsSubscribedToPresenceChannelIncomingCall")
-
         NapoleonApplication.callModel?.let {
             startWebRTCService()
         }
@@ -1236,7 +1228,6 @@ class WebRTCClientImp
     }
 
     override fun processDisposeCall() {
-
         try {
 
             hideNotification()

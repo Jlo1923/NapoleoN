@@ -130,26 +130,16 @@ class SocketClientImp
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
-
                 Timber.d("LLAMADA PASO 4: SOCKET DESCONECTADO, CONECTANDO SOCKET")
-
                 pusher.connect(object : ConnectionEventListener {
-
                     override fun onConnectionStateChange(connectionStateChange: ConnectionStateChange?) {
-
                         when (connectionStateChange?.currentState) {
-
                             CONNECTED -> {
                                 Timber.d("LLAMADA PASO 4: CONEXION AL SOCKET EXITOSA")
                                 handlerStateConnectedSocket()
                             }
-
-                            ConnectionState.DISCONNECTING,
-                            ConnectionState.DISCONNECTED,
-                            ConnectionState.CONNECTING,
-                            ConnectionState.RECONNECTING,
-                            ConnectionState.ALL -> {
-                                Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange.currentState}")
+                            else -> {
+                                Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange?.currentState}")
                             }
                         }
                     }
@@ -160,16 +150,11 @@ class SocketClientImp
                         e: java.lang.Exception?
                     ) {
                         Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError message: $message, code: $code, e: ${e?.localizedMessage}")
-//                        pusher.connect()
                     }
                 })
-
             } else if (pusher.connection.state == CONNECTED) {
-
                 Timber.d("LLAMADA PASO 4: SOCKET PREVIAMENTE CONECTADO")
-
                 handlerStateConnectedSocket()
-
             }
         }
     }
@@ -1406,19 +1391,6 @@ class SocketClientImp
         }
     }
 //endregion
-
-    private fun availableToReceived(attachments: List<NewMessageEventAttachmentRes>): Boolean {
-
-        val attachment: NewMessageEventAttachmentRes? = attachments.firstOrNull() {
-            it.type == Constants.AttachmentType.IMAGE.type ||
-                    it.type == Constants.AttachmentType.AUDIO.type ||
-                    it.type == Constants.AttachmentType.VIDEO.type ||
-                    it.type == Constants.AttachmentType.DOCUMENT.type
-        }
-
-        return attachment != null
-
-    }
 
     override fun emitSocketClientConversation(listMessagesReceived: MessagesReqDTO) {
         emitClientConversation(listMessagesReceived)
