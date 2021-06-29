@@ -28,7 +28,7 @@ class WebRTCService : Service() {
         const val ACTION_REJECT_CALL = "REJECT_CALL"
 
         const val ACTION_CONTACT_CANCEL_CALL = "ACTION_CONTACT_CANCEL_CALL"
-        const val ACTION_CONTACT_REJECT_CALL = "REJECT_CALL"
+        const val ACTION_CONTACT_REJECT_CALL = "ACTION_CONTACT_REJECT_CALL"
 
         const val ACTION_HANG_UP_CALL = "HANG_UP_CALL"
         const val ACTION_OPEN_CALL = "OPEN_CALL"
