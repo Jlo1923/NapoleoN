@@ -388,6 +388,7 @@ class WebRTCClientImp
             socketClient.emitClientCall(
                 SocketClientImp.CONTACT_WANT_CHANGE_TO_VIDEO
             )
+            stopProximitySensor()
         }
     }
 
@@ -398,12 +399,14 @@ class WebRTCClientImp
             SocketClientImp.CONTACT_ACCEPT_CHANGE_TO_VIDEO
         )
         eventFromWebRtcClientListener?.showTypeCallTitle()
+        stopProximitySensor()
     }
 
     override fun meCancelChangeToVideoCall() {
         socketClient.emitClientCall(
             SocketClientImp.CONTACT_CANCEL_CHANGE_TO_VIDEO
         )
+        startProximitySensor()
     }
 
     //Video
@@ -1187,6 +1190,7 @@ class WebRTCClientImp
                 NapoleonApplication.callModel?.typeCall = Constants.TypeCall.IS_OUTGOING_CALL
                 NapoleonApplication.callModel?.isVideoCall = true
                 renegotiateCall = true
+                stopProximitySensor()
                 eventFromWebRtcClientListener?.contactAcceptChangeToVideoCall()
             }
         }
@@ -1194,16 +1198,19 @@ class WebRTCClientImp
 
     override fun contactCancelChangeToVideoCall() {
         NapoleonApplication.callModel.let { callModel ->
-            if (callModel?.channelName != "")
+            if (callModel?.channelName != "") {
                 eventFromWebRtcClientListener?.contactCancelChangeToVideoCall()
+                startProximitySensor()
+            }
         }
     }
 
     override fun contactCantChangeToVideoCall() {
         NapoleonApplication.callModel.let { callModel ->
-            if (callModel?.channelName != "")
+            if (callModel?.channelName != "") {
                 eventFromWebRtcClientListener?.contactCantChangeToVideoCall()
-
+                startProximitySensor()
+            }
         }
     }
 
