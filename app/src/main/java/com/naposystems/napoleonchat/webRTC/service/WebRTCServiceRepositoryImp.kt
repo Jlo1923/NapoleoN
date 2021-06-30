@@ -13,7 +13,8 @@ class WebRTCServiceRepositoryImp
     override fun disposeCall(typeEndCall: TypeEndCallEnum?) {
         Timber.d("LLAMADA PASO: WEBRTCSERVICE")
         if (typeEndCall == null) {
-            webRTCClient.disposeCall()
+            webRTCClient.emitHangUp()
+            webRTCClient.playEndCall()
         } else {
             webRTCClient.disposeCall(typeEndCall)
         }

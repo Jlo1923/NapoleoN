@@ -1,5 +1,48 @@
 package com.naposystems.napoleonchat.source.remote.api
 
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.BLOCK_ATTACKER
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.CALL_CONTACT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.CANCEL_CALL
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.CANCEL_SUBSCRIPTION
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.CHECK_SUBSCRIPTION
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.CREATE_ACCOUNT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.DELETE_CONTACT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.DELETE_MESSAGES_FOR_ALL
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.FRIEND_SHIP_SEARCH
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.FRIEND_SHIP_SEARCH_BY_DATE
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GENERATE_CODE
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_FRIENDSHIP_REQUESTS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_FRIENDSHIP_REQUESTS_RECEIVED
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_FRIENDSHIP_REQUEST_QUANTITY
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_MY_MESSAGES
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_QUESTIONS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_RECOVERY_QUESTIONS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_SUBSCRIPTION_USER
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.LOG_OUT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.NOTIFY_MESSAGE_RECEIVED
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.PUT_BLOCK_CONTACT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.PUT_FRIENDSHIP_REQUEST
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.PUT_UNBLOCK_CONTACT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.READY_CALL
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.REJECT_CALL
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEARCH_USER
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_ANSWERS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_FRIENDSHIP_REQUEST
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_MESSAGE
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_MESSAGES_READ
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_MESSAGE_ATTACHMENT
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_MESSAGE_TEST
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_PQRS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_QUESTIONS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_SELECTED_SUBSCRIPTION
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.TYPE_SUBSCRIPTIONS
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_CONTACT_FAKE
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_MUTE_CONVERSATION
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_USER_INFO
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VALIDATE_NICKNAME
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VERIFICATE_CODE
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VERIFY_MESSAGES_READ
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VERIFY_MESSAGES_RECEIVED
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountResDTO
 import com.naposystems.napoleonchat.source.remote.dto.accountAttackDialog.AccountAttackDialogReqDTO
@@ -24,7 +67,8 @@ import com.naposystems.napoleonchat.source.remote.dto.conversation.call.readyFor
 import com.naposystems.napoleonchat.source.remote.dto.conversation.call.reject.RejectCallReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.conversation.deleteMessages.DeleteMessagesResDTO
-import com.naposystems.napoleonchat.source.remote.dto.conversation.message.*
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.conversation.message.MessageResDTO
 import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.enterCode.EnterCodeResDTO
 import com.naposystems.napoleonchat.source.remote.dto.home.FriendshipRequestQuantityResDTO
@@ -48,49 +92,6 @@ import com.naposystems.napoleonchat.source.remote.dto.subscription.*
 import com.naposystems.napoleonchat.source.remote.dto.user.LogoutResDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateNickname.ValidateNicknameResDTO
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.BLOCK_ATTACKER
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CALL_CONTACT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CANCEL_CALL
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CANCEL_SUBSCRIPTION
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CHECK_SUBSCRIPTION
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.CREATE_ACCOUNT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.DELETE_CONTACT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.DELETE_MESSAGES_FOR_ALL
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.FRIEND_SHIP_SEARCH_BY_DATE
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GENERATE_CODE
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUESTS_RECEIVED
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_FRIENDSHIP_REQUEST_QUANTITY
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_MY_MESSAGES
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_QUESTIONS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_RECOVERY_QUESTIONS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.GET_SUBSCRIPTION_USER
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.LOG_OUT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.NOTIFY_MESSAGE_RECEIVED
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_BLOCK_CONTACT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_FRIENDSHIP_REQUEST
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.PUT_UNBLOCK_CONTACT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.READY_CALL
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.REJECT_CALL
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEARCH_USER
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_ANSWERS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_FRIENDSHIP_REQUEST
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_MESSAGE
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_MESSAGES_READ
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_MESSAGE_ATTACHMENT
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_MESSAGE_TEST
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_PQRS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_QUESTIONS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.SEND_SELECTED_SUBSCRIPTION
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.TYPE_SUBSCRIPTIONS
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_CONTACT_FAKE
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_MUTE_CONVERSATION
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.UPDATE_USER_INFO
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VALIDATE_NICKNAME
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFICATE_CODE
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFY_MESSAGES_READ
-import com.naposystems.napoleonchat.utility.Constants.NapoleonApi.VERIFY_MESSAGES_RECEIVED
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -260,10 +261,12 @@ interface NapoleonApi {
     @GET(CHECK_SUBSCRIPTION)
     suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
 
-
     @POST(READY_CALL)
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>
 
     @PUT(UPDATE_CONTACT_FAKE)
-    suspend fun updateContactFake(@Body contactFakeReqDTO: ContactFakeReqDTO,@Path("friendshipId") idContact: Int): Response<ContactFakeResDTO>
+    suspend fun updateContactFake(
+        @Body contactFakeReqDTO: ContactFakeReqDTO,
+        @Path("friendshipId") idContact: Int
+    ): Response<ContactFakeResDTO>
 }

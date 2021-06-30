@@ -256,10 +256,10 @@ class HandlerNotificationImp
             setUsesChronometer(true)
             setContentTitle(context.getString(R.string.text_call_in_progress))
             setOngoing(true)
-            if (Build.VERSION.SDK_INT >= 29) {
+//            if (Build.VERSION.SDK_INT >= 29) {
                 setFullScreenIntent(pendingIntent, true)
                 priority = NotificationCompat.PRIORITY_MAX
-            }
+//            }
             addAction(
                 getServiceNotificationAction(
                     WebRTCService.ACTION_HANG_UP_CALL,

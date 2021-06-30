@@ -35,7 +35,7 @@ import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.READED
 import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
-import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_CONNECTED
+import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
@@ -109,9 +109,9 @@ class SocketClientImp
             if (pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed)
                 pusher.getPrivateChannel(Constants.SocketChannelName.PRIVATE_GLOBAL_CHANNEL_NAME.channelName).isSubscribed
             else
-                Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+                Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_NOT_CONNECTED.status
         else
-            Constants.SocketChannelStatus.SOCKECT_CHANNEL_STATUS_NOT_CONNECTED.status
+            Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_NOT_CONNECTED.status
     }
 
     override suspend fun connectSocket() {
@@ -130,26 +130,16 @@ class SocketClientImp
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
-
                 Timber.d("LLAMADA PASO 4: SOCKET DESCONECTADO, CONECTANDO SOCKET")
-
                 pusher.connect(object : ConnectionEventListener {
-
                     override fun onConnectionStateChange(connectionStateChange: ConnectionStateChange?) {
-
                         when (connectionStateChange?.currentState) {
-
                             CONNECTED -> {
                                 Timber.d("LLAMADA PASO 4: CONEXION AL SOCKET EXITOSA")
                                 handlerStateConnectedSocket()
                             }
-
-                            ConnectionState.DISCONNECTING,
-                            ConnectionState.DISCONNECTED,
-                            ConnectionState.CONNECTING,
-                            ConnectionState.RECONNECTING,
-                            ConnectionState.ALL -> {
-                                Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange.currentState}")
+                            else -> {
+                                Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange?.currentState}")
                             }
                         }
                     }
@@ -160,16 +150,11 @@ class SocketClientImp
                         e: java.lang.Exception?
                     ) {
                         Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError message: $message, code: $code, e: ${e?.localizedMessage}")
-//                        pusher.connect()
                     }
                 })
-
             } else if (pusher.connection.state == CONNECTED) {
-
                 Timber.d("LLAMADA PASO 4: SOCKET PREVIAMENTE CONECTADO")
-
                 handlerStateConnectedSocket()
-
             }
         }
     }
@@ -195,41 +180,7 @@ class SocketClientImp
                         ) = Unit
 
                         override fun onSubscriptionSucceeded(channelName: String) {
-
-                            Timber.d("LLAMADA PASO 2: SUSCRIPCION LLAMADAS SUCCESS")
-
-                            listenCallEvents(channelName)
-
-                            Timber.d("LLAMADA PASO 2: ${NapoleonApplication.statusCall}")
-
-                            if (NapoleonApplication.statusCall.isNoCall()) {
-
-                                Timber.d("LLAMADA PASO 2: NO Esta en llamada")
-
-                                when (callModel.typeCall) {
-
-                                    Constants.TypeCall.IS_INCOMING_CALL -> {
-
-                                        Timber.d("LLAMADA PASO 2: Llamada entrante")
-
-                                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
-
-                                            pusher.getPresenceChannel(callModel.channelName).users.forEach {
-                                                Timber.d("LLAMADA PASO User: ${it.id} ${it.info}")
-                                            }
-
-                                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
-
-                                            eventsFromSocketClientListener.itsSubscribedToPresenceChannelIncomingCall()
-                                        }
-                                    }
-
-                                    Constants.TypeCall.IS_OUTGOING_CALL -> {
-                                        Timber.d("LLAMADA PASO 2: Llamada saliente")
-                                        eventsFromSocketClientListener.itsSubscribedToPresenceChannelOutgoingCall()
-                                    }
-                                }
-                            }
+                            handlerSubscriptionPresenceSuccess()
                         }
 
                         override fun onUsersInformationReceived(
@@ -242,6 +193,51 @@ class SocketClientImp
                         override fun userUnsubscribed(channelName: String?, user: User?) = Unit
                     }
                 )
+            } else if (pusher.getPresenceChannel(callModel.channelName).isSubscribed) {
+                handlerSubscriptionPresenceSuccess()
+            } else {
+                //TODO: Nothing
+            }
+        }
+    }
+
+    private fun handlerSubscriptionPresenceSuccess() {
+
+        NapoleonApplication.callModel?.let { callModel ->
+
+            Timber.d("LLAMADA PASO 2: SUSCRIPCION LLAMADAS SUCCESS")
+
+            listenCallEvents(callModel.channelName)
+
+            Timber.d("LLAMADA PASO 2: ${NapoleonApplication.statusCall}")
+
+            if (NapoleonApplication.statusCall.isNoCall()) {
+
+                Timber.d("LLAMADA PASO 2: NO Esta en llamada")
+
+                when (callModel.typeCall) {
+
+                    Constants.TypeCall.IS_INCOMING_CALL -> {
+
+                        Timber.d("LLAMADA PASO 2: Llamada entrante")
+
+                        if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
+
+                            pusher.getPresenceChannel(callModel.channelName).users.forEach {
+                                Timber.d("LLAMADA PASO User: ${it.id} ${it.info}")
+                            }
+
+                            Timber.d("LLAMADA PASO 3: Usuarios  mas de uno")
+
+                            eventsFromSocketClientListener.itsSubscribedToPresenceChannelIncomingCall()
+                        }
+                    }
+
+                    Constants.TypeCall.IS_OUTGOING_CALL -> {
+                        Timber.d("LLAMADA PASO 2: Llamada saliente")
+                        eventsFromSocketClientListener.itsSubscribedToPresenceChannelOutgoingCall()
+                    }
+                }
             }
         }
     }
@@ -459,7 +455,7 @@ class SocketClientImp
     }
 
     override fun isConnected(): Boolean =
-        getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKECT_CHANNEL_STATUS_CONNECTED.status
+        getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKET_CHANNEL_STATUS_CONNECTED.status
 
     //endregion
 
@@ -1395,19 +1391,6 @@ class SocketClientImp
         }
     }
 //endregion
-
-    private fun availableToReceived(attachments: List<NewMessageEventAttachmentRes>): Boolean {
-
-        val attachment: NewMessageEventAttachmentRes? = attachments.firstOrNull() {
-            it.type == Constants.AttachmentType.IMAGE.type ||
-                    it.type == Constants.AttachmentType.AUDIO.type ||
-                    it.type == Constants.AttachmentType.VIDEO.type ||
-                    it.type == Constants.AttachmentType.DOCUMENT.type
-        }
-
-        return attachment != null
-
-    }
 
     override fun emitSocketClientConversation(listMessagesReceived: MessagesReqDTO) {
         emitClientConversation(listMessagesReceived)

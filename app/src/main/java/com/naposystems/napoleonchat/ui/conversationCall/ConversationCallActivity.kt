@@ -496,18 +496,22 @@ class ConversationCallActivity :
     }
 
     override fun contactCancelChangeToVideoCall() {
-        handlerDialog.alertDialogInformative(
-            "",
-            getString(R.string.text_video_call_rejected),
-            true,
-            this,
-            R.string.text_okay
-        ) {}
-        binding.imageButtonChangeToVideo.isEnabled = true
+        runOnUiThread {
+            handlerDialog.alertDialogInformative(
+                "",
+                getString(R.string.text_video_call_rejected),
+                true,
+                this,
+                R.string.text_okay
+            ) {}
+            binding.imageButtonChangeToVideo.isEnabled = true
+        }
     }
 
     override fun contactCantChangeToVideoCall() {
-        binding.imageButtonChangeToVideo.isEnabled = true
+        runOnUiThread {
+            binding.imageButtonChangeToVideo.isEnabled = true
+        }
     }
 
     override fun showTimer() {

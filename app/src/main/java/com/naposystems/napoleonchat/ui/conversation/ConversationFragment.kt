@@ -1902,7 +1902,7 @@ class ConversationFragment
                 Utils.getFileUri(
                     requireContext(),
                     attachmentEntity.fileName,
-                    Constants.CacheDirectories.DOCUMENTOS.folder
+                    Constants.CacheDirectories.DOCUMENTS.folder
                 )
             }
 

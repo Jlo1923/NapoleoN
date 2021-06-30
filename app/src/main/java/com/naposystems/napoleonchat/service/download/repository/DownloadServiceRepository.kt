@@ -143,7 +143,7 @@ class DownloadServiceRepository @Inject constructor(
         IMAGE.type, LOCATION.type -> IMAGES.folder
         AUDIO.type -> AUDIOS.folder
         VIDEO.type -> VIDEOS.folder
-        DOCUMENT.type -> DOCUMENTOS.folder
+        DOCUMENT.type -> DOCUMENTS.folder
         GIF.type -> GIFS.folder
         GIF_NN.type -> GIFS.folder
         else -> IMAGES.folder
