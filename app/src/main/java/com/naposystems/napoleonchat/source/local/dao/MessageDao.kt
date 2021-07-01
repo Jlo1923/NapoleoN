@@ -150,6 +150,13 @@ interface MessageDao {
     @Query(
         "SELECT * " +
                 "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
+                "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} = :contactId and ${DBConstants.Message.COLUMN_IS_MINE}=0"
+    )
+    suspend fun getMessagesByContactNotMine(contactId: Int): List<MessageAttachmentRelation>
+
+    @Query(
+        "SELECT * " +
+                "FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 "WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} = :contactId " +
                 "AND ${DBConstants.Message.COLUMN_STATUS}  = :status " +
                 "AND ${DBConstants.Message.COLUMN_IS_MINE} = 1"
@@ -167,7 +174,7 @@ interface MessageDao {
         " SELECT COUNT(CASE WHEN status=3 then 1 end)" +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
                 " WHERE ${DBConstants.Message.COLUMN_CONTACT_ID} =:id " +
-                " AND ${DBConstants.Message.COLUMN_NUMBER_ATTACHMENTS} <= 1"
+                " AND ${DBConstants.Message.COLUMN_NUMBER_ATTACHMENTS} <= 1  and ${DBConstants.Message.COLUMN_IS_MINE}=0"
     )
     suspend fun countUnreadByContactId(id: Int): Int
 
