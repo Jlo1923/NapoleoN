@@ -83,10 +83,17 @@ open class ConversationViewHolder constructor(
                             textView.visibility = View.VISIBLE
                         }
 
-                        val text = Utils.getTimeWithDays(
-                            millisUntilFinished,
-                            showHours = true
-                        )
+                        val text = if(item.messageEntity.status != Constants.MessageStatus.ERROR.status){
+                            //correcto
+                            Utils.getTimeWithDays(
+                                millisUntilFinished,
+                                showHours = true
+                            )
+                        } else {
+                            Utils.getTimeForMessageError(
+                                millisUntilFinished
+                            )
+                        }
                         textView?.text = text
                     }
                 }

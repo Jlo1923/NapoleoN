@@ -344,7 +344,7 @@ class MessageLocalDataSourceImp @Inject constructor(
                         } ?: run { 0 }
 
                         val unreadAttachments = messageAndAttachmentRelation.contact?.id?.let {
-                            val msgsByContact = messageDao.getMessagesByContact(it)
+                            val msgsByContact = messageDao.getMessagesByContactNotMine(it)
                             var countAttachmentsUnread = 0
                             msgsByContact.forEach { msgAndRelation ->
                                 if (msgAndRelation.messageEntity.numberAttachments > 1) {
