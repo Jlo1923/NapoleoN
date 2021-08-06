@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.reactive
 
 import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
@@ -113,4 +114,5 @@ class RxEvent {
     class ConnectSocket {
 
     }
+    data class SubscriptionStatusEvent(val status: SubscriptionStatus)
 }

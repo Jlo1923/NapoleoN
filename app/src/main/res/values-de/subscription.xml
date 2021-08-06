@@ -30,4 +30,6 @@
     <string name="text_operation_cancelled">Vorgang abgebrochen.</string>
     <string name="text_subscription_error">Ein Fehler ist aufgetreten. Versuchen Sie es später noch einmal.</string>
     <string name="text_subscription_expired">Ihr abgelaufenes Abonnement, Sie werden nur Nachrichten empfangen.</string>
+    <string name="text_subscription_free_trial_fourth_day">Genießen Sie die echte Privatsphäre, verwalten Sie Ihr Konto.</string>
+    <string name="text_subscription_partial_lock">Ist etwas passiert? verwaltet Ihr Konto</string>
 </resources>

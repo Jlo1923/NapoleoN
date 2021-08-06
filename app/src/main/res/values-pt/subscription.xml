@@ -30,4 +30,6 @@
     <string name="text_operation_cancelled">Operação cancelada.</string>
     <string name="text_subscription_error">Ocorreu um erro. Tente mais tarde.</string>
     <string name="text_subscription_expired">Sua Assinatura expirada, você só vai receber mensagens.</string>
+    <string name="text_subscription_free_trial_fourth_day">Desfrute de privacidade real, gerencie a sua conta.</string>
+    <string name="text_subscription_partial_lock">Aconteceu alguma coisa? gerir a sua conta</string>
 </resources>

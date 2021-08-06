@@ -2,6 +2,9 @@ package com.naposystems.napoleonchat.repository.home
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.naposystems.napoleonchat.model.SubscriptionStatus
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
@@ -198,6 +201,48 @@ class HomeRepositoryImp @Inject constructor(
             Timber.e(e)
         }
     }
+
+    override suspend fun lastSubscription() {
+        val response = napoleonApi.lastSubscription()
+        if (response.isSuccessful) {
+            val expire = response.body()!!.expire
+            val status = response.body()!!.status
+            val createdAt = userLocalDataSourceImp.getMyUser().createAt
+            val currentTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+            val currentDaySinceCreated =
+                TimeUnit.SECONDS.toDays(currentTimeInSeconds - createdAt)
+            val currentDaySinceExpired = TimeUnit.SECONDS.toDays(
+                expire - currentTimeInSeconds
+            )
+            val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
+            saveSubscription(SubscriptionStatus.PARTIAL_LOCK)
+        }
+    }
+
+    //TODO VALIDAR CON CASOS DE PRUEBA
+    private fun getSubscriptionType(
+        isActive: Boolean,
+        subscriptionExpireDays: Long,
+        currentDaySinceCreated: Long
+    ) = when {
+        isActive -> SubscriptionStatus.ACTIVE
+        currentDaySinceCreated < 4 -> SubscriptionStatus.FREE_TRIAL
+        currentDaySinceCreated in 4..7 -> SubscriptionStatus.FREE_TRIAL_DAY_4
+        currentDaySinceCreated >= 38 -> SubscriptionStatus.TOTAL_LOCK
+        currentDaySinceCreated in 8..36 -> SubscriptionStatus.PARTIAL_LOCK
+        subscriptionExpireDays in -30..0 -> SubscriptionStatus.PARTIAL_LOCK
+        subscriptionExpireDays <= 0 -> SubscriptionStatus.TOTAL_LOCK
+        else -> SubscriptionStatus.FREE_TRIAL
+    }
+
+    private fun saveSubscription(subscriptionStatus: SubscriptionStatus) {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.SubscriptionStatus,
+            subscriptionStatus.name
+        )
+        RxBus.publish(RxEvent.SubscriptionStatusEvent(subscriptionStatus))
+    }
+
 
     override fun getFreeTrial(): Long {
         return sharedPreferencesManager.getLong(

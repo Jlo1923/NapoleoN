@@ -30,4 +30,6 @@
     <string name="text_operation_cancelled">Opération annulée.</string>
     <string name="text_subscription_error">Une erreur est survenue! Réessayez plus tard.</string>
     <string name="text_subscription_expired">Votre expirés d\'abonnement, vous ne recevrez des messages.</string>
+    <string name="text_subscription_free_trial_fourth_day">Profitez d’une réelle intimité, gérez votre compte.</string>
+    <string name="text_subscription_partial_lock">Il s\' est passé quelque chose ? gère votre compte</string>
 </resources>

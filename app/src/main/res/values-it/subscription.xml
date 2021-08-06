@@ -30,6 +30,8 @@
     <string name="text_operation_cancelled">Operazione anullata.</string>
     <string name="text_subscription_error">C\'è stato un errore. Riprovare più tardi.</string>
     <string name="text_subscription_expired">Il tuo abbonamento scaduto, si riceverà solo i messaggi.</string>
+    <string name="text_subscription_free_trial_fourth_day">Goditi la vera privacy, gestisci il tuo account.</string>
+    <string name="text_subscription_partial_lock">È successo qualcosa? gestire l\'account</string>
 </resources>
 
 

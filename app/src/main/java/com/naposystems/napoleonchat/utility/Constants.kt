@@ -101,6 +101,7 @@ object Constants {
         const val PREF_FREE_TRIAL = "free_trial"
         const val PREF_TYPE_SUBSCRIPTION = "type_subscription"
         const val PREF_SUBSCRIPTION_TIME = "subscription_time"
+        const val SubscriptionStatus = "subscription_status"
         //endregion
 
         //region Lock and Unlock App

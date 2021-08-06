@@ -30,6 +30,9 @@
     <string name="text_operation_cancelled">Operation cancelled.</string>
     <string name="text_subscription_error">An error ocurred. Please try again later.</string>
     <string name="text_subscription_expired">Your subscription expired, you will only receive messages.</string>
+    <string name="text_subscription_free_trial_fourth_day">Enjoy real privacy, manage your account.</string>
+    <string name="text_subscription_partial_lock">Did anything happen? manage your account</string>
+    <string name="buy_subscription_url" translatable="false">https://qa.napoleon-chat.com/buysubscription</string>
 </resources>
 
 

@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -55,6 +56,9 @@ class HomeFragment : BaseFragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
+
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
@@ -113,6 +117,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeViewModel.lastSubscription()
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
         validateMustGoToContacts()
@@ -275,6 +280,8 @@ class HomeFragment : BaseFragment() {
 
         observeContact()
 
+        observeSubscription()
+
         //TODO:Subscription
         /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
@@ -392,6 +399,36 @@ class HomeFragment : BaseFragment() {
         homeViewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
             if (it != -1) setupBadge(it)
         })
+    }
+
+    private fun observeSubscription() {
+        val disposableSubscriptionStatus = RxBus.listen(RxEvent.SubscriptionStatusEvent::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                setupSubscriptionContainer(it.status)
+            }
+        disposable.add(disposableSubscriptionStatus)
+    }
+
+    private fun setupSubscriptionContainer(status: SubscriptionStatus) {
+        binding.containerSubscription.setOnClickListener {
+            subscriptionIntent()
+        }
+        when (status) {
+            SubscriptionStatus.FREE_TRIAL -> binding.containerSubscription.isVisible = false
+            SubscriptionStatus.FREE_TRIAL_DAY_4 -> {
+                binding.containerSubscription.isVisible = true
+                binding.textViewMessageSubscription.setText(R.string.text_subscription_free_trial_fourth_day)
+                binding.textViewMessageSubscription.isVisible = true
+            }
+            SubscriptionStatus.PARTIAL_LOCK -> {
+                binding.containerSubscription.isVisible = true
+                binding.textViewMessageSubscription.setText(R.string.text_subscription_partial_lock)
+                binding.textViewMessageSubscription.isVisible = true
+            }
+            SubscriptionStatus.TOTAL_LOCK -> binding.containerSubscription.isVisible = true
+            SubscriptionStatus.ACTIVE -> binding.containerSubscription.isVisible = false
+        }
     }
 
     //TODO:Subscription
@@ -793,5 +830,19 @@ class HomeFragment : BaseFragment() {
         } catch (e: Exception) {
             Timber.d(e.localizedMessage)
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val subscriptionStatus =
+            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, "")
+        setupSubscriptionContainer(SubscriptionStatus.valueOf(subscriptionStatus))
+    }
+
+    private fun subscriptionIntent() {
+        val url = getString(R.string.buy_subscription_url) // TODO pasar ID de usuario
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 }
