@@ -215,7 +215,7 @@ class HomeRepositoryImp @Inject constructor(
                 expire - currentTimeInSeconds
             )
             val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
-            saveSubscription(SubscriptionStatus.PARTIAL_LOCK)
+            saveSubscription(SubscriptionStatus.ACTIVE)
         }
     }
 

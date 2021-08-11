@@ -835,7 +835,7 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val subscriptionStatus =
-            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, "")
+            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, SubscriptionStatus.ACTIVE.name)
         setupSubscriptionContainer(SubscriptionStatus.valueOf(subscriptionStatus))
     }
 
