@@ -32,4 +32,7 @@
     <string name="text_subscription_expired">Sua Assinatura expirada, você só vai receber mensagens.</string>
     <string name="text_subscription_free_trial_fourth_day">Desfrute de privacidade real, gerencie a sua conta.</string>
     <string name="text_subscription_partial_lock">Aconteceu alguma coisa? gerir a sua conta</string>
+    <string name="text_total_lock_dialog_title">Conta suspensa</string>
+    <string name="text_total_lock_dialog_desc">Mantenha o seu mesmo utilizador e desfrute dos benefícios que o chat NapoleoИ lhe dá gerindo a sua conta</string>
+    <string name="text_total_lock_dialog_action">Vai</string>
 </resources>

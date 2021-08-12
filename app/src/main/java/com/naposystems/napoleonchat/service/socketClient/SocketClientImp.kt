@@ -6,6 +6,7 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.model.extractIdsAttachments
 import com.naposystems.napoleonchat.model.extractIdsMessages
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
@@ -218,9 +219,16 @@ class SocketClientImp
                 when (callModel.typeCall) {
 
                     Constants.TypeCall.IS_INCOMING_CALL -> {
-
+                        val subscriptionStatus = SubscriptionStatus.valueOf(
+                            sharedPreferencesManager.getString(
+                                Constants.SharedPreferences.SubscriptionStatus,
+                                SubscriptionStatus.ACTIVE.name
+                            )
+                        )
+                        if (subscriptionStatus == SubscriptionStatus.PARTIAL_LOCK ||
+                            subscriptionStatus == SubscriptionStatus.TOTAL_LOCK
+                        ) return
                         Timber.d("LLAMADA PASO 2: Llamada entrante")
-
                         if (pusher.getPresenceChannel(callModel.channelName).users.size > 1) {
 
                             pusher.getPresenceChannel(callModel.channelName).users.forEach {

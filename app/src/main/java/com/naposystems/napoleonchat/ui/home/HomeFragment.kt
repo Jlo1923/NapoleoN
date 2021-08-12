@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -39,6 +40,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_USER_ID
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
@@ -82,6 +84,8 @@ class HomeFragment : BaseFragment() {
     private val timeFormatShareViewModel: TimeFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
+
+    private var totalBlockDialog: DialogFragment? = null
 
     private lateinit var binding: HomeFragmentBinding
 
@@ -426,7 +430,9 @@ class HomeFragment : BaseFragment() {
                 binding.textViewMessageSubscription.setText(R.string.text_subscription_partial_lock)
                 binding.textViewMessageSubscription.isVisible = true
             }
-            SubscriptionStatus.TOTAL_LOCK -> binding.containerSubscription.isVisible = true
+            SubscriptionStatus.TOTAL_LOCK -> {
+                createTotalBlockDialog()
+            }
             SubscriptionStatus.ACTIVE -> binding.containerSubscription.isVisible = false
         }
     }
@@ -835,14 +841,34 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val subscriptionStatus =
-            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, SubscriptionStatus.ACTIVE.name)
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
         setupSubscriptionContainer(SubscriptionStatus.valueOf(subscriptionStatus))
+
+
     }
 
     private fun subscriptionIntent() {
-        val url = getString(R.string.buy_subscription_url) // TODO pasar ID de usuario
+        val userId = sharedPreferencesManager.getString(PREF_USER_ID, "")
+        val url = getString(R.string.buy_subscription_url, "")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
+    }
+
+    private fun createTotalBlockDialog() {
+        if (totalBlockDialog == null) {
+            totalBlockDialog = handlerDialog.generalDialog(
+                resources.getString(R.string.text_total_lock_dialog_title),
+                resources.getString(R.string.text_total_lock_dialog_desc),
+                false,
+                childFragmentManager,
+                textButtonAccept = resources.getString(R.string.text_total_lock_dialog_action)
+            ) {
+                subscriptionIntent()
+            }
+        }
     }
 }

@@ -2421,8 +2421,6 @@ class ConversationFragment
 
     private fun setupSubscription(subscriptionStatus: SubscriptionStatus) {
         when (subscriptionStatus) {
-            SubscriptionStatus.FREE_TRIAL -> TODO()
-            SubscriptionStatus.FREE_TRIAL_DAY_4 -> TODO()
             SubscriptionStatus.PARTIAL_LOCK -> {
                 binding.inputPanel.isVisible = false
                 binding.buttonCall.isVisible = false
@@ -2430,15 +2428,16 @@ class ConversationFragment
                 binding.containerStatus.isVisible = false
                 binding.textViewUserStatus.isVisible = false
             }
-            SubscriptionStatus.TOTAL_LOCK -> TODO()
-            SubscriptionStatus.ACTIVE -> TODO()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val subscriptionStatus =
-            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, SubscriptionStatus.ACTIVE.name)
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
         setupSubscription(SubscriptionStatus.valueOf(subscriptionStatus))
     }
     //endregion

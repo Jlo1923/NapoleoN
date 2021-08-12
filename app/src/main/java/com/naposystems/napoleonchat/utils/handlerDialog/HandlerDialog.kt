@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.utils.handlerDialog
 
 import android.content.Context
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 
 interface HandlerDialog {
@@ -13,7 +14,7 @@ interface HandlerDialog {
         textButtonAccept: String = "",
         textButtonCancel: String = "",
         actionAccept: () -> Unit
-    )
+    ): DialogFragment
 
     fun alertDialogWithNeutralButton(
         message: Int,

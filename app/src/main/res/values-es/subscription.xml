@@ -32,4 +32,7 @@
     <string name="text_subscription_expired">Tu suscripción expiro, solo podrás recibir mensajes.</string>
     <string name="text_subscription_free_trial_fourth_day">Disfruta de la privacidad real, gestiona tu cuenta.</string>
     <string name="text_subscription_partial_lock">¿Ocurrió algo? gestiona tu cuenta</string>
+    <string name="text_total_lock_dialog_title">Cuenta suspendida</string>
+    <string name="text_total_lock_dialog_desc">Conserva tu mismo usuario y disfruta de los beneficios que te da NapoleoИ chat gestionando tu cuenta</string>
+    <string name="text_total_lock_dialog_action">Ir</string>
 </resources>

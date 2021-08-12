@@ -215,7 +215,10 @@ class HomeRepositoryImp @Inject constructor(
                 expire - currentTimeInSeconds
             )
             val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
-            saveSubscription(SubscriptionStatus.ACTIVE)
+            saveSubscription(
+                SubscriptionStatus.TOTAL_LOCK,
+                userLocalDataSourceImp.getMyUser().firebaseId.toString()
+            )
         }
     }
 
@@ -235,10 +238,14 @@ class HomeRepositoryImp @Inject constructor(
         else -> SubscriptionStatus.FREE_TRIAL
     }
 
-    private fun saveSubscription(subscriptionStatus: SubscriptionStatus) {
+    private fun saveSubscription(subscriptionStatus: SubscriptionStatus, userId: String) {
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.SubscriptionStatus,
             subscriptionStatus.name
+        )
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_USER_ID,
+            userId
         )
         RxBus.publish(RxEvent.SubscriptionStatusEvent(subscriptionStatus))
     }
