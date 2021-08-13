@@ -460,22 +460,23 @@ class ProfileFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val subscriptionStatus =
-            sharedPreferencesManager.getString(Constants.SharedPreferences.SubscriptionStatus, SubscriptionStatus.ACTIVE.name)
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
         setupSubscription(SubscriptionStatus.valueOf(subscriptionStatus))
     }
 
     private fun setupSubscription(subscriptionStatus: SubscriptionStatus) {
         when (subscriptionStatus) {
-            SubscriptionStatus.FREE_TRIAL -> TODO()
-            SubscriptionStatus.FREE_TRIAL_DAY_4 -> TODO()
             SubscriptionStatus.PARTIAL_LOCK -> {
                 binding.imageViewProfileImage.isClickable = false
                 binding.imageViewProfileImage.isEnabled = false
                 binding.floatingButtonProfileImage.isClickable = false
                 binding.floatingButtonProfileImage.isEnabled = false
+                binding.imageButtonNameOptionEndIcon.isClickable = false
+                binding.imageButtonNameOptionEndIcon.isEnabled = false
             }
-            SubscriptionStatus.TOTAL_LOCK -> TODO()
-            SubscriptionStatus.ACTIVE -> TODO()
         }
     }
 

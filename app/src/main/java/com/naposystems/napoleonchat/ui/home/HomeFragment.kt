@@ -429,6 +429,8 @@ class HomeFragment : BaseFragment() {
                 binding.containerSubscription.isVisible = true
                 binding.textViewMessageSubscription.setText(R.string.text_subscription_partial_lock)
                 binding.textViewMessageSubscription.isVisible = true
+                binding.containerStatus.isClickable = false
+                binding.containerStatus.isEnabled = false
             }
             SubscriptionStatus.TOTAL_LOCK -> {
                 createTotalBlockDialog()

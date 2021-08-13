@@ -216,7 +216,7 @@ class HomeRepositoryImp @Inject constructor(
             )
             val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
             saveSubscription(
-                SubscriptionStatus.TOTAL_LOCK,
+                type,
                 userLocalDataSourceImp.getMyUser().firebaseId.toString()
             )
         }
