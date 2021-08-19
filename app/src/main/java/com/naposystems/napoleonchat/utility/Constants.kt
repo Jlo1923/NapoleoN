@@ -68,6 +68,7 @@ object Constants {
         const val PREF_ACCOUNT_STATUS = "account_status"
         const val PREF_FIREBASE_ID = "firebase_id"
         const val PREF_USER_ID = "user_id"
+        const val PREF_USER_CREATED_AT = "user_created_at"
         const val PREF_COLOR_SCHEME = "color_scheme"
         const val PREF_USER_DISPLAY_FORMAT = "user_display_format"
         const val PREF_TIME_FORMAT = "time_format"

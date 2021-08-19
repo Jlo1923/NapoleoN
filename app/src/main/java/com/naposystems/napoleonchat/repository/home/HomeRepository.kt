@@ -54,4 +54,5 @@ interface HomeRepository {
 
     suspend fun lastSubscription()
 
+    fun subscriptionNotificationWork()
 }

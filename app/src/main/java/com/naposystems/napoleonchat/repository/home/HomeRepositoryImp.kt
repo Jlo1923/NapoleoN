@@ -2,9 +2,11 @@ package com.naposystems.napoleonchat.repository.home
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.work.*
 import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.subscription.SubscriptionWorker
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
@@ -37,7 +39,8 @@ class HomeRepositoryImp @Inject constructor(
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
     private val syncManager: SyncManager,
-    private val context: Context
+    private val context: Context,
+    private val workManager: WorkManager
 ) :
     HomeRepository {
 
@@ -211,18 +214,15 @@ class HomeRepositoryImp @Inject constructor(
             val currentTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
             val currentDaySinceCreated =
                 TimeUnit.SECONDS.toDays(currentTimeInSeconds - createdAt)
-            val currentDaySinceExpired = TimeUnit.SECONDS.toDays(
-                expire - currentTimeInSeconds
-            )
+            val currentDaySinceExpired = TimeUnit.SECONDS.toDays(expire - currentTimeInSeconds)
             val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
             saveSubscription(
                 type,
-                userLocalDataSourceImp.getMyUser().firebaseId.toString()
+                userLocalDataSourceImp.getMyUser().firebaseId.toString(), createdAt
             )
         }
     }
 
-    //TODO VALIDAR CON CASOS DE PRUEBA
     private fun getSubscriptionType(
         isActive: Boolean,
         subscriptionExpireDays: Long,
@@ -238,7 +238,11 @@ class HomeRepositoryImp @Inject constructor(
         else -> SubscriptionStatus.FREE_TRIAL
     }
 
-    private fun saveSubscription(subscriptionStatus: SubscriptionStatus, userId: String) {
+    private fun saveSubscription(
+        subscriptionStatus: SubscriptionStatus,
+        userId: String,
+        userCreatedAt: Long
+    ) {
         sharedPreferencesManager.putString(
             Constants.SharedPreferences.SubscriptionStatus,
             subscriptionStatus.name
@@ -247,7 +251,12 @@ class HomeRepositoryImp @Inject constructor(
             Constants.SharedPreferences.PREF_USER_ID,
             userId
         )
+        sharedPreferencesManager.putLong(
+            Constants.SharedPreferences.PREF_USER_CREATED_AT,
+            userCreatedAt
+        )
         RxBus.publish(RxEvent.SubscriptionStatusEvent(subscriptionStatus))
+        subscriptionNotificationWork()
     }
 
 
@@ -347,5 +356,23 @@ class HomeRepositoryImp @Inject constructor(
 
     override fun verifyMessagesRead() {
         syncManager.verifyMessagesRead()
+    }
+
+    override fun subscriptionNotificationWork() {
+        val constraintsBuilder: Constraints.Builder = Constraints.Builder()
+        constraintsBuilder.setRequiresBatteryNotLow(false)
+        constraintsBuilder.setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+        constraintsBuilder.setRequiresCharging(false)
+        val request = PeriodicWorkRequest.Builder(
+            SubscriptionWorker::class.java,
+            12,
+            TimeUnit.HOURS
+        )
+        request.setConstraints(constraintsBuilder.build())
+        workManager.enqueueUniquePeriodicWork(
+            "SUBSCRIPTION_NOTIFICATION_WORK",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            request.build()
+        )
     }
 }
