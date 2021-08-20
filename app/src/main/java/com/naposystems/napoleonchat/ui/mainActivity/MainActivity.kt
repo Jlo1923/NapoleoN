@@ -681,7 +681,8 @@ class MainActivity :
     }
 
     private fun subscriptionIntent() {
-        val url = getString(R.string.buy_subscription_url) //Todo pasar ID deusuario
+        val userId = sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_USER_ID, "")
+        val url = getString(R.string.buy_subscription_url).plus(userId)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)

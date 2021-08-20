@@ -40,6 +40,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_FIREBASE_ID
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_USER_ID
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
@@ -854,7 +855,7 @@ class HomeFragment : BaseFragment() {
 
     private fun subscriptionIntent() {
         val userId = sharedPreferencesManager.getString(PREF_USER_ID, "")
-        val url = getString(R.string.buy_subscription_url, "")
+        val url = getString(R.string.buy_subscription_url).plus(userId)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)

@@ -218,7 +218,7 @@ class HomeRepositoryImp @Inject constructor(
             val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
             saveSubscription(
                 type,
-                userLocalDataSourceImp.getMyUser().firebaseId.toString(), createdAt
+                userLocalDataSourceImp.getMyUser().id.toString(), createdAt
             )
         }
     }
