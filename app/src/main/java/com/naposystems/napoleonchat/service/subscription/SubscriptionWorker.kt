@@ -3,13 +3,17 @@ package com.naposystems.napoleonchat.service.subscription
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.model.SubscriptionStatus
+import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.ui.mainActivity.SHOW_ENTER_PIN
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import java.util.concurrent.TimeUnit
@@ -59,7 +63,24 @@ class SubscriptionWorker(val context: Context, workerParams: WorkerParameters) :
                 .setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_notification_icon)
                 .setContentText(content)
+                .setContentIntent(createPendingIntent())
         val notification: Notification = notificationBuilder.build()
         notificationManager.notify(1, notification)
+    }
+
+    private fun createPendingIntent(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+        intent.putExtra(SHOW_ENTER_PIN, true)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
+        return PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_ONE_SHOT
+        )
     }
 }

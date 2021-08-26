@@ -63,6 +63,8 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
+const val SHOW_ENTER_PIN = "SHOW_ENTER_PIN"
+
 class MainActivity :
     AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -327,7 +329,14 @@ class MainActivity :
         hideOptionMenuRecoveryAccount()
 
         validateExtrasForShareFromOutside()
+
+        validateShowEnterPin()
     }
+
+    private fun validateShowEnterPin() = intent.extras?.getBoolean(SHOW_ENTER_PIN)?.let {
+        if (it) navToEnterPin()
+    }
+
 
     private fun openMenu() {
         binding.toolbar.setOnClickListener {
