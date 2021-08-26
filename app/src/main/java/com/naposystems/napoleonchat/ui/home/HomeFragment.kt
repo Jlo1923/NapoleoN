@@ -40,7 +40,6 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
-import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_FIREBASE_ID
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_USER_ID
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
@@ -59,6 +58,8 @@ class HomeFragment : BaseFragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
+
+    private var subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE
 
     @Inject
     lateinit var sharedPreferencesManager: SharedPreferencesManager
@@ -125,6 +126,12 @@ class HomeFragment : BaseFragment() {
         homeViewModel.lastSubscription()
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
+        subscriptionStatus = SubscriptionStatus.valueOf(
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        )
         validateMustGoToContacts()
     }
 
@@ -157,11 +164,6 @@ class HomeFragment : BaseFragment() {
         binding.containerStatus.setOnClickListener {
             goToStatus()
         }
-
-        //TODO:Subscription
-        /*binding.containerSubscription.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
-        }*/
 
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
@@ -331,7 +333,10 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun validateMustGoToContacts() {
-        val mustGoToContacts = homeViewModel.isMarkGoToContacts()
+        val mustGoToContacts = homeViewModel.isMarkGoToContacts() &&
+                (subscriptionStatus == SubscriptionStatus.ACTIVE ||
+                        subscriptionStatus == SubscriptionStatus.FREE_TRIAL ||
+                        subscriptionStatus == SubscriptionStatus.FREE_TRIAL_DAY_4)
         if (mustGoToContacts) {
             /**
              * Solo podemos ir a contactos una sola vez, si se devuelve ya se pierden los archivos
@@ -410,6 +415,7 @@ class HomeFragment : BaseFragment() {
         val disposableSubscriptionStatus = RxBus.listen(RxEvent.SubscriptionStatusEvent::class.java)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                subscriptionStatus = it.status
                 setupSubscriptionContainer(it.status)
             }
         disposable.add(disposableSubscriptionStatus)
@@ -432,6 +438,8 @@ class HomeFragment : BaseFragment() {
                 binding.textViewMessageSubscription.isVisible = true
                 binding.containerStatus.isClickable = false
                 binding.containerStatus.isEnabled = false
+                binding.imageButtonStatusEndIcon.isClickable = false
+                binding.imageButtonStatusEndIcon.isEnabled = false
             }
             SubscriptionStatus.TOTAL_LOCK -> {
                 createTotalBlockDialog()
@@ -843,14 +851,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val subscriptionStatus =
-            sharedPreferencesManager.getString(
-                Constants.SharedPreferences.SubscriptionStatus,
-                SubscriptionStatus.ACTIVE.name
-            )
-        setupSubscriptionContainer(SubscriptionStatus.valueOf(subscriptionStatus))
-
-
+        setupSubscriptionContainer(subscriptionStatus)
     }
 
     private fun subscriptionIntent() {

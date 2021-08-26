@@ -735,9 +735,21 @@ class ConversationFragment
         conversationViewModel.verifyMessagesRead()
     }
 
+    private fun getSubscriptionStatus() = SubscriptionStatus.valueOf(
+        sharedPreferencesManager.getString(
+            Constants.SharedPreferences.SubscriptionStatus,
+            SubscriptionStatus.ACTIVE.name
+        )
+    )
+
+    private fun shouldShowAttachmentPreview(subscriptionStatus: SubscriptionStatus) =
+        subscriptionStatus == SubscriptionStatus.ACTIVE ||
+                subscriptionStatus == SubscriptionStatus.FREE_TRIAL ||
+                subscriptionStatus == SubscriptionStatus.FREE_TRIAL_DAY_4
+
     private fun validateMustGoToPreviewAttachmentsFromOutside() {
         val uris = conversationViewModel.getPendingUris()
-        if (uris.isEmpty().not()) {
+        if (uris.isEmpty().not() && shouldShowAttachmentPreview(getSubscriptionStatus())) {
             if (uris.size <= 10) {
                 handleIntentExtrasDataForMultiple(uris)
             } else {
