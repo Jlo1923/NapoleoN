@@ -1,4 +1,4 @@
-package com.naposystems.napoleonchat.utility
+package com.naposystems.napoleonchat.utility.zoom
 
 import android.content.Context
 import android.graphics.Matrix
@@ -33,6 +33,11 @@ class ZoomImage : AppCompatImageView, View.OnTouchListener,
     var viewHeight = 0
     private var mLast = PointF()
     private var mStart = PointF()
+    private var isInZoom = false
+    private var zoomImageListener: ZoomImageListener? = null
+    fun setListener(listener: ZoomImageListener) {
+    this.zoomImageListener = listener
+    }
 
     constructor(context: Context) : super(context) {
         sharedConstructing(context)
@@ -68,33 +73,52 @@ class ZoomImage : AppCompatImageView, View.OnTouchListener,
 
         override fun onScale(detector: ScaleGestureDetector): Boolean {
             var mScaleFactor = detector.scaleFactor
-            val prevScale = mSaveScale
-            mSaveScale *= mScaleFactor
-            if (mSaveScale > mMaxScale) {
-                mSaveScale = mMaxScale
-                mScaleFactor = mMaxScale / prevScale
-            } else if (mSaveScale < mMinScale) {
-                mSaveScale = mMinScale
-                mScaleFactor = mMinScale / prevScale
-            }
-            if (origWidth * mSaveScale <= viewWidth
-                || origHeight * mSaveScale <= viewHeight
-            ) {
-                mMatrix!!.postScale(
-                    mScaleFactor, mScaleFactor, viewWidth / 2.toFloat(),
-                    viewHeight / 2.toFloat()
-                )
-            } else {
-                mMatrix!!.postScale(
-                    mScaleFactor, mScaleFactor,
-                    detector.focusX, detector.focusY
-                )
-            }
-            fixTranslation()
+            scaleWithScaleFactor(mScaleFactor, detector)
             return true
         }
     }
+    private fun scaleWithScaleFactor(
+        mScaleFactor: Float,
+        detector: ScaleGestureDetector?
+    ) {
+        var mScaleFactor1 = mScaleFactor
+        val prevScale = mSaveScale
+        mSaveScale *= mScaleFactor1
+        if (mSaveScale > mMaxScale) {
+            mSaveScale = mMaxScale
+            mScaleFactor1 = mMaxScale / prevScale
+        } else if (mSaveScale < mMinScale) {
+            mSaveScale = mMinScale
+            mScaleFactor1 = mMinScale / prevScale
+        }
+        if (origWidth * mSaveScale <= viewWidth || origHeight * mSaveScale <= viewHeight) {
+            mMatrix!!.postScale(
+                mScaleFactor1, mScaleFactor1, viewWidth / 2.toFloat(),
+                viewHeight / 2.toFloat()
+            )
+        } else {
+            detector?.let {
+                mMatrix!!.postScale(
+                    mScaleFactor1, mScaleFactor1,
+                    it.focusX, it.focusY
+                )
+            } ?: run {
+                mMatrix!!.postScale(
+                    mScaleFactor1, mScaleFactor1,
+                    viewWidth / 2.toFloat(), viewHeight / 2.toFloat()
+                )
+            }
+        }
+        fixTranslation()
 
+        if (mSaveScale == 1.0f) {
+            zoomImageListener?.onNormalMode()
+            isInZoom = false
+        } else {
+            zoomImageListener?.onZoomMode()
+            isInZoom = true
+        }
+    }
     fun fitToScreen() {
         mSaveScale = 1f
         val scale: Float
@@ -189,7 +213,9 @@ class ZoomImage : AppCompatImageView, View.OnTouchListener,
                 fixTranslation()
                 mLast[currentPoint.x] = currentPoint.y
             }
-            MotionEvent.ACTION_POINTER_UP -> mode = NONE
+            MotionEvent.ACTION_POINTER_UP -> {
+                mode = NONE
+            }
         }
         imageMatrix = mMatrix
         return false
@@ -234,7 +260,15 @@ class ZoomImage : AppCompatImageView, View.OnTouchListener,
     }
 
     override fun onDoubleTap(motionEvent: MotionEvent): Boolean {
-        fitToScreen()
+        if (isInZoom) {
+            fitToScreen()
+            zoomImageListener?.onNormalMode()
+            isInZoom = false
+        } else {
+            scaleWithScaleFactor(2.0f, null)
+            zoomImageListener?.onZoomMode()
+            isInZoom = true
+        }
         return false
     }
 

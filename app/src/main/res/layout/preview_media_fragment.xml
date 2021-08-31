@@ -18,7 +18,7 @@
         android:focusable="true"
         tools:context=".ui.previewMedia.PreviewMediaFragment">
 
-        <com.naposystems.napoleonchat.utility.ZoomImage
+        <com.naposystems.napoleonchat.utility.zoom.ZoomImage
             android:id="@+id/imageView_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

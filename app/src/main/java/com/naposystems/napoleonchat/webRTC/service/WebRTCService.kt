@@ -221,6 +221,13 @@ class WebRTCService : Service() {
 
             startActivity(intent)
 
+        }else {
+           if (NapoleonApplication.isShowingCallActivity) {
+               RxBus.publish(RxEvent.HangupByNotification())
+              } else {
+               repository.contactRejectCall()
+               }
+           hideNotification()
         }
 
     }

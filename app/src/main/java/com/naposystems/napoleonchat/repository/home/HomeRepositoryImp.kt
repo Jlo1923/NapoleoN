@@ -162,7 +162,28 @@ class HomeRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun getDeletedMessages() = syncManager.getDeletedMessages()
+    override suspend fun getDeletedMessages() {
+        try {
+            val response = napoleonApi.getDeletedMessages()
+            if (response.isSuccessful) {
+                response.body()?.messagesId.let {
+                    it?.let {
+                        messageLocalDataSource.deleteMessagesByWebId(it)
+                    }
+                }
+
+                response.body()?.attachmentsId.let {
+                    it?.let {
+                        attachmentLocalDataSource.deletedAttachments(it)
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
+        }
+    }
+
+    //override suspend fun getDeletedMessages() = syncManager.getDeletedMessages()
 
     override suspend fun insertSubscription() {
         try {
