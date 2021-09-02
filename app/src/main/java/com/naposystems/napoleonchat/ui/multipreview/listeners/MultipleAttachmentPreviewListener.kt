@@ -16,4 +16,6 @@ interface MultipleAttachmentPreviewListener {
         position: Int
     )
 
+   fun blockPager()
+   fun unBlockPager()
 }

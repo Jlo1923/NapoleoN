@@ -52,11 +52,6 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
     private val modes: SingleLiveEvent<MultipleAttachmentPreviewMode> = SingleLiveEvent()
     fun modes(): LiveData<MultipleAttachmentPreviewMode> = modes
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun initUi() {
-        loading()
-    }
-
     fun changeVisibilityOptions() {
         isShowingOptions = isShowingOptions.not()
         actions.value = if (isShowingOptions) {
@@ -341,7 +336,7 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
 
     private fun getHighestTimeInFiles(): Int = listFiles.maxOfOrNull { it.selfDestruction } ?: 0
 
-    private fun loading() {
+    fun loading() {
         _state.value = MultipleAttachmentPreviewState.Loading
     }
 

@@ -22,13 +22,14 @@ import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.extensions.showViews
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import com.naposystems.napoleonchat.utility.zoom.ZoomImageListener
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MultipleAttachmentPreviewImageFragment(
     val file: MultipleAttachmentFileItem,
     val position: Int
-) : BaseFragment() {
+) : BaseFragment(), ZoomImageListener {
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
@@ -58,6 +59,7 @@ class MultipleAttachmentPreviewImageFragment(
         } else {
             loadImageFromBody()
         }
+        binding.imagePreview.setListener(this)
     }
 
     override fun onResume() {
@@ -73,7 +75,13 @@ class MultipleAttachmentPreviewImageFragment(
             handleAttachmentState(it)
         })
     }
+    override fun onZoomMode() {
+               listener?.blockPager()
+           }
 
+       override fun onNormalMode() {
+               listener?.unBlockPager()
+           }
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
             when (it.status) {

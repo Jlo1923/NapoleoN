@@ -90,6 +90,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
         bindViewModel()
+        viewModel.loading()
         validateMustRejectMarkAsReadTheFirstAttachment()
         extractContactFromExtras()
         extractFilesFromExtras()
@@ -110,7 +111,6 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             ViewAttachmentOptionEvent.OnDelete -> onDeleteItem()
         }
     }
-
     override fun onRemoveAttachment(event: MultipleAttachmentRemoveEvent) {
         when (event) {
             MultipleAttachmentRemoveEvent.OnRemoveForAll -> removeAttachmentForAll(event)
@@ -185,6 +185,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         }
     }
 
+    override fun blockPager() {
+        viewBinding.viewPagerAttachments.isUserInputEnabled = false
+    }
+
+    override fun unBlockPager() {
+        viewBinding.viewPagerAttachments.isUserInputEnabled = true
+    }
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
         if (bundle.containsKey(MULTI_SELECTED)) {
             val index = bundle.getInt(MULTI_SELECTED)
@@ -207,7 +214,8 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
             TabLayoutMediator(
                 viewPreviewBottom.getTabLayout(),
-                viewPagerAttachments
+                viewPagerAttachments,
+                false,false
             ) { tab, position ->
                 val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
                 view.bindFile(it[position])
