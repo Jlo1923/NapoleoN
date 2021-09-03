@@ -7,8 +7,8 @@ import com.bumptech.glide.Registry
 import com.bumptech.glide.annotation.GlideModule
 import com.bumptech.glide.module.AppGlideModule
 import com.bumptech.glide.request.RequestOptions
-import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.model.attachment.gallery.GalleryItem
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.utility.glideModelLoaders.attachment.AttachmentLoaderFactory
 import com.naposystems.napoleonchat.utility.glideModelLoaders.galleryItem.GalleryItemLoaderFactory
 import java.io.InputStream

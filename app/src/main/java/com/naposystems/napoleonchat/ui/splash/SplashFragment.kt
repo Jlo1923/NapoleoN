@@ -120,7 +120,7 @@ class SplashFragment : DaggerFragment() {
 
                     viewModel.getUser()
                 }
-                
+
                 Constants.AccountStatus.ACCOUNT_CREATED.id -> {
 
                     Timber.d("AccountStatus Created")

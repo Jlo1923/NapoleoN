@@ -13,12 +13,12 @@ import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SecuritySettingsFragmentBinding
 import com.naposystems.napoleonchat.dialog.activateBiometrics.ActivateBiometricsDialogFragment
-import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
 import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
 import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
-import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.napoleonchat.dialog.timeAccessPin.TimeAccessPinDialogFragment
+import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
+import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.showCaseManager.ShowCaseManager

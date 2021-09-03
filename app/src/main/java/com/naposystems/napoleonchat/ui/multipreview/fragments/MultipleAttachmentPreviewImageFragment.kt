@@ -75,13 +75,15 @@ class MultipleAttachmentPreviewImageFragment(
             handleAttachmentState(it)
         })
     }
-    override fun onZoomMode() {
-               listener?.blockPager()
-           }
 
-       override fun onNormalMode() {
-               listener?.unBlockPager()
-           }
+    override fun onZoomMode() {
+        listener?.blockPager()
+    }
+
+    override fun onNormalMode() {
+        listener?.unBlockPager()
+    }
+
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
             when (it.status) {
@@ -164,15 +166,21 @@ class MultipleAttachmentPreviewImageFragment(
     }
 
     private fun loadImageFromBody() = binding.apply {
-        Glide.with(root.context)
-            .load(file.messageAndAttachment?.attachment?.body)
-            .into(imagePreview)
+        try {
+            Glide.with(root.context)
+                .load(file.messageAndAttachment?.attachment?.body)
+                .into(imagePreview)
+        } catch (e: Exception) {
+        }
     }
 
     private fun loadImage() = binding.apply {
-        Glide.with(root.context)
-            .load(file.contentUri)
-            .into(imagePreview)
+        try {
+            Glide.with(root.context)
+                .load(file.contentUri)
+                .into(imagePreview)
+        } catch (e: Exception) {
+        }
     }
 
     fun setListener(listener: MultipleAttachmentPreviewListener) {
