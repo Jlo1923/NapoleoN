@@ -34,9 +34,10 @@ class EnterCodeFragment :
 
     private val viewModel: EnterCodeViewModel by viewModels { viewModelFactory }
 
-    private var _binding: EnterCodeFragmentBinding? = null
+   // private var _binding: EnterCodeFragmentBinding? = null
 
-    private val binding get() = _binding!!
+   // private val binding get() = _binding!!
+   private lateinit var binding : EnterCodeFragmentBinding
 
     private lateinit var snackbarUtils: SnackbarUtils
     private var attemptsForEnterCode: Int = 0
@@ -50,7 +51,7 @@ class EnterCodeFragment :
     ): View {
 
         //Bindeo del fragmento
-        _binding = EnterCodeFragmentBinding.inflate(inflater, container, false)
+        binding = EnterCodeFragmentBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -73,7 +74,7 @@ class EnterCodeFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        //binding = null
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
