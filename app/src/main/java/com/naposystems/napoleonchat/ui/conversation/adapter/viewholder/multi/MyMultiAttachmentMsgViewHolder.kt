@@ -112,7 +112,7 @@ class MyMultiAttachmentMsgViewHolder(
     private fun defineListeners() = binding.apply {
         imageButtonState.setOnClickListener {
             val attachmentsToSendRemote =
-                msgAndAttachment.attachmentEntityList.filter { it.isError() }
+                msgAndAttachment.attachmentEntityList.filter { it.isError() || it.isCancelUpload() }
             listener.onMultipleAttachmentMsgAction(
                 MultiAttachmentMsgAction.SendMessageToRemote(
                     msgAndAttachment.messageEntity, attachmentsToSendRemote
@@ -220,11 +220,11 @@ class MyMultiAttachmentMsgViewHolder(
         }
     }
 
-    private fun showQuantity(data: Pair<Int, Int>) = binding.apply {
+    private fun showQuantity(pairData: Pair<Int, Int>) = binding.apply {
         val data = UploadAttachmentsIndicatorModel(
             msgAndAttachment.messageEntity.status,
-            data.first,
-            data.second
+            pairData.first,
+            pairData.second
         )
         binding.viewUploadAttachmentsIndicator.apply {
             show()
