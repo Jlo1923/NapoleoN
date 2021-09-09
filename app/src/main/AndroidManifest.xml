@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.naposystems.napoleonchat">
-
-    <!--<uses-feature
+    <!--
+        <uses-feature
         android:name="android.hardware.camera"
-        android:required="true" />-->
+        android:required="true" />
+    -->
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="true" />
@@ -42,22 +43,19 @@
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
-
+        <activity
+            android:name=".ui.home.TabsPagerActivity"
+            android:exported="true" />
         <activity
             android:name=".ui.multipreview.MultipleAttachmentPreviewActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.multi.MultipleAttachmentActivity"
             android:screenOrientation="portrait" />
 
         <service android:name=".webRTC.service.WebRTCService" />
-
         <service android:name=".service.uploadService.UploadService" />
-
-        <service android:name=".service.multiattachment.MultipleUploadService"
-            />
-
+        <service android:name=".service.multiattachment.MultipleUploadService" />
         <service android:name=".service.download.DownloadAttachmentsService" />
 
         <meta-data
@@ -72,31 +70,35 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="video/*" />
             </intent-filter>
-
         </activity>
-
         <activity
             android:name=".ui.conversationCall.ConversationCallActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -108,43 +110,30 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.mainActivity.MainActivity" />
-        </activity>
-
-        <!-- uCrop cropping activity -->
+        </activity> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
-        <!-- FIREBASE -->
+            android:theme="@style/AppTheme" /> <!-- FIREBASE -->
         <service
             android:name=".service.firebase.NapoleonFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- DEFAULT FIREBASE NOTIFICATION ICON -->
+        </service> <!-- DEFAULT FIREBASE NOTIFICATION ICON -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification_icon" />
-
-        <!-- DEFAULT FIREBASE NOTIFICATION COLOR -->
+            android:resource="@drawable/ic_notification_icon" /> <!-- DEFAULT FIREBASE NOTIFICATION COLOR -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorPrimary" />
-
-        <!-- DEFAULT FIREBASE NOTIFICATION CHANNEL -->
+            android:resource="@color/colorPrimary" /> <!-- DEFAULT FIREBASE NOTIFICATION CHANNEL -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
-
         <meta-data
             android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
-        <!-- CACHE DIRECTORY FILE PROVIDER PATHS -->
+            android:resource="@array/preloaded_fonts" /> <!-- CACHE DIRECTORY FILE PROVIDER PATHS -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.naposystems.napoleonchat.provider"
@@ -160,7 +149,6 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

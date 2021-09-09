@@ -64,5 +64,8 @@
     <item name="low_ripple_focused_alpha" format="float" type="dimen">0.12</item>
     <item name="low_ripple_hovered_alpha" format="float" type="dimen">0.04</item>
     <item name="low_ripple_default_alpha" format="float" type="dimen">0.00</item>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
     <!-- END MATERIAL RIPPLE DIMENS -->
 </resources>
