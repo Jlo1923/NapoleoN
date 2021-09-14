@@ -190,6 +190,13 @@
         <action
             android:id="@+id/action_homeFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_all_search"
+            app:destination="@id/search_all_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -490,6 +497,27 @@
         <action
             android:id="@+id/action_recoveryAccountQuestionsFragment_to_accessPinFragment"
             app:destination="@id/accessPinFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/search_all_fragment"
+        android:name="com.naposystems.napoleonchat.ui.home.TabsPagerFragment"
+        android:label="NapoleóN"
+        tools:layout="@layout/fragment_tabs_pager">
+        <action
+            android:id="@+id/action_contactsFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"

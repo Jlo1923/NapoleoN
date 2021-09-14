@@ -50,6 +50,7 @@ import com.naposystems.napoleonchat.ui.registerRecoveryAccount.RegisterRecoveryA
 import com.naposystems.napoleonchat.ui.registerRecoveryAccountQuestion.RegisterRecoveryAccountQuestionFragment
 import com.naposystems.napoleonchat.ui.securitySettings.SecuritySettingsFragment
 import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.ui.home.TabsPagerFragment
 import com.naposystems.napoleonchat.ui.selfDestructTimeMessageNotSentFragment.SelfDestructTimeMessageNotSentDialogFragment
 import com.naposystems.napoleonchat.ui.splash.SplashFragment
 import com.naposystems.napoleonchat.ui.status.StatusFragment
@@ -231,5 +232,8 @@ abstract class FragmentModule {
     @ContributesAndroidInjector
     abstract fun contributeMultipleAttachmentPreviewVideoFragment(
     ): MultipleAttachmentPreviewVideoFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeTabsPagerFragment(): TabsPagerFragment
 
 }

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
@@ -90,6 +91,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private lateinit var textViewBadge: TextView
+    private lateinit var imageViewSearch: TextView
 
     private var showCaseManager: ShowCaseManager? = null
 
@@ -98,6 +100,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var popup: PopupMenu
 
     private var addContactsMenuItem: MenuItem? = null
+    private var searchAllMenuItem: MenuItem? = null
 
     private var homeMenuItem: View? = null
 
@@ -458,11 +461,20 @@ class HomeFragment : BaseFragment() {
         val menuItem = menu.findItem(R.id.add_contact)
         addContactsMenuItem = menuItem
 
+        val menuItem2 = menu.findItem(R.id.search_all)
+        searchAllMenuItem = menuItem2
+
         val actionView = menuItem.actionView
         textViewBadge = actionView.findViewById(R.id.textView_badge)
 
+        val actionView2 = menuItem2.actionView
+        imageViewSearch = actionView2.findViewById(R.id.textView_search)
+
         actionView.setOnClickListener {
             onOptionsItemSelected(menuItem)
+        }
+        actionView2.setOnClickListener {
+            onOptionsItemSelected(menuItem2)
         }
 
         homeMenuItem =
@@ -574,6 +586,12 @@ class HomeFragment : BaseFragment() {
         return when (item.itemId) {
             R.id.add_contact -> {
                 goToAddContactFragment()
+                true
+            }
+            R.id.search_all -> {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionAllSearch()
+                )
                 true
             }
             else -> super.onOptionsItemSelected(item)

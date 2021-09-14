@@ -81,8 +81,8 @@
                     android:id="@+id/imageButton_status_end_icon"
                     style="@style/OptionEndIcon"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:tint="?attr/attrTintColorSecondaryDark"
-                    app:srcCompat="@drawable/ic_arrow_right_primary" />
+                    app:srcCompat="@drawable/ic_arrow_right_primary"
+                    app:tint="?attr/attrTintColorSecondaryDark" />
 
             </LinearLayout>
 
@@ -196,6 +196,7 @@
             android:id="@+id/fab_contacts"
             style="@style/FabPrimary"
             android:layout_gravity="bottom|end"
+            android:visibility="gone"
             android:layout_margin="16dp"
             app:borderWidth="0dp"
             app:srcCompat="@drawable/ic_contacts"

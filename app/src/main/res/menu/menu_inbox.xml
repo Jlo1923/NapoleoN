@@ -9,4 +9,11 @@
         app:actionLayout="@layout/add_contact_badge"
         app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/search_all"
+        android:icon="@drawable/ic_person_add_white"
+        android:title="@string/text_add_contact"
+        app:actionLayout="@layout/search_all"
+        app:iconTint="?attr/attrBackgroundTintIconToolbar"
+        app:showAsAction="always" />
 </menu>
