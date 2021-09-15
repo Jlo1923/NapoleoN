@@ -38,4 +38,7 @@ sealed class MultipleAttachmentPreviewAction {
         val iconSelfDestruction: Int
     ) : MultipleAttachmentPreviewAction()
 
+    class ShowUpload(
+        val shouldShowUpload: Boolean
+    ) : MultipleAttachmentPreviewAction()
 }

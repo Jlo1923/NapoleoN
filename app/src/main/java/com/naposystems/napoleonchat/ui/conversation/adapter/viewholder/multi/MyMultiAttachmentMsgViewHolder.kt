@@ -194,7 +194,9 @@ class MyMultiAttachmentMsgViewHolder(
         val actionForListener = OpenMultipleAttachmentPreview(
             listAttachmentFileItems,
             action.index,
-            msgAndAttachment.messageEntity.body
+            msgAndAttachment.messageEntity.body,
+            msgAndAttachment.messageEntity,
+            msgAndAttachment.attachmentEntityList
         )
         listener.onMultipleAttachmentMsgAction(actionForListener)
     }

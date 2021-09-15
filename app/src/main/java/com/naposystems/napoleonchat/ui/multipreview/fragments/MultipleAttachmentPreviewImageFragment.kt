@@ -91,6 +91,7 @@ class MultipleAttachmentPreviewImageFragment(
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
                 Constants.AttachmentStatus.READED.status -> onModeRead(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
+                Constants.AttachmentStatus.UPLOAD_CANCEL.status -> onModeError(it)
                 else -> hideStatus()
             }
         }
@@ -105,6 +106,13 @@ class MultipleAttachmentPreviewImageFragment(
         imageViewStatus.show()
         frameStatus.show()
         imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
+    }
+
+    private fun onModeError(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_error))
+        configTimer(attachmentEntity)
     }
 
     private fun onModeReceived(attachmentEntity: AttachmentEntity) = binding.apply {
@@ -168,7 +176,7 @@ class MultipleAttachmentPreviewImageFragment(
     private fun loadImageFromBody() = binding.apply {
         try {
             Glide.with(root.context)
-                .load(file.messageAndAttachment?.attachment?.body)
+                .load(file.messageAndAttachment?.attachment?.thumbnailUri?.toString())
                 .into(imagePreview)
         } catch (e: Exception) {
         }

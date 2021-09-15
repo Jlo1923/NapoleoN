@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.naposystems.napoleonchat.R
@@ -13,6 +15,7 @@ import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
 import com.naposystems.napoleonchat.ui.contacts.showToast
+import com.naposystems.napoleonchat.ui.conversation.ConversationViewModel
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentAction
 import com.naposystems.napoleonchat.ui.multi.events.MultipleAttachmentState
 import com.naposystems.napoleonchat.ui.multi.fragments.MultipleAttachmentExitBottomSheetDialogFragment

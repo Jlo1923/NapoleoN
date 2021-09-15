@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.naposystems.napoleonchat.BuildConfig
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageEntity
@@ -13,13 +14,13 @@ import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentPreview
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ExitToConversationAndSendData
+import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewMode
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewState.SuccessFilesAsPager
 import com.naposystems.napoleonchat.ui.previewMedia.IContractPreviewMedia
-import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogRepository
-import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction.ShowSelfDestruction
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.UPLOAD_CANCEL
 import com.naposystems.napoleonchat.utility.SingleLiveEvent
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.extensions.isVideo
@@ -371,5 +372,15 @@ class MultipleAttachmentPreviewViewModel @Inject constructor(
         repository.markWasInPreviewActivity()
     }
 
+    fun validateShouldShowUpload(position: Int) {
+        when (listFiles[position].messageAndAttachment?.attachment?.status) {
+            UPLOAD_CANCEL.status -> {
+                actions.value = MultipleAttachmentPreviewAction.ShowUpload(true)
+            }
+
+        }
+    }
+
+    fun getFileForPosition(position: Int) = listFiles.getOrNull(position)
 
 }

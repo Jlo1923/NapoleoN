@@ -1,6 +1,8 @@
 package com.naposystems.napoleonchat.utility.extras
 
 const val MULTI_EXTRA_CONTACT = "contact"
+const val MULTI_EXTRA_ENTITY = "entity"
+const val MULTI_EXTRA_ATTACHMENTS = "attachments"
 const val MULTI_EXTRA_FILES = "files"
 const val MULTI_EXTRA_FILES_DELETE = "files_delete"
 const val MULTI_SELECTED = "multi_selected"

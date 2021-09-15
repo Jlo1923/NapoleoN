@@ -182,6 +182,7 @@ class MultipleAttachmentPreviewVideoFragment(
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
                 Constants.AttachmentStatus.READED.status -> onModeReaded(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
+                Constants.AttachmentStatus.UPLOAD_CANCEL.status -> onModeError(it)
                 else -> hideStatus()
             }
         }
@@ -217,6 +218,13 @@ class MultipleAttachmentPreviewVideoFragment(
         } else {
             imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
         }
+        configTimer(attachmentEntity)
+    }
+
+    private fun onModeError(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_error))
         configTimer(attachmentEntity)
     }
 
