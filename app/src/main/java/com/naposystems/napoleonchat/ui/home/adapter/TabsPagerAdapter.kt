@@ -6,6 +6,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.naposystems.napoleonchat.ui.addContact.AddContactFragment
 import com.naposystems.napoleonchat.ui.contacts.ContactsFragment
+import com.naposystems.napoleonchat.ui.groups.GroupsFragment
+import com.naposystems.napoleonchat.ui.home.HomeFragment
+import com.naposystems.napoleonchat.ui.home.HomeFragmentDirections
 import com.naposystems.napoleonchat.ui.home.TabsPagerFragmentDirections
 import com.naposystems.napoleonchat.utility.Constants
 
@@ -15,20 +18,16 @@ class TabsPagerAdapter(fm: FragmentManager, lifecycle: Lifecycle, private var nu
         when (position) {
             0 -> {
                 // # Contacts Fragment
-                return ContactsFragment()
+                return HomeFragment()
             }
             1 -> {
                 // # solictudes Fragment
-                //location = Constants.LocationAddContact.HOME.location
-                return AddContactFragment()
+                return ContactsFragment()
             }
             2 -> {
-                    TabsPagerFragmentDirections.actionContactsFragmentToAddContactFragment(
-                        location = Constants.LocationAddContact.HOME.location
-                    )
-                return AddContactFragment()
+                return GroupsFragment()
             }
-            else -> return ContactsFragment()
+            else -> return HomeFragment()
         }
     }
 

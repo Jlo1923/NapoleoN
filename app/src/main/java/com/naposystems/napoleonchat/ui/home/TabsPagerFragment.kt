@@ -66,11 +66,11 @@ class TabsPagerFragment : Fragment() {
         TabLayoutMediator(binding.root.tab_layout, binding.root.tabs_viewpager) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "Contactos"
+                    tab.text = "Chats"
                     tab.setIcon(R.drawable.ic_contacts)
                 }
                 1 -> {
-                    tab.text = "Solicitudes"
+                    tab.text = "Contactos"
                     tab.setIcon(R.drawable.ic_person_add)
 
                 }
