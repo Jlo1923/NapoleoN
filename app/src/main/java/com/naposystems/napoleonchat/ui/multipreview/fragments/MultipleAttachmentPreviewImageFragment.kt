@@ -86,6 +86,7 @@ class MultipleAttachmentPreviewImageFragment(
 
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
+            configTimer(it)
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)

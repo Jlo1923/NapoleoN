@@ -127,7 +127,13 @@ class MultipleAttachmentPreviewVideoFragment(
             binding.playerView.useController = false
         }
 
-        val mediaSource = buildMediaSource(file.contentUri)
+        val contentUri = Utils.getFileUri(
+            context = requireContext(),
+            subFolder = Constants.CacheDirectories.VIDEOS.folder,
+            fileName = file.messageAndAttachment?.attachment?.fileName.orEmpty()
+        )
+
+        val mediaSource = buildMediaSource(if (!file.messageAndAttachment?.attachment?.fileName.isNullOrEmpty()) contentUri else file.contentUri)
         binding.viewVideoController.apply {
             mediaSource?.let { this.setMediaSource(it) }
         }
@@ -177,6 +183,7 @@ class MultipleAttachmentPreviewVideoFragment(
 
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
+            configTimer(it)
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
