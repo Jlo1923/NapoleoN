@@ -2,6 +2,7 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import com.naposystems.napoleonchat.source.remote.dto.messagesReceived.MessagesReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
+import com.pusher.client.Pusher
 import com.pusher.client.connection.ConnectionState
 import org.json.JSONObject
 
@@ -30,5 +31,7 @@ interface SocketClient {
     fun emitClientCall(eventType: Int)
 
     fun isConnected(): Boolean
+
+    fun setNewPusher(token: String)
 
 }

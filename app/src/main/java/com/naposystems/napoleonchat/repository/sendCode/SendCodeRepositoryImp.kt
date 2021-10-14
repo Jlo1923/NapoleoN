@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.repository.sendCode
 
+import com.naposystems.napoleonchat.service.socketClient.SocketClient
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeErrorDTO
 import com.naposystems.napoleonchat.source.remote.dto.sendCode.SendCodeReqDTO
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 class SendCodeRepositoryImp @Inject constructor(
     private val napoleonApi: NapoleonApi,
-    private val sharedPreferencesManager: SharedPreferencesManager
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val socketClient: SocketClient
 ) : SendCodeRepository {
 
     private val moshi by lazy {
@@ -31,6 +33,8 @@ class SendCodeRepositoryImp @Inject constructor(
 
     override suspend fun setFirebaseId(newToken: String) {
         sharedPreferencesManager.putString(Constants.SharedPreferences.PREF_FIREBASE_ID, newToken)
+        //update new token in pusher
+        socketClient.setNewPusher(newToken)
     }
 
     override fun getTimeForNewCode(): Long {

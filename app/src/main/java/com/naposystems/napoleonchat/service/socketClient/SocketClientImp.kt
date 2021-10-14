@@ -6,6 +6,7 @@ import android.util.Log
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.di.module.general.PusherModule
 import com.naposystems.napoleonchat.model.extractIdsAttachments
 import com.naposystems.napoleonchat.model.extractIdsMessages
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
@@ -31,6 +32,7 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.READED
@@ -61,7 +63,7 @@ import javax.inject.Inject
 class SocketClientImp
 @Inject constructor(
     private val context: Context,
-    private val pusher: Pusher,
+    private var pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
     private val napoleonApi: NapoleonApi,
@@ -126,6 +128,7 @@ class SocketClientImp
 
             privateGeneralChannelName =
                 Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
+
 
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||
                 pusher.connection.state == ConnectionState.DISCONNECTING
@@ -456,6 +459,14 @@ class SocketClientImp
 
     override fun isConnected(): Boolean =
         getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKET_CHANNEL_STATUS_CONNECTED.status
+
+    override fun setNewPusher(token: String) {
+        pusher = Pusher(BuildConfig.PUSHER_KEY, PusherModule.providePusherOptionsCreate(sharedPreferencesManager))
+        GlobalScope.launch{
+            pusher.disconnect()
+            connectSocket()
+        }
+    }
 
     //endregion
 
