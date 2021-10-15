@@ -307,7 +307,7 @@ interface MessageDao {
                 " WHERE  ${DBConstants.Message.COLUMN_STATUS} != 5  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) AND web_id != ''"
+                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) AND is_mine = 0"
     )
     suspend fun deleteDuplicateMessage()
 
@@ -317,7 +317,7 @@ interface MessageDao {
                 " WHERE  ${DBConstants.Attachment.COLUMN_STATUS} != 3  AND ${DBConstants.Attachment.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Attachment.COLUMN_ID}) ${DBConstants.Attachment.COLUMN_ID} " +
                 " FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
-                " GROUP BY ${DBConstants.Attachment.COLUMN_WEB_ID}) AND web_id != ''"
+                " GROUP BY ${DBConstants.Attachment.COLUMN_WEB_ID})"
     )
     suspend fun deleteDuplicateAttachment()
     //endregion
