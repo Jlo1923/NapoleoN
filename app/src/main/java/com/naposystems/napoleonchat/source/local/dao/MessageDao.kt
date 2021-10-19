@@ -317,7 +317,7 @@ interface MessageDao {
                 " WHERE  ${DBConstants.Attachment.COLUMN_STATUS} != 3  AND ${DBConstants.Attachment.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Attachment.COLUMN_ID}) ${DBConstants.Attachment.COLUMN_ID} " +
                 " FROM ${DBConstants.Attachment.TABLE_NAME_ATTACHMENT} " +
-                " GROUP BY ${DBConstants.Attachment.COLUMN_WEB_ID})"
+                " GROUP BY ${DBConstants.Attachment.COLUMN_WEB_ID}) and ${DBConstants.Attachment.COLUMN_WEB_ID} != ''"
     )
     suspend fun deleteDuplicateAttachment()
     //endregion
