@@ -9,7 +9,9 @@ sealed class MultiAttachmentMsgAction {
     class OpenMultipleAttachmentPreview(
         val listElements: List<MultipleAttachmentFileItem>,
         val index: Int,
-        val message: String? = null
+        val message: String? = null,
+        val messageEntity: MessageEntity? = null,
+        val attachments: List<AttachmentEntity?>? = null
     ) : MultiAttachmentMsgAction()
 
     class SendMessageToRemote(

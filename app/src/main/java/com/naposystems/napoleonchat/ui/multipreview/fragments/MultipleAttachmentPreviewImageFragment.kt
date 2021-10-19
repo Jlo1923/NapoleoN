@@ -75,20 +75,24 @@ class MultipleAttachmentPreviewImageFragment(
             handleAttachmentState(it)
         })
     }
-    override fun onZoomMode() {
-               listener?.blockPager()
-           }
 
-       override fun onNormalMode() {
-               listener?.unBlockPager()
-           }
+    override fun onZoomMode() {
+        listener?.blockPager()
+    }
+
+    override fun onNormalMode() {
+        listener?.unBlockPager()
+    }
+
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
+            configTimer(it)
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
                 Constants.AttachmentStatus.READED.status -> onModeRead(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
+                Constants.AttachmentStatus.UPLOAD_CANCEL.status -> onModeError(it)
                 else -> hideStatus()
             }
         }
@@ -103,6 +107,13 @@ class MultipleAttachmentPreviewImageFragment(
         imageViewStatus.show()
         frameStatus.show()
         imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_sent))
+    }
+
+    private fun onModeError(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_error))
+        configTimer(attachmentEntity)
     }
 
     private fun onModeReceived(attachmentEntity: AttachmentEntity) = binding.apply {
@@ -164,15 +175,21 @@ class MultipleAttachmentPreviewImageFragment(
     }
 
     private fun loadImageFromBody() = binding.apply {
-        Glide.with(root.context)
-            .load(file.messageAndAttachment?.attachment?.body)
-            .into(imagePreview)
+        try {
+            Glide.with(root.context)
+                .load(file.messageAndAttachment?.attachment?.thumbnailUri?.toString())
+                .into(imagePreview)
+        } catch (e: Exception) {
+        }
     }
 
     private fun loadImage() = binding.apply {
-        Glide.with(root.context)
-            .load(file.contentUri)
-            .into(imagePreview)
+        try {
+            Glide.with(root.context)
+                .load(file.contentUri)
+                .into(imagePreview)
+        } catch (e: Exception) {
+        }
     }
 
     fun setListener(listener: MultipleAttachmentPreviewListener) {

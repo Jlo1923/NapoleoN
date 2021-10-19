@@ -127,7 +127,13 @@ class MultipleAttachmentPreviewVideoFragment(
             binding.playerView.useController = false
         }
 
-        val mediaSource = buildMediaSource(file.contentUri)
+        val contentUri = Utils.getFileUri(
+            context = requireContext(),
+            subFolder = Constants.CacheDirectories.VIDEOS.folder,
+            fileName = file.messageAndAttachment?.attachment?.fileName.orEmpty()
+        )
+
+        val mediaSource = buildMediaSource(if (!file.messageAndAttachment?.attachment?.fileName.isNullOrEmpty()) contentUri else file.contentUri)
         binding.viewVideoController.apply {
             mediaSource?.let { this.setMediaSource(it) }
         }
@@ -177,11 +183,13 @@ class MultipleAttachmentPreviewVideoFragment(
 
     private fun handleAttachmentState(theAttachment: AttachmentEntity?) {
         theAttachment?.let {
+            configTimer(it)
             when (it.status) {
                 Constants.AttachmentStatus.RECEIVED.status,
                 Constants.AttachmentStatus.DOWNLOAD_COMPLETE.status -> onModeReceived(it)
                 Constants.AttachmentStatus.READED.status -> onModeReaded(it)
                 Constants.AttachmentStatus.SENT.status -> onModeWhite()
+                Constants.AttachmentStatus.UPLOAD_CANCEL.status -> onModeError(it)
                 else -> hideStatus()
             }
         }
@@ -217,6 +225,13 @@ class MultipleAttachmentPreviewVideoFragment(
         } else {
             imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_baseline_check_circle))
         }
+        configTimer(attachmentEntity)
+    }
+
+    private fun onModeError(attachmentEntity: AttachmentEntity) = binding.apply {
+        imageViewStatus.show()
+        frameStatus.show()
+        imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_error))
         configTimer(attachmentEntity)
     }
 

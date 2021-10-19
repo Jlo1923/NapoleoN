@@ -46,6 +46,7 @@ class ViewAttachmentStatusSenderCollage @JvmOverloads constructor(
             Constants.AttachmentStatus.SENT.status -> uiModeSent()
             Constants.AttachmentStatus.RECEIVED.status -> uiModeReceived()
             Constants.AttachmentStatus.READED.status -> uiModeRead()
+            Constants.AttachmentStatus.UPLOAD_CANCEL.status -> uiModeError(isMsgStateError)
             else -> Unit
         }
     }

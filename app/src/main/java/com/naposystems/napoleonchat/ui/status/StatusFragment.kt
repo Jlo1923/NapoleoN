@@ -9,18 +9,15 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.StatusFragmentBinding
 import com.naposystems.napoleonchat.source.local.entity.StatusEntity
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
-import com.naposystems.napoleonchat.ui.splash.SplashViewModel
 import com.naposystems.napoleonchat.ui.status.adapter.StatusAdapter
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
-import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import com.naposystems.napoleonchat.utils.handlerDialog.HandlerDialog
 import javax.inject.Inject
 
