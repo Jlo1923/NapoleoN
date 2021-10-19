@@ -307,7 +307,7 @@ interface MessageDao {
                 " WHERE  ${DBConstants.Message.COLUMN_STATUS} != 5  AND ${DBConstants.Message.COLUMN_ID} NOT IN ( " +
                 " SELECT MIN(${DBConstants.Message.COLUMN_ID}) ${DBConstants.Message.COLUMN_ID} " +
                 " FROM ${DBConstants.Message.TABLE_NAME_MESSAGE} " +
-                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) AND is_mine = 0"
+                " GROUP BY ${DBConstants.Message.COLUMN_WEB_ID}) and ${DBConstants.Attachment.COLUMN_WEB_ID} != ''"
     )
     suspend fun deleteDuplicateMessage()
 
