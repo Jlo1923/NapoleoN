@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -28,6 +29,7 @@ import com.naposystems.napoleonchat.utility.extensions.hide
 import com.naposystems.napoleonchat.utility.extensions.hideViews
 import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -39,6 +41,9 @@ class MultipleAttachmentPreviewVideoFragment(
 
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
+
+    @set:Inject
+    lateinit var exoPlayer: SimpleExoPlayer
 
     private val viewModel: MultipleAttachmentPreviewItemViewModel by viewModels {
         viewModelFactory
@@ -75,6 +80,7 @@ class MultipleAttachmentPreviewVideoFragment(
             falseView.setOnClickListener { pauseVideo() }
         }
 
+
         configVideoView()
     }
 
@@ -110,6 +116,11 @@ class MultipleAttachmentPreviewVideoFragment(
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.viewVideoController.releasePlayer()
+    }
+
     private fun hidePlayerOptions() = binding.apply {
         viewVideoController.hide()
         imageButtonPlay.show()
@@ -132,6 +143,7 @@ class MultipleAttachmentPreviewVideoFragment(
             subFolder = Constants.CacheDirectories.VIDEOS.folder,
             fileName = file.messageAndAttachment?.attachment?.fileName.orEmpty()
         )
+        Timber.d("elian cargar video" + file.messageAndAttachment?.attachment?.fileName + " file url "+file.contentUri)
 
         val mediaSource = buildMediaSource(if (!file.messageAndAttachment?.attachment?.fileName.isNullOrEmpty()) contentUri else file.contentUri)
         binding.viewVideoController.apply {
