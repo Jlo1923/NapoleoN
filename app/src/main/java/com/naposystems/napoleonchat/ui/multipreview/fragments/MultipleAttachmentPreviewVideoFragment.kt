@@ -42,8 +42,6 @@ class MultipleAttachmentPreviewVideoFragment(
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
-    @set:Inject
-    lateinit var exoPlayer: SimpleExoPlayer
 
     private val viewModel: MultipleAttachmentPreviewItemViewModel by viewModels {
         viewModelFactory
@@ -143,6 +141,7 @@ class MultipleAttachmentPreviewVideoFragment(
             subFolder = Constants.CacheDirectories.VIDEOS.folder,
             fileName = file.messageAndAttachment?.attachment?.fileName.orEmpty()
         )
+        Timber.d("elian cargar video" + file.messageAndAttachment?.attachment?.fileName + " file url "+file.contentUri)
 
         val mediaSource = buildMediaSource(if (!file.messageAndAttachment?.attachment?.fileName.isNullOrEmpty()) contentUri else file.contentUri)
         binding.viewVideoController.apply {
