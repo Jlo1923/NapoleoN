@@ -174,6 +174,7 @@ class ConversationCallActivity :
             handlerActiveCall()
             if (NapoleonApplication.callModel?.isVideoCall == true) {
 
+
                 webRTCClient.toggleVideo(previousState = webRTCClient.isHideVideo, false)
                 isReturnCall = false
                 try {
@@ -210,8 +211,14 @@ class ConversationCallActivity :
             webRTCClient.renderRemoteVideo()
             showRemoteVideo()
             binding.localSurfaceRender.isVisible = webRTCClient.isHideVideo.not()
-            binding.cameraOff.containerCameraOff.isVisible =
-                webRTCClient.contactCameraIsVisible
+            //binding.cameraOff.containerCameraOff.isVisible =
+            //    webRTCClient.contactCameraIsVisible
+
+            if(webRTCClient.contactCameraIsVisible.not()){
+                toggleContactCamera(View.VISIBLE)
+
+            }else toggleContactCamera(View.INVISIBLE)
+
         }
 
         binding.imageButtonMicOff.setChecked(webRTCClient.isMicOn.not(), false)

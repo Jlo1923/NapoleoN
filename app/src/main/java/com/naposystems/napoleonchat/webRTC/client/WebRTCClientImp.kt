@@ -59,7 +59,7 @@ class WebRTCClientImp
 
     override var isHideVideo: Boolean = false
 
-    override var contactCameraIsVisible: Boolean = false
+    override var contactCameraIsVisible: Boolean = true
 
     override var isMicOn: Boolean = true
 
@@ -239,7 +239,7 @@ class WebRTCClientImp
             }
             callTime = 0
             isHideVideo = false
-            contactCameraIsVisible = false
+            //contactCameraIsVisible = false
             isMicOn = true
             isBluetoothActive = false
             mediaPlayerHasStopped = false
@@ -416,7 +416,6 @@ class WebRTCClientImp
     ) {
 
         if (localSurface != null) {
-            if(localSurfaceViewRenderer != null) localSurfaceViewRenderer = null
             localSurfaceViewRenderer = localSurface
             try {
                 localSurfaceViewRenderer?.apply {
