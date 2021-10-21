@@ -7,14 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.animation.*
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.CustomInputPanelWidgetBinding
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.custom.microphoneRecorderView.MicrophoneRecorderView
+import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.Utils
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -208,27 +211,37 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onRecordPressed() {
-        mListener?.onRecorderStarted()
-        binding.containerInputPanel.startAnimation(
-            AnimationUtils.loadAnimation(
-                context, R.anim.slide_out_left
-            )
-        )
-        binding.containerInputPanel.isVisible = false
-        /*Utils.fadeIn(binding.containerSlideToCancel, 150)
-        Utils.fadeOut(binding.containerInputPanel, 150, View.INVISIBLE)*/
-        binding.containerSlideToCancel.startAnimation(
-            AnimationUtils.loadAnimation(
-                context, R.anim.slide_in_right_input
-            )
-        )
-        binding.imageViewMic.startAnimation(
-            AnimationUtils.loadAnimation(
-                context, R.anim.intermittent
-            )
-        )
 
-        binding.containerSlideToCancel.isVisible = true
+        if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_CONNECTED_CALL){
+            Toast.makeText(context, context.getString(R.string.text_fail), Toast.LENGTH_SHORT).show()
+            onRecordReleased()
+        }else{
+
+            mListener?.onRecorderStarted()
+
+            binding.containerInputPanel.startAnimation(
+                AnimationUtils.loadAnimation(
+                    context, R.anim.slide_out_left
+                )
+            )
+            binding.containerInputPanel.isVisible = false
+
+            /*Utils.fadeIn(binding.containerSlideToCancel, 150)
+            Utils.fadeOut(binding.containerInputPanel, 150, View.INVISIBLE)*/
+            binding.containerSlideToCancel.startAnimation(
+                AnimationUtils.loadAnimation(
+                    context, R.anim.slide_in_right_input
+                )
+            )
+            binding.imageViewMic.startAnimation(
+                AnimationUtils.loadAnimation(
+                    context, R.anim.intermittent
+                )
+            )
+
+            binding.containerSlideToCancel.isVisible = true
+
+        }
     }
 
     override fun onRecordReleased() {
@@ -287,17 +300,22 @@ class InputPanelWidget(context: Context, attrs: AttributeSet) : ConstraintLayout
     }
 
     override fun onRecordLocked() {
-        mListener?.onRecorderLocked()
-        if (binding.viewSwitcherText.nextView.id == binding.textViewCancel.id) {
-            binding.viewSwitcherText.showNext()
+        if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_CONNECTED_CALL){
+            Toast.makeText(context, context.getString(R.string.text_fail), Toast.LENGTH_SHORT).show()
+            onRecordReleased()
+        }else {
+            mListener?.onRecorderLocked()
+            if (binding.viewSwitcherText.nextView.id == binding.textViewCancel.id) {
+                binding.viewSwitcherText.showNext()
+            }
+            binding.microphoneRecorderView.isVisible = false
+            /*binding.imageButtonSend.animate()
+                .alpha(1f)
+                .setDuration(150)
+                .start()*/
+            binding.imageButtonSend.isVisible = true
+            animationMove.fillAfter = false
         }
-        binding.microphoneRecorderView.isVisible = false
-        /*binding.imageButtonSend.animate()
-            .alpha(1f)
-            .setDuration(150)
-            .start()*/
-        binding.imageButtonSend.isVisible = true
-        animationMove.fillAfter = false
     }
 
     override fun onRecordMoved(offsetX: Float, absoluteX: Float) {

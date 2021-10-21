@@ -25,6 +25,7 @@ import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.adapters.toJSONObject
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
+import com.naposystems.napoleonchat.utility.extensions.show
 import com.naposystems.napoleonchat.utils.handlerMediPlayer.HandlerMediaPlayerNotification
 import com.naposystems.napoleonchat.webRTC.CustomPeerConnectionObserver
 import com.naposystems.napoleonchat.webRTC.CustomSdpObserver
@@ -413,7 +414,9 @@ class WebRTCClientImp
         localSurface: SurfaceViewRenderer?,
         remoteSurface: SurfaceViewRenderer?
     ) {
+
         if (localSurface != null) {
+            if(localSurfaceViewRenderer != null) localSurfaceViewRenderer = null
             localSurfaceViewRenderer = localSurface
             try {
                 localSurfaceViewRenderer?.apply {
@@ -425,6 +428,7 @@ class WebRTCClientImp
                 Timber.e(ex)
             }
         }
+
 
         if (remoteSurface != null) {
             remoteSurfaceViewRenderer = remoteSurface
@@ -438,29 +442,37 @@ class WebRTCClientImp
                 Timber.e(ex)
             }
         }
+
+
         startCaptureVideo()
     }
 
     override fun startCaptureVideo() {
 
         Timber.d("createLocalVideoTrack")
+        if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_NO_CALL){
 
-        videoCapturerAndroid = createCameraCapturer(Camera2Enumerator(context))
+            videoCapturerAndroid = createCameraCapturer(Camera2Enumerator(context))
 
-        mediaConstraints = MediaConstraints()
+
+            mediaConstraints = MediaConstraints()
+
+            videoCapturerAndroid?.let { videoCapturer ->
+
+                val surfaceTextureHelper: SurfaceTextureHelper =
+                    SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
+
+                localVideoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
+
+                videoCapturer.initialize(
+                    surfaceTextureHelper,
+                    context,
+                    localVideoSource?.capturerObserver
+                )
+            }
+        }
 
         videoCapturerAndroid?.let { videoCapturer ->
-
-            val surfaceTextureHelper: SurfaceTextureHelper =
-                SurfaceTextureHelper.create("SurfaceTextureHelper", eglBase.eglBaseContext)
-
-            localVideoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast)
-
-            videoCapturer.initialize(
-                surfaceTextureHelper,
-                context,
-                localVideoSource?.capturerObserver
-            )
 
             localVideoTrack =
                 peerConnectionFactory.createVideoTrack("localVideoTrack1", localVideoSource)
@@ -468,8 +480,9 @@ class WebRTCClientImp
             Timber.d("LLAMADA PASO: LOCAL MEDIA STREAM: AGREGADO REMOTE SURFACEVIEWRENDERER EN RENDERREMOTEVIDEO")
             localMediaStream?.addTrack(localVideoTrack)
             localVideoTrack?.addSink(localSurfaceViewRenderer)
+            videoCapturerAndroid?.startCapture(640, 480, 15)
+
         }
-        videoCapturerAndroid?.startCapture(640, 480, 15)
     }
 
     override fun renderRemoteVideo() {
@@ -507,7 +520,10 @@ class WebRTCClientImp
                 }
                 eventFromWebRtcClientListener?.toggleLocalRenderVisibility(visibility = true)
             }
-            isHideVideo = if (itsFromBackPressed) false else previousState
+
+            if(!itsFromBackPressed){
+                isHideVideo =  previousState
+            }
         }
     }
 
@@ -1081,11 +1097,11 @@ class WebRTCClientImp
 
         stopRingAndVibrate()
 
-        startProximitySensor()
 
         if (NapoleonApplication.callModel?.isVideoCall == false && NapoleonApplication.callModel?.typeCall == Constants.TypeCall.IS_INCOMING_CALL) {
             audioManager.isSpeakerphoneOn = false
             eventFromWebRtcClientListener?.toggleCheckedSpeaker(false)
+            startProximitySensor()
         }
 
         if ((NapoleonApplication.callModel?.isVideoCall == false && isBluetoothActive) ||

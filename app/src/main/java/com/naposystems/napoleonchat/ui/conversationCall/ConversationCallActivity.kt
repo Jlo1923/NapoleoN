@@ -158,6 +158,7 @@ class ConversationCallActivity :
         if (NapoleonApplication.callModel?.isVideoCall == true)
             initSurfaceRenders()
 
+
         if (NapoleonApplication.statusCall.isNoCall()) {
             when (NapoleonApplication.callModel?.typeCall) {
                 Constants.TypeCall.IS_INCOMING_CALL -> {
@@ -172,7 +173,8 @@ class ConversationCallActivity :
         } else {
             handlerActiveCall()
             if (NapoleonApplication.callModel?.isVideoCall == true) {
-                webRTCClient.toggleVideo(previousState = false)
+
+                webRTCClient.toggleVideo(previousState = webRTCClient.isHideVideo, false)
                 isReturnCall = false
                 try {
                     with(window) {
@@ -211,6 +213,7 @@ class ConversationCallActivity :
             binding.cameraOff.containerCameraOff.isVisible =
                 webRTCClient.contactCameraIsVisible
         }
+
         binding.imageButtonMicOff.setChecked(webRTCClient.isMicOn.not(), false)
         binding.imageButtonSpeaker.setChecked(webRTCClient.isSpeakerOn(), false)
         binding.imageButtonToggleVideo.setChecked(webRTCClient.isHideVideo, false)
@@ -283,7 +286,9 @@ class ConversationCallActivity :
 
     override fun onResume() {
         super.onResume()
-        webRTCClient.startProximitySensor()
+        if (NapoleonApplication.callModel?.isVideoCall == false){
+            webRTCClient.startProximitySensor()
+        }
     }
 
     override fun onPause() {

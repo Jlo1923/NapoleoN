@@ -158,7 +158,6 @@ class SocketClientImp
                                 GlobalScope.launch {
                                     delay(20000)
                                     if(pusher.connection.state == DISCONNECTED) {
-                                        Timber.d("elian connecting")
                                         connectSocket()
                                     }
                                 }
