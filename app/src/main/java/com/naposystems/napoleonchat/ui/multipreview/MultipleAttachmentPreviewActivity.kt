@@ -52,6 +52,8 @@ import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
+import kotlinx.android.synthetic.main.napoleon_keyboard_sticker_fragment.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -221,7 +223,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         viewBinding.apply {
 
             // TODO: this can change and improvment
-            viewPagerAttachments.offscreenPageLimit = 9
+            viewPagerAttachments.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             viewPagerAttachments.adapter = adapter
 
             TabLayoutMediator(
@@ -234,6 +236,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
                 view.selected(position == 0)
                 tab.customView = view
             }.attach()
+
 
         }
     }
