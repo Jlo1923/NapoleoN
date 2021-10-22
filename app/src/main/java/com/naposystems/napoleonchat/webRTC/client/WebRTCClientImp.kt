@@ -449,7 +449,7 @@ class WebRTCClientImp
     override fun startCaptureVideo() {
 
         Timber.d("createLocalVideoTrack")
-        if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_NO_CALL){
+        if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_NO_CALL || videoCapturerAndroid == null){
 
             videoCapturerAndroid = createCameraCapturer(Camera2Enumerator(context))
 
