@@ -70,6 +70,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     private var mListener: Listener? = null
     private var tempFile: File? = null
     private var mStatusPlayWithSensor : Boolean = false
+    private var sensorStatusLast: Int = 0
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -204,6 +205,26 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
     override fun onSensorChanged(event: SensorEvent) {
         if (event.sensor.type != Sensor.TYPE_PROXIMITY) return
+
+        val streamType: Int =
+            if (event.values[0] < 5f && event.values[0] != mProximitySensor.maximumRange) {
+                AudioManager.STREAM_VOICE_CALL
+            } else {
+                AudioManager.STREAM_MUSIC
+            }
+
+        //Optimización para dispositivos de gama baja, causan multi instancia a el sensor
+        if (sensorStatusLast == streamType) return
+        else sensorStatusLast = streamType
+
+
+        if(streamType == AudioManager.STREAM_VOICE_CALL){
+            if(wakeLock != null) wakeLock.acquire()
+            mAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+        }else{
+            mAudioManager.mode = AudioManager.MODE_NORMAL
+        }
+
         if (mediaPlayer == null || mediaPlayer?.isPlaying == false) {
             if (wakeLock.isHeld && !mStatusPlayWithSensor)
                 wakeLock.release()
@@ -214,16 +235,13 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
         Timber.d("Conver onSensorChanged: ${event.sensor.type}")
 
+
         mediaPlayer?.let { mediaPlayer ->
-            val streamType: Int =
-                if (event.values[0] < 5f && event.values[0] != mProximitySensor.maximumRange) {
-                    AudioManager.STREAM_VOICE_CALL
-                } else {
-                    AudioManager.STREAM_MUSIC
-                }
+
+            val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
 
             if (streamType == AudioManager.STREAM_VOICE_CALL && !mAudioManager.isWiredHeadsetOn) {
-                val progress = ((mediaPlayer.currentPosition * 100) / mediaPlayer.duration)
+
                 Timber.d("Conver progress: $progress")
                 if (progress > 0) {
                     wakeLock.acquire()
@@ -252,6 +270,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                     wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                 }
                 if (mediaPlayer.isPlaying && currentMessageId != mPreviousMessageId) {
+
                     mediaPlayer.playWhenReady = false
                     changeIconPlayPause(R.drawable.ic_baseline_play_circle)
                     mListener?.onPauseAudio(currentMessageId)
@@ -261,6 +280,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         RxEvent.StateFlag(Constants.StateFlag.OFF.state)
                     )
                 }
+
             }
         }
     }
@@ -303,13 +323,15 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         mListener?.onPauseAudio(currentMessageId)
 
 //                        Timber.d("*TestAudio: pause")
+                        unregisterProximityListener()
                         RxBus.publish(
                             RxEvent.StateFlag(Constants.StateFlag.OFF.state)
                         )
                     } else {
                         setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
-//                        Timber.d("*TestAudio: Play")
+                        Timber.d("*TestAudio : Play")
+
                         RxBus.publish(
                             RxEvent.StateFlag(Constants.StateFlag.ON.state)
                         )
@@ -324,6 +346,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         mHandler.postDelayed(mRunnable, 0)
                     }
                     mediaPlayer?.playWhenReady = !mediaPlayer!!.isPlaying
+                    registerProximityListener()
                 }
             } else {
 
@@ -375,8 +398,9 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         .setUsage( C.USAGE_MEDIA)
                         .build()
 
-                    audioManagerCompat.requestCallAudioFocus()
-                    mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
+                    //audioManagerCompat.requestCallAudioFocus()
+                    //mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
+
 
                     playWhenReady = true
 
@@ -485,11 +509,13 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     }
 
     override fun registerProximityListener() {
-        mSensorManager.registerListener(
-            this,
-            mProximitySensor,
-            1 * 1000 * 1000
-        )
+        if(mediaPlayer?.isPlaying == true){
+            mSensorManager.registerListener(
+                this,
+                mProximitySensor,
+                1 * 1000 * 1000
+            )
+        }
     }
 
     override fun unregisterProximityListener() {
