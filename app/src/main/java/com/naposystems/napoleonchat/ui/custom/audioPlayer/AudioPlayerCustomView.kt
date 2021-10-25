@@ -5,14 +5,17 @@ import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
+import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.CustomViewAudioPlayerBinding
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.utility.StatusCallEnum
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -135,22 +138,27 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
 
         binding.imageButtonPlay.setOnClickListener {
             if (mEnable) {
-                mediaPlayerManager?.apply {
-                    setMessageId(mMessageId)
-                    setImageButtonPlay(binding.imageButtonPlay)
-                    setSeekbar(binding.seekbar)
-                    setImageButtonSpeed(binding.imageButtonSpeed)
-                    setTextViewDuration(binding.textViewDuration)
+                if(NapoleonApplication.statusCall == StatusCallEnum.STATUS_CONNECTED_CALL){
+                    Toast.makeText(context, context.getString(R.string.text_error_playing_audio), Toast.LENGTH_SHORT).show()
+                }else {
+                    mediaPlayerManager?.apply {
 
-                    if (mIsEncryptedFile) {
-                        isEncryptedFile(BuildConfig.ENCRYPT_API)
-                        setAudioFileName(mEncryptedFileName)
-                    } else {
-                        isEncryptedFile(false)
-                        setAudioUri(mAudioFileUri)
+                        setMessageId(mMessageId)
+                        setImageButtonPlay(binding.imageButtonPlay)
+                        setSeekbar(binding.seekbar)
+                        setImageButtonSpeed(binding.imageButtonSpeed)
+                        setTextViewDuration(binding.textViewDuration)
+
+                        if (mIsEncryptedFile) {
+                            isEncryptedFile(BuildConfig.ENCRYPT_API)
+                            setAudioFileName(mEncryptedFileName)
+                        } else {
+                            isEncryptedFile(false)
+                            setAudioUri(mAudioFileUri)
+                        }
+
+                        playAudio()
                     }
-
-                    playAudio()
                 }
             }
         }
@@ -270,6 +278,7 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun onPauseAudio(messageId: Int, webId: String) {
+        mediaPlayerManager?.unregisterProximityListener()
         this.mListener?.onPause(messageId, webId)
     }
 
