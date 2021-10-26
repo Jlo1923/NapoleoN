@@ -23,10 +23,11 @@
         android:layout_marginEnd="@dimen/normal_margin"
         android:padding="@dimen/x_small_padding"
         android:text="12:12"
+        android:layout_marginStart="@dimen/small_margin"
+        android:layout_marginTop="@dimen/xx_large_margin"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/frame_status"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/frame_status"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
     <FrameLayout

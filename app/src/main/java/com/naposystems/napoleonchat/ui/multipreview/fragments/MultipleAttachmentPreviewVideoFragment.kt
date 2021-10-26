@@ -220,7 +220,7 @@ class MultipleAttachmentPreviewVideoFragment(
         frameStatus.show()
         imageViewStatus.setImageDrawable(root.context.getDrawable(R.drawable.ic_message_unread))
         if (file.messageAndAttachment?.isMine == 0) {
-            //hideViews(imageViewStatus, frameStatus)
+            hideViews(imageViewStatus, frameStatus)
         }
         configTimer(attachmentEntity)
     }
