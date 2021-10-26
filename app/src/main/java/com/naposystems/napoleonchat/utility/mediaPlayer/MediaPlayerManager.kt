@@ -308,7 +308,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     }
 
     override fun playAudio(progress: Int, isEarpiece: Boolean) {
-
         try {
 
             mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
@@ -322,11 +321,11 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         mHandler.removeCallbacks(mRunnable)
                         mListener?.onPauseAudio(currentMessageId)
 
-//                        Timber.d("*TestAudio: pause")
-                        unregisterProximityListener()
+                        Timber.e("*TestAudio: pause")
                         RxBus.publish(
                             RxEvent.StateFlag(Constants.StateFlag.OFF.state)
                         )
+                        unregisterProximityListener()
                     } else {
                         setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
@@ -368,8 +367,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
                 with(mediaPlayer!!) {
 
-                    if (!mIsBluetoothConnected)
-                        registerProximityListener()
+
 
                     val playbackParameters = PlaybackParameters(mSpeed)
                     mediaPlayer?.playbackParameters = playbackParameters
@@ -398,8 +396,8 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         .setUsage( C.USAGE_MEDIA)
                         .build()
 
-                    //audioManagerCompat.requestCallAudioFocus()
-                    //mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
+                    audioManagerCompat.requestCallAudioFocus()
+                    mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
 
 
                     playWhenReady = true
@@ -412,7 +410,11 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                             playWhenReady: Boolean,
                             playbackState: Int
                         ) {
-                            Timber.d("Conver onPlayerStateChanged: $playWhenReady, $playbackState")
+                            Timber.e("Conver onPlayerStateChanged: $playWhenReady, $playbackState")
+
+                            if(playWhenReady == false){
+                                unregisterProximityListener()
+                            }
 
                             when (playbackState) {
                                 Player.STATE_READY -> {
@@ -450,7 +452,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                                     }
                                     mHandler.postDelayed(mRunnable, 0)
                                     changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
-                                    setupVoiceNoteSound(R.raw.tone_audio_message_start)
+                                    if(!isEarpiece) setupVoiceNoteSound(R.raw.tone_audio_message_start)
                                     Timber.d("*TestAudio: Play Media Player")
                                     RxBus.publish(
                                         RxEvent.StateFlag(Constants.StateFlag.ON.state)
@@ -461,7 +463,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                                     mStatusPlayWithSensor = true
                                     Timber.i("Conver onComplete")
                                     mSeekBar?.progress = 0
-                                    mSensorManager.unregisterListener(this@MediaPlayerManager)
+                                    unregisterProximityListener()
                                     if (wakeLock.isHeld && !isProximitySensorActive) {
                                         wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                                     }
@@ -482,7 +484,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
 
                             mStatusPlayWithSensor = false
 
-                            mSensorManager.unregisterListener(this@MediaPlayerManager)
+                            unregisterProximityListener()
                             if (wakeLock.isHeld) {
                                 wakeLock.release(PowerManager.RELEASE_FLAG_WAIT_FOR_NO_PROXIMITY)
                             }
@@ -509,7 +511,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     }
 
     override fun registerProximityListener() {
-        if(mediaPlayer?.isPlaying == true){
+        if(mediaPlayer?.isPlaying == true && isProximitySensorActive == false){
             mSensorManager.registerListener(
                 this,
                 mProximitySensor,
