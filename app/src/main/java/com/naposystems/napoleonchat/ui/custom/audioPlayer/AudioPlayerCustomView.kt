@@ -142,7 +142,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                     Toast.makeText(context, context.getString(R.string.text_error_playing_audio), Toast.LENGTH_SHORT).show()
                 }else {
                     mediaPlayerManager?.apply {
-
                         setMessageId(mMessageId)
                         setImageButtonPlay(binding.imageButtonPlay)
                         setSeekbar(binding.seekbar)
@@ -156,7 +155,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                             isEncryptedFile(false)
                             setAudioUri(mAudioFileUri)
                         }
-
                         playAudio()
                     }
                 }
@@ -278,7 +276,6 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
     }
 
     override fun onPauseAudio(messageId: Int, webId: String) {
-        mediaPlayerManager?.unregisterProximityListener()
         this.mListener?.onPause(messageId, webId)
     }
 
