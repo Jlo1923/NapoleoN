@@ -478,8 +478,7 @@ open class ConversationViewHolder constructor(
         imageButtonSend?.setSafeOnClickListener {
             if (item.messageEntity.status == Constants.MessageStatus.ERROR.status) {
                 imageButtonSend?.isEnabled = false
-                
-                //clickListener.reSendMessage(item.messageEntity)
+                clickListener.reSendMessage(item.messageEntity)
             }
         }
     }
