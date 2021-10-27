@@ -466,10 +466,20 @@ open class ConversationViewHolder constructor(
             imageButtonShow?.visibility = View.GONE
         }
 
+
+        //re-send messages pending
+        if(item.messageEntity.status == Constants.MessageStatus.SENDING.status
+            && item.messageEntity.webId.isNullOrEmpty() == true
+            && item.messageEntity.body.isNullOrEmpty() == false){
+
+            clickListener.reSendMessage(item.messageEntity)
+        }
+
         imageButtonSend?.setSafeOnClickListener {
             if (item.messageEntity.status == Constants.MessageStatus.ERROR.status) {
                 imageButtonSend?.isEnabled = false
-                clickListener.reSendMessage(item.messageEntity)
+                
+                //clickListener.reSendMessage(item.messageEntity)
             }
         }
     }
