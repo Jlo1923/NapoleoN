@@ -228,6 +228,7 @@ class ConversationFragment
     private var menuCreated: Boolean = false
     private var showShowCase: Boolean = false
     private var isSelectedMessage = false
+    private var isValidMessagesPending = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -1101,6 +1102,25 @@ class ConversationFragment
             viewLifecycleOwner,
             Observer { conversationList ->
                 if (conversationList.isNotEmpty()) {
+
+                    if(isValidMessagesPending == false){
+                        isValidMessagesPending = true
+                        //Poner en estado fallido mensajes que no se enviaron cuando se cerro la app
+
+                        conversationList.forEach {
+                            if (it.messageEntity.status == Constants.MessageStatus.SENDING.status
+                                && it.messageEntity.webId.isNullOrEmpty() == true
+                                && it.messageEntity.body.isNullOrEmpty() == false){
+
+                                var messageEntity = it.messageEntity
+                                messageEntity.status = Constants.MessageStatus.ERROR.status
+                                conversationViewModel.updateMessage(messageEntity)
+
+                            }
+                        }
+
+                    }
+
                     conversationAdapter.submitList(conversationList) {
                         if (enterConversation) {
                             validScroll(conversationList, conversationAdapter.itemCount)
