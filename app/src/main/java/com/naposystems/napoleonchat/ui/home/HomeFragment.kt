@@ -590,7 +590,8 @@ class HomeFragment : BaseFragment() {
             }
             R.id.search_all -> {
                 findNavController().navigate(
-                    HomeFragmentDirections.actionAllSearch()
+                    HomeFragmentDirections.actionAllSearch(
+                        location = Constants.LocationAddContact.HOME.location)
                 )
                 true
             }
