@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.naposystems.napoleonchat.source.local.DBConstants
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
+import com.naposystems.napoleonchat.utility.Constants
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -78,7 +79,8 @@ interface AttachmentDao {
                 "SET ${DBConstants.Attachment.COLUMN_STATUS} = :status, " +
                 "${DBConstants.Attachment.COLUMN_UPDATED_AT} = :updateAttachmentStatus, " +
                 "${DBConstants.Attachment.COLUMN_TOTAL_SELF_DESTRUCTION_AT} = :totalSelfDestructTime " +
-                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} = :webId"
+                "WHERE ${DBConstants.Attachment.COLUMN_WEB_ID} = :webId " +
+                "AND ${DBConstants.Attachment.COLUMN_STATUS} != 11"
     )
     fun updateAttachmentStatus(
         webId: String,

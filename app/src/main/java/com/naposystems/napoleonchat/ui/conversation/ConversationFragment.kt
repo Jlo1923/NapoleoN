@@ -50,6 +50,13 @@ import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.databinding.ConversationActionBarBinding
 import com.naposystems.napoleonchat.databinding.ConversationFragmentBinding
+import com.naposystems.napoleonchat.dialog.deletionMesssages.DeletionMessagesDialogFragment
+import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
+import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
+import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.model.CallModel
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
@@ -74,18 +81,11 @@ import com.naposystems.napoleonchat.ui.conversation.adapter.viewholder.multi.vie
 import com.naposystems.napoleonchat.ui.conversation.model.ItemMessage
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelWidget
-import com.naposystems.napoleonchat.dialog.deletionMesssages.DeletionMessagesDialogFragment
-import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
-import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.ui.multi.MultipleAttachmentActivity
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.MultipleAttachmentPreviewActivity
-import com.naposystems.napoleonchat.dialog.muteConversation.MuteConversationDialogFragment
 import com.naposystems.napoleonchat.ui.napoleonKeyboard.NapoleonKeyboard
-import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
-import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
-import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogViewModel
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.Utils.Companion.showToast
@@ -117,6 +117,7 @@ import java.io.InputStream
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class ConversationFragment
     : BaseFragment(),
@@ -227,6 +228,7 @@ class ConversationFragment
     private var menuCreated: Boolean = false
     private var showShowCase: Boolean = false
     private var isSelectedMessage = false
+    private var isValidMessagesPending = false
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -817,33 +819,35 @@ class ConversationFragment
 
         observeResponseDeleteLocalMessages()
 
-        conversationViewModel.contactCalledSuccessfully.observe(viewLifecycleOwner, Observer { channel ->
-            if (!channel.isNullOrEmpty()) {
-                Timber.d("startCallActivity contactCalledSuccessfully")
+        conversationViewModel.contactCalledSuccessfully.observe(
+            viewLifecycleOwner,
+            Observer { channel ->
+                if (!channel.isNullOrEmpty()) {
+                    Timber.d("startCallActivity contactCalledSuccessfully")
 
-                NapoleonApplication.callModel = CallModel(
-                    contactId = args.contact.id,
-                    channelName = channel,
-                    isVideoCall = conversationViewModel.isVideoCall(),
-                    typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
-                    mustSubscribeToPresenceChannel = true
-                )
+                    NapoleonApplication.callModel = CallModel(
+                        contactId = args.contact.id,
+                        channelName = channel,
+                        isVideoCall = conversationViewModel.isVideoCall(),
+                        typeCall = Constants.TypeCall.IS_OUTGOING_CALL,
+                        mustSubscribeToPresenceChannel = true
+                    )
 
-                val intent = Intent(context, ConversationCallActivity::class.java)
-                startActivity(intent)
-                (context as MainActivity).overridePendingTransition(
-                    R.anim.slide_in_up,
-                    R.anim.slide_out_down
-                )
-                conversationViewModel.resetContactCalledSuccessfully()
-                conversationViewModel.resetIsVideoCall()
-                binding.buttonCall.isEnabled = true
-                binding.buttonVideoCall.isEnabled = true
-            } else {
-                binding.buttonCall.isEnabled = true
-                binding.buttonVideoCall.isEnabled = true
-            }
-        })
+                    val intent = Intent(context, ConversationCallActivity::class.java)
+                    startActivity(intent)
+                    (context as MainActivity).overridePendingTransition(
+                        R.anim.slide_in_up,
+                        R.anim.slide_out_down
+                    )
+                    conversationViewModel.resetContactCalledSuccessfully()
+                    conversationViewModel.resetIsVideoCall()
+                    binding.buttonCall.isEnabled = true
+                    binding.buttonVideoCall.isEnabled = true
+                } else {
+                    binding.buttonCall.isEnabled = true
+                    binding.buttonVideoCall.isEnabled = true
+                }
+            })
 
         conversationViewModel.downloadAttachmentProgress.observe(viewLifecycleOwner, Observer {
             binding.recyclerViewConversation.post {
@@ -1094,21 +1098,42 @@ class ConversationFragment
     }
 
     private fun observeMessageMessages() {
-        conversationViewModel.messageMessagesRelation.observe(viewLifecycleOwner, Observer { conversationList ->
-            if (conversationList.isNotEmpty()) {
-                conversationAdapter.submitList(conversationList) {
-                    if (enterConversation) {
-                        validScroll(conversationList, conversationAdapter.itemCount)
-                    } else {
-                        binding.recyclerViewConversation.scrollToPosition(conversationAdapter.itemCount - 1)
-                        enterConversation = true
+        conversationViewModel.messageMessagesRelation.observe(
+            viewLifecycleOwner,
+            Observer { conversationList ->
+                if (conversationList.isNotEmpty()) {
+
+                    if(isValidMessagesPending == false){
+                        isValidMessagesPending = true
+                        //Poner en estado fallido mensajes que no se enviaron cuando se cerro la app
+
+                        conversationList.forEach {
+                            if (it.messageEntity.status == Constants.MessageStatus.SENDING.status
+                                && it.messageEntity.webId.isNullOrEmpty() == true
+                                && it.messageEntity.body.isNullOrEmpty() == false){
+
+                                var messageEntity = it.messageEntity
+                                messageEntity.status = Constants.MessageStatus.ERROR.status
+                                conversationViewModel.updateMessage(messageEntity)
+
+                            }
+                        }
+
                     }
-                }
-                //conversationAdapter.notifyDataSetChanged()
+
+                    conversationAdapter.submitList(conversationList) {
+                        if (enterConversation) {
+                            validScroll(conversationList, conversationAdapter.itemCount)
+                        } else {
+                            binding.recyclerViewConversation.scrollToPosition(conversationAdapter.itemCount - 1)
+                            enterConversation = true
+                        }
+                    }
+                    //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
-                conversationViewModel.sendTextMessagesRead()
-            } else conversationAdapter.submitList(conversationList)
-        })
+                    conversationViewModel.sendTextMessagesRead()
+                } else conversationAdapter.submitList(conversationList)
+            })
     }
 
     @OptIn(InternalCoroutinesApi::class)
@@ -1758,26 +1783,44 @@ class ConversationFragment
                 clickTopButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            conversationViewModel.deleteMessagesSelected(args.contact.id, messagesSelected)
+                            conversationViewModel.deleteMessagesSelected(
+                                args.contact.id,
+                                messagesSelected
+                            )
                         }
                         Constants.DeleteMessages.BY_UNREADS.option -> {
-                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(
+                                args.contact.id,
+                                status
+                            )
                         }
                         Constants.DeleteMessages.BY_UNRECEIVED.option -> {
-                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(
+                                args.contact.id,
+                                status
+                            )
                         }
                     }
                 },
                 clickDownButton = { _ ->
                     when (status) {
                         Constants.DeleteMessages.BY_SELECTION.option -> {
-                            conversationViewModel.deleteMessagesForAll(args.contact.id, messagesSelected)
+                            conversationViewModel.deleteMessagesForAll(
+                                args.contact.id,
+                                messagesSelected
+                            )
                         }
                         Constants.DeleteMessages.BY_UNREADS.option -> {
-                            conversationViewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForAll(
+                                args.contact.id,
+                                status
+                            )
                         }
                         Constants.DeleteMessages.BY_UNRECEIVED.option -> {
-                            conversationViewModel.deleteMessagesByStatusForAll(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForAll(
+                                args.contact.id,
+                                status
+                            )
                         }
                     }
                 }
@@ -1803,7 +1846,10 @@ class ConversationFragment
                             )
                         }
                         Constants.DeleteMessages.BY_FAILED.option -> {
-                            conversationViewModel.deleteMessagesByStatusForMe(args.contact.id, status)
+                            conversationViewModel.deleteMessagesByStatusForMe(
+                                args.contact.id,
+                                status
+                            )
                         }
                     }
                 }, clickNegativeButton = {}
@@ -2268,7 +2314,11 @@ class ConversationFragment
         attachmentEntity: AttachmentEntity,
         messageEntity: MessageEntity
     ) {
-        conversationViewModel.uploadAttachment(attachmentEntity, messageEntity, obtainTimeSelfDestruct())
+        conversationViewModel.uploadAttachment(
+            attachmentEntity,
+            messageEntity,
+            obtainTimeSelfDestruct()
+        )
     }
 
     override fun updateAttachmentState(attachmentEntity: AttachmentEntity) {
@@ -2360,6 +2410,13 @@ class ConversationFragment
         val intent = Intent(requireContext(), MultipleAttachmentPreviewActivity::class.java)
         intent.putExtras(Bundle().apply {
             putParcelable(MULTI_EXTRA_CONTACT, args.contact)
+            putParcelable(MULTI_EXTRA_ENTITY, action.messageEntity)
+            action.attachments?.let {
+                putParcelableArrayList(
+                    MULTI_EXTRA_ATTACHMENTS,
+                    ArrayList(it)
+                )
+            }
             putParcelableArrayList(MULTI_EXTRA_FILES, ArrayList(action.listElements))
             putInt(MULTI_SELECTED, action.index)
             action.message?.let { putString(MESSAGE_TEXT, it) }

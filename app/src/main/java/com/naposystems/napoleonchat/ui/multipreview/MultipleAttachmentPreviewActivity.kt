@@ -3,14 +3,21 @@ package com.naposystems.napoleonchat.ui.multipreview
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ActivityMultipleAttachmentPreviewBinding
+import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
+import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
+import com.naposystems.napoleonchat.source.local.entity.MessageEntity
+import com.naposystems.napoleonchat.ui.conversation.ConversationViewModel
 import com.naposystems.napoleonchat.ui.multi.model.MultipleAttachmentFileItem
 import com.naposystems.napoleonchat.ui.multipreview.adapters.MultipleAttachmentFragmentAdapter
 import com.naposystems.napoleonchat.ui.multipreview.events.MultipleAttachmentPreviewAction
@@ -31,8 +38,7 @@ import com.naposystems.napoleonchat.ui.multipreview.model.MultipleAttachmentRemo
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewItemViewModel
 import com.naposystems.napoleonchat.ui.multipreview.viewmodels.MultipleAttachmentPreviewViewModel
 import com.naposystems.napoleonchat.ui.multipreview.views.ViewMultipleAttachmentTabView
-import com.naposystems.napoleonchat.dialog.selfDestructTime.Location
-import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDialogFragment
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.anims.animHideSlideDown
 import com.naposystems.napoleonchat.utility.anims.animHideSlideUp
 import com.naposystems.napoleonchat.utility.anims.animShowSlideDown
@@ -46,6 +52,8 @@ import com.naposystems.napoleonchat.utility.extras.*
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.fragment_multiple_attachment_remove_attachment_dialog.view.*
+import kotlinx.android.synthetic.main.napoleon_keyboard_sticker_fragment.*
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
@@ -55,9 +63,13 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     MultipleAttachmentPreviewListener,
     MultipleAttachmentRemoveListener {
 
+    private var currentPosition: Int = 0
+
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
+    private val conversationViewModel: ConversationViewModel by viewModels {
+        viewModelFactory
+    }
     private lateinit var viewModel: MultipleAttachmentPreviewViewModel
     private lateinit var viewModelItem: MultipleAttachmentPreviewItemViewModel
     private lateinit var viewBinding: ActivityMultipleAttachmentPreviewBinding
@@ -111,6 +123,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             ViewAttachmentOptionEvent.OnDelete -> onDeleteItem()
         }
     }
+
     override fun onRemoveAttachment(event: MultipleAttachmentRemoveEvent) {
         when (event) {
             MultipleAttachmentRemoveEvent.OnRemoveForAll -> removeAttachmentForAll(event)
@@ -192,6 +205,7 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
     override fun unBlockPager() {
         viewBinding.viewPagerAttachments.isUserInputEnabled = true
     }
+
     private fun extractSelectedIndex() = intent.extras?.let { bundle ->
         if (bundle.containsKey(MULTI_SELECTED)) {
             val index = bundle.getInt(MULTI_SELECTED)
@@ -209,19 +223,20 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         viewBinding.apply {
 
             // TODO: this can change and improvment
-            viewPagerAttachments.offscreenPageLimit = 9
+            viewPagerAttachments.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
             viewPagerAttachments.adapter = adapter
 
             TabLayoutMediator(
                 viewPreviewBottom.getTabLayout(),
                 viewPagerAttachments,
-                false,false
+                false, false
             ) { tab, position ->
                 val view = ViewMultipleAttachmentTabView(viewBinding.root.context)
                 view.bindFile(it[position])
                 view.selected(position == 0)
                 tab.customView = view
             }.attach()
+
 
         }
     }
@@ -314,7 +329,12 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
             is ExitAndSendDeleteFiles -> exitPreviewAndSendDeleteFiles(action.listFilesForRemoveInCreate)
             is OnChangeSelfDestruction -> onChangeSelfDestruction(action)
             is ExitToConversationAndSendData -> exitToConversationAndSendData(action)
+            is ShowUpload -> showOrHideUploadIcon(action.shouldShowUpload)
         }
+    }
+
+    private fun showOrHideUploadIcon(shouldShow: Boolean) {
+        viewBinding.imageButtonState.isVisible = shouldShow
     }
 
     private fun exitToConversationAndSendData(action: ExitToConversationAndSendData) {
@@ -466,7 +486,9 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
+                    currentPosition = position
                     viewModel.loadSelfDestructionTimeByIndex(position)
+                    viewModel.validateShouldShowUpload(position)
                     if (position == 0) {
                         if (mustRejectMarkAsReadTheFirstAttachment.not()) {
                             viewModel.validateMustAttachmentMarkAsReaded(position)
@@ -487,6 +509,18 @@ class MultipleAttachmentPreviewActivity : AppCompatActivity(),
         viewAttachmentOptions.defineListener(this@MultipleAttachmentPreviewActivity)
         viewPreviewBottom.setOnClickListenerButton {
             viewModel.saveMessageAndAttachments(viewPreviewBottom.getTextInEdit())
+        }
+        imageButtonState.setOnClickListener {
+           /* if (Utils.isInternetAvailable(viewBinding.root.context)) {
+               intent.extras?.getParcelableArrayList<AttachmentEntity?>(MULTI_EXTRA_ATTACHMENTS)?.let {  attachments ->
+                   intent.extras?.getParcelable<MessageEntity>(MULTI_EXTRA_ENTITY) ?.let {entity ->
+                       conversationViewModel.sendMessageToRemote(entity, listOf(attachments.get(currentPosition)))
+                   }
+                }
+
+            } else {
+                //showNotInternetMessage()
+            }*/
         }
     }
 

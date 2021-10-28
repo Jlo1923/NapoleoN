@@ -1,7 +1,6 @@
 package com.naposystems.napoleonchat.ui.multi.model
 
 import android.net.Uri
-import android.os.Parcel
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 

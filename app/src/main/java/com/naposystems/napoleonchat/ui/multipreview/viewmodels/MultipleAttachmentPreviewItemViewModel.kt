@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.ui.multipreview.viewmodels
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.naposystems.napoleonchat.source.local.entity.AttachmentEntity
 import com.naposystems.napoleonchat.ui.multipreview.contract.IContractMultipleAttachmentItemPreview
 import javax.inject.Inject

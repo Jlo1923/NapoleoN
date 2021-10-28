@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.naposystems.napoleonchat.databinding.FragmentMultipleAttachmentExitDialogBinding
-import com.naposystems.napoleonchat.ui.multipreview.listeners.events.MultipleAttachmentRemoveEvent
 
 class MultipleAttachmentExitBottomSheetDialogFragment(
     val functionInAccept: () -> Unit

@@ -69,4 +69,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progress_loader" />
 
+    <!-- BUTTON ATTACHMENT STATE -->
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/imageButton_state"
+        style="@style/ButtonState"
+        android:layout_margin="@dimen/normal_margin"
+        android:src="@drawable/ic_file_upload_black"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/view_preview_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <ProgressBar
+        android:id="@+id/progressBar_indeterminate"
+        style="@style/ProgressIndeterminate"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/imageButton_state"
+        app:layout_constraintEnd_toEndOf="@id/imageButton_state"
+        app:layout_constraintStart_toStartOf="@id/imageButton_state"
+        app:layout_constraintTop_toTopOf="@id/imageButton_state"
+        tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

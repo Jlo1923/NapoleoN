@@ -2,10 +2,18 @@ package com.naposystems.napoleonchat.service.socketClient
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.util.Log
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.app.NapoleonApplication
 import com.naposystems.napoleonchat.crypto.message.CryptoMessage
+import com.naposystems.napoleonchat.di.module.general.PusherModule
+import com.naposystems.napoleonchat.di.module.workmanager.WorkManagerModule
+import com.naposystems.napoleonchat.model.Theme
 import com.naposystems.napoleonchat.model.extractIdsAttachments
 import com.naposystems.napoleonchat.model.extractIdsMessages
 import com.naposystems.napoleonchat.model.toMessagesReqDTO
@@ -31,6 +39,7 @@ import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessage
 import com.naposystems.napoleonchat.source.remote.dto.newMessageEvent.NewMessageEventRes
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessage
 import com.naposystems.napoleonchat.source.remote.dto.validateMessageEvent.ValidateMessageEventDTO
+import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.Constants
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus
 import com.naposystems.napoleonchat.utility.Constants.AttachmentStatus.READED
@@ -38,6 +47,7 @@ import com.naposystems.napoleonchat.utility.Constants.MessageStatus.UNREAD
 import com.naposystems.napoleonchat.utility.Constants.SocketChannelStatus.SOCKET_CHANNEL_STATUS_CONNECTED
 import com.naposystems.napoleonchat.utility.Constants.StatusMustBe.RECEIVED
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.adapters.toIceCandidate
 import com.naposystems.napoleonchat.utility.adapters.toSessionDescription
 import com.naposystems.napoleonchat.utility.isNoCall
@@ -47,21 +57,26 @@ import com.pusher.client.channel.*
 import com.pusher.client.connection.ConnectionEventListener
 import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionState.CONNECTED
+import com.pusher.client.connection.ConnectionState.DISCONNECTED
 import com.pusher.client.connection.ConnectionStateChange
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.socket.client.On
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import org.webrtc.SessionDescription
 import timber.log.Timber
+import java.sql.Time
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SocketClientImp
 @Inject constructor(
     private val context: Context,
-    private val pusher: Pusher,
+    private var pusher: Pusher,
     private val sharedPreferencesManager: SharedPreferencesManager,
     private val syncManager: SyncManager,
     private val napoleonApi: NapoleonApi,
@@ -69,7 +84,7 @@ class SocketClientImp
     private val messageLocalDataSource: MessageLocalDataSource,
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val contactLocalDataSource: ContactLocalDataSource,
-    private val quoteLocalDataSource: QuoteLocalDataSource
+    private val quoteLocalDataSource: QuoteLocalDataSource,
 ) : SocketClient, GetMessagesSocketListener {
 
     private val moshi: Moshi by lazy { Moshi.Builder().build() }
@@ -127,6 +142,7 @@ class SocketClientImp
             privateGeneralChannelName =
                 Constants.SocketChannelName.PRIVATE_GENERAL_CHANNEL_NAME.channelName + userId
 
+
             if (pusher.connection.state == ConnectionState.DISCONNECTED ||
                 pusher.connection.state == ConnectionState.DISCONNECTING
             ) {
@@ -137,6 +153,15 @@ class SocketClientImp
                             CONNECTED -> {
                                 Timber.d("LLAMADA PASO 4: CONEXION AL SOCKET EXITOSA")
                                 handlerStateConnectedSocket()
+                            }
+                            DISCONNECTED ->{
+                                GlobalScope.launch {
+                                    delay(20000)
+                                    if(pusher.connection.state == DISCONNECTED) {
+                                        connectSocket()
+                                    }
+                                }
+
                             }
                             else -> {
                                 Timber.e("LLAMADA PASO 4: ConnectionStateChange Unhandling ${connectionStateChange?.currentState}")
@@ -152,12 +177,17 @@ class SocketClientImp
                         Timber.d("LLAMADA PASO: CONECTAR A SOCKET onError message: $message, code: $code, e: ${e?.localizedMessage}")
                     }
                 })
+
+
+
             } else if (pusher.connection.state == CONNECTED) {
                 Timber.d("LLAMADA PASO 4: SOCKET PREVIAMENTE CONECTADO")
                 handlerStateConnectedSocket()
             }
         }
     }
+
+
 
     override suspend fun subscribeToPresenceChannel() {
 
@@ -456,6 +486,14 @@ class SocketClientImp
 
     override fun isConnected(): Boolean =
         getStatusSocket() == CONNECTED && getStatusGlobalChannel() == SOCKET_CHANNEL_STATUS_CONNECTED.status
+
+    override fun setNewPusher(token: String) {
+        pusher = Pusher(BuildConfig.PUSHER_KEY, PusherModule.providePusherOptionsCreate(sharedPreferencesManager))
+        GlobalScope.launch{
+            pusher.disconnect()
+            connectSocket()
+        }
+    }
 
     //endregion
 
