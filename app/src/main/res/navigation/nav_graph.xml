@@ -40,7 +40,7 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
+            app:destination="@id/search_all_fragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
         <action
@@ -125,7 +125,7 @@
             app:argType="boolean" />
         <action
             android:id="@+id/action_accessPinFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
+            app:destination="@id/search_all_fragment"
             app:popUpTo="@+id/nav_graph"
             app:popUpToInclusive="true" />
     </fragment>
@@ -505,8 +505,64 @@
     <fragment
         android:id="@+id/search_all_fragment"
         android:name="com.naposystems.napoleonchat.ui.home.TabsPagerFragment"
-        android:label="NapoleóN"
+        android:label="NapoleoN"
         tools:layout="@layout/fragment_tabs_pager">
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_securitySettingsFragment"
+            app:destination="@id/securitySettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_appearanceSettingsFragment"
+            app:destination="@id/appearanceSettingsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_inviteSomeoneFragment"
+            app:destination="@id/inviteSomeoneFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_helpFragment"
+            app:destination="@id/helpFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_contactsFragment"
+            app:destination="@id/contactsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_addContactFragment"
+            app:destination="@id/addContactFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_subscriptionFragment"
+            app:destination="@id/subscriptionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
         <action
             android:id="@+id/action_contactsFragment_to_addContactFragment"
             app:destination="@id/addContactFragment"
@@ -527,7 +583,7 @@
         tools:layout="@layout/enter_pin_fragment">
         <action
             android:id="@+id/action_enterPinFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
+            app:destination="@id/search_all_fragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"

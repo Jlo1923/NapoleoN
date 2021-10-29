@@ -49,7 +49,7 @@ class TabsPagerFragment : Fragment() {
             inflater, R.layout.fragment_tabs_pager, container, false
         )
         binding.root.tab_layout.setSelectedTabIndicatorColor(Color.WHITE)
-        binding.root.tab_layout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark))
+        binding.root.tab_layout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorPrimary))
         binding.root.tab_layout.tabTextColors = ContextCompat.getColorStateList(requireContext(), android.R.color.white)
 
         val numberOfTabs = 3
@@ -66,17 +66,17 @@ class TabsPagerFragment : Fragment() {
         TabLayoutMediator(binding.root.tab_layout, binding.root.tabs_viewpager) { tab, position ->
             when (position) {
                 0 -> {
-                    tab.text = "Chats"
-                    tab.setIcon(R.drawable.ic_contacts)
+                    //tab.text = "Chats"
+                    tab.setIcon(R.drawable.ic_chat)
                 }
                 1 -> {
-                    tab.text = "Contactos"
-                    tab.setIcon(R.drawable.ic_person_add)
+                   // tab.text = "Contactos"
+                    tab.setIcon(R.drawable.ic_contacts)
 
                 }
                 2 -> {
-                    tab.text = "Grupos"
-                    tab.setIcon(R.drawable.ic_search_all)
+                  //  tab.text = "Grupos"
+                    tab.setIcon(R.drawable.ic_groups)
 
                 }
 

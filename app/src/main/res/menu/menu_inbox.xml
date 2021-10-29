@@ -11,8 +11,9 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/search_all"
-        android:icon="@drawable/ic_person_add_white"
+        android:icon="@drawable/ic_bell"
         android:title="@string/text_add_contact"
+        android:visible="false"
         app:actionLayout="@layout/search_all"
         app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="always" />
