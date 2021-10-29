@@ -26,6 +26,7 @@ import com.naposystems.napoleonchat.ui.custom.audioPlayer.AudioPlayerCustomView
 import com.naposystems.napoleonchat.ui.custom.circleProgressBar.CircleProgressBar
 import com.naposystems.napoleonchat.ui.custom.inputPanel.InputPanelQuote
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.mediaPlayer.MediaPlayerManager
@@ -476,24 +477,34 @@ open class ConversationViewHolder constructor(
 
     private fun showDestructionTime(messageAndAttachmentRelation: MessageAttachmentRelation) {
         val message = messageAndAttachmentRelation.messageEntity
-        val stringId = when (message.selfDestructionAt) {
-            Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
-            Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
-            Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time -> R.string.text_every_thirty_seconds
-            Constants.SelfDestructTime.EVERY_ONE_MINUTE.time -> R.string.text_every_one_minute
-            Constants.SelfDestructTime.EVERY_TEN_MINUTES.time -> R.string.text_every_ten_minutes
-            Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time -> R.string.text_every_thirty_minutes
-            Constants.SelfDestructTime.EVERY_ONE_HOUR.time -> R.string.text_every_one_hour
-            Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
-            Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
-            Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
-            Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time -> R.string.text_every_twenty_four_hours
-            else -> -1
+
+        val sharedPreferencesManager: SharedPreferencesManager = SharedPreferencesManager(context)
+        val selfDestructionTime = sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_SELF_DESTRUCT_TIME)
+
+        if(message.status != Constants.MessageStatus.SENDING.status){
+            val stringId = when (message.selfDestructionAt) {
+                Constants.SelfDestructTime.EVERY_FIVE_SECONDS.time -> R.string.text_every_five_seconds
+                Constants.SelfDestructTime.EVERY_FIFTEEN_SECONDS.time -> R.string.text_every_fifteen_seconds
+                Constants.SelfDestructTime.EVERY_THIRTY_SECONDS.time -> R.string.text_every_thirty_seconds
+                Constants.SelfDestructTime.EVERY_ONE_MINUTE.time -> R.string.text_every_one_minute
+                Constants.SelfDestructTime.EVERY_TEN_MINUTES.time -> R.string.text_every_ten_minutes
+                Constants.SelfDestructTime.EVERY_THIRTY_MINUTES.time -> R.string.text_every_thirty_minutes
+                Constants.SelfDestructTime.EVERY_ONE_HOUR.time -> R.string.text_every_one_hour
+                Constants.SelfDestructTime.EVERY_TWELVE_HOURS.time -> R.string.text_every_twelve_hours
+                Constants.SelfDestructTime.EVERY_ONE_DAY.time -> R.string.text_every_one_day
+                Constants.SelfDestructTime.EVERY_SEVEN_DAY.time -> R.string.text_every_seven_days
+                Constants.SelfDestructTime.EVERY_TWENTY_FOUR_HOURS_ERROR.time -> R.string.text_every_twenty_four_hours
+                else -> -1
+            }
+            if (stringId != -1) {
+                textViewCountDown?.visibility = View.VISIBLE
+                textViewCountDown?.text = context.resources.getString(stringId)
+            }
+        }else{
+            textViewCountDown?.visibility = View.INVISIBLE
+            textViewCountDown?.text = ""
         }
-        if (stringId != -1) {
-            textViewCountDown?.visibility = View.VISIBLE
-            textViewCountDown?.text = context.resources.getString(stringId)
-        }
+
     }
 
     private fun loadMediaPlayer(

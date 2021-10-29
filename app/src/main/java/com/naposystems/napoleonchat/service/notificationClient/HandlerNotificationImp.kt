@@ -1,6 +1,7 @@
 package com.naposystems.napoleonchat.service.notificationClient
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -51,14 +52,15 @@ class HandlerNotificationImp
         with(NotificationManagerCompat.from(context)) {
             notify(
                 notificationId,
-                createNotificationMessageBuilder(dataFromNotification, notification).build()
+                createNotificationMessageBuilder(dataFromNotification, notification, this).build(),
             )
         }
     }
 
     private fun createNotificationMessageBuilder(
         dataFromNotification: Map<String, String>,
-        notification: RemoteMessage.Notification?
+        notification: RemoteMessage.Notification?,
+        notificationManagerCompat: NotificationManagerCompat
     ): NotificationCompat.Builder {
 
         val pendingIntent = createPendingIntent(dataFromNotification)
@@ -100,7 +102,7 @@ class HandlerNotificationImp
                 dataFromNotification.getValue(Constants.NotificationKeys.BADGE).toInt()
             )
 
-        return builder
+        builder
             .setLargeIcon(iconBitmap)
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notification_icon)
@@ -109,6 +111,24 @@ class HandlerNotificationImp
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setBadgeIconType(NotificationCompat.BADGE_ICON_SMALL)
             .setAutoCancel(true)
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val notificationChannel = NotificationChannel(channelType, channelType, importance)
+            notificationChannel.enableLights(true)
+            notificationChannel.enableVibration(true)
+            notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
+            notificationChannel.vibrationPattern =
+                longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+            assert(notificationManagerCompat != null)
+            notificationManagerCompat!!.createNotificationChannel(notificationChannel)
+
+            builder.setChannelId(channelType)
+        }
+
+
+        return builder
 
     }
 
