@@ -13,6 +13,9 @@ import javax.inject.Inject
 //TODO: Revisar porque se agregan atributos despues del Dialog.show()
 class HandlerDialogImp @Inject constructor() : HandlerDialog {
 
+    override lateinit var alertDialogInformative: AlertDialog
+    override var issetAlertDialogInformative = false
+
     override fun generalDialog(
         title: String,
         message: String,
@@ -141,7 +144,9 @@ class HandlerDialogImp @Inject constructor() : HandlerDialog {
         titleButton: Int,
         clickTopButton: (Boolean) -> Unit
     ) {
-        val dialog = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
+
+
+        alertDialogInformative = AlertDialog.Builder(childFragmentManager, R.style.MyDialogTheme)
             .setMessage(message)
             .setCancelable(isCancelable)
             .setPositiveButton(titleButton) { _, _ ->
@@ -150,18 +155,19 @@ class HandlerDialogImp @Inject constructor() : HandlerDialog {
             .create()
 
         if (title.isNotEmpty()) {
-            dialog.setTitle(title)
+            alertDialogInformative.setTitle(title)
         }
 
-        dialog.show()
+        alertDialogInformative.show()
 
         val textColorButton =
             Utils.convertAttrToColorResource(childFragmentManager, R.attr.attrTextColorButtonTint)
 
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).apply {
+        alertDialogInformative.getButton(AlertDialog.BUTTON_POSITIVE).apply {
             setTextColor(textColorButton)
             setBackgroundColor(Color.TRANSPARENT)
             isAllCaps = false
         }
+        issetAlertDialogInformative = true
     }
 }

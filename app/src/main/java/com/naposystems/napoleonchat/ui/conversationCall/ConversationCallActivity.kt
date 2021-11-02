@@ -293,6 +293,7 @@ class ConversationCallActivity :
 
     override fun onResume() {
         super.onResume()
+        NapoleonApplication.isShowingCallActivity = true
         if (NapoleonApplication.callModel?.isVideoCall == false){
             webRTCClient.startProximitySensor()
         }
@@ -302,7 +303,6 @@ class ConversationCallActivity :
         setCallOnBackground()
         super.onPause()
     }
-
     override fun onNewIntent(intent: Intent) {
 
         super.onNewIntent(intent)
@@ -472,6 +472,9 @@ class ConversationCallActivity :
 
     override fun contactWantChangeToVideoCall() {
         runOnUiThread {
+
+            if(handlerDialog.issetAlertDialogInformative == true) handlerDialog.alertDialogInformative.dismiss()
+
             binding.imageButtonChangeToVideo.isEnabled = true
             handlerDialog.alertDialogWithoutNeutralButton(
                 R.string.text_contact_want_change_to_video_call,

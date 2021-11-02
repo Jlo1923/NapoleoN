@@ -1,9 +1,12 @@
 package com.naposystems.napoleonchat.utils.handlerDialog
 
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 
 interface HandlerDialog {
+    var alertDialogInformative: AlertDialog
+    var issetAlertDialogInformative: Boolean
 
     fun generalDialog(
         title: String,
@@ -45,4 +48,6 @@ interface HandlerDialog {
         titleButton: Int,
         clickTopButton: (Boolean) -> Unit
     )
+
+
 }
