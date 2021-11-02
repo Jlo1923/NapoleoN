@@ -602,7 +602,7 @@ class WebRTCClientImp
 
     //Proximity Sensor
     override fun startProximitySensor() {
-        if (wakeLock.isHeld.not()) {
+        if (wakeLock.isHeld.not() && NapoleonApplication.callModel?.isVideoCall == false) {
             wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/)
         }
     }
