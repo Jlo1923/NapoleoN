@@ -648,7 +648,7 @@ class ConversationFragment
             if (emojiKeyboard?.isShowing() == true) {
                 emojiKeyboard?.handleBackButton()
             } else {
-                findNavController().popBackStack(R.id.homeFragment, false)
+                findNavController().popBackStack(R.id.search_all_fragment, false)
             }
         }
 

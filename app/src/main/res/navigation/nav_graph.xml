@@ -507,6 +507,8 @@
         android:name="com.naposystems.napoleonchat.ui.home.TabsPagerFragment"
         android:label="NapoleoN"
         tools:layout="@layout/fragment_tabs_pager">
+
+
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -570,10 +572,30 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_contactsFragment_to_conversationFragment"
+            app:destination="@id/conversationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_contactsFragment_to_contactProfileFragment"
+            app:destination="@id/contactProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
         <argument
             android:name="location"
             android:defaultValue="0"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_search_all_fragment_to_groupsFragment"
+            app:destination="@id/groupsFragment" />
     </fragment>
     <fragment
         android:id="@+id/enterPinFragment"
@@ -866,4 +888,9 @@
             android:name="contact"
             app:argType="com.naposystems.napoleonchat.source.local.entity.ContactEntity" />
     </fragment>
+    <fragment
+        android:id="@+id/groupsFragment"
+        android:name="com.naposystems.napoleonchat.ui.groups.GroupsFragment"
+        android:label="groups_fragment"
+        tools:layout="@layout/groups_fragment" />
 </navigation>

@@ -12,7 +12,8 @@ import com.naposystems.napoleonchat.ui.home.HomeFragmentDirections
 import com.naposystems.napoleonchat.ui.home.TabsPagerFragmentDirections
 import com.naposystems.napoleonchat.utility.Constants
 
-class TabsPagerAdapter(fm: FragmentManager, lifecycle: Lifecycle, private var numberOfTabs: Int) : FragmentStateAdapter(fm, lifecycle) {
+class TabsPagerAdapter(fm: Fragment, lifecycle: Lifecycle, private var numberOfTabs: Int)
+    : FragmentStateAdapter(fm) {
 
     override fun createFragment(position: Int): Fragment {
         when (position) {

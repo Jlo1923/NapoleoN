@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:src="@drawable/ic_search_all"
+        android:src="@drawable/gph_ic_search_pink"
         app:tint="?attr/attrBackgroundTintIconToolbar" />
 
     <TextView

@@ -444,6 +444,7 @@ class HomeFragment : BaseFragment() {
         if (::popup.isInitialized) {
             popup.dismiss()
         }
+
         super.onPause()
     }
 
@@ -776,6 +777,7 @@ class HomeFragment : BaseFragment() {
 
     private fun showCase() {
         try {
+
             Handler().postDelayed({
                 if (isMenuCreated && !isShowingShowCase) {
                     val drawerMenu = (requireActivity() as MainActivity).getNavView().menu

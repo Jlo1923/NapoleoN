@@ -109,6 +109,8 @@ class MainActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
 
+
+
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
@@ -231,12 +233,13 @@ class MainActivity :
         navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.homeFragment
+                R.id.search_all_fragment
             ), binding.drawerLayout
         )
 
         NavigationUI.setupActionBarWithNavController(this, navController, binding.drawerLayout)
         NavigationUI.setupWithNavController(binding.toolbar, navController, appBarConfiguration)
+
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             viewModel.getAccountStatus()
@@ -253,7 +256,7 @@ class MainActivity :
                     hideToolbar()
                     disableDrawer()
                 }
-                R.id.homeFragment -> {
+                R.id.search_all_fragment -> {
                     showToolbar()
                     enableDrawer()
                     openMenu()

@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.naposystems.napoleonchat.R
@@ -22,8 +24,10 @@ import com.naposystems.napoleonchat.ui.home.adapter.TabsPagerAdapter
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
 import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.add_contact_friend_item.*
+import kotlinx.android.synthetic.main.conversation_menu_options.*
 import kotlinx.android.synthetic.main.fragment_tabs_pager.*
 import kotlinx.android.synthetic.main.fragment_tabs_pager.view.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class TabsPagerFragment : Fragment() {
@@ -57,7 +61,9 @@ class TabsPagerFragment : Fragment() {
 
         binding.root.tab_layout.isInlineLabel = true
 
-        val adapter = TabsPagerAdapter(requireActivity().supportFragmentManager, lifecycle, numberOfTabs)
+
+        //set adapter
+        val adapter = TabsPagerAdapter(this, lifecycle, numberOfTabs)
         binding.root.tabs_viewpager.adapter = adapter
 
         // Enable Swipe
@@ -88,10 +94,14 @@ class TabsPagerFragment : Fragment() {
                 )
         }.attach()
 
+        //change titles to string value
 
         setCustomTabTitles()
         return binding.root
     }
+
+
+
     private fun setCustomTabTitles() {
         val vg = binding.root.tab_layout.getChildAt(0) as ViewGroup
         val tabsCount = vg.childCount
@@ -109,8 +119,10 @@ class TabsPagerFragment : Fragment() {
             }
         }
     }
-        override fun onAttach(context: Context) {
-            AndroidSupportInjection.inject(this)
-            super.onAttach(context)
-        }
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
+
+
 }
