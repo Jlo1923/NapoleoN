@@ -1132,7 +1132,10 @@ class ConversationFragment
                     //conversationAdapter.notifyDataSetChanged()
 //                Timber.d("*TestMessage: ${conversationList.last()}")
                     conversationViewModel.sendTextMessagesRead()
-                } else conversationAdapter.submitList(conversationList)
+                } else {
+                    conversationAdapter.submitList(conversationList)
+                    isValidMessagesPending = true
+                }
             })
     }
 
