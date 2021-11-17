@@ -45,6 +45,7 @@ object ApiConstants {
     const val LOG_OUT = "auth/logout"
     const val CANCEL_SUBSCRIPTION = "subscriptions/cancel"
     const val CHECK_SUBSCRIPTION = "subscriptions/state"
+    const val LAST_SUBSCRIPTION = "lastsubscription"
     const val CANCEL_CALL = "call/cancelcall"
     const val READY_CALL = "call/readyforcall"
     const val UPDATE_CONTACT_FAKE = "friendship/updatefriendship/{friendshipId}"

@@ -30,4 +30,9 @@
     <string name="text_operation_cancelled">Opération annulée.</string>
     <string name="text_subscription_error">Une erreur est survenue! Réessayez plus tard.</string>
     <string name="text_subscription_expired">Votre expirés d\'abonnement, vous ne recevrez des messages.</string>
+    <string name="text_subscription_free_trial_fourth_day">Profitez d’une réelle intimité, gérez votre compte.</string>
+    <string name="text_subscription_partial_lock">Il s\' est passé quelque chose ? gère votre compte</string>
+    <string name="text_total_lock_dialog_title">Compte suspendu</string>
+    <string name="text_total_lock_dialog_desc">Gardez votre même utilisateur et profitez des avantages que napoleoИ chat vous offre en gérant votre compte</string>
+    <string name="text_total_lock_dialog_action">Aller</string>
 </resources>

@@ -28,16 +28,14 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.ProfileFragmentBinding
+import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
+import com.naposystems.napoleonchat.dialog.logout.LogoutDialogFragment
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.source.remote.dto.user.UserAvatarReqDTO
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.baseFragment.BaseViewModel
-import com.naposystems.napoleonchat.dialog.changeParams.ChangeParamsDialogFragment
 import com.naposystems.napoleonchat.ui.imagePicker.ImageSelectorBottomSheetFragment
-import com.naposystems.napoleonchat.dialog.logout.LogoutDialogFragment
-import com.naposystems.napoleonchat.utility.Constants
-import com.naposystems.napoleonchat.utility.FileManager
-import com.naposystems.napoleonchat.utility.SnackbarUtils
-import com.naposystems.napoleonchat.utility.Utils
+import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Utils.Companion.setSafeOnClickListener
 import com.naposystems.napoleonchat.utility.sharedViewModels.CameraSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.GallerySharedViewModel
@@ -56,6 +54,9 @@ class ProfileFragment : BaseFragment() {
         const val REQUEST_IMAGE_CAPTURE = 1
         private const val FILE_EXTENSION = ".jpg"
     }
+
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
@@ -452,6 +453,29 @@ class ProfileFragment : BaseFragment() {
                 if (child.name != compressedFile?.name) {
                     child.delete()
                 }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val subscriptionStatus =
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        setupSubscription(SubscriptionStatus.valueOf(subscriptionStatus))
+    }
+
+    private fun setupSubscription(subscriptionStatus: SubscriptionStatus) {
+        when (subscriptionStatus) {
+            SubscriptionStatus.PARTIAL_LOCK -> {
+                binding.imageViewProfileImage.isClickable = false
+                binding.imageViewProfileImage.isEnabled = false
+                binding.floatingButtonProfileImage.isClickable = false
+                binding.floatingButtonProfileImage.isEnabled = false
+                binding.imageButtonNameOptionEndIcon.isClickable = false
+                binding.imageButtonNameOptionEndIcon.isEnabled = false
             }
         }
     }

@@ -49,7 +49,10 @@ interface HomeRepository {
     suspend fun addUUID()
 
     fun verifyMessagesReceived()
-    
+
     fun verifyMessagesRead()
 
+    suspend fun lastSubscription()
+
+    fun subscriptionNotificationWork()
 }

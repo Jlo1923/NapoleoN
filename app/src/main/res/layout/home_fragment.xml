@@ -52,29 +52,6 @@
                     tools:text="@string/text_subscription_expired" />
 
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/action_all_search"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tab_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorPrimaryDark"
-                    app:tabMaxWidth="0dp"
-                    app:tabTextAppearance="?android:attr/textAppearanceMedium"
-                    app:textAllCaps="false" />
-
-
-                <androidx.viewpager2.widget.ViewPager2
-                    android:id="@+id/tabs_viewpager"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
             <!-- STATUS -->
             <LinearLayout
                 android:id="@+id/container_status"

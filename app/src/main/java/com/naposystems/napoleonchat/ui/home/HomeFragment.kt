@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -27,6 +28,7 @@ import com.naposystems.napoleonchat.databinding.HomeFragmentBinding
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
@@ -39,6 +41,7 @@ import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
+import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.PREF_USER_ID
 import com.naposystems.napoleonchat.utility.adapters.verifyPermission
 import com.naposystems.napoleonchat.utility.sharedViewModels.contact.ContactSharedViewModel
 import com.naposystems.napoleonchat.utility.sharedViewModels.friendShipAction.FriendShipActionSharedViewModel
@@ -56,6 +59,11 @@ class HomeFragment : BaseFragment() {
     companion object {
         fun newInstance() = HomeFragment()
     }
+
+    private var subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE
+
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     @Inject
     lateinit var handlerDialog: HandlerDialog
@@ -79,6 +87,8 @@ class HomeFragment : BaseFragment() {
     private val timeFormatShareViewModel: TimeFormatDialogViewModel by activityViewModels {
         viewModelFactory
     }
+
+    private var totalBlockDialog: DialogFragment? = null
 
     private lateinit var binding: HomeFragmentBinding
 
@@ -116,8 +126,15 @@ class HomeFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        homeViewModel.lastSubscription()
         //TODO:Subscription
 //        lifecycle.addObserver(billingClientLifecycle)
+        subscriptionStatus = SubscriptionStatus.valueOf(
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        )
         validateMustGoToContacts()
     }
 
@@ -150,11 +167,6 @@ class HomeFragment : BaseFragment() {
         binding.containerStatus.setOnClickListener {
             goToStatus()
         }
-
-        //TODO:Subscription
-        /*binding.containerSubscription.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSubscriptionFragment())
-        }*/
 
         binding.imageButtonStatusEndIcon.setOnClickListener {
             goToStatus()
@@ -278,6 +290,8 @@ class HomeFragment : BaseFragment() {
 
         observeContact()
 
+        observeSubscription()
+
         //TODO:Subscription
         /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
             purchasesList?.let {
@@ -322,7 +336,10 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun validateMustGoToContacts() {
-        val mustGoToContacts = homeViewModel.isMarkGoToContacts()
+        val mustGoToContacts = homeViewModel.isMarkGoToContacts() &&
+                (subscriptionStatus == SubscriptionStatus.ACTIVE ||
+                        subscriptionStatus == SubscriptionStatus.FREE_TRIAL ||
+                        subscriptionStatus == SubscriptionStatus.FREE_TRIAL_DAY_4)
         if (mustGoToContacts) {
             /**
              * Solo podemos ir a contactos una sola vez, si se devuelve ya se pierden los archivos
@@ -395,6 +412,43 @@ class HomeFragment : BaseFragment() {
         homeViewModel.quantityFriendshipRequest.observe(viewLifecycleOwner, Observer {
             if (it != -1) setupBadge(it)
         })
+    }
+
+    private fun observeSubscription() {
+        val disposableSubscriptionStatus = RxBus.listen(RxEvent.SubscriptionStatusEvent::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                subscriptionStatus = it.status
+                setupSubscriptionContainer(it.status)
+            }
+        disposable.add(disposableSubscriptionStatus)
+    }
+
+    private fun setupSubscriptionContainer(status: SubscriptionStatus) {
+        binding.containerSubscription.setOnClickListener {
+            subscriptionIntent()
+        }
+        when (status) {
+            SubscriptionStatus.FREE_TRIAL -> binding.containerSubscription.isVisible = false
+            SubscriptionStatus.FREE_TRIAL_DAY_4 -> {
+                binding.containerSubscription.isVisible = true
+                binding.textViewMessageSubscription.setText(R.string.text_subscription_free_trial_fourth_day)
+                binding.textViewMessageSubscription.isVisible = true
+            }
+            SubscriptionStatus.PARTIAL_LOCK -> {
+                binding.containerSubscription.isVisible = true
+                binding.textViewMessageSubscription.setText(R.string.text_subscription_partial_lock)
+                binding.textViewMessageSubscription.isVisible = true
+                binding.containerStatus.isClickable = false
+                binding.containerStatus.isEnabled = false
+                binding.imageButtonStatusEndIcon.isClickable = false
+                binding.imageButtonStatusEndIcon.isEnabled = false
+            }
+            SubscriptionStatus.TOTAL_LOCK -> {
+                createTotalBlockDialog()
+            }
+            SubscriptionStatus.ACTIVE -> binding.containerSubscription.isVisible = false
+        }
     }
 
     //TODO:Subscription
@@ -813,6 +867,33 @@ class HomeFragment : BaseFragment() {
             }, 500)
         } catch (e: Exception) {
             Timber.d(e.localizedMessage)
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupSubscriptionContainer(subscriptionStatus)
+    }
+
+    private fun subscriptionIntent() {
+        val userId = sharedPreferencesManager.getString(PREF_USER_ID, "")
+        val url = getString(R.string.buy_subscription_url).plus(userId)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
+    }
+
+    private fun createTotalBlockDialog() {
+        if (totalBlockDialog == null) {
+            totalBlockDialog = handlerDialog.generalDialog(
+                resources.getString(R.string.text_total_lock_dialog_title),
+                resources.getString(R.string.text_total_lock_dialog_desc),
+                false,
+                childFragmentManager,
+                textButtonAccept = resources.getString(R.string.text_total_lock_dialog_action)
+            ) {
+                subscriptionIntent()
+            }
         }
     }
 }

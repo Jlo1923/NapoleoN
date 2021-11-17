@@ -211,4 +211,7 @@ class HomeViewModel
 
     fun isMarkGoToContacts() = sharedPreferencesManager.getBoolean(NAV_TO_CONTACTS, false)
 
+    fun lastSubscription() = viewModelScope.launch {
+        repository.lastSubscription()
+    }
 }

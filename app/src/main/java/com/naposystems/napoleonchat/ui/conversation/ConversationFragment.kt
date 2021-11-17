@@ -58,6 +58,7 @@ import com.naposystems.napoleonchat.dialog.selfDestructTime.SelfDestructTimeDial
 import com.naposystems.napoleonchat.dialog.timeFormat.TimeFormatDialogViewModel
 import com.naposystems.napoleonchat.dialog.userDisplayFormat.UserDisplayFormatDialogViewModel
 import com.naposystems.napoleonchat.model.CallModel
+import com.naposystems.napoleonchat.model.SubscriptionStatus
 import com.naposystems.napoleonchat.reactive.RxBus
 import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.service.download.model.DownloadAttachmentResult
@@ -736,9 +737,21 @@ class ConversationFragment
         conversationViewModel.verifyMessagesRead()
     }
 
+    private fun getSubscriptionStatus() = SubscriptionStatus.valueOf(
+        sharedPreferencesManager.getString(
+            Constants.SharedPreferences.SubscriptionStatus,
+            SubscriptionStatus.ACTIVE.name
+        )
+    )
+
+    private fun shouldShowAttachmentPreview(subscriptionStatus: SubscriptionStatus) =
+        subscriptionStatus == SubscriptionStatus.ACTIVE ||
+                subscriptionStatus == SubscriptionStatus.FREE_TRIAL ||
+                subscriptionStatus == SubscriptionStatus.FREE_TRIAL_DAY_4
+
     private fun validateMustGoToPreviewAttachmentsFromOutside() {
         val uris = conversationViewModel.getPendingUris()
-        if (uris.isEmpty().not()) {
+        if (uris.isEmpty().not() && shouldShowAttachmentPreview(getSubscriptionStatus())) {
             if (uris.size <= 10) {
                 handleIntentExtrasDataForMultiple(uris)
             } else {
@@ -1102,7 +1115,6 @@ class ConversationFragment
             viewLifecycleOwner,
             Observer { conversationList ->
                 if (conversationList.isNotEmpty()) {
-
                     if(isValidMessagesPending == false){
                         isValidMessagesPending = true
                         //Poner en estado fallido mensajes que no se enviaron cuando se cerro la app
@@ -1136,7 +1148,9 @@ class ConversationFragment
                     conversationAdapter.submitList(conversationList)
                     isValidMessagesPending = true
                 }
-            })
+
+            }
+        )
     }
 
     @OptIn(InternalCoroutinesApi::class)
@@ -2449,6 +2463,27 @@ class ConversationFragment
     }
 
 
+    private fun setupSubscription(subscriptionStatus: SubscriptionStatus) {
+        when (subscriptionStatus) {
+            SubscriptionStatus.PARTIAL_LOCK -> {
+                binding.inputPanel.isVisible = false
+                binding.buttonCall.isVisible = false
+                binding.buttonVideoCall.isVisible = false
+                binding.containerStatus.isVisible = false
+                binding.textViewUserStatus.isVisible = false
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val subscriptionStatus =
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        setupSubscription(SubscriptionStatus.valueOf(subscriptionStatus))
+    }
     //endregion
 }
 

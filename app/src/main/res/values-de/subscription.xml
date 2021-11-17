@@ -30,4 +30,9 @@
     <string name="text_operation_cancelled">Vorgang abgebrochen.</string>
     <string name="text_subscription_error">Ein Fehler ist aufgetreten. Versuchen Sie es später noch einmal.</string>
     <string name="text_subscription_expired">Ihr abgelaufenes Abonnement, Sie werden nur Nachrichten empfangen.</string>
+    <string name="text_subscription_free_trial_fourth_day">Genießen Sie die echte Privatsphäre, verwalten Sie Ihr Konto.</string>
+    <string name="text_subscription_partial_lock">Ist etwas passiert? verwaltet Ihr Konto</string>
+    <string name="text_total_lock_dialog_title">Konto gesperrt</string>
+    <string name="text_total_lock_dialog_desc">Behalten Sie Ihren gleichen Benutzer und genießen Sie die Vorteile, die Ihnen der NapoleoИ-Chat bietet, indem Sie Ihr Konto verwalten</string>
+    <string name="text_total_lock_dialog_action">Gehen</string>
 </resources>

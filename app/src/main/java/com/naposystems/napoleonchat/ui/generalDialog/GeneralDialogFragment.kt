@@ -79,7 +79,6 @@ class GeneralDialogFragment : DialogFragment() {
         }
 
         isCancelable = optionIsCancelable
-
         binding.buttonCancel.isVisible = optionIsCancelable
 
         binding.buttonCancel.setOnClickListener {
@@ -88,7 +87,8 @@ class GeneralDialogFragment : DialogFragment() {
 
         binding.buttonAccept.setOnClickListener {
             listener.onAccept()
-            dismiss()
+            if (optionIsCancelable)
+                dismiss()
         }
 
         return binding.root

@@ -18,6 +18,7 @@ import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_MY_MESSAG
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_QUESTIONS
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_RECOVERY_QUESTIONS
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.GET_SUBSCRIPTION_USER
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.LAST_SUBSCRIPTION
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.LOG_OUT
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.NOTIFY_MESSAGE_RECEIVED
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.PUT_BLOCK_CONTACT
@@ -260,6 +261,9 @@ interface NapoleonApi {
 
     @GET(CHECK_SUBSCRIPTION)
     suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
+
+    @GET(LAST_SUBSCRIPTION)
+    suspend fun lastSubscription(): Response<LastSubscriptionDTO>
 
     @POST(READY_CALL)
     suspend fun readyForCall(@Body readyForCallReqDTO: ReadyForCallReqDTO): Response<ReadyForCallResDTO>

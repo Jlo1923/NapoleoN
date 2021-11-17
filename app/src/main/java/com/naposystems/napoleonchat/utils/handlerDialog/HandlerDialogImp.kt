@@ -3,6 +3,7 @@ package com.naposystems.napoleonchat.utils.handlerDialog
 import android.content.Context
 import android.graphics.Color
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.ui.generalDialog.GeneralDialogFragment
@@ -24,7 +25,7 @@ class HandlerDialogImp @Inject constructor() : HandlerDialog {
         textButtonAccept: String,
         textButtonCancel: String,
         actionAccept: () -> Unit
-    ) {
+    ): DialogFragment {
 
         val dialog = GeneralDialogFragment.newInstance(
             title,
@@ -41,6 +42,7 @@ class HandlerDialogImp @Inject constructor() : HandlerDialog {
         })
 
         dialog.show(childFragmentManager, "GeneralDialog")
+        return dialog
     }
 
     override fun alertDialogWithNeutralButton(

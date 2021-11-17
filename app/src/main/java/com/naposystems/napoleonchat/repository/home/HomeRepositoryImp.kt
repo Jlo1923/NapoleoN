@@ -2,6 +2,11 @@ package com.naposystems.napoleonchat.repository.home
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.work.*
+import com.naposystems.napoleonchat.model.SubscriptionStatus
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
+import com.naposystems.napoleonchat.service.subscription.SubscriptionWorker
 import com.naposystems.napoleonchat.service.syncManager.SyncManager
 import com.naposystems.napoleonchat.source.local.datasource.attachment.AttachmentLocalDataSource
 import com.naposystems.napoleonchat.source.local.datasource.contact.ContactLocalDataSource
@@ -34,7 +39,8 @@ class HomeRepositoryImp @Inject constructor(
     private val attachmentLocalDataSource: AttachmentLocalDataSource,
     private val quoteLocalDataSource: QuoteLocalDataSource,
     private val syncManager: SyncManager,
-    private val context: Context
+    private val context: Context,
+    private val workManager: WorkManager
 ) :
     HomeRepository {
 
@@ -220,6 +226,61 @@ class HomeRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun lastSubscription() {
+        val response = napoleonApi.lastSubscription()
+        if (response.isSuccessful) {
+            val expire = response.body()!!.expire
+            val status = response.body()!!.status
+            val createdAt = userLocalDataSourceImp.getMyUser().createAt
+            val currentTimeInSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+            val currentDaySinceCreated =
+                TimeUnit.SECONDS.toDays(currentTimeInSeconds - createdAt)
+            val currentDaySinceExpired = TimeUnit.SECONDS.toDays(expire - currentTimeInSeconds)
+            val type = getSubscriptionType(status, currentDaySinceExpired, currentDaySinceCreated)
+            saveSubscription(
+                type,
+                userLocalDataSourceImp.getMyUser().id.toString(), createdAt
+            )
+        }
+    }
+
+    private fun getSubscriptionType(
+        isActive: Boolean,
+        subscriptionExpireDays: Long,
+        currentDaySinceCreated: Long
+    ) = when {
+        isActive -> SubscriptionStatus.ACTIVE
+        currentDaySinceCreated < 4 -> SubscriptionStatus.FREE_TRIAL
+        currentDaySinceCreated in 4..7 -> SubscriptionStatus.FREE_TRIAL_DAY_4
+        currentDaySinceCreated >= 38 -> SubscriptionStatus.TOTAL_LOCK
+        currentDaySinceCreated in 8..36 -> SubscriptionStatus.PARTIAL_LOCK
+        subscriptionExpireDays in -30..0 -> SubscriptionStatus.PARTIAL_LOCK
+        subscriptionExpireDays <= 0 -> SubscriptionStatus.TOTAL_LOCK
+        else -> SubscriptionStatus.FREE_TRIAL
+    }
+
+    private fun saveSubscription(
+        subscriptionStatus: SubscriptionStatus,
+        userId: String,
+        userCreatedAt: Long
+    ) {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.SubscriptionStatus,
+            subscriptionStatus.name
+        )
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_USER_ID,
+            userId
+        )
+        sharedPreferencesManager.putLong(
+            Constants.SharedPreferences.PREF_USER_CREATED_AT,
+            userCreatedAt
+        )
+        RxBus.publish(RxEvent.SubscriptionStatusEvent(subscriptionStatus))
+        subscriptionNotificationWork()
+    }
+
+
     override fun getFreeTrial(): Long {
         return sharedPreferencesManager.getLong(
             Constants.SharedPreferences.PREF_FREE_TRIAL
@@ -316,5 +377,23 @@ class HomeRepositoryImp @Inject constructor(
 
     override fun verifyMessagesRead() {
         syncManager.verifyMessagesRead()
+    }
+
+    override fun subscriptionNotificationWork() {
+        val constraintsBuilder: Constraints.Builder = Constraints.Builder()
+        constraintsBuilder.setRequiresBatteryNotLow(false)
+        constraintsBuilder.setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+        constraintsBuilder.setRequiresCharging(false)
+        val request = PeriodicWorkRequest.Builder(
+            SubscriptionWorker::class.java,
+            12,
+            TimeUnit.HOURS
+        )
+        request.setConstraints(constraintsBuilder.build())
+        workManager.enqueueUniquePeriodicWork(
+            "SUBSCRIPTION_NOTIFICATION_WORK",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            request.build()
+        )
     }
 }

@@ -63,6 +63,8 @@ import org.json.JSONObject
 import timber.log.Timber
 import javax.inject.Inject
 
+const val SHOW_ENTER_PIN = "SHOW_ENTER_PIN"
+
 class MainActivity :
     AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -114,7 +116,7 @@ class MainActivity :
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         when (sharedPreferencesManager.getInt(Constants.SharedPreferences.PREF_COLOR_SCHEME)) {
-            Constants.ThemesApplication.LIGHT_NAPOLEON.theme ->setTheme(R.style.AppTheme)
+            Constants.ThemesApplication.LIGHT_NAPOLEON.theme -> setTheme(R.style.AppTheme)
             Constants.ThemesApplication.DARK_NAPOLEON.theme -> setTheme(R.style.AppThemeDarkNapoleon)
             Constants.ThemesApplication.BLACK_GOLD_ALLOY.theme -> setTheme(R.style.AppThemeBlackGoldAlloy)
             Constants.ThemesApplication.COLD_OCEAN.theme -> setTheme(R.style.AppThemeColdOcean)
@@ -330,7 +332,14 @@ class MainActivity :
         hideOptionMenuRecoveryAccount()
 
         validateExtrasForShareFromOutside()
+
+        validateShowEnterPin()
     }
+
+    private fun validateShowEnterPin() = intent.extras?.getBoolean(SHOW_ENTER_PIN)?.let {
+        if (it) navToEnterPin()
+    }
+
 
     private fun openMenu() {
         binding.toolbar.setOnClickListener {
@@ -544,12 +553,8 @@ class MainActivity :
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-            //TODO:Subscription
-            /*R.id.subscription -> navController.navigate(
-                R.id.subscriptionFragment,
-                null,
-                options
-            )*/
+
+            R.id.subscription -> subscriptionIntent()
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,
@@ -685,6 +690,14 @@ class MainActivity :
                 }
             }
         }
+    }
+
+    private fun subscriptionIntent() {
+        val userId = sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_USER_ID, "")
+        val url = getString(R.string.buy_subscription_url).plus(userId)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        startActivity(intent)
     }
 
     private fun navToEnterPin() {
