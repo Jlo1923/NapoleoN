@@ -547,7 +547,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
         }
     }
 
-    override fun registerProximityListener(forceEnble: Boolean) {
+    override fun registerProximityListener(forceEnable: Boolean) {
         if((mediaPlayer?.isPlaying == true && isProximitySensorActive == false) || forceEnble == true){
             mSensorManager.registerListener(
                 this,
