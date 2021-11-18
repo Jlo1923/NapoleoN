@@ -9,6 +9,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -70,7 +71,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     private var mListener: Listener? = null
     private var tempFile: File? = null
     private var mStatusPlayWithSensor : Boolean = false
-    private var sensorStatusLast: Int = 0
+    private var sensorStatusLast: Int = 3 //Inactive
 
     private val mHandler: Handler by lazy {
         Handler()
@@ -180,7 +181,7 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
             .createMediaSource(uri)
     }
 
-    private fun setupVoiceNoteSound(sound: Int) {
+    public fun setupVoiceNoteSound(sound: Int) {
         try {
             soundMediaPlayer.apply {
                 reset()
@@ -218,16 +219,22 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
         else sensorStatusLast = streamType
 
 
-        if(streamType == AudioManager.STREAM_VOICE_CALL){
-            if(wakeLock != null) wakeLock.acquire()
-            mAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-        }else{
-            mAudioManager.mode = AudioManager.MODE_NORMAL
-        }
-
         if (mediaPlayer == null || mediaPlayer?.isPlaying == false) {
-            if (wakeLock.isHeld && !mStatusPlayWithSensor)
-                wakeLock.release()
+            if (wakeLock.isHeld && !mStatusPlayWithSensor) wakeLock.release()
+            Handler(Looper.myLooper()!!).postDelayed({
+                if (mediaPlayer?.isPlaying == true){
+                    playAudio()
+                }
+            },1000)
+
+            Handler(Looper.myLooper()!!).postDelayed({
+                if (sensorStatusLast != 0 && mAudioManager.mode == AudioManager.MODE_IN_COMMUNICATION){
+                    if(mediaPlayer?.isPlaying == true){
+                        playAudio(0,false)
+                    }
+                }
+            },2700)
+            if(sensorStatusLast == 0) wakeLock.acquire()
             return
         }
 
@@ -281,6 +288,8 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                     )
                 }
 
+                playAudio()
+
             }
         }
     }
@@ -310,7 +319,16 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     override fun playAudio(progress: Int, isEarpiece: Boolean) {
         try {
 
-            mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
+            //change to sensor
+                Timber.d("elian play audio $mediaPlayer")
+
+            if(sensorStatusLast == 0){ //active
+                mAudioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                mAudioManager.isSpeakerphoneOn = false
+            }else{
+                mAudioManager.mode = AudioManager.MODE_NORMAL
+                mAudioManager.isSpeakerphoneOn = true
+            }
 
             if (mPreviousMessageId == currentMessageId && progress == 0) {
                 if (mediaPlayer != null) {
@@ -325,9 +343,11 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         RxBus.publish(
                             RxEvent.StateFlag(Constants.StateFlag.OFF.state)
                         )
+                        mediaPlayer?.playWhenReady = !mediaPlayer!!.isPlaying
                         unregisterProximityListener()
+
                     } else {
-                        setupVoiceNoteSound(R.raw.tone_audio_message_start)
+                        //setupVoiceNoteSound(R.raw.tone_audio_message_start)
                         changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
                         Timber.d("*TestAudio : Play")
 
@@ -343,11 +363,32 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                             )
                         }
                         mHandler.postDelayed(mRunnable, 0)
+
+                        //reset media player for detect sensor
+                        registerProximityListener()
+
+                        if(sensorStatusLast == 0 || mediaPlayer == null){ //active
+                            val progress = ((mediaPlayer!!.currentPosition * 100) / mediaPlayer!!.duration)
+
+                            mediaPlayer!!.stop()
+                            mediaPlayer!!.release()
+                            this.mediaPlayer = null
+
+                            Handler(Looper.myLooper()!!).postDelayed({
+                                playAudio(progress = progress.toInt(), isEarpiece = true)
+                            },1000)
+                        }else{
+                            Handler(Looper.myLooper()!!).postDelayed({
+                                mediaPlayer!!.playWhenReady = true
+                            },1000)
+
+                        }
                     }
-                    mediaPlayer?.playWhenReady = !mediaPlayer!!.isPlaying
-                    registerProximityListener()
+
+
                 }
             } else {
+
 
                 mPreviousMessageId = currentMessageId
 
@@ -366,8 +407,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                 )
 
                 with(mediaPlayer!!) {
-
-
 
                     val playbackParameters = PlaybackParameters(mSpeed)
                     mediaPlayer?.playbackParameters = playbackParameters
@@ -397,7 +436,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                         .build()
 
                     audioManagerCompat.requestCallAudioFocus()
-                    mAudioManager.isSpeakerphoneOn = isProximitySensorActive.not()
 
 
                     playWhenReady = true
@@ -452,7 +490,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
                                     }
                                     mHandler.postDelayed(mRunnable, 0)
                                     changeIconPlayPause(R.drawable.ic_baseline_pause_circle)
-                                    if(!isEarpiece) setupVoiceNoteSound(R.raw.tone_audio_message_start)
                                     Timber.d("*TestAudio: Play Media Player")
                                     RxBus.publish(
                                         RxEvent.StateFlag(Constants.StateFlag.ON.state)
@@ -510,8 +547,8 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
         }
     }
 
-    override fun registerProximityListener() {
-        if(mediaPlayer?.isPlaying == true && isProximitySensorActive == false){
+    override fun registerProximityListener(forceEnble: Boolean) {
+        if((mediaPlayer?.isPlaying == true && isProximitySensorActive == false) || forceEnble == true){
             mSensorManager.registerListener(
                 this,
                 mProximitySensor,
@@ -521,9 +558,6 @@ class MediaPlayerManager @Inject constructor(private val context: Context) :
     }
 
     override fun unregisterProximityListener() {
-        if (wakeLock.isHeld) {
-            wakeLock.release()
-        }
         mSensorManager.unregisterListener(this, mProximitySensor)
         isProximitySensorActive = false
     }

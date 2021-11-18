@@ -22,10 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipe_refresh"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+
 
                 <ViewSwitcher
                     android:id="@+id/viewSwitcher"
@@ -69,7 +66,6 @@
 
                 </ViewSwitcher>
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

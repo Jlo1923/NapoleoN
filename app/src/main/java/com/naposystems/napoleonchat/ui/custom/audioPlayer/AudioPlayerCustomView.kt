@@ -2,6 +2,8 @@ package com.naposystems.napoleonchat.ui.custom.audioPlayer
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -155,7 +157,18 @@ class AudioPlayerCustomView constructor(context: Context, attributeSet: Attribut
                             isEncryptedFile(false)
                             setAudioUri(mAudioFileUri)
                         }
-                        playAudio()
+
+                        mediaPlayerManager!!.registerProximityListener(true)
+                        if(mediaPlayerManager!!.isPlaying() == true){
+                            playAudio()
+                        }else{
+                            mediaPlayerManager!!.setupVoiceNoteSound(R.raw.tone_audio_message_start)
+                            Handler(Looper.myLooper()!!).postDelayed({
+                                playAudio()
+                            },1000)
+                        }
+
+
                     }
                 }
             }

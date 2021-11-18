@@ -73,10 +73,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView,
 
         setAdapter()
 
-        binding.swipeRefresh.setOnRefreshListener {
-            getContacts()
-            binding.swipeRefresh.isRefreshing = false
-        }
+
 
         return binding.root
     }
@@ -102,11 +99,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView,
             SnackbarUtils(binding.coordinator, it).showSnackbar {}
         })
 
-        viewModel.contactsLoaded.observe(viewLifecycleOwner, Observer {
-            if (it == true && binding.viewSwitcher.nextView.id == binding.swipeRefresh.id) {
-                binding.viewSwitcher.showNext()
-            }
-        })
+
 
         observeContactsForSearch()
     }
@@ -271,7 +264,7 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView,
 
     //region Implementation SearchView.OnSearchView
     override fun onOpened() {
-        binding.swipeRefresh.isEnabled = false
+
     }
 
     override fun onQuery(text: String) {
@@ -289,7 +282,6 @@ class ContactsFragment : BaseFragment(), SearchView.OnSearchView,
 
     override fun onClosed() {
         refreshView()
-        binding.swipeRefresh.isEnabled = true
     }
 
     override fun onClosedCompleted() {
