@@ -1413,6 +1413,13 @@ class ConversationFragment
 
         showCase()
 
+        //subscription
+        when (getSubscriptionStatus()) {
+            SubscriptionStatus.PARTIAL_LOCK -> {
+                menu.findItem(R.id.menu_item_delete_messages).isVisible = false
+            }
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -1777,11 +1784,17 @@ class ConversationFragment
                 conversationViewModel.copyMessagesSelected(args.contact.id)
             },
             clickDelete = { moreMessagesOtherContact ->
-                if (moreMessagesOtherContact) {
-                    dialogWithoutNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
-                } else {
-                    dialogWithNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
+                //subscription
+                if(getSubscriptionStatus() != SubscriptionStatus.PARTIAL_LOCK){
+                    if (moreMessagesOtherContact) {
+                        dialogWithoutNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
+                    } else {
+                        dialogWithNeutralButton(Constants.DeleteMessages.BY_SELECTION.option)
+                    }
+                }else{
+                    Toast.makeText(requireContext(), R.string.text_free_trial_expired, Toast.LENGTH_SHORT).show()
                 }
+
             }, clickBack = {
                 cleanSelectionMessages()
                 isSelectedMessage = true
@@ -2471,6 +2484,7 @@ class ConversationFragment
                 binding.buttonVideoCall.isVisible = false
                 binding.containerStatus.isVisible = false
                 binding.textViewUserStatus.isVisible = false
+
             }
         }
     }

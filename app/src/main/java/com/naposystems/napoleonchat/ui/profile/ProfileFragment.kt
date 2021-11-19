@@ -476,6 +476,10 @@ class ProfileFragment : BaseFragment() {
                 binding.floatingButtonProfileImage.isEnabled = false
                 binding.imageButtonNameOptionEndIcon.isClickable = false
                 binding.imageButtonNameOptionEndIcon.isEnabled = false
+                binding.optionStatus.isClickable = false
+                binding.optionStatus.isEnabled = false
+                binding.imageButtonStatusOptionEndIcon.isClickable = false
+                binding.imageButtonStatusOptionEndIcon.isEnabled = false
             }
         }
     }
