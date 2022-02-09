@@ -34,6 +34,8 @@ import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
+import com.naposystems.napoleonchat.ui.contacts.ContactsFragmentDirections
+import com.naposystems.napoleonchat.ui.contacts.adapter.ContactsAdapter
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
 import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
@@ -96,6 +98,8 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
     private lateinit var binding: HomeFragmentBinding
 
     lateinit var conversationAdapter: ConversationAdapter
+
+    lateinit var contactsAdapter: ContactsAdapter
 
     private lateinit var friendShipRequestReceivedAdapter: FriendShipRequestReceivedAdapter
 
@@ -169,6 +173,8 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
         )
 
         setAdapter()
+
+        setAdapterContacts()
 
         setFriendshipRequest()
 
@@ -278,6 +284,8 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
         homeViewModel.getFriendshipRequestHome()
 
+        homeViewModel.getLocalContacts()
+
         observeFriendshipRequestPutSuccessfully()
 
         observeFriendshipRequestWsError()
@@ -285,6 +293,8 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
         observeFriendshipRequestAcceptedSuccessfully()
 
         observeConversations()
+
+        observeContacts()
 
         observeQuantityFriendshipRequest()
 
@@ -300,7 +310,7 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
         observeSubscription()
 
-        observeConversationsForSearch()
+        observeContactsForSearch()
 
         //TODO:Subscription
         /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
@@ -733,6 +743,25 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
         }
     }
 
+
+    private fun setAdapterContacts() {
+        contactsAdapter = ContactsAdapter(object : ContactsAdapter.ContactClickListener {
+            override fun onClick(item: ContactEntity) {
+                if (item.id != 0) {
+                    startConversation(item)
+                }
+            }
+
+            override fun onMoreClick(item: ContactEntity, view: View) {
+
+            }
+        }, userDisplayFormatDialogViewModel)
+        binding.recyclerViewContacts.adapter = contactsAdapter
+        binding.recyclerViewContacts.itemAnimator = ItemAnimator()
+
+    }
+
+
     private fun startConversation(contact: ContactEntity) {
         findNavController().navigate(
             HomeFragmentDirections.actionHomeFragmentToConversationFragment(contact)
@@ -760,10 +789,24 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
         })
     }
 
-    private fun observeConversationsForSearch() {
-        homeViewModel.conversationsForSearch?.observe(viewLifecycleOwner, Observer {
+    private fun observeContacts() {
+        homeViewModel.contacts.observe(viewLifecycleOwner, Observer { listContacts ->
+            if (listContacts != null) {
+                if (listContacts.count() >= 1) {
+
+                    listContacts.sortBy { contact ->
+                        contact.getNickName()
+                    }
+                }
+                contactsAdapter.submitList(listContacts)
+            }
+        })
+    }
+
+    private fun observeContactsForSearch() {
+        homeViewModel.contactsForSearch?.observe(viewLifecycleOwner, Observer {
             if(it != null){
-                conversationAdapter.submitList(it)
+                contactsAdapter.submitList(it)
             }
         })
     }
@@ -921,6 +964,8 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
             homeViewModel.setTextSearch("")
         }
         if (text.length >= 2) {
+            binding.recyclerViewChats.isVisible = false
+            binding.recyclerViewContacts.isVisible = true
             homeViewModel.searchContact(text.toLowerCase(Locale.getDefault()))
         } else {
             refreshView()
@@ -936,6 +981,7 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun refreshView() {
-        conversationAdapter.submitList(homeViewModel.conversations.value)
+        binding.recyclerViewChats.isVisible = true
+        binding.recyclerViewContacts.isVisible = false
     }
 }

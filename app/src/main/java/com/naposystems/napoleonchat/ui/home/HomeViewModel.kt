@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.naposystems.napoleonchat.model.FriendShipRequest
+import com.naposystems.napoleonchat.repository.contacts.ContactsRepository
 import com.naposystems.napoleonchat.repository.home.HomeRepository
 import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
@@ -22,12 +23,14 @@ import javax.inject.Inject
 class HomeViewModel
 @Inject constructor(
     private val repository: HomeRepository,
-    private val sharedPreferencesManager: SharedPreferencesManager
+    private val sharedPreferencesManager: SharedPreferencesManager,
+    private val contactsRepository: ContactsRepository
 ) : ViewModel() {
 
     private lateinit var _userEntity: LiveData<UserEntity>
     val userEntity: LiveData<UserEntity>
         get() = _userEntity
+
 
     private lateinit var _conversations: LiveData<MutableList<MessageAttachmentRelation>>
     val conversations: LiveData<MutableList<MessageAttachmentRelation>>
@@ -36,6 +39,15 @@ class HomeViewModel
     private val _conversationsForSearch = MutableLiveData<List<MessageAttachmentRelation>>()
     val conversationsForSearch: LiveData<List<MessageAttachmentRelation>>
         get() = _conversationsForSearch
+
+    private lateinit var _contacts: LiveData<MutableList<ContactEntity>>
+    val contacts: LiveData<MutableList<ContactEntity>>
+        get() = _contacts
+
+    private val _contactsForSearch = MutableLiveData<List<ContactEntity>>()
+    val contactsForSearch: LiveData<List<ContactEntity>>
+        get() = _contactsForSearch
+
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
     val quantityFriendshipRequest: LiveData<Int>
@@ -86,6 +98,7 @@ class HomeViewModel
         }
     }
 
+
     fun resetDuplicates() {
         viewModelScope.launch {
             repository.deleteDuplicates()
@@ -109,6 +122,16 @@ class HomeViewModel
         viewModelScope.launch {
             try {
                 repository.getRemoteMessages()
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun getLocalContacts() {
+        viewModelScope.launch {
+            try {
+                _contacts = contactsRepository.getLocalContacts()
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
@@ -230,12 +253,8 @@ class HomeViewModel
     fun searchContact(query: String) {
         viewModelScope.launch {
             try {
-                _conversationsForSearch.value = _conversations.value?.filter {
-                    if (it.contact != null){
-                        Utils.validateSearch(it.contact!!.nicknameFake, query) || Utils.validateSearch(it.contact!!.displayNameFake, query)
-                    }else{
-                        false
-                    }
+                _contactsForSearch.value = _contacts.value?.filter {
+                    Utils.validateNickname(it, query) || Utils.validateDisplayName(it, query)
                 }
             } catch (ex: Exception) {
                 Timber.e(ex)
