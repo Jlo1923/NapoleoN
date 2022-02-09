@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item
+        android:id="@+id/search_contacts"
+        android:icon="@drawable/ic_search_white"
+        android:title="@string/text_search"
+        app:showAsAction="always"/>
+
     <item
         android:id="@+id/add_contact"
         android:icon="@drawable/ic_person_add_white"
@@ -9,12 +16,5 @@
         app:actionLayout="@layout/add_contact_badge"
         app:iconTint="?attr/attrBackgroundTintIconToolbar"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/search_all"
-        android:icon="@drawable/ic_bell"
-        android:title="@string/text_add_contact"
-        android:visible="false"
-        app:actionLayout="@layout/search_all"
-        app:iconTint="?attr/attrBackgroundTintIconToolbar"
-        app:showAsAction="always" />
+
 </menu>

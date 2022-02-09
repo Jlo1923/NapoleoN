@@ -333,10 +333,10 @@ class MessageLocalDataSourceImp @Inject constructor(
         }
     }
 
-    override fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>> {
+    override fun getMessagesForHome(): LiveData<MutableList<MessageAttachmentRelation>> {
 
-        return messageDao.getMessagesForHome()
-            .map { listMessageRelations: List<MessageAttachmentRelation> ->
+        val messages = messageDao.getMessagesForHome()
+            .map { listMessageRelations: MutableList<MessageAttachmentRelation> ->
                 if (BuildConfig.ENCRYPT_API) {
                     listMessageRelations.forEach { messageAndAttachmentRelation: MessageAttachmentRelation ->
                         val unReadMsgs = messageAndAttachmentRelation.contact?.id?.let {
@@ -373,6 +373,8 @@ class MessageLocalDataSourceImp @Inject constructor(
                 listMessageRelations
             }
             .asLiveData()
+
+        return messages
     }
 
     override suspend fun getTextMessagesByStatus(

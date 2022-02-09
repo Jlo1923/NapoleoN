@@ -50,7 +50,7 @@ interface MessageDao {
                 "ORDER BY ${DBConstants.Message.COLUMN_ID} DESC"
 
     )
-    fun getMessagesForHome(): Flow<List<MessageAttachmentRelation>>
+    fun getMessagesForHome(): Flow<MutableList<MessageAttachmentRelation>>
 
     @Query(
         "SELECT ${DBConstants.Message.COLUMN_ID} " +

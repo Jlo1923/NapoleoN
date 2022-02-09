@@ -309,7 +309,7 @@ class HomeRepositoryImp @Inject constructor(
         )
     }
 
-    override fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>> {
+    override fun getMessagesForHome(): LiveData<MutableList<MessageAttachmentRelation>> {
         return messageLocalDataSource.getMessagesForHome()
     }
 

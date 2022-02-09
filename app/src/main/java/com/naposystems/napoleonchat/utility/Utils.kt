@@ -750,7 +750,7 @@ class Utils {
             return validateSearch(data, query)
         }
 
-        private fun validateSearch(data: String, query: String): Boolean {
+        fun validateSearch(data: String, query: String): Boolean {
             return data.toLowerCase(Locale.getDefault()).contains(query)
         }
 

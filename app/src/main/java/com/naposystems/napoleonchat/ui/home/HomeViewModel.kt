@@ -14,6 +14,7 @@ import com.naposystems.napoleonchat.source.remote.dto.addContact.FriendshipReque
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.NAV_TO_CONTACTS
 import com.naposystems.napoleonchat.utility.Constants.SharedPreferences.URIS_CACHE
 import com.naposystems.napoleonchat.utility.SharedPreferencesManager
+import com.naposystems.napoleonchat.utility.Utils
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,9 +29,13 @@ class HomeViewModel
     val userEntity: LiveData<UserEntity>
         get() = _userEntity
 
-    private var _conversations: LiveData<List<MessageAttachmentRelation>>?
-    val conversations: LiveData<List<MessageAttachmentRelation>>?
+    private lateinit var _conversations: LiveData<MutableList<MessageAttachmentRelation>>
+    val conversations: LiveData<MutableList<MessageAttachmentRelation>>
         get() = _conversations
+
+    private val _conversationsForSearch = MutableLiveData<List<MessageAttachmentRelation>>()
+    val conversationsForSearch: LiveData<List<MessageAttachmentRelation>>
+        get() = _conversationsForSearch
 
     private val _quantityFriendshipRequest = MutableLiveData<Int>()
     val quantityFriendshipRequest: LiveData<Int>
@@ -52,8 +57,10 @@ class HomeViewModel
     val contact: LiveData<ContactEntity>
         get() = _contact
 
+    var textBarSearch: String = ""
+
     init {
-        _conversations = null
+
         _contact.value = null
         _jsonNotification.value = null
         _jsonCleaned.value = null
@@ -150,7 +157,7 @@ class HomeViewModel
     }
 
     fun resetConversations() {
-        _conversations = null
+       //_conversations.value = listOf<MessageAttachmentRelation>()
     }
 
     fun cleanVariables() {
@@ -212,6 +219,38 @@ class HomeViewModel
     fun isMarkGoToContacts() = sharedPreferencesManager.getBoolean(NAV_TO_CONTACTS, false)
 
     fun lastSubscription() = viewModelScope.launch {
-        repository.lastSubscription()
+        try{
+            repository.lastSubscription()
+        }catch (ex: Exception){
+            Timber.e(ex)
+        }
     }
+
+
+    fun searchContact(query: String) {
+        viewModelScope.launch {
+            try {
+                _conversationsForSearch.value = _conversations.value?.filter {
+                    if (it.contact != null){
+                        Utils.validateSearch(it.contact!!.nicknameFake, query) || Utils.validateSearch(it.contact!!.displayNameFake, query)
+                    }else{
+                        false
+                    }
+                }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun setTextSearch(text: String) {
+        textBarSearch = text
+    }
+
+    fun getTextSearch() = textBarSearch
+
+    fun resetTextSearch() {
+        textBarSearch = ""
+    }
+
 }

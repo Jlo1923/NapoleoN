@@ -56,12 +56,12 @@ interface MessageLocalDataSource {
         status: Int
     )
 
-    fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>>
-
     suspend fun getTextMessagesByStatus(
         contactId: Int,
         status: Int
     ): List<MessageAttachmentRelation>
+
+    fun getMessagesForHome(): LiveData<MutableList<MessageAttachmentRelation>>
 
     suspend fun getMissedCallsByStatus(contactId: Int, status: Int): List<MessageAttachmentRelation>
 

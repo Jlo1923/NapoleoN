@@ -35,6 +35,7 @@ import com.naposystems.napoleonchat.source.local.entity.ContactEntity
 import com.naposystems.napoleonchat.source.local.entity.MessageAttachmentRelation
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.ui.conversationCall.ConversationCallActivity
+import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
@@ -51,10 +52,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -123,6 +126,11 @@ class HomeFragment : BaseFragment() {
     private var isMenuCreated: Boolean = false
 
     private var isShowingShowCase: Boolean = false
+
+    private lateinit var mainActivity: MainActivity
+
+    private lateinit var searchView: SearchView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -291,6 +299,8 @@ class HomeFragment : BaseFragment() {
         observeContact()
 
         observeSubscription()
+
+        observeConversationsForSearch()
 
         //TODO:Subscription
         /*billingClientLifecycle.purchases.observe(viewLifecycleOwner, Observer { purchasesList ->
@@ -516,27 +526,29 @@ class HomeFragment : BaseFragment() {
         val menuItem = menu.findItem(R.id.add_contact)
         addContactsMenuItem = menuItem
 
-        val menuItem2 = menu.findItem(R.id.search_all)
-        searchAllMenuItem = menuItem2
-
         val actionView = menuItem.actionView
         textViewBadge = actionView.findViewById(R.id.textView_badge)
 
-        val actionView2 = menuItem2.actionView
-        imageViewSearch = actionView2.findViewById(R.id.textView_search)
 
         actionView.setOnClickListener {
             onOptionsItemSelected(menuItem)
-        }
-        actionView2.setOnClickListener {
-            onOptionsItemSelected(menuItem2)
         }
 
         homeMenuItem =
             ((activity as MainActivity).findViewById(R.id.toolbar) as MaterialToolbar).getChildAt(1)
 
-        isMenuCreated = true
 
+
+        if (activity is MainActivity) {
+            mainActivity = activity as MainActivity
+            searchView = mainActivity.findViewById(R.id.searchView)
+            searchView.setStyleable(Constants.LocationSearchView.OTHER.location)
+            searchView.setHint(R.string.text_search_contact)
+            searchView.setMenuItem(menu.findItem(R.id.search_contacts))
+            searchView.setListener(this)
+        }
+
+        isMenuCreated = true
         showCase()
 
     }
@@ -643,14 +655,7 @@ class HomeFragment : BaseFragment() {
                 goToAddContactFragment()
                 true
             }
-            R.id.search_all -> {
-                findNavController().navigate(
-                    HomeFragmentDirections.actionAllSearch(
-                        location = Constants.LocationAddContact.HOME.location)
-                )
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+            else -> false
         }
     }
 
@@ -751,6 +756,14 @@ class HomeFragment : BaseFragment() {
                 existConversation = it.isNotEmpty()
                 validateViewSwitcher(existConversation, existFriendShip)
                 homeViewModel.resetConversations()
+            }
+        })
+    }
+
+    private fun observeConversationsForSearch() {
+        homeViewModel.conversationsForSearch?.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                conversationAdapter.submitList(it)
             }
         })
     }
@@ -895,5 +908,34 @@ class HomeFragment : BaseFragment() {
                 subscriptionIntent()
             }
         }
+    }
+
+    override fun onOpened() {
+
+    }
+
+    override fun onQuery(text: String) {
+        if (text.isNotEmpty())
+            homeViewModel.setTextSearch(text)
+        else if (text.isEmpty() && homeViewModel.getTextSearch().count() == 1) {
+            homeViewModel.setTextSearch("")
+        }
+        if (text.length >= 2) {
+            homeViewModel.searchContact(text.toLowerCase(Locale.getDefault()))
+        } else {
+            refreshView()
+        }
+    }
+
+    override fun onClosed() {
+        refreshView()
+    }
+
+    override fun onClosedCompleted() {
+
+    }
+
+    private fun refreshView() {
+        conversationAdapter.submitList(homeViewModel.conversations.value)
     }
 }

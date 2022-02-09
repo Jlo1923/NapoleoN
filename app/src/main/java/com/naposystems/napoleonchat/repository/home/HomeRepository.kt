@@ -32,7 +32,7 @@ interface HomeRepository {
 
     suspend fun cleanJsonNotification()
 
-    fun getMessagesForHome(): LiveData<List<MessageAttachmentRelation>>
+    fun getMessagesForHome(): LiveData<MutableList<MessageAttachmentRelation>>
 
     /**
      * Verifica los mensajes a elinminar por su autodestruccion "vencida"
