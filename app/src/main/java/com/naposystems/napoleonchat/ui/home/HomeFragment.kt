@@ -955,7 +955,10 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     override fun onOpened() {
-        binding.viewSwitcherChats.showNext()
+
+        if(homeViewModel.conversations.value?.size == 0){
+            binding.viewSwitcherChats.showNext()
+        }
     }
 
     override fun onQuery(text: String) {
@@ -975,7 +978,10 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
     override fun onClosed() {
         refreshView()
-        binding.viewSwitcherChats.showPrevious()
+        if(homeViewModel.conversations.value?.size == 0)
+        {
+            binding.viewSwitcherChats.showNext()
+        }
     }
 
     override fun onClosedCompleted() {
