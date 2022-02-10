@@ -515,6 +515,7 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
         isShowingShowCase = false
         shareFriendShipViewModel.clearMessageError()
         homeViewModel.cleanVariables()
+        searchView.close()
         if (::popup.isInitialized) {
             popup.dismiss()
         }
@@ -954,7 +955,7 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     override fun onOpened() {
-
+        binding.viewSwitcherChats.showNext()
     }
 
     override fun onQuery(text: String) {
@@ -974,6 +975,7 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
     override fun onClosed() {
         refreshView()
+        binding.viewSwitcherChats.showPrevious()
     }
 
     override fun onClosedCompleted() {
