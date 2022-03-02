@@ -485,7 +485,7 @@ object Constants {
 
     enum class SkuSubscriptions(val sku: String) {
         QUARTERLY("com.naposystems.napoleonchat.quarterly"),
-        SEMIANNUAL("com.naposystems.napoleonchat.semiannuaxl"),
+        SEMIANNUAL("com.naposystems.napoleonchat.semiannual"),
         YEARLY("com.naposystems.napoleonchat.yearly")
     }
 
