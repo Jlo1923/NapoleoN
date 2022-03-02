@@ -16,6 +16,7 @@ import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
 import com.naposystems.napoleonchat.ui.subscription.adapter.SkuDetailsAdapter
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -50,7 +51,7 @@ class SubscriptionFragment : BaseFragment() {
         PurchasesUpdatedListener { billingResult, purchases ->
             // To be implemented in a later section.
         }
-
+    private val sharedPreferencesManager: SharedPreferencesManager = TODO()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(billingClientLifecycle)
@@ -306,7 +307,7 @@ class SubscriptionFragment : BaseFragment() {
 
         when (lastPurchase.sku) {
             Constants.SkuSubscriptions.QUARTERLY.sku ->
-                calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.QUATERLY.subscription)
+                calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.QUARTERLY.subscription)
             Constants.SkuSubscriptions.SEMIANNUAL.sku ->
                 calendar.add(
                     Calendar.MONTH,

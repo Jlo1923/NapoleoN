@@ -542,7 +542,7 @@ object Constants {
     }
 
     enum class SubscriptionsTimeType(val subscription: Int) {
-        QUATERLY(3),
+        QUARTERLY(3),
         SEMIANNUAL(6),
         YEARLY(1)
     }
