@@ -1,5 +1,6 @@
 package com.naposystems.napoleonchat.ui.help
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -58,20 +59,24 @@ class HelpFragment : BaseFragment() {
         return binding.root
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun frequentQuestionsClickListener() = View.OnClickListener {
         val uri: Uri = Uri.parse(Constants.URL_FREQUENT_QUESTIONS)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(requireContext().packageManager) != null) {
+        startActivity(intent)
+        /*if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
-        }
+        }*/
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
     private fun termsAndConditionsClickListener() = View.OnClickListener {
         val uri: Uri = Uri.parse(Constants.URL_TERMS_AND_CONDITIONS)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(requireContext().packageManager) != null) {
+        startActivity(intent)
+        /*if (intent.resolveActivity(requireContext().packageManager) != null) {
             startActivity(intent)
-        }
+        }*/
     }
 
     private fun aboutClickListener() = View.OnClickListener {
