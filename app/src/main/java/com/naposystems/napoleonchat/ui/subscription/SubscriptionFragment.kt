@@ -306,7 +306,7 @@ class SubscriptionFragment : BaseFragment() {
 
         when (lastPurchase.sku) {
             Constants.SkuSubscriptions.QUARTERLY.sku ->
-                calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.MONTHLY.subscription)
+                calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.QUATERLY.subscription)
             Constants.SkuSubscriptions.SEMIANNUAL.sku ->
                 calendar.add(
                     Calendar.MONTH,
