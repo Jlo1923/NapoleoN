@@ -170,7 +170,7 @@ class SubscriptionFragment : BaseFragment() {
                                     getString(R.string.text_subscription_expired)
                             } else {
                                 binding.textViewSubscriptionActual.text = when (lastPurchase.sku) {
-                                    Constants.SkuSubscriptions.MONTHLY.sku -> getString(R.string.text_subscription_monthly)
+                                    Constants.SkuSubscriptions.QUARTERLY.sku -> getString(R.string.text_subscription_quarterly)
                                     Constants.SkuSubscriptions.SEMIANNUAL.sku -> getString(R.string.text_subscription_semiannual)
                                     else -> getString(R.string.text_subscription_yearly)
                                 }
@@ -305,7 +305,7 @@ class SubscriptionFragment : BaseFragment() {
 
 
         when (lastPurchase.sku) {
-            Constants.SkuSubscriptions.MONTHLY.sku ->
+            Constants.SkuSubscriptions.QUARTERLY.sku ->
                 calendar.add(Calendar.MONTH, Constants.SubscriptionsTimeType.MONTHLY.subscription)
             Constants.SkuSubscriptions.SEMIANNUAL.sku ->
                 calendar.add(

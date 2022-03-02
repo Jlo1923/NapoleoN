@@ -203,7 +203,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/normal_padding"
-                    tools:text="Comprar subscripcion" />
+                    tools:text="Comprar con Google Pay" />
 
                 <ProgressBar
                     android:layout_width="match_parent"

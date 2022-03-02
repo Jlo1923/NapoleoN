@@ -21,7 +21,7 @@
     <string name="text_unsubscribed_desc">Denken Sie daran, dass Sie in ein anderes Paket abonnieren können, die Ihre Bedürfnisse jederzeit entspricht.</string>
     <string name="text_finalize">Finalisierung</string>
     <string name="text_error_unsubscribe">Ein Fehler Ihr Abonnement Cancelling, versuchen Sie es später erneut aufgetreten.</string>
-    <string name="text_subscription_monthly">Monatlich</string>
+    <string name="text_subscription_quarterly">vierteljährlich</string>
     <string name="text_subscription_semiannual">Halbjährlich</string>
     <string name="text_subscription_yearly">Jährlich</string>
     <string name="text_purchase">Kaufen %1$s (%2$s)</string>

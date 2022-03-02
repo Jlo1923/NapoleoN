@@ -76,7 +76,7 @@ class BillingClientLifecycle @Inject constructor(private val app: NapoleonApplic
             .setType(BillingClient.SkuType.SUBS)
             .setSkusList(
                 listOf(
-                    Constants.SkuSubscriptions.MONTHLY.sku,
+                    Constants.SkuSubscriptions.QUARTERLY.sku,
                     Constants.SkuSubscriptions.SEMIANNUAL.sku,
                     Constants.SkuSubscriptions.YEARLY.sku
                 )

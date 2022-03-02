@@ -35,7 +35,7 @@ class SkuDetailsAdapter constructor(
         val skuDetail = list[position]
 
         val subscriptionTitle= when(skuDetail.sku){
-            Constants.SkuSubscriptions.MONTHLY.sku -> context.getString(R.string.text_subscription_monthly)
+            Constants.SkuSubscriptions.QUARTERLY.sku -> context.getString(R.string.text_subscription_quarterly)
             Constants.SkuSubscriptions.SEMIANNUAL.sku -> context.getString(R.string.text_subscription_semiannual)
             else -> context.getString(R.string.text_subscription_yearly)
         }

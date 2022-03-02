@@ -553,8 +553,12 @@ class MainActivity :
         binding.drawerLayout.closeDrawers()
 
         when (menuItem.itemId) {
-
-            R.id.subscription -> subscriptionIntent()
+            // R.id.subscription -> subscriptionIntent()
+            R.id.subscription -> navController.navigate(
+                R.id.subscriptionFragment,
+                null,
+                options
+            )
             R.id.security_settings -> navController.navigate(
                 R.id.securitySettingsFragment,
                 null,

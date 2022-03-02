@@ -21,7 +21,7 @@
     <string name="text_unsubscribed_desc">Rappelez-vous que vous pouvez vous abonner à un autre forfait qui convient à vos besoins à tout moment.</string>
     <string name="text_finalize">Finaliser</string>
     <string name="text_error_unsubscribe">une erreur annulation de votre abonnement, s\'il vous plaît essayer plus tard a eu lieu.</string>
-    <string name="text_subscription_monthly">Mensuel</string>
+    <string name="text_subscription_quarterly">Trimestriel</string>
     <string name="text_subscription_semiannual">Semestriel</string>
     <string name="text_subscription_yearly">Annuel</string>
     <string name="text_purchase">Acheter %1$s (%2$s)</string>
