@@ -39,6 +39,7 @@ import com.naposystems.napoleonchat.source.remote.api.ApiConstants.SEND_SELECTED
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.TYPE_SUBSCRIPTIONS
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_CONTACT_FAKE
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_MUTE_CONVERSATION
+import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_SUSCRIPTION
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.UPDATE_USER_INFO
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VALIDATE_NICKNAME
 import com.naposystems.napoleonchat.source.remote.api.ApiConstants.VERIFICATE_CODE
@@ -272,5 +273,11 @@ interface NapoleonApi {
     suspend fun updateContactFake(
         @Body contactFakeReqDTO: ContactFakeReqDTO,
         @Path("friendshipId") idContact: Int
+    ): Response<ContactFakeResDTO>
+
+    @PUT(UPDATE_SUSCRIPTION)
+    suspend fun updateSuscription(
+        @Body contactFakeReqDTO: ContactFakeReqDTO,
+        @Path("friendshipId")  idContact: Int
     ): Response<ContactFakeResDTO>
 }

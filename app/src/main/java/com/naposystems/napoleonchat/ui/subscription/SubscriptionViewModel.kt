@@ -111,6 +111,22 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
+    fun updateSuscription(userId: Int, suscriptionId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.sendPayment(userId)
+
+                if (response.isSuccessful) {
+                    _subscriptionUrl.value = SubscriptionUrlResDTO.toModel(response.body()!!)
+                } else {
+                    _sendPaymentError.value =
+                        repository.getSubscriptionUrlError(response.errorBody()!!)
+                }
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+    }
     fun resetViewModel() {
         _subscriptionUrl.value = null
     }

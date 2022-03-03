@@ -403,6 +403,7 @@ class SubscriptionFragment : BaseFragment() {
             if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
                 binding.viewSwitcher.showNext()
             }
+            viewModel.subscriptionUserError
             binding.checkBoxPaymentDescription.isChecked = false
             billingClientLifecycle.queryPurchases()
             billingClientLifecycle.acknowledged(purchase)

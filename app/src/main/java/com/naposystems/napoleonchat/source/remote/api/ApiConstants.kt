@@ -49,5 +49,6 @@ object ApiConstants {
     const val CANCEL_CALL = "call/cancelcall"
     const val READY_CALL = "call/readyforcall"
     const val UPDATE_CONTACT_FAKE = "friendship/updatefriendship/{friendshipId}"
+    const val UPDATE_SUSCRIPTION = "friendship/updatefriendship/{friendshipId}"
 
 }

@@ -197,13 +197,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintWidth_percent="@dimen/width_app_button">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_buy_subscription"
-                    style="@style/AppPrimaryButton"
-                    android:layout_width="match_parent"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/normal_padding"
-                    tools:text="Comprar con Google Pay" />
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_buy_subscription"
+                        style="@style/AppPrimaryButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/normal_padding"
+                        tools:text="Comprar con Google Pay" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_buy_paymentsway"
+                        style="@style/AppPrimaryButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/normal_padding"
+                        tools:text="Comprar con otro medio de pago" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <ProgressBar
                     android:layout_width="match_parent"
