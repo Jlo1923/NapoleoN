@@ -1,5 +1,8 @@
 package com.naposystems.napoleonchat.ui.subscription
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
@@ -8,14 +11,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.*
+import com.naposystems.napoleonchat.BuildConfig
 import com.naposystems.napoleonchat.R
 import com.naposystems.napoleonchat.databinding.SubscriptionFragmentBinding
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.CreateSuscriptionDTO
 import com.naposystems.napoleonchat.ui.subscription.adapter.SkuDetailsAdapter
 import com.naposystems.napoleonchat.utility.Constants
+import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
@@ -36,6 +44,9 @@ class SubscriptionFragment : BaseFragment() {
 
     @Inject
     lateinit var billingClientLifecycle: BillingClientLifecycle
+
+    @Inject
+    lateinit var sharedPreferencesManager: SharedPreferencesManager
 
     private val viewModel: SubscriptionViewModel by viewModels {
         viewModelFactory
@@ -96,6 +107,14 @@ class SubscriptionFragment : BaseFragment() {
             sendPayment()
         }
 
+        binding.buttonBuyPaymentsway.setOnClickListener {
+                val userId = sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_USER_ID, "")
+                val url = getString(R.string.buy_subscription_url).plus(userId)
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.data = Uri.parse(url)
+                startActivity(intent)
+
+        }
         return binding.root
     }
 
@@ -403,10 +422,18 @@ class SubscriptionFragment : BaseFragment() {
             if (binding.viewSwitcher.nextView.id == binding.buttonBuySubscription.id) {
                 binding.viewSwitcher.showNext()
             }
-            viewModel.subscriptionUserError
+
             binding.checkBoxPaymentDescription.isChecked = false
             billingClientLifecycle.queryPurchases()
             billingClientLifecycle.acknowledged(purchase)
+
+            val createSuscriptionDTO = CreateSuscriptionDTO(
+                user_id = "150",
+                subscription_id = "6"
+            )
+            
+            viewModel.createSubscription(createSuscriptionDTO)
+
         }
     }
 }

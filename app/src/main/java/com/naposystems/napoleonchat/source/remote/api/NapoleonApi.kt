@@ -275,9 +275,10 @@ interface NapoleonApi {
         @Path("friendshipId") idContact: Int
     ): Response<ContactFakeResDTO>
 
-    @PUT(UPDATE_SUSCRIPTION)
-    suspend fun updateSuscription(
-        @Body contactFakeReqDTO: ContactFakeReqDTO,
-        @Path("friendshipId")  idContact: Int
-    ): Response<ContactFakeResDTO>
+    //suspend fun createSubscription(@Path("user_id") user_id: Int, @Path("subscription_id") subscription_id: Int): Response<CreateSuscriptionDTO>
+
+    @POST(UPDATE_SUSCRIPTION)
+    suspend fun createSubscription(
+        @Body createSuscriptionDTO: CreateSuscriptionDTO
+    ): Response<CreateSuscriptionDTO>
 }

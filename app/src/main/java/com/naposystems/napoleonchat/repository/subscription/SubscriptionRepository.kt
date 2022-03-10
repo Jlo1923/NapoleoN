@@ -1,5 +1,7 @@
 package com.naposystems.napoleonchat.repository.subscription
 
+import com.naposystems.napoleonchat.source.remote.dto.contactProfile.ContactFakeResDTO
+import com.naposystems.napoleonchat.source.remote.dto.subscription.CreateSuscriptionDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.StateSubscriptionResDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
@@ -17,4 +19,5 @@ interface SubscriptionRepository {
     fun getError(response: ResponseBody): ArrayList<String>
     fun getSubscriptionUrlError(response: ResponseBody): ArrayList<String>
     suspend fun checkSubscription(): Response<StateSubscriptionResDTO>
+    suspend fun createSubscription(createSuscriptionDTO: CreateSuscriptionDTO): Response<CreateSuscriptionDTO>
 }

@@ -8,6 +8,7 @@ import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUrl
 import com.naposystems.napoleonchat.model.typeSubscription.SubscriptionUser
 import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.repository.subscription.SubscriptionRepository
+import com.naposystems.napoleonchat.source.remote.dto.subscription.CreateSuscriptionDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionUrlResDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.SubscriptionsResDTO
 import kotlinx.coroutines.launch
@@ -111,23 +112,21 @@ class SubscriptionViewModel @Inject constructor(
         }
     }
 
-    fun updateSuscription(userId: Int, suscriptionId: Int) {
+    fun createSubscription(createSuscriptionDTO: CreateSuscriptionDTO) {
+
         viewModelScope.launch {
             try {
-                val response = repository.sendPayment(userId)
 
-                if (response.isSuccessful) {
-                    _subscriptionUrl.value = SubscriptionUrlResDTO.toModel(response.body()!!)
-                } else {
-                    _sendPaymentError.value =
-                        repository.getSubscriptionUrlError(response.errorBody()!!)
-                }
-            } catch (e: Exception) {
-                Timber.e(e)
+                val response = repository.createSubscription(createSuscriptionDTO)
+
+            }catch (ex: java.lang.Exception){
+                Timber.e(ex)
             }
         }
+
     }
     fun resetViewModel() {
         _subscriptionUrl.value = null
     }
+
 }

@@ -1,8 +1,6 @@
 package com.naposystems.napoleonchat.repository.subscription
 
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import com.naposystems.napoleonchat.service.subscription.SubscriptionWorker
+import android.util.Log
 import com.naposystems.napoleonchat.source.remote.api.NapoleonApi
 import com.naposystems.napoleonchat.source.remote.dto.subscription.*
 import com.naposystems.napoleonchat.utility.Constants
@@ -10,7 +8,6 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.squareup.moshi.Moshi
 import okhttp3.ResponseBody
 import retrofit2.Response
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SubscriptionRepositoryImp
@@ -70,6 +67,11 @@ class SubscriptionRepositoryImp
         return napoleonApi.checkSubscription()
     }
 
+
+    override suspend fun createSubscription(createSuscriptionDTO: CreateSuscriptionDTO): Response<CreateSuscriptionDTO> {
+        Log.e("api", createSuscriptionDTO.user_id)
+        return napoleonApi.createSubscription(createSuscriptionDTO)
+    }
 
 
 }

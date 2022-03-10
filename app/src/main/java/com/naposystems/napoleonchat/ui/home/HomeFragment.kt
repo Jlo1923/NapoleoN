@@ -566,6 +566,14 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
     override fun onResume() {
         super.onResume()
+        subscriptionStatus = SubscriptionStatus.valueOf(
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        )
+        observeSubscription()
+        setupSubscriptionContainer(subscriptionStatus)
         if (showCaseManager?.getStateShowCaseSixth() == true) {
             this.verifyPermission(
                 Manifest.permission.CAMERA,
