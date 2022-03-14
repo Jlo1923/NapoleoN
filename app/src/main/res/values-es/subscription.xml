@@ -24,7 +24,7 @@
     <string name="text_subscription_quarterly">Trimestral</string>
     <string name="text_subscription_semiannual">Semestral</string>
     <string name="text_subscription_yearly">Anual</string>
-    <string name="text_purchase">Comprar %1$s (%2$s)</string>
+    <string name="text_purchase">Comprar con Gpay %1$s (%2$s)</string>
     <string name="text_subscription_successfully">¡Suscripción realizada con éxito!</string>
     <string name="text_subscription_already_owned">Ya cuentas con este paquete activo actualmente.</string>
     <string name="text_operation_cancelled">Operación cancelada.</string>
@@ -35,4 +35,5 @@
     <string name="text_total_lock_dialog_title">Cuenta suspendida</string>
     <string name="text_total_lock_dialog_desc">Conserva tu mismo usuario y disfruta de los beneficios que te da NapoleoИ chat gestionando tu cuenta</string>
     <string name="text_total_lock_dialog_action">Ir</string>
+    <string name="text_payments_way">Comprar con otro medio de pago</string>
 </resources>

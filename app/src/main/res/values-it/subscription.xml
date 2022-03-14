@@ -35,6 +35,7 @@
     <string name="text_total_lock_dialog_title">Account sospeso</string>
     <string name="text_total_lock_dialog_desc">Mantieni il tuo stesso utente e goditi i vantaggi che la chat NapoleoИ ti offre gestendo il tuo account</string>
     <string name="text_total_lock_dialog_action">Andare</string>
+    <string name="text_payments_way">Acquista con un altro mezzo di pagamento</string>
 </resources>
 
 

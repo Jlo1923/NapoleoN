@@ -172,7 +172,7 @@
                 android:layout_marginEnd="@dimen/large_margin"
                 android:layout_marginBottom="@dimen/normal_margin"
                 android:scrollbars="vertical"
-                app:layout_constraintBottom_toTopOf="@id/viewSwitcher"
+                app:layout_constraintBottom_toTopOf="@id/ly"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/checkBox_payment_description"
@@ -187,42 +187,49 @@
 
             </androidx.core.widget.NestedScrollView>
 
-            <ViewSwitcher
-                android:id="@+id/viewSwitcher"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/normal_margin"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="@dimen/width_app_button">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:orientation="vertical">
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_buy_subscription"
-                        style="@style/AppPrimaryButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/normal_padding"
-                        tools:text="Comprar con Google Pay" />
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_buy_paymentsway"
-                        style="@style/AppPrimaryButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/normal_padding"
-                        tools:text="Comprar con otro medio de pago" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <ProgressBar
+                <ScrollView
+                    android:id="@+id/ly"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/normal_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="MissingConstraints">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:gravity="center_horizontal"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="vertical">
 
-            </ViewSwitcher>
+                        <ViewSwitcher
+                            android:id="@+id/viewSwitcher"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/button_buy_subscription"
+                                style="@style/AppPrimaryButton"
+                                android:layout_width="304dp"
+                                android:layout_height="wrap_content"
+                                android:padding="@dimen/normal_padding"
+                                tools:text="Comprar con Google Pay" />
+
+                            <ProgressBar
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+                        </ViewSwitcher>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/button_buy_paymentsway"
+                            style="@style/AppPrimaryButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/normal_padding"
+                            tools:text="Comprar con otro medio de pago" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </ScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

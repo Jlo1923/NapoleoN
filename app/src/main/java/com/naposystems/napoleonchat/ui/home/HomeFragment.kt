@@ -18,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -41,6 +42,7 @@ import com.naposystems.napoleonchat.ui.custom.SearchView
 import com.naposystems.napoleonchat.ui.home.adapter.ConversationAdapter
 import com.naposystems.napoleonchat.ui.home.adapter.FriendShipRequestReceivedAdapter
 import com.naposystems.napoleonchat.ui.mainActivity.MainActivity
+import com.naposystems.napoleonchat.ui.subscription.SubscriptionFragmentDirections
 import com.naposystems.napoleonchat.utility.*
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_CODE_KEY
 import com.naposystems.napoleonchat.utility.Constants.REMOTE_CONFIG_VERSION_KEY
@@ -135,6 +137,16 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
 
     private lateinit var searchView: SearchView
 
+    private val options by lazy {
+        navOptions {
+            anim {
+                enter = R.anim.slide_in_right
+                exit = R.anim.slide_out_left
+                popEnter = R.anim.slide_in_left
+                popExit = R.anim.slide_out_right
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -941,11 +953,14 @@ class HomeFragment : BaseFragment(), SearchView.OnSearchView {
     }
 
     private fun subscriptionIntent() {
-        val userId = sharedPreferencesManager.getString(PREF_USER_ID, "")
+        findNavController().navigate(
+            R.id.subscriptionFragment,null, options
+        )
+        /*val userId = sharedPreferencesManager.getString(PREF_USER_ID, "")
         val url = getString(R.string.buy_subscription_url).plus(userId)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
-        startActivity(intent)
+        startActivity(intent)*/
     }
 
     private fun createTotalBlockDialog() {

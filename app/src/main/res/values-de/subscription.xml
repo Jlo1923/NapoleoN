@@ -35,4 +35,5 @@
     <string name="text_total_lock_dialog_title">Konto gesperrt</string>
     <string name="text_total_lock_dialog_desc">Behalten Sie Ihren gleichen Benutzer und genießen Sie die Vorteile, die Ihnen der NapoleoИ-Chat bietet, indem Sie Ihr Konto verwalten</string>
     <string name="text_total_lock_dialog_action">Gehen</string>
+    <string name="text_payments_way">Kauf mit einem anderen Zahlungsmittel</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="text_total_lock_dialog_title">Compte suspendu</string>
     <string name="text_total_lock_dialog_desc">Gardez votre même utilisateur et profitez des avantages que napoleoИ chat vous offre en gérant votre compte</string>
     <string name="text_total_lock_dialog_action">Aller</string>
+    <string name="text_payments_way">Acheter avec un autre moyen de paiement</string>
 </resources>

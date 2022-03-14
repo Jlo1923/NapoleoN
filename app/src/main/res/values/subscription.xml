@@ -2,7 +2,7 @@
 <resources>
     <string name="text_trial_period">Trial period - %1$d days remaining</string>
     <string name="text_current_subscription">Current subscription</string>
-    <string name="text_get_subscription">Buy a subscription</string>
+    <string name="text_get_subscription">Buy a subscription </string>
     <string name="text_subscription_type">Subscription type</string>
     <string name="text_select_subscription">Select a subscription type</string>
     <string name="text_expired_subscription">Subscription expired</string>
@@ -36,6 +36,7 @@
     <string name="text_total_lock_dialog_title">Account suspended</string>
     <string name="text_total_lock_dialog_desc">Keep your same user and enjoy the benefits that NapoleoИ chat gives you by managing your account</string>
     <string name="text_total_lock_dialog_action">Go</string>
+    <string name="text_payments_way">Purchase with another payment method</string>
 </resources>
 
 

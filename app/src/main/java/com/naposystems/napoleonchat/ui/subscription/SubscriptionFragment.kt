@@ -113,7 +113,6 @@ class SubscriptionFragment : BaseFragment() {
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(url)
                 startActivity(intent)
-
         }
         return binding.root
     }
@@ -346,6 +345,7 @@ class SubscriptionFragment : BaseFragment() {
             skuDetailsSelected.price,
             skuDetailsSelected.priceCurrencyCode
         )
+        binding.buttonBuyPaymentsway.text = getString(R.string.text_payments_way)
     }
 
     private fun enableButtonPaypal() {
@@ -424,6 +424,7 @@ class SubscriptionFragment : BaseFragment() {
             }
 
             binding.checkBoxPaymentDescription.isChecked = false
+            binding.buttonBuySubscription.visibility = View.GONE
             billingClientLifecycle.queryPurchases()
             billingClientLifecycle.acknowledged(purchase)
 
