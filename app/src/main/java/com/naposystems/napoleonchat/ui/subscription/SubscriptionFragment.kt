@@ -18,6 +18,9 @@ import com.naposystems.napoleonchat.model.typeSubscription.TypeSubscription
 import com.naposystems.napoleonchat.subscription.BillingClientLifecycle
 import com.naposystems.napoleonchat.ui.baseFragment.BaseFragment
 import com.naposystems.napoleonchat.dialog.cancelSubscription.CancelSubscriptionDialogFragment
+import com.naposystems.napoleonchat.model.SubscriptionStatus
+import com.naposystems.napoleonchat.reactive.RxBus
+import com.naposystems.napoleonchat.reactive.RxEvent
 import com.naposystems.napoleonchat.source.remote.dto.accessPin.CreateAccountReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.contactUs.ContactUsReqDTO
 import com.naposystems.napoleonchat.source.remote.dto.subscription.CreateSuscriptionDTO
@@ -27,6 +30,8 @@ import com.naposystems.napoleonchat.utility.SharedPreferencesManager
 import com.naposystems.napoleonchat.utility.SnackbarUtils
 import com.naposystems.napoleonchat.utility.Utils
 import com.naposystems.napoleonchat.utility.viewModel.ViewModelFactory
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +44,11 @@ class SubscriptionFragment : BaseFragment() {
         fun newInstance() = SubscriptionFragment()
     }
 
+    private var subscriptionStatus: SubscriptionStatus = SubscriptionStatus.ACTIVE
+
+    private val disposable: CompositeDisposable by lazy {
+        CompositeDisposable()
+    }
     @Inject
     override lateinit var viewModelFactory: ViewModelFactory
 
@@ -145,8 +155,9 @@ class SubscriptionFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel.checkSubscription()
-        viewModel.getTypeSubscription()
+     //   viewModel.checkSubscription()
+        //
+        //  viewModel.getTypeSubscription()
 
         billingClientLifecycle.skusWithSkuDetails.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -413,7 +424,7 @@ class SubscriptionFragment : BaseFragment() {
         for (purchase in purchaseList) {
             val sku = purchase.sku
             val purchaseToken = purchase.purchaseToken
-            Timber.d("Register purchase with sku: $sku, token: $purchaseToken")
+            Timber.d("jennyfer Register purchase with sku: $sku, token: $purchaseToken")
             Utils.showSimpleSnackbar(
                 binding.coordinator,
                 getString(R.string.text_subscription_successfully),
@@ -428,13 +439,52 @@ class SubscriptionFragment : BaseFragment() {
             billingClientLifecycle.queryPurchases()
             billingClientLifecycle.acknowledged(purchase)
 
+            val user_id =sharedPreferencesManager.getString(Constants.SharedPreferences.PREF_USER_ID, "")
             val createSuscriptionDTO = CreateSuscriptionDTO(
-                user_id = "150",
+                user_id = user_id,
                 subscription_id = "6"
             )
             
             viewModel.createSubscription(createSuscriptionDTO)
-
+            saveSubscription(SubscriptionStatus.ACTIVE,user_id)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subscriptionStatus = SubscriptionStatus.valueOf(
+            sharedPreferencesManager.getString(
+                Constants.SharedPreferences.SubscriptionStatus,
+                SubscriptionStatus.ACTIVE.name
+            )
+        )
+        observeSubscription()
+    }
+
+    private fun saveSubscription(
+        subscriptionStatus: SubscriptionStatus,
+        userId: String
+    ) {
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.SubscriptionStatus,
+            subscriptionStatus.name
+        )
+        sharedPreferencesManager.putString(
+            Constants.SharedPreferences.PREF_USER_ID,
+            userId
+        )
+
+        RxBus.publish(RxEvent.SubscriptionStatusEvent(subscriptionStatus))
+       // subscriptionNotificationWork()
+    }
+
+
+    private fun observeSubscription() {
+        val disposableSubscriptionStatus = RxBus.listen(RxEvent.SubscriptionStatusEvent::class.java)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                subscriptionStatus = it.status
+            }
+        disposable.add(disposableSubscriptionStatus)
     }
 }
